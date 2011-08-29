@@ -1,5 +1,0 @@
-connect '192.168.10.2:51013  /I /F="C:\\Program Files (x86)\\teraterm\\i-remocon.ini" /nossh /T=1 '
-mpause 100
-sendln '*is;7'
-mpause 100
-disconnect 0
