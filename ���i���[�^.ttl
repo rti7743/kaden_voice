@@ -1,0 +1,23 @@
+fileopen fhandle '_light_status.dat' 0
+filereadln fhandle lighttype
+fileclose fhandle
+
+strcompare lighttype 'on'
+if result=0 then
+    lighttype='off'
+    command='*is;5'
+else
+    lighttype='on'
+    command='*is;4'
+endif
+
+connect '192.168.10.2:51013 /I  /F="C:\\Program Files (x86)\\teraterm\\i-remocon.ini" /nossh /T=1 '
+mpause 100
+sendln command
+
+fileopen fhandle '_light_status.dat' 0
+filewriteln fhandle lighttype
+fileclose fhandle
+
+mpause 100
+disconnect 0

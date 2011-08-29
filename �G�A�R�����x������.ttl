@@ -1,0 +1,91 @@
+
+fileopen fhandle '_aircon_status.dat' 0
+filereadln fhandle aircontype
+filereadln fhandle aircontemp
+fileclose fhandle
+
+;î≠çsÇ∑ÇÈÉRÉ}ÉìÉh
+command='*is;'
+
+;c:ó‚ñ[   h:ígñ[ÇÃîªíf
+strcompare aircontype 'c'
+if result=0 then
+  ;c:ó‚ñ[ÇÃåüèÿ
+  strcompare aircontemp '27'
+  if result=0 then
+    command='*is;3'
+    aircontemp='25'
+  else 
+    strcompare aircontemp '25'
+    if result=0 then
+      command='*is;13'
+      aircontemp='23'
+    else
+      strcompare aircontemp '23'
+      if result=0 then
+        command='*is;15'
+        aircontemp='21'
+      else
+        strcompare aircontemp '21'
+        if result=0 then
+          command='*is;16'
+          aircontemp='19'
+        else
+          strcompare aircontemp '19'
+          if result=0 then
+            command='*is;2'
+            aircontemp='19'
+          else
+            command='*is;1'
+            aircontemp='27'
+          endif
+        endif
+      endif
+    endif
+  endif
+else 
+  ;h:ígñ[ÇÃåüèÿ
+  strcompare aircontemp '27'
+  if result=0 then
+      command='*is;18'
+      aircontemp='25'
+  else 
+    strcompare aircontemp '25'
+    if result=0 then
+        command='*is;17'
+        aircontemp='23'
+    else
+      strcompare aircontemp '23'
+      if result=0 then
+        command='*is;12'
+        aircontemp='21'
+      else
+        strcompare aircontemp '21'
+        if result=0 then
+            command='*is;2'
+            aircontemp='19'
+        else
+          strcompare aircontemp '19'
+          if result=0 then
+            command='*is;2'
+            aircontemp='19'
+          else
+            command='*is;19'
+            aircontemp='27'
+          endif
+        endif
+      endif
+    endif
+  endif
+endif
+
+connect '192.168.10.2:51013 /I /F="C:\\Program Files (x86)\\teraterm\\i-remocon.ini" /nossh /T=1 '
+mpause 100
+sendln command
+mpause 100
+
+fileopen fhandle '_aircon_status.dat' 0
+filewriteln fhandle aircontype
+filewriteln fhandle aircontemp
+fileclose fhandle
+disconnect 0
