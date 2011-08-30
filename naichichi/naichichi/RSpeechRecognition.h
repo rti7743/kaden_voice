@@ -21,7 +21,7 @@ public:
 	//音声認識のためのオブジェクトの構築.
 	void RSpeechRecognition::Create(const std::string & inToWave,const std::string & inGrammarXML , HWND inWindow , UINT inCallbackMesage );
 	//認識開始
-	void RSpeechRecognition::Listen() ;
+	bool RSpeechRecognition::Listen() ;
 
 	const std::string & getResultString() const
 	{

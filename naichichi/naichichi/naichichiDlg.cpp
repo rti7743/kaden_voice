@@ -260,7 +260,10 @@ void CnaichichiDlg::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 afx_msg LRESULT CnaichichiDlg::OnSpeechRecognitioned(WPARAM wParam, LPARAM lParam)
 {
 	//Œ‹‰Ê‚ÌŽæ“¾
-	this->SpeechRecognition.Listen();
+	if ( ! this->SpeechRecognition.Listen() )
+	{
+		return 1;
+	}
 
 	//Œ‹‰Ê‚ðŒ©‚Ä‚¢‚­.
 	std::string text = this->SpeechRecognition.getResultString();

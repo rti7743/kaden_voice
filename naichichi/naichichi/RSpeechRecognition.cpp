@@ -106,7 +106,7 @@ void RSpeechRecognition::Create(const std::string & inToWave,const std::string &
 }
 
 //認識開始
-void RSpeechRecognition::Listen()
+bool RSpeechRecognition::Listen()
 {
 	USES_CONVERSION;
 	HRESULT hr;
@@ -119,7 +119,7 @@ void RSpeechRecognition::Listen()
 //	if ( FAILED(hr) )	AfxThrowOleException(hr);
 
 	hr = event.GetFrom( this->RecoCtxt );
-	if ( FAILED(hr) )	AfxThrowOleException(hr);
+	if ( FAILED(hr) )	return false;
 
 	//認識した結果
 	ISpRecoResult* result;
@@ -128,12 +128,14 @@ void RSpeechRecognition::Listen()
 	//認識した文字列の取得
 	CSpDynamicString dstrText;
 	hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE, &dstrText, NULL);
-	if ( FAILED(hr) )	AfxThrowOleException(hr);
+	if ( FAILED(hr) )	return false;
 	this->ResultString = W2A(dstrText);
 
 	//認識に XMLを使用した場合、代入された結果を得る.
 	SPPHRASE *pPhrase;
-	event.RecoResult()->GetPhrase(&pPhrase);
+	hr = event.RecoResult()->GetPhrase(&pPhrase);
+	if ( FAILED(hr) )	return false;
+
 	const SPPHRASEPROPERTY *pProp;
 	for (pProp = pPhrase->pProperties; pProp; pProp = pProp->pNextSibling)
 	{
@@ -167,4 +169,5 @@ void RSpeechRecognition::Listen()
 		}
 	}
 */
+	return true;
 }
