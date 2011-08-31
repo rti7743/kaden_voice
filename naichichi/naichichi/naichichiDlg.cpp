@@ -262,20 +262,12 @@ afx_msg LRESULT CnaichichiDlg::OnSpeechRecognitioned(WPARAM wParam, LPARAM lPara
 	//結果の取得
 	if ( ! this->SpeechRecognition.Listen() )
 	{
-		return 1;
+		return 0;
 	}
 
 	//結果を見ていく.
 	std::string text = this->SpeechRecognition.getResultString();
 	std::string mtext = this->SpeechRecognition.getResultMap("NAME");
-	puts(text.c_str() );
-	puts(mtext.c_str() );
-
-	if (mtext == "QUIT")
-	{
-		PostMessage(WM_CLOSE);
-		return 0;
-	}
 
 	//コマンドを認識できたらしい.
 	if (mtext != "")
