@@ -96,7 +96,7 @@ BOOL CnaichichiDlg::OnInitDialog()
 	}
 
 	//音声認識エンジンスタート!
-	this->SpeechRecognition.Create("","_vicecommand.xml",this->m_hWnd ,WM_USER_SPEECH_RECOGNITIONED );
+	this->SpeechRecognition.Create("コンピュータ","_vicecommand.xml",this->m_hWnd ,WM_USER_SPEECH_RECOGNITIONED );
 
 	return TRUE;  // フォーカスをコントロールに設定した場合を除き、TRUE を返します。
 }
@@ -259,12 +259,6 @@ void CnaichichiDlg::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 //音声認識されたとき
 afx_msg LRESULT CnaichichiDlg::OnSpeechRecognitioned(WPARAM wParam, LPARAM lParam)
 {
-	//結果の取得
-	if ( ! this->SpeechRecognition.Listen() )
-	{
-		return 0;
-	}
-
 	//結果を見ていく.
 	std::string text = this->SpeechRecognition.getResultString();
 	std::string mtext = this->SpeechRecognition.getResultMap("NAME");

@@ -2,6 +2,9 @@
 <GRAMMAR>
 <RULE name="S" toplevel="ACTIVE">
   <L>
+    <P>コンピュータ</P>
+  </L>
+  <L>
     <P>
       <RULEREF name="NAME"/>
     </P>
@@ -11,18 +14,20 @@
   <L propname="NAME">
     <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/エアコンOFF/えあこんおふ;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/エアコン切って/えあこんきって;</P>
+    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/エアコン消して/えあこんけして;</P>
+    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/クーラーOFF/くーらーおふ;</P>
+    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/クーラー切って/くーらーきって;</P>
+    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/クーラー消して/くーらーけして;</P>
+    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/暖房OFF/だんぼうおふ;</P>
+    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/暖房切って/だんぼうきって;</P>
+    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコンOFF.ttl">/暖房消して/だんぼうけして;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン冷房19度.ttl">/エアコンMAX/えあこんまっくす;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン暖房27度.ttl">/暖房MAX/だんぼうまっくす;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン冷房23度.ttl">/エアコンつけて/えあこんつけて;</P>
+    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン冷房23度.ttl">/クーラーつけて/くーらーつけて;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン暖房23度.ttl">/暖房つけて/だんぼうつけて;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン温度上げる.ttl">/エアコン温度上げて/えあこんのおんどをあげて;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン温度下げる.ttl">/エアコン温度下げて/えあこんのおんどをさげて;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン温度上げる.ttl">/温度上げて/おんどあげて;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン温度下げる.ttl">/温度下げて/おんどさげて;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン温度上げる.ttl">/温度上げて/さむい;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン温度下げる.ttl">/温度下げて/あつい;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン温度上げる.ttl">/温度上げて/ちょっとさむいかな;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\エアコン温度下げる.ttl">/温度下げて/ちょっとあついかな;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\液晶を消す.ttl">/液晶消して/えきしょうけして;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\液晶をつける.ttl">/液晶つけて/えきしょうつけて;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\ホームスターを消す.ttl">/ホームスター消して/ほーむすたーけして;</P>
@@ -31,35 +36,21 @@
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気をつける.ttl">/しょうめいをつけて/しょうめいつけて;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気をつける.ttl">/主は申された、光りあれ/しゅはもうされた、ひかりあれ;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気をつける.ttl">/光りあれ/ひかりあれ;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\電気をつける.ttl">/光りよ/ひかりよ;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気をつける.ttl">/ライティング/らいてぃんぐ;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気を消す.ttl">/電気をけして/でんきけして;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気を消す.ttl">/しょうめいをけして/しょうめいけして;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気を消す.ttl">/くらやみに/くらやみに;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気を消す.ttl">/くらやみよ/くらやみよ;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\電気を消す.ttl">/イン・ザ・ダーク/いんざだーく;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\ギャラクシー.ttl">/ギャラクシー/ぎゃらくしー;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エターナルダーク.ttl">/エターナルダーク/えたーなるだーく;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\エターナルダーク.ttl">/エターナルダークネス/えたーなるだーくねす;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\ラナルータ.ttl">/ラナルータ/らなるーた;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\バルス.ttl">/バルスして/ばるすして;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\バルス.ttl">/エターナルフォースブリザード/えたーなるふぉーすぶりざーど;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\ほむほむりせっと.ttl">/基本姿勢/きほんしせい;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\ほむほむりせっと.ttl">/環境リセット/かんきょうりせっと;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\ほむほむりせっと.ttl">/ほむほむりせっと/ほむほむりせっと;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\プロジェクターをつける.ttl">/プロジェクター起動/ぷろじぇくたーきどう;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\プロジェクターをつける.ttl">/プロジェクターつけて/ぷろじぇくたーつけて;</P>
     <P valstr="C:\Users\rti\Desktop\tool\家電\プロジェクターを消す.ttl">/プロジェクター消して/ぷろじぇくたーけして;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\シアターモード暗い.ttl">/シアターモード/しあたーもーど;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\シアターモード暗い.ttl">/暗いシアターモード/くらいしあたーもーど;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\家電\シアターモード明るい.ttl">/明るいシアターモード/あかるいしあたーもーど;</P>
-    <P valstr="C:\Users\rti\AppData\Local\Google\Chrome\Application\chrome.exe">/chrome/くろむ;</P>
-    <P valstr="http://twitter.com/">/twitter/ついったー;</P>
-    <P valstr="https://mail.google.com/mail/">/gmail/じーめーる;</P>
-    <P valstr="http://www.nicovideo.jp/ranking">/niconico/にこにこ;</P>
-    <P valstr="C:\Program Files (x86)\teraterm\ttermpro.exe">/ssh/えすえすえいち;</P>
-    <P valstr="C:\Users\rti\Desktop\tool\検索.html">/検索/けんさく;</P>
-    <P valstr="QUIT">/えんいー/えんいー;</P>
+    <P valstr="C:\Users\rti\Desktop\Dropbox\library\music\Playlists\いつもの.wpl">/音楽かけて/おんがくかけて;</P>
   </L>
 </RULE>
 </GRAMMAR>
