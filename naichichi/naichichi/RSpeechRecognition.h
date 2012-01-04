@@ -25,29 +25,25 @@ public:
 
 	const std::string & getResultString() const
 	{
-		return ResultString;
+		return this->ResultString;
 	}
 	const std::string  getResultMap(const std::string & inKey) const
 	{
-		auto i = ResultMap.find(inKey);
-		if (i == ResultMap.end() ) return "";
+		auto i = this->ResultMap.find(inKey);
+		if (i == this->ResultMap.end() ) return "";
 
 		return (*i).second;
 	}
 private:
-	static void __stdcall __callbackDictation(WPARAM wParam, LPARAM lParam)
-	{
-		((RSpeechRecognition*)wParam)->CallbackDictation();
-	}
 
 	static void __stdcall __callbackRule(WPARAM wParam, LPARAM lParam)
 	{
 		((RSpeechRecognition*)wParam)->CallbackRule();
 	}
+	void RSpeechRecognition::FlagCleanup();
 
 private:
 	void CallbackRule();
-	void CallbackDictation();
 
 private:
 	//ルールベース
@@ -68,8 +64,6 @@ private:
 	std::map<std::string,std::string>		ResultMap;
 	bool				RuleReady;
 
-	std::string			DictationString;
-	bool				DictationReady;
 };
 
 #endif // !defined(AFX_RSPEECHRECOGNITION_H__1477FE93_D7A8_4F29_A369_60E33C71B2B7__INCLUDED_)

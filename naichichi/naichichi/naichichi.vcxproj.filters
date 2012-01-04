@@ -25,9 +25,6 @@
     <None Include="res\icon.ico">
       <Filter>リソース ファイル</Filter>
     </None>
-    <None Include="res\girl.bmp">
-      <Filter>リソース ファイル</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="naichichi.h">

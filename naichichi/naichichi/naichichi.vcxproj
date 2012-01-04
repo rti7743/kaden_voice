@@ -95,7 +95,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
-    <None Include="res\girl.bmp" />
     <None Include="res\icon.ico" />
     <None Include="res\naichichi.ico" />
     <None Include="res\naichichi.rc2" />

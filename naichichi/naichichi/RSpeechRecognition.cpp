@@ -26,8 +26,6 @@ void RSpeechRecognition::Create(const std::string & inDicticationFilterWord , co
 	HRESULT hr;
 
 	this->DicticationFilterWord = inDicticationFilterWord;
-	this->DictationReady = false;
-	this->RuleReady = false;
 	this->CallbackWindowHandle = inWindow;
 	this->CallbackWindowMesage = inCallbackMesage;
 
@@ -38,10 +36,6 @@ void RSpeechRecognition::Create(const std::string & inDicticationFilterWord , co
 		if(FAILED(hr))	 AfxThrowOleException(hr);
 
 		hr = this->DictationEngine.CoCreateInstance(CLSID_SpInprocRecognizer);
-		if(FAILED(hr))	 AfxThrowOleException(hr);
-
-		//オーディオから読み込んでね
-		hr = this->DictationEngine->SetInput( cpAudio, TRUE);  
 		if(FAILED(hr))	 AfxThrowOleException(hr);
 
 		hr = this->DictationEngine->CreateRecoContext(&this->DictationRecoCtxt);
@@ -60,10 +54,7 @@ void RSpeechRecognition::Create(const std::string & inDicticationFilterWord , co
 		hr = this->DictationGrammar->LoadDictation(NULL, SPLO_STATIC);
 		if(FAILED(hr))	 AfxThrowOleException(hr);
 
-		hr = this->DictationRecoCtxt->SetNotifyCallbackFunction(__callbackDictation , (WPARAM)this , 0);
-		if(FAILED(hr))	 AfxThrowOleException(hr);
-
-		hr = this->DictationGrammar->SetDictationState(SPRS_ACTIVE );
+		hr = this->DictationRecoCtxt->SetNotifyWin32Event();
 		if(FAILED(hr))	 AfxThrowOleException(hr);
 	}
 	//ルールベースのエンジンを作る.
@@ -105,45 +96,7 @@ void RSpeechRecognition::Create(const std::string & inDicticationFilterWord , co
 		hr = this->RuleGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
 		if(FAILED(hr))	 AfxThrowOleException(hr);
 	}
-}
-
-void RSpeechRecognition::CallbackDictation()
-{
-	USES_CONVERSION;
-	HRESULT hr;
-	CSpEvent event;
-
-	hr = event.GetFrom( this->DictationRecoCtxt );
-	if ( FAILED(hr) )	return ;
-
-	//認識した結果
-	ISpRecoResult* result;
-	result = event.RecoResult();
-
-	//認識した文字列の取得
-	CSpDynamicString dstrText;
-	hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE, &dstrText, NULL);
-	if ( FAILED(hr) )	return ;
-	this->DictationString = W2A(dstrText);
-
-	if ( ! this->RuleReady )
-	{
-		//自分は完了したが、ルールベースがまだ。自分は完了したフラグを立てる。
-		this->DictationReady = true;
-	}
-	else
-	{
-		//ディクテーションフィルターで絞る
-		this->RuleReady = false;
-		if ( this->DictationString.find(this->DicticationFilterWord) == std::string::npos )
-		{
-			//ディクテーションフィルターで落とす
-			return ;
-		}
-		//コマンド認識
-		SendMessage(this->CallbackWindowHandle , this->CallbackWindowMesage , 0 , 0);
-	}
-
+	this->FlagCleanup();
 }
 
 void RSpeechRecognition::CallbackRule()
@@ -166,36 +119,70 @@ void RSpeechRecognition::CallbackRule()
 	if ( FAILED(hr) )	return ;
 	this->ResultString = W2A(dstrText);
 
+	//ルールベースで認識した結果の音声部分をもう一度 ディクテーションにかけます。
+	//これで過剰なマッチを排除します。
+	{
+		CComPtr<ISpStreamFormat>	resultStream;
+		hr = result->GetAudio( 0, 0, &resultStream );
+		if ( FAILED(hr) )	return;
+
+		//オーディオから読み込んでね
+		hr = this->DictationEngine->SetInput( resultStream, TRUE);  
+		if(FAILED(hr))	 return;
+
+		hr = this->DictationGrammar->SetDictationState(SPRS_ACTIVE );
+		if(FAILED(hr))	 return;
+
+		hr = this->DictationRecoCtxt->WaitForNotifyEvent(10000); //10秒タイムアウト
+		if ( FAILED(hr) )	return;
+
+		hr = this->DictationGrammar->SetDictationState(SPRS_INACTIVE );
+		if(FAILED(hr))	 return;
+
+		CSpEvent tempevent;
+		hr = tempevent.GetFrom( this->DictationRecoCtxt );
+		if ( FAILED(hr) )	return ;
+
+		//認識した結果
+		ISpRecoResult* tempresult;
+		tempresult = tempevent.RecoResult();
+
+		//認識した文字列の取得
+		CSpDynamicString tempdstrText;
+		hr = tempresult->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE, &tempdstrText, NULL);
+		if ( FAILED(hr) )	return ;
+		std::string dictationString = W2A(tempdstrText);
+		//ディクテーションフィルターで絞る
+		if ( dictationString.find(this->DicticationFilterWord) == std::string::npos )
+		{
+			//フィルターにより拒否
+			this->FlagCleanup();
+			return ;
+		}
+	}
+
+
 	//認識に XMLを使用した場合、代入された結果を得る.
 	SPPHRASE *pPhrase;
-	hr = ruleEvent.RecoResult()->GetPhrase(&pPhrase);
+	hr = result->GetPhrase(&pPhrase);
 	if ( FAILED(hr) )	return ;
 
 	this->ResultMap.clear();
 	const SPPHRASEPROPERTY *pProp;
 	for (pProp = pPhrase->pProperties; pProp; pProp = pProp->pNextSibling)
 	{
-		std::string a = W2A(pProp->pszName);
 		this->ResultMap[ W2A(pProp->pszName) ] = W2A(pProp->pszValue);
 	}
 	CoTaskMemFree(pPhrase);
 
-	if ( ! this->DictationReady )
-	{
-		//ディクテーションが完了していない。 ルールは完了しているフラグだけを立てる。
-		this->RuleReady = true;
-	}
-	else
-	{
-		//ディクテーションフィルターで絞る
-		this->DictationReady = false;
-		if ( this->DictationString.find(this->DicticationFilterWord) == std::string::npos )
-		{
-			//フィルターにより拒否
-			return ;
-		}
-		//コマンド認識
-		SendMessage(this->CallbackWindowHandle , this->CallbackWindowMesage , 0 , 0);
-	}
+	//コマンド認識
+	SendMessage(this->CallbackWindowHandle , this->CallbackWindowMesage , 0 , 0);
+	this->FlagCleanup();
 }
 
+void RSpeechRecognition::FlagCleanup()
+{
+	this->RuleReady = false;
+	this->ResultMap.clear();
+	this->ResultString = "";
+}
