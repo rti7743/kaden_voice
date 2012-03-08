@@ -216,7 +216,7 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 				//マッチしたのでコールバックする
 				std::string matchstring=word.str();
 				this->PoolMainWindow->SyncInvokePopupMessage("音声認識",matchstring);
-				this->PoolMainWindow->AnSyncInvoke( [=](){
+				this->PoolMainWindow->SyncInvoke( [=](){
 					this->PoolMainWindow->ScriptManager.VoiceRecogntion
 						(callback,capture,matchstring,0,(*it)->plus_sentence_score);
 				} );
