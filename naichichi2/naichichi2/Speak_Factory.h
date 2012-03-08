@@ -9,8 +9,9 @@ struct ISpeechSpeakInterface
 	virtual xreturn::r<bool> Create(MainWindow* poolMainWindow) = 0;
 	virtual xreturn::r<bool> Setting(int rate,int pitch,unsigned int volume,const std::string& botname) = 0;
 	virtual xreturn::r<bool> Speak(const std::string & str) = 0;
-	virtual xreturn::r<bool> RegistWaitCallback(CallbackDataStruct & callback) = 0;
+	virtual xreturn::r<bool> RegistWaitCallback(const CallbackDataStruct * callback) = 0;
 	virtual xreturn::r<bool> Cancel() = 0;
+	virtual xreturn::r<bool> RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) = 0;
 };
 
 struct SpeakSentens
@@ -30,8 +31,9 @@ public:
 
 	xreturn::r<bool> Create(const std::string & name , MainWindow* poolMainWindow,int rate,int pitch,unsigned int volume,const std::string& botname);
 	xreturn::r<bool> Speak(const std::string & str);
-	void RegistWaitCallback(CallbackDataStruct & callback);
+	void RegistWaitCallback(const CallbackDataStruct * callback);
 	void Cancel();
+	xreturn::r<bool> RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback);
 
 	static std::list<SpeakSentens*> Speak_Factory::SpeakParse(const std::string& speakString,int rate,int volume,int speed);
 private:

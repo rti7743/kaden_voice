@@ -50,10 +50,26 @@ bool XLFileUtil::move(const std::string & inFileNameA,const std::string & inFile
 std::string XLFileUtil::cat(const std::string & inFileName)
 {
 	std::vector<char> out;
-	if (! cat_b(inFileName,&out) )
-	{
-		return "";
-	}
+	FILE * fp = fopen(inFileName.c_str() , "rb");
+	//存在しない場合は空
+	if (fp == NULL) return "";
+
+	//ケツに持っていって.
+	fseek(fp , 0 ,SEEK_END);
+
+	//これでサイズがわかる.
+	unsigned long size = ftell(fp);
+
+	//先頭に戻す.
+	fseek(fp , 0 ,SEEK_SET);
+
+	//領域を確保して読み込む
+	out.resize(size + 1);
+	fread( &out[0] , 1 , size  , fp);
+	out[size] = '0';	//終端.
+
+	fclose(fp);
+
 	return (const char*) (&out[0]);
 }
 
@@ -84,10 +100,9 @@ bool XLFileUtil::cat_b(const std::string & inFileName , std::vector<char>* out)
 	fseek(fp , 0 ,SEEK_SET);
 
 	//領域を確保して読み込む
-	out->resize(size + 1);
+	out->resize(size);
 	fread( &((*out)[0]) , 1 , size  , fp);
-	((*out)[size]) = '0';	//終端.
-
+	
 	fclose(fp);
 
 	return true;

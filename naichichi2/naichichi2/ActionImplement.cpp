@@ -1,6 +1,7 @@
 #include "common.h"
 #include "ActionImplement.h"
 #include "XLHttpRequerst.h"
+#include "XLStringUtil.h"
 
 ActionImplement::ActionImplement(void)
 {
@@ -79,7 +80,10 @@ xreturn::r<std::string> ActionImplement::HttpPost(const std::string& url,const s
 
 xreturn::r<bool> ActionImplement::Execute(const std::string& targetpc,const std::string& command,const std::string& args,const std::string& directory)
 {
-	::ShellExecute(NULL,NULL,command.c_str(),args.c_str(),directory.c_str(),0);
+	std::string _command = XLStringUtil::pathseparator(command);
+	std::string _args = XLStringUtil::pathseparator(args);
+	std::string _directory = XLStringUtil::pathseparator(directory);
+	::ShellExecute(NULL,NULL,_command.c_str(),_args.c_str(),_directory.c_str(),0);
 	//ê¨å˜é∏îsÇÃîªíËÇ™Ç§Ç‹Ç≠Ç¢Ç©Ç»Ç¢éûÇ™Ç†ÇÈÇÃÇ≈ÅAÇ∆ÇËÇ†Ç¶Ç∏Ç±ÇÍÇ≈ÅB
 	return true;
 }

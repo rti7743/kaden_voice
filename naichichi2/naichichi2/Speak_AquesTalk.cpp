@@ -254,7 +254,7 @@ xreturn::r<bool> Speak_AquesTalk::Speak(const std::string & str)
 	return true;
 }
 
-xreturn::r<bool> Speak_AquesTalk::RegistWaitCallback(CallbackDataStruct & callback)
+xreturn::r<bool> Speak_AquesTalk::RegistWaitCallback(const CallbackDataStruct * callback)
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
@@ -278,3 +278,15 @@ int Speak_AquesTalk::getVersion() const
 {
 	return this->AquesTalk2_Synthe == NULL ? 1 : 2;
 }
+
+xreturn::r<bool> Speak_AquesTalk::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
+{
+	CRemoveIF(this->CallbackDictionary , {
+		if (_ == callback)
+		{
+			return false; //消す.
+		}
+	});
+	return true;
+}
+

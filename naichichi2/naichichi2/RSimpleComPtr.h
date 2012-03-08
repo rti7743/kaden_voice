@@ -1,14 +1,14 @@
 #pragma once
 
 //atl使えない人のための、超単機能の CComPtr
-template<typename _INTERFACE>class RSimpleComPtr
+template<typename _INTERFACE>class CComPtr
 {
 public:
-	RSimpleComPtr()
+	CComPtr()
 	{
 		this->Object = NULL;
 	}
-	virtual ~RSimpleComPtr()
+	virtual ~CComPtr()
 	{
 		if (this->Object)
 		{

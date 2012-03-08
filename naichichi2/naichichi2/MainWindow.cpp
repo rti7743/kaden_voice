@@ -271,7 +271,6 @@ void MainWindow::PopupMessage(const std::string & title,const std::string & mess
 }
 
 
-
 //初期化を行う所
 bool MainWindow::OnInit()
 {
@@ -320,7 +319,7 @@ bool MainWindow::OnInit()
 	{
 		int port = this->Config.GetInt("httpd__port",15550);
 		int threadcount = this->Config.GetInt("httpd__workerthread",2);
-		std::string webroot = this->Config.Get("httpd__webroot", this->Config.GetBaseDirectory() );
+		std::string webroot = this->Config.Get("httpd__webroot", this->Config.GetBaseDirectory() + "\\webroot");
 		std::map<std::string,std::string> allowext = this->Config.FindGetsToMap("httpd__allowext_"); 
 
 		char myhostname[256] ;
@@ -329,14 +328,19 @@ bool MainWindow::OnInit()
 		std::string accesstoken = this->Config.Get("httpd__accesstoken", myhostname ); 
 		this->Httpd.Create(this,port,threadcount,webroot,accesstoken,allowext);
 	}
+	//トリガーマネージャ
+	{
+		this->TriggerManager.Create(this);
+	}
 
 	//メディアファイル
 	{
 		std::list<std::string> mediaDirectoryListArray = this->Config.FindGets("media__directory"); 
 		std::map<std::string,std::string> mediaTargetext = this->Config.FindGetsToMap("media__targetext_"); 
+		std::map<std::string,std::string> mediaDefualtIcon = this->Config.FindGetsToMap("media__defualticon_"); 
 		std::string dbpath = this->Config.GetBaseDirectory() + "\\media.db"; //this->Config.Get("media__dbpath",""); 
 		std::string filenamehelperLua = this->Config.Get("media__filenamehelper","config_media_filename.lua"); 
-		this->Media.Create(this,mediaDirectoryListArray,dbpath,filenamehelperLua,mediaTargetext);
+		this->Media.Create(this,mediaDirectoryListArray,dbpath,filenamehelperLua,mediaTargetext,mediaDefualtIcon);
 	}
 
 	//アクションのスクリプト管理
@@ -460,27 +464,27 @@ void MainWindow::SyncInvokeLog(const std::string& log,LOG_LEVEL level )
 
 			if (level <= LOG_LEVEL_DEBUG)
 			{
-				WriteConsole(handle , "DEBUG     :" , 11, NULL, NULL);
+				WriteConsole(handle , "DEBUG      :" , 11, NULL, NULL);
 			}
 			else if (level <= LOG_LEVEL_NOTIFY)
 			{
 				SetConsoleTextAttribute(handle, FOREGROUND_GREEN);	//文字を強調
-				WriteConsole(handle , "NOTIFY    :" , 11, NULL, NULL);
+				WriteConsole(handle , "NOTIFY     :" , 11, NULL, NULL);
 			}
 			else if (level <= LOG_LEVEL_FAIL_NOTIFY)
 			{
 				SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN); //文字を黄色
-				WriteConsole(handle , "FAIL NOTIFY" , 11, NULL, NULL);
+				WriteConsole(handle , "FAIL NOTIFY:" , 11, NULL, NULL);
 			}
 			else if (level <= LOG_LEVEL_WARNING)
 			{
 				SetConsoleTextAttribute(handle, BACKGROUND_RED | BACKGROUND_BLUE); //背景を紫
-				WriteConsole(handle , "WARNING   :" , 11, NULL, NULL);
+				WriteConsole(handle , "WARNING    :" , 11, NULL, NULL);
 			}
 			else if (level <= LOG_LEVEL_ERROR)
 			{
 				SetConsoleTextAttribute(handle, BACKGROUND_RED); //背景を赤
-				WriteConsole(handle , "ERROR     :" , 11, NULL, NULL);
+				WriteConsole(handle , "ERROR      :" , 11, NULL, NULL);
 			}
 			//黒白に戻す.
 			SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);

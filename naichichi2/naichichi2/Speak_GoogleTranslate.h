@@ -19,8 +19,9 @@ public:
 	virtual xreturn::r<bool> Speak_GoogleTranslate::Create(MainWindow* poolMainWindow);
 	virtual xreturn::r<bool> Speak_GoogleTranslate::Setting(int rate,int pitch,unsigned int volume,const std::string& botname);
 	virtual xreturn::r<bool> Speak_GoogleTranslate::Speak(const std::string & str);
-	virtual xreturn::r<bool> Speak_GoogleTranslate::RegistWaitCallback(CallbackDataStruct & callback);
+	virtual xreturn::r<bool> Speak_GoogleTranslate::RegistWaitCallback(const CallbackDataStruct * callback);
 	virtual xreturn::r<bool> Speak_GoogleTranslate::Cancel();
+	virtual xreturn::r<bool> Speak_GoogleTranslate::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
 
 private:
 	void Speak_GoogleTranslate::Run();
@@ -33,7 +34,7 @@ private:
 	boost::condition_variable queue_wait;
 	bool           StopFlag;
 
-	std::vector<CallbackDataStruct> CallbackDictionary;
+	std::vector<const CallbackDataStruct*> CallbackDictionary;
 };
 
 #endif // !defined(AFX_Speak_GoogleTranslate_H__1477FE93_D7A8_4F29_A369_60E33C71B2B7__INCLUDED_)

@@ -173,7 +173,7 @@ xreturn::r<bool> Speak_GoogleTranslate::Speak(const std::string & str)
 	return true;
 }
 
-xreturn::r<bool> Speak_GoogleTranslate::RegistWaitCallback(CallbackDataStruct & callback)
+xreturn::r<bool> Speak_GoogleTranslate::RegistWaitCallback(const CallbackDataStruct * callback)
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
@@ -192,4 +192,19 @@ xreturn::r<bool> Speak_GoogleTranslate::Cancel()
 	this->SpeakQueue.clear();
 	return true;
 }
+
+xreturn::r<bool> Speak_GoogleTranslate::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
+{
+	boost::unique_lock<boost::mutex> al(this->Lock);
+
+	CRemoveIF(this->CallbackDictionary , {
+		if (_ == callback)
+		{
+			return false; //消す.
+		}
+	});
+
+	return true;
+}
+
 

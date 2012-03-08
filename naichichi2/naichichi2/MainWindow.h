@@ -8,6 +8,8 @@
 #include "HttpServer.h"
 #include "ActionScriptManager.h"
 #include "MediaFileIndex.h"
+#include "TriggerManager.h"
+#include <gdiplus.h>
 
 enum LOG_LEVEL
 {
@@ -100,6 +102,7 @@ public:
 	HttpServer				Httpd;
 	ActionScriptManager		ActionScriptManager;
 	MediaFileIndex			Media;
+	TriggerManager			TriggerManager;
 
 	DWORD MainThreadID;
 	bool IsOpenConsole;
@@ -134,3 +137,18 @@ public:
 	}
 };
 
+class GdiPlusInit
+{
+public:
+	GdiPlusInit()
+	{
+		Gdiplus::GdiplusStartup(&gdiToken, &gdiSI, NULL);
+	}
+	virtual ~GdiPlusInit()
+	{
+		Gdiplus::GdiplusShutdown(gdiToken);
+	}
+private:
+	Gdiplus::GdiplusStartupInput gdiSI;
+	ULONG_PTR gdiToken;
+};

@@ -70,7 +70,7 @@ void HttpWorker::HTTP302(const std::string& url)
 
 	boost::asio::write(*this->ConnectSocket,respons );
 }
-void HttpWorker::HTTP200(const std::string& contents)
+void HttpWorker::HTTP200(const std::string& contents,const std::string& headers)
 {
     boost::asio::streambuf respons;
     std::ostream respons_stream(&respons);
@@ -78,7 +78,7 @@ void HttpWorker::HTTP200(const std::string& contents)
 						"Pragma:no-cache\r\n"
 						"Server:naichichi2\r\n"
 						"Content-Length: " << contents.size() << "\r\n"
-						"\r\n"
+						<< headers << "\r\n"
 						<< contents 
 						<< std::flush;
 
@@ -88,8 +88,8 @@ void HttpWorker::HTTP200(const std::string& contents)
 void HttpWorker::HTTP200SendFileContent(const std::string& urlpath)
 {
 	//アクセスが許可されている拡張子か？
-	std::string mime = this->PoolServer->getAllowExtAndMime( XLStringUtil::strtolower(XLStringUtil::baseext(urlpath)) );
-	if (!mime.empty())
+	std::string mime = this->PoolServer->getAllowExtAndMime( XLStringUtil::strtolower(XLStringUtil::baseext_nodot(urlpath)) );
+	if (mime.empty())
 	{
 		HTTP403();
 		return;
@@ -117,6 +117,7 @@ void HttpWorker::HTTP200SendFileContent(const std::string& urlpath)
 						"Pragma:no-cache\r\n"
 						"Server:naichichi2\r\n"
 						"Content-Length: " << filebinary.size() << "\r\n"
+						"Content-Type: " << mime << "\r\n"
 						"\r\n"
 						<< std::flush;
 	boost::asio::write(*this->ConnectSocket,respons );
@@ -161,7 +162,8 @@ void HttpWorker::operator()()
 	//lua処理系に投げる
 	std::string responsString;
 	WEBSERVER_RESULT_TYPE type;
-	bool r = this->PoolServer->FireCallback(path,request,&responsString, &type);
+	std::string headers;
+	bool r = this->PoolServer->FireCallback(path,request,&responsString, &type,&headers);
 	if (!r)
 	{//luaにないらしい、画像などのリアルコンテンツ？
 		HTTP200SendFileContent(path);
@@ -171,7 +173,7 @@ void HttpWorker::operator()()
 	switch(type)
 	{
 	case WEBSERVER_RESULT_TYPE_OK:
-		HTTP200(responsString);
+		HTTP200(responsString,headers);
 		return ;
 	case WEBSERVER_RESULT_TYPE_TRASMITFILE:
 		HTTP200SendFileContent(responsString);
@@ -195,10 +197,14 @@ bool HttpWorker::ProcToken(const std::map<std::string,std::string>& header,const
 	//内部からのリファラーを持つアクセスだったら許可する。
 	//理由:ブラウザからのXSSを防止するのが目的なのでこれで大丈夫だと思われる
 	{
-		auto it = header.find("referer");
+		auto it = header.find("Referer");
+		if (it == header.end())
+		{
+			it = header.find("referer");
+		}
 		if (it != header.end())
 		{
-			if ( it->second.find("http://127.0.0.1:") == 0 )
+			if ( it->second.find( this->PoolServer->getServerTop() ) == 0 )
 			{
 				//OK 内部からのアクセスだ。
 				return true;
@@ -311,11 +317,11 @@ void HttpServer::acceptThread(int threadcount)
 	tg.join_all();
 }
 
-xreturn::r<bool>  HttpServer::Regist(CallbackDataStruct & callback ,const std::string & path)
+xreturn::r<bool>  HttpServer::Regist(const CallbackDataStruct * callback ,const std::string & path)
 {
 	boost::unique_lock<boost::mutex> al(this->lock);
 
-	this->CallbackDictionary.insert( std::pair<std::string,CallbackDataStruct>(path, callback) );
+	this->CallbackDictionary.insert( std::pair<std::string,const CallbackDataStruct*>(path, callback) );
 	return true;
 }
 
@@ -331,7 +337,7 @@ std::string HttpServer::getAllowExtAndMime(const std::string& ext) const
 
 
 
-bool HttpServer::FireCallback(const std::string & path,const std::map<std::string,std::string> & request,std::string * respons,WEBSERVER_RESULT_TYPE* type) const
+bool HttpServer::FireCallback(const std::string & path,const std::map<std::string,std::string> & request,std::string * respons,WEBSERVER_RESULT_TYPE* type,std::string* headers) const
 {
 	const CallbackDataStruct* callback;
 	//対応するコールバックルーチンを取得する.
@@ -346,16 +352,17 @@ bool HttpServer::FireCallback(const std::string & path,const std::map<std::strin
 			*respons = "";
 			return false;
 		}
-		callback = &(it->second);
+		callback = it->second;
 	}
 
+	this->PoolMainWindow->SyncInvokeLog(std::string() + "webから実行 " + path ,LOG_LEVEL_DEBUG);
 
 	//メインスレッドで動いている シナリオを呼び出す.
 	this->PoolMainWindow->SyncInvoke( [&](){
 		try
 		{
 			ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-			this->PoolMainWindow->ScriptManager.HttpRequest( *callback ,path,request, respons ,  type);
+			this->PoolMainWindow->ScriptManager.HttpRequest( callback ,path,request, respons ,  type,headers);
 		}
 		catch(xreturn::error &e)
 		{
@@ -368,13 +375,19 @@ bool HttpServer::FireCallback(const std::string & path,const std::map<std::strin
 //続きはwebで
 std::string HttpServer::getWebURL(const std::string& path) const
 {
-	std::string url = "http://127.0.0.1:" + num2str(this->Port) ;
+	std::string url = this->getServerTop() ;
 
 	if (path.empty())        url += "/";
 	else if (path[0] != '/') url += "/" + path;
 	else url += path;
 
 	return XLStringUtil::AppendURLParam(url,"accesstoken=" + this->Accesstoken);
+}
+
+//サーバのトップアドレス. (accesstokenキーなし)
+std::string HttpServer::getServerTop() const
+{
+	return "http://127.0.0.1:" + num2str(this->Port) ;
 }
 
 bool HttpServer::checkAccessToken(const std::string& token) const
@@ -386,17 +399,39 @@ std::string HttpServer::WebPathToRealPath(const std::string& urlpath)
 {
 	//パスの区切りを / で統一します。
 	const std::string _webroot = XLStringUtil::replace(this->Webroot , "\\" , "/");
-	const std::string _urlpath = XLStringUtil::replace(urlpath , "\\" , "/");
-	std::string realpath = XLStringUtil::pathcombine(_webroot,_urlpath,"/");
-
-	//パス区切り文字をOS標準に再度合わせます。
-	realpath = XLStringUtil::pathseparator(realpath);
+	std::string realpath = XLStringUtil::pathcombine(_webroot,urlpath,"/");
 
 	//webrootより上にアクセスしていないか？
-	if (realpath.find(this->Webroot) != 0)
+	if (realpath.find(_webroot) != 0)
 	{
 		return "";
 	}
 
+	//パス区切り文字をOS標準に再度合わせます。
+	realpath = XLStringUtil::pathseparator(realpath);
 	return realpath;
+}
+SEXYTEST("HttpServer::WebPathToRealPath")
+{
+	
+	{
+		HttpServer server;
+		server.Webroot = "./config/webroot";
+
+		std::string a = server.WebPathToRealPath("./hello.tpl");
+		SEXYTEST_EQ(a ,".\\config\\webroot\\hello.tpl");
+	}
+}
+
+xreturn::r<bool> HttpServer::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
+{
+	boost::unique_lock<boost::mutex> al(this->lock);
+
+	CRemoveIF(this->CallbackDictionary , {
+		if (_.second == callback)
+		{
+			return false; //消す.
+		}
+	});
+	return true;
 }

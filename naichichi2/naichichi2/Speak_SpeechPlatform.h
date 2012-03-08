@@ -9,8 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-//#include <atlbase.h>
-#include "RSimpleComPtr.h"
+#include <atlbase.h>
 
 //Speech Platform SDK 入れてね http://www.microsoft.com/download/en/details.aspx?id=27226
 #include <../../../Speech/v11.0/Include/sapi.h>
@@ -26,23 +25,23 @@ public:
 	virtual xreturn::r<bool> Speak_SpeechPlatform::Create(MainWindow* poolMainWindow);
 	virtual xreturn::r<bool> Speak_SpeechPlatform::Setting(int rate,int pitch,unsigned int volume,const std::string& botname);
 	virtual xreturn::r<bool> Speak_SpeechPlatform::Speak(const std::string & str);
-	virtual xreturn::r<bool> Speak_SpeechPlatform::RegistWaitCallback(CallbackDataStruct & callback);
+	virtual xreturn::r<bool> Speak_SpeechPlatform::RegistWaitCallback(const CallbackDataStruct * callback);
 	virtual xreturn::r<bool> Speak_SpeechPlatform::Cancel();
-
+	virtual xreturn::r<bool> Speak_SpeechPlatform::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
 private:
 	xreturn::r<bool> Speak_SpeechPlatform::RegistVoiceBot(const std::string & botname);
 	void Speak_SpeechPlatform::FireWaitCallback();
 	void Speak_SpeechPlatform::Callback(WPARAM wParam, LPARAM lParam);
 
 	//ルールベース
-	RSimpleComPtr<ISpVoice>			Engine;
+	CComPtr<ISpVoice>			Engine;
 	bool							isSpeakingFlg;
 	int								Pitch;	//なぜか Pitchを指定できないので、xmlで.
 
 	std::list<std::string> SpeakQueue;
 	MainWindow* PoolMainWindow;
 
-	std::vector<CallbackDataStruct> CallbackDictionary;
+	std::vector<const CallbackDataStruct*> CallbackDictionary;
 };
 
 #endif // !defined(AFX_SAPISpeechRecognition_H__1477FE93_D7A8_4F29_A369_60E33C71B2B7__INCLUDED_)

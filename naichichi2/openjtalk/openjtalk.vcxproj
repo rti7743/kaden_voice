@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9AAE796F-247C-44FA-8BEE-F1DB12B8D0C1}</ProjectGuid>
+    <RootNamespace>openjtalk</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>.\hts_engine_API\include;.\open_jtalk\njd_set_accent_phrase;.\open_jtalk\njd;.\open_jtalk\njd_set_accent_type;.\open_jtalk\njd_set_digit;.\open_jtalk\njd_set_long_vowel;.\open_jtalk\njd_set_pronunciation;.\open_jtalk\njd_set_unvoiced_vowel;.\open_jtalk\njd2jpcommon;.\open_jtalk\jpcommon;.\;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>.\hts_engine_API\include;.\open_jtalk\njd_set_accent_phrase;.\open_jtalk\njd;.\open_jtalk\njd_set_accent_type;.\open_jtalk\njd_set_digit;.\open_jtalk\njd_set_long_vowel;.\open_jtalk\njd_set_pronunciation;.\open_jtalk\njd_set_unvoiced_vowel;.\open_jtalk\njd2jpcommon;.\open_jtalk\jpcommon;.\;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <DisableSpecificWarnings>4996;4995;4244;4018;4305;4101</DisableSpecificWarnings>
+      <PreprocessorDefinitions>CHARSET_SHIFT_JIS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>CHARSET_SHIFT_JIS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996;4995;4244;4018;4305;4101</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="hts_engine_API\bin\hts_engine.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_audio.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_engine.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_gstream.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_label.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_misc.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_model.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_pstream.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_sstream.c" />
+    <ClCompile Include="hts_engine_API\lib\HTS_vocoder.c" />
+    <ClCompile Include="open_jtalk\jpcommon\jpcommon.c" />
+    <ClCompile Include="open_jtalk\jpcommon\jpcommon_label.c" />
+    <ClCompile Include="open_jtalk\jpcommon\jpcommon_node.c" />
+    <ClCompile Include="open_jtalk\njd2jpcommon\njd2jpcommon.c" />
+    <ClCompile Include="open_jtalk\njd\njd.c" />
+    <ClCompile Include="open_jtalk\njd\njd_node.c" />
+    <ClCompile Include="open_jtalk\njd_set_accent_phrase\njd_set_accent_phrase.c" />
+    <ClCompile Include="open_jtalk\njd_set_accent_type\njd_set_accent_type.c" />
+    <ClCompile Include="open_jtalk\njd_set_digit\njd_set_digit.c" />
+    <ClCompile Include="open_jtalk\njd_set_long_vowel\njd_set_long_vowel.c" />
+    <ClCompile Include="open_jtalk\njd_set_pronunciation\njd_set_pronunciation.c" />
+    <ClCompile Include="open_jtalk\njd_set_unvoiced_vowel\njd_set_unvoiced_vowel.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="hts_engine_API\include\HTS_engine.h" />
+    <ClInclude Include="hts_engine_API\lib\HTS_hidden.h" />
+    <ClInclude Include="open_jtalk\jpcommon\jpcommon.h" />
+    <ClInclude Include="open_jtalk\jpcommon\jpcommon_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\jpcommon\jpcommon_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\jpcommon\jpcommon_rule_utf_8.h" />
+    <ClInclude Include="open_jtalk\njd2jpcommon\njd2jpcommon.h" />
+    <ClInclude Include="open_jtalk\njd2jpcommon\njd2jpcommon_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\njd2jpcommon\njd2jpcommon_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\njd2jpcommon\njd2jpcommon_rule_utf_8.h" />
+    <ClInclude Include="open_jtalk\njd\njd.h" />
+    <ClInclude Include="open_jtalk\njd\njd_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\njd\njd_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\njd\njd_rule_utf_8.h" />
+    <ClInclude Include="open_jtalk\njd_set_accent_phrase\njd_set_accent_phrase.h" />
+    <ClInclude Include="open_jtalk\njd_set_accent_phrase\njd_set_accent_phrase_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\njd_set_accent_phrase\njd_set_accent_phrase_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\njd_set_accent_phrase\njd_set_accent_phrase_rule_utf_8.h" />
+    <ClInclude Include="open_jtalk\njd_set_accent_type\njd_set_accent_type.h" />
+    <ClInclude Include="open_jtalk\njd_set_accent_type\njd_set_accent_type_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\njd_set_accent_type\njd_set_accent_type_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\njd_set_accent_type\njd_set_accent_type_rule_utf_8.h" />
+    <ClInclude Include="open_jtalk\njd_set_digit\njd_set_digit.h" />
+    <ClInclude Include="open_jtalk\njd_set_digit\njd_set_digit_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\njd_set_digit\njd_set_digit_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\njd_set_digit\njd_set_digit_rule_utf_8.h" />
+    <ClInclude Include="open_jtalk\njd_set_long_vowel\njd_set_long_vowel.h" />
+    <ClInclude Include="open_jtalk\njd_set_long_vowel\njd_set_long_vowel_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\njd_set_long_vowel\njd_set_long_vowel_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\njd_set_long_vowel\njd_set_long_vowel_rule_utf_8.h" />
+    <ClInclude Include="open_jtalk\njd_set_pronunciation\njd_set_pronunciation.h" />
+    <ClInclude Include="open_jtalk\njd_set_pronunciation\njd_set_pronunciation_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\njd_set_pronunciation\njd_set_pronunciation_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\njd_set_pronunciation\njd_set_pronunciation_rule_utf_8.h" />
+    <ClInclude Include="open_jtalk\njd_set_unvoiced_vowel\njd_set_unvoiced_vowel.h" />
+    <ClInclude Include="open_jtalk\njd_set_unvoiced_vowel\njd_set_unvoiced_vowel_rule_euc_jp.h" />
+    <ClInclude Include="open_jtalk\njd_set_unvoiced_vowel\njd_set_unvoiced_vowel_rule_shift_jis.h" />
+    <ClInclude Include="open_jtalk\njd_set_unvoiced_vowel\njd_set_unvoiced_vowel_rule_utf_8.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

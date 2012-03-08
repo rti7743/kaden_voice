@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8EFFAE4A-B4DF-478A-94F0-5AE37AF92B62}</ProjectGuid>
+    <RootNamespace>mecab</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <DisableSpecificWarnings>4996;4995;</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_WIN32;_MBCS;HAVE_WINDOWS_H;MECAB_DEFAULT_RC="";VERSION="0.98";DIC_VERSION=102;PACKAGE="test";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_MBCS;HAVE_WINDOWS_H;VERSION="0.98";DIC_VERSION=102;PACKAGE="test";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996;4995;</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\char_property.cpp" />
+    <ClCompile Include="src\connector.cpp" />
+    <ClCompile Include="src\context_id.cpp" />
+    <ClCompile Include="src\dictionary.cpp" />
+    <ClCompile Include="src\dictionary_compiler.cpp" />
+    <ClCompile Include="src\dictionary_generator.cpp" />
+    <ClCompile Include="src\dictionary_rewriter.cpp" />
+    <ClCompile Include="src\eval.cpp" />
+    <ClCompile Include="src\feature_index.cpp" />
+    <ClCompile Include="src\iconv_utils.cpp" />
+    <ClCompile Include="src\lbfgs.cpp" />
+    <ClCompile Include="src\learner.cpp" />
+    <ClCompile Include="src\learner_tagger.cpp" />
+    <ClCompile Include="src\libmecab.cpp" />
+    <ClCompile Include="src\mecab.cpp" />
+    <ClCompile Include="src\nbest_generator.cpp" />
+    <ClCompile Include="src\param.cpp" />
+    <ClCompile Include="src\string_buffer.cpp" />
+    <ClCompile Include="src\tagger.cpp" />
+    <ClCompile Include="src\tokenizer.cpp" />
+    <ClCompile Include="src\utils.cpp" />
+    <ClCompile Include="src\viterbi.cpp" />
+    <ClCompile Include="src\writer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\char_property.h" />
+    <ClInclude Include="src\connector.h" />
+    <ClInclude Include="src\context_id.h" />
+    <ClInclude Include="src\dictionary.h" />
+    <ClInclude Include="src\dictionary_rewriter.h" />
+    <ClInclude Include="src\feature_index.h" />
+    <ClInclude Include="src\iconv_utils.h" />
+    <ClInclude Include="src\lbfgs.h" />
+    <ClInclude Include="src\learner_node.h" />
+    <ClInclude Include="src\learner_tagger.h" />
+    <ClInclude Include="src\mecab.h" />
+    <ClInclude Include="src\nbest_generator.h" />
+    <ClInclude Include="src\param.h" />
+    <ClInclude Include="src\string_buffer.h" />
+    <ClInclude Include="src\tokenizer.h" />
+    <ClInclude Include="src\utils.h" />
+    <ClInclude Include="src\viterbi.h" />
+    <ClInclude Include="src\writer.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

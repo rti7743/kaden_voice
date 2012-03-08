@@ -44,8 +44,7 @@ xreturn::r<bool> Recognition_SAPI::Create(MainWindow* poolMainWindow)
 		hr = this->DictationEngine->CreateRecoContext(&this->DictationRecoCtxt);
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-//		ULONGLONG hookevent = SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION);
-		ULONGLONG hookevent = SPFEI(SPEI_RECOGNITION);
+		ULONGLONG hookevent = SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION);
 		hr = this->DictationRecoCtxt->SetInterest(hookevent, hookevent);
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
@@ -66,13 +65,16 @@ xreturn::r<bool> Recognition_SAPI::Create(MainWindow* poolMainWindow)
 		hr = this->DictationGrammar->GetRule(_A2W("FilterRule") ,0,SRATopLevel | SRADynamic | SPRAF_Active, TRUE ,  &this->FilterRuleHandleHandle); 
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
+//		hr = this->DictationGrammar->GetRule(_A2W("FilterRule2") ,0,SRATopLevel | SRADynamic | SPRAF_Active, TRUE ,  &this->FilterRuleHandleHandle2); 
+//		if(FAILED(hr))	 return xreturn::windowsError(hr);
+
 
 //		hr = this->DictationGrammar->Commit(0);
 //		if(FAILED(hr))	 return xreturn::windowsError(hr);
 	}
 	//ルールベースのエンジンを作る.
 	{
-		RSimpleComPtr<ISpAudio> cpAudio;
+		CComPtr<ISpAudio> cpAudio;
 		hr = SpCreateDefaultObjectFromCategoryId(SPCAT_AUDIOIN, &cpAudio);
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
@@ -99,27 +101,46 @@ xreturn::r<bool> Recognition_SAPI::Create(MainWindow* poolMainWindow)
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
 	}
 	//トップレベルルールたちを作成する。
-	hr = this->RuleGrammar->GetRule(_A2W("BasicRule") ,0,SRATopLevel | SRADynamic | SPRAF_Active, TRUE ,  &this->BasicRuleHandleHandle); 
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
+//	hr = this->RuleGrammar->GetRule(_A2W("BasicRule") ,0,SRATopLevel | SRADynamic | SPRAF_Active, TRUE ,  &this->BasicRuleHandleHandle); 
+//	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
 	hr = this->RuleGrammar->GetRule(_A2W("TemporaryRule") ,0,SRATopLevel | SRADynamic |  SPRAF_Active , TRUE ,  &this->TemporaryRuleHandle); 
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-	hr = this->RuleGrammar->GetRule(_A2W("YobikakeRule") ,0,SRADynamic , TRUE ,  &this->YobikakeRuleHandle); 
+	hr = this->RuleGrammar->GetRule(_A2W("YobikakeRule") ,0,SRATopLevel | SRADynamic |  SPRAF_Active , TRUE ,  &this->YobikakeRuleHandle); 
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
 	hr = this->RuleGrammar->GetRule(_A2W("CommandRule") ,0,SRADynamic , TRUE ,  &this->CommandRuleHandle); 
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
+/*
+	hr = this->RuleGrammar->GetRule(_A2W("MusicRule") ,0,SRADynamic , TRUE ,  &this->MusicRuleHandle); 
+	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
+	hr = this->RuleGrammar->GetRule(_A2W("VideoRule") ,0,SRADynamic , TRUE ,  &this->VideoRuleHandle); 
+	if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+	hr = this->RuleGrammar->GetRule(_A2W("BookRule") ,0,SRADynamic , TRUE ,  &this->BookRuleHandle); 
+	if(FAILED(hr))	 return xreturn::windowsError(hr);
+*/
 	//http://msdn.microsoft.com/en-us/library/ee125671(v=vs.85).aspx
 	//BasicRule = YobikakeRule + CommandRule
-	SPSTATEHANDLE appendState; //あとに続くを表現するためには、 新規にステートを作らないといけない。
-	hr = this->RuleGrammar->CreateNewState(this->BasicRuleHandleHandle, &appendState);
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-	hr = this->RuleGrammar->AddRuleTransition(this->BasicRuleHandleHandle , appendState , this->YobikakeRuleHandle , 1.0f , NULL );
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-	hr = this->RuleGrammar->AddRuleTransition(appendState , NULL , this->CommandRuleHandle , 1.0f , NULL );
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
+//	SPSTATEHANDLE appendState; //あとに続くを表現するためには、 新規にステートを作らないといけない。
+//	hr = this->RuleGrammar->Z(this->BasicRuleHandleHandle, &appendState);
+//	if(FAILED(hr))	 return xreturn::windowsError(hr);
+//	hr = this->RuleGrammar->AddRuleTransition(this->BasicRuleHandleHandle , appendState , this->YobikakeRuleHandle , 1.0f , NULL );
+//	if(FAILED(hr))	 return xreturn::windowsError(hr);
+//	hr = this->RuleGrammar->AddRuleTransition(appendState , NULL , this->CommandRuleHandle , 1.0f , NULL );
+//	if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+	//////
+//	SPSTATEHANDLE appendState; //あとに続くを表現するためには、 新規にステートを作らないといけない。
+//	hr = this->RuleGrammar->CreateNewState(this->YobikakeRuleHandle, &appendState);
+//	if(FAILED(hr))	 return xreturn::windowsError(hr);
+//	hr = this->RuleGrammar->AddRuleTransition(this->YobikakeRuleHandle , appendState , this->CommandRuleHandle , 1.0f , NULL );
+//	if(FAILED(hr))	 return xreturn::windowsError(hr);
+//	hr = this->RuleGrammar->AddRuleTransition(appendState , NULL , this->CommandRuleHandle , 1.0f , NULL );
+//	if(FAILED(hr))	 return xreturn::windowsError(hr);
+
 
 	//戻りはコールバックで。
 	//SAPIのコールバックはメインスレッドにコールバックされる。
@@ -192,7 +213,8 @@ public:
 		else
 		{
 			//CommandRule の下を読み取る.
-			this->Track.track(this->Phrase->Rule.pFirstChild->pNextSibling);
+//			this->Track.track(this->Phrase->Rule.pFirstChild->pNextSibling);
+			this->Track.track(this->Phrase->Rule.pFirstChild);
 		}
 	}
 	~PhraseTo()
@@ -313,6 +335,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 	//マッチした文字列全体
 	std::string matchString;
 
+	//マッチした結果を取得し分析します。
 	{
 		CSpEvent ruleEvent;
 		hr = ruleEvent.GetFrom( this->RuleRecoCtxt );
@@ -320,95 +343,76 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 
 		if ( ruleEvent.eEventId != SPEI_RECOGNITION )
 		{
-			if ( ruleEvent.eEventId == SPEI_HYPOTHESIS)
-			{
-				this->PoolMainWindow->SyncInvokeLog("SPEI_HYPOTHESIS" ,LOG_LEVEL_DEBUG);
-			}
-			else if ( ruleEvent.eEventId == SPEI_START_INPUT_STREAM)
-			{
-				this->PoolMainWindow->SyncInvokeLog("SPEI_START_INPUT_STREAM" ,LOG_LEVEL_DEBUG);
-			}
-			else if ( ruleEvent.eEventId == SPEI_END_INPUT_STREAM)
-			{
-				this->PoolMainWindow->SyncInvokeLog("SPEI_END_INPUT_STREAM" ,LOG_LEVEL_DEBUG);
-			}
-			else if ( ruleEvent.eEventId == SPEI_SOUND_START)
-			{
-				this->PoolMainWindow->SyncInvokeLog("SPEI_SOUND_START" ,LOG_LEVEL_DEBUG);
-			}
-			else if ( ruleEvent.eEventId == SPEI_SOUND_END)
-			{
-//				this->RuleRecoCtxt->SetVoicePurgeEvent(SPFEI(SPEI_SOUND_START));
-				this->PoolMainWindow->SyncInvokeLog("SPEI_SOUND_END" ,LOG_LEVEL_DEBUG);
-			}
-			else if ( ruleEvent.eEventId == SPEI_FALSE_RECOGNITION)
-			{
-				this->PoolMainWindow->SyncInvokeLog("SPEI_FALSE_RECOGNITION" ,LOG_LEVEL_DEBUG);
-				this->PoolMainWindow->AnSyncInvoke( [=](){
-					this->PoolMainWindow->ScriptManager.BadVoiceRecogntion(-6,"","",0,0,false); 
-				} );
-			}
-			else
-			{
-				this->PoolMainWindow->SyncInvokeLog("不明なマッチ" ,LOG_LEVEL_DEBUG);
-			}
 			return false;
 		}
 		this->PoolMainWindow->SyncInvokeLog("SPEI_RECOGNITION" ,LOG_LEVEL_DEBUG);
 
-		//認識した結果
-		ISpRecoResult* result;
-		result = ruleEvent.RecoResult();
-
-		SPPHRASE *pPhrase;
-		hr = result->GetPhrase(&pPhrase);
-		if ( FAILED(hr) )	return xreturn::windowsError(hr);
-
-		PhraseTo phraseTo(pPhrase);
-		if (phraseTo.IsError())
 		{
-			this->PoolMainWindow->AnSyncInvoke( [=](){
-				this->PoolMainWindow->ScriptManager.BadVoiceRecogntion(-5,"","",0,0,false); 
-			} );
-			return false;
-		}
+			//認識した結果
+			ISpRecoResult* result;
+			result = ruleEvent.RecoResult();
 
-		//平均認識率
-		SREngineConfidenceAvg = phraseTo.GetSREngineConfidenceAvg();
-		//正規表現キャプチャ
-		capture = phraseTo.GetRegexpCapture();
-		//呼びかけの部分の信頼度を取得する.
-		yobikakeEngineConfidence = phraseTo.GetYobikakeEngineConfidence();
-		//コールバックIDの取得
-		funcID = phraseTo.GetFuncID();
-		//テンポラリルール？
-		isTemporaryRule = phraseTo.IsTemporaryRule();
-		//ルールでマッチしたものをディクテーション認識させてみる。
-		dictationString = this->convertDictation(result);
-		//マッチした文字列
-		matchString = phraseTo.GetAllString();
+			SPPHRASE *pPhrase;
+			hr = result->GetPhrase(&pPhrase);
+			if ( FAILED(hr) )	return xreturn::windowsError(hr);
+
+			PhraseTo phraseTo(pPhrase);
+			if (phraseTo.IsError())
+			{
+				this->PoolMainWindow->AnSyncInvoke( [=](){
+					this->PoolMainWindow->ScriptManager.BadVoiceRecogntion(-5,"","",0,0,false); 
+				} );
+				return false;
+			}
+
+			//平均認識率
+			SREngineConfidenceAvg = phraseTo.GetSREngineConfidenceAvg();
+			//正規表現キャプチャ
+			capture = phraseTo.GetRegexpCapture();
+			//呼びかけの部分の信頼度を取得する.
+			yobikakeEngineConfidence = phraseTo.GetYobikakeEngineConfidence();
+			//コールバックIDの取得
+			funcID = phraseTo.GetFuncID();
+			//テンポラリルール？
+			isTemporaryRule = phraseTo.IsTemporaryRule();
+			//マッチした文字列
+			matchString = phraseTo.GetAllString();
+			if ( !isTemporaryRule )
+			{//ルールでマッチしたものをディクテーション認識させてみる。
+//				dictationString = this->convertDictation(result,"FilterRule");
+//				if ( ! this->checkDictation(dictationString) )
+//				{
+//					dictationString = this->convertDictation(result,"FilterRule2");
+//					if ( ! this->checkDictation(dictationString) )
+//					{
+						dictationString = this->convertDictation(result,"");
+//					}
+//				}
+			}
+		}
 	}
 
 	if ( funcID == UINT_MAX || funcID >= this->CallbackDictionary.size()  )
-	{
+	{//コールバックしようがないマッチは異常。
 		return xreturn::error("マッチした後のコールバック関数ID " + num2str(funcID) + " が存在しません" );
 	}
 
+
 	if ( isTemporaryRule )
-	{//temp
+	{//テンポラリルール
 		if (SREngineConfidenceAvg < this->TemporaryRuleConfidenceFilter)
 		{//BAD
 			this->PoolMainWindow->AnSyncInvoke( [=](){
 				this->PoolMainWindow->ScriptManager.BadVoiceRecogntion
-					(-1,matchString,dictationString,0,SREngineConfidenceAvg,false);
+					(-1,matchString,"",0,SREngineConfidenceAvg,false);
 			} );
 			return false;
 		}
+		//上手くマッチしたらのでコールバックする
 		this->PoolMainWindow->SyncInvokePopupMessage("音声認識",matchString);
-
 		this->PoolMainWindow->AnSyncInvoke( [=](){
 			this->PoolMainWindow->ScriptManager.VoiceRecogntion
-				(this->CallbackDictionary[funcID],capture,dictationString,0,SREngineConfidenceAvg);
+				(this->CallbackDictionary[funcID],capture,"",0,SREngineConfidenceAvg);
 		} );
 		return true;
 	}
@@ -418,7 +422,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 	if (this->UseDictationFilter)
 	{
 		if (! dictationCheck )
-		{
+		{//ディクテーションチェックの結果エラーになった
 			this->PoolMainWindow->AnSyncInvoke( [=](){
 				this->PoolMainWindow->ScriptManager.BadVoiceRecogntion
 					(-2,matchString,dictationString,yobikakeEngineConfidence,SREngineConfidenceAvg,dictationCheck);
@@ -429,16 +433,17 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 
 	//呼びかけの部分の信頼度
 	if (yobikakeEngineConfidence <  this->YobikakeRuleConfidenceFilter )
-	{
+	{//呼びかけの信頼度が足りない
 		this->PoolMainWindow->AnSyncInvoke( [=](){
 			this->PoolMainWindow->ScriptManager.BadVoiceRecogntion
 				(-3,matchString,dictationString,yobikakeEngineConfidence,SREngineConfidenceAvg,dictationCheck);
 		} );
 		return false;
 	}
+
 	//全体を通しての信頼度
 	if (SREngineConfidenceAvg <  this->BasicRuleConfidenceFilter )
-	{
+	{//全体を通しての信頼度が足りない
 		this->PoolMainWindow->AnSyncInvoke( [=](){
 			this->PoolMainWindow->ScriptManager.BadVoiceRecogntion
 				(-4,matchString,dictationString,yobikakeEngineConfidence,SREngineConfidenceAvg,dictationCheck);
@@ -446,8 +451,8 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 		return false;
 	}
 
+	//マッチしたのでコールバックする
 	this->PoolMainWindow->SyncInvokePopupMessage("音声認識",matchString);
-
 	this->PoolMainWindow->AnSyncInvoke( [=](){
 		this->PoolMainWindow->ScriptManager.VoiceRecogntion
 			(this->CallbackDictionary[funcID],capture,dictationString,yobikakeEngineConfidence,SREngineConfidenceAvg);
@@ -472,107 +477,131 @@ bool Recognition_SAPI::checkDictation(const std::string & dictationString) const
 
 //ルールベースで認識した結果の音声部分をもう一度 ディクテーションにかけます。
 //これで過剰なマッチを排除します。
-xreturn::r<std::string> Recognition_SAPI::convertDictation(ISpRecoResult* result)
+xreturn::r<std::string> Recognition_SAPI::convertDictation(ISpRecoResult* result,const std::string& ruleName)
 {
 	HRESULT hr;
 	_USE_WINDOWS_ENCODING;
-/*
+
+	CComPtr<ISpStreamFormat>	resultStream;
 	{
-		const SPSTREAMFORMAT spFormat = SPSF_22kHz8BitMono;
-		CSpStreamFormat Fmt( spFormat, &hr);
+		hr = result->GetAudio( 0, 1, &resultStream );
+		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-		CComPtr<ISpStreamFormat> cpStreamFormat;
-		// get stream pointer to recognized audio
-		// Note: specifying NULL for the start element and element length defaults to the entire recognized audio stream. Correction UI may only need a subset of the audio for playback
-		hr = result->GetAudio( 0, 1, &cpStreamFormat );
-		// Check hr
-		CSpStreamFormat OriginalFmt;
-		OriginalFmt.AssignFormat(cpStreamFormat);
+		//オーディオから読み込んでね
+		hr = this->DictationEngine->SetInput( resultStream, TRUE);  
+		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-		// basic SAPI-stream for file-based storage
-		CComPtr<ISpStream> cpStream;
-		ULONG cbWritten = 0;
+		hr = this->DictationGrammar->SetRuleState(ruleName.empty() ? NULL : _A2W(ruleName.c_str()), NULL, SPRS_ACTIVE );
+		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-		// create file on hard-disk for storing recognized audio, and specify audio format as the retained audio format
-		std::string fff = std::string() + "C:\\Users\\rti\\Desktop\\nai_" + num2str(time(NULL))+".wav";
-//		hr = SPBindToFile(_A2W(fff.c_str()) , SPFM_CREATE_ALWAYS, &cpStream, &Fmt.FormatId(), Fmt.WaveFormatExPtr(), SPFEI_ALL_EVENTS);
-		hr = SPBindToFile(_A2W(fff.c_str()) , SPFM_CREATE_ALWAYS, &cpStream, &OriginalFmt.FormatId(), OriginalFmt.WaveFormatExPtr(), SPFEI_ALL_EVENTS);
-		// Check hr
-		// Continuously transfer data between the two streams until no more data is found (i.e. end of stream)
-		// Note only transfer 1000 bytes at a time to creating large chunks of data at one time
-		while (TRUE)
+		hr = this->DictationRecoCtxt->WaitForNotifyEvent(2000); //2秒タイムアウト
+		if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+		hr = this->DictationGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+		if(FAILED(hr))	 return xreturn::windowsError(hr);
+
 		{
-			// for logging purposes, the app can retrieve the recognized audio stream length in bytes
-			STATSTG stats;
-			hr = cpStreamFormat->Stat(&stats, NULL);
-			// Check hr
+			CSpEvent tempevent;
+			hr = tempevent.GetFrom( this->DictationRecoCtxt );
+			if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-			// create a 1000-byte buffer for transferring
-			BYTE bBuffer[1000];
-			ULONG cbRead;
+			if (tempevent.eEventId == SPEI_RECOGNITION)
+			{//認識した結果
+				ISpRecoResult* tempresult;
+				{
+					tempresult = tempevent.RecoResult();
 
-			// request 1000 bytes of data from the input stream
-			hr = cpStreamFormat->Read(bBuffer, 1000, &cbRead);
-			// if data was returned??
-			if (SUCCEEDED(hr) && cbRead > 0)
-			{
-				// then transfer/write the audio to the file-based stream
-				hr = cpStream->Write(bBuffer, cbRead, &cbWritten);
-				// Check hr
-			}
+					//認識した文字列の取得
+					CSpDynamicString tempdstrText;
+					hr = tempresult->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE, &tempdstrText, NULL);
+					if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-			// since there is no more data being added to the input stream, if the read request returned less than expected, the end of stream was reached, so break data transfer loop
-			if (cbRead < 1000)
-			{
-				break;
+					SPPHRASE *pPhrase;
+					hr = tempresult->GetPhrase(&pPhrase);
+					if ( FAILED(hr) )	return xreturn::windowsError(hr);
+
+					double confidence = pPhrase->pElements->SREngineConfidence;
+
+					std::string ret = _W2A(tempdstrText);
+					this->PoolMainWindow->SyncInvokeLog(std::string() + "ディクテーションフィルター :" + ret + + " " + num2str(confidence),LOG_LEVEL_DEBUG);
+
+					if (confidence <= 0.60)
+					{
+						this->PoolMainWindow->SyncInvokeLog(std::string() + "ディクテーションフィルター棄却",LOG_LEVEL_DEBUG);
+						return "";
+					}
+
+					return ret;
+				}
 			}
 		}
-		// explicitly close the file-based stream to flush file data and allow app to immediately use the file
-		hr = cpStream->Close();
 	}
-*/
-	RSimpleComPtr<ISpStreamFormat>	resultStream;
-	hr = result->GetAudio( 0, 1, &resultStream );
+
+	//不明
+	return "";
+}
+
+//デバッグ用 認識結果をWaveファイルとして保存する
+xreturn::r<bool> Recognition_SAPI::DebugSaveWavFile(const std::string& directory,ISpStreamFormat* streamFormat) const
+{
+	HRESULT hr;
+	_USE_WINDOWS_ENCODING;
+
+	const SPSTREAMFORMAT spFormat = SPSF_22kHz8BitMono;
+	CSpStreamFormat Fmt( spFormat, &hr);
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-	//オーディオから読み込んでね
-	hr = this->DictationEngine->SetInput( resultStream, TRUE);  
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-
-
-///	hr = this->DictationEngine->SetRecoState(SPRST_ACTIVE);
-///	if(FAILED(hr))	 return xreturn::windowsError(hr);
-
-	hr = this->DictationGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-
-
-	hr = this->DictationRecoCtxt->WaitForNotifyEvent(3000); //3秒タイムアウト
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-
-
-	hr = this->DictationGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-
-	CSpEvent tempevent;
-	hr = tempevent.GetFrom( this->DictationRecoCtxt );
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-
-	if (tempevent.eEventId != SPEI_RECOGNITION)
 	{
-		return "";
+		CSpStreamFormat OriginalFmt;
+		{
+			OriginalFmt.AssignFormat(streamFormat);
+
+			// basic SAPI-stream for file-based storage
+			CComPtr<ISpStream> cpStream;
+			{
+				ULONG cbWritten = 0;
+
+				// create file on hard-disk for storing recognized audio, and specify audio format as the retained audio format
+				std::string fff = directory + "\\" + num2str(time(NULL))+".wav";
+				hr = SPBindToFile(_A2W(fff.c_str()) , SPFM_CREATE_ALWAYS, &cpStream, &OriginalFmt.FormatId(), OriginalFmt.WaveFormatExPtr(), SPFEI_ALL_EVENTS);
+				if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+				// Continuously transfer data between the two streams until no more data is found (i.e. end of stream)
+				// Note only transfer 1000 bytes at a time to creating large chunks of data at one time
+				while (TRUE)
+				{
+					// for logging purposes, the app can retrieve the recognized audio stream length in bytes
+					STATSTG stats;
+					hr = streamFormat->Stat(&stats, NULL);
+					if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+					// create a 1000-byte buffer for transferring
+					BYTE bBuffer[1000];
+					ULONG cbRead;
+
+					// request 1000 bytes of data from the input stream
+					hr = streamFormat->Read(bBuffer, 1000, &cbRead);
+					// if data was returned??
+					if (SUCCEEDED(hr) && cbRead > 0)
+					{
+						// then transfer/write the audio to the file-based stream
+						hr = cpStream->Write(bBuffer, cbRead, &cbWritten);
+						if(FAILED(hr))	 return xreturn::windowsError(hr);
+					}
+
+					// since there is no more data being added to the input stream, if the read request returned less than expected, the end of stream was reached, so break data transfer loop
+					if (cbRead < 1000)
+					{
+						break;
+					}
+				}
+			}
+			// explicitly close the file-based stream to flush file data and allow app to immediately use the file
+			hr = cpStream->Close();
+			if(FAILED(hr))	 return xreturn::windowsError(hr);
+		}
 	}
-
-	//認識した結果
-	ISpRecoResult* tempresult;
-	tempresult = tempevent.RecoResult();
-
-	//認識した文字列の取得
-	CSpDynamicString tempdstrText;
-	hr = tempresult->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE, &tempdstrText, NULL);
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-
-	return _W2A(tempdstrText);
+	return true;
 }
 
 //呼びかけを設定します。
@@ -584,22 +613,45 @@ xreturn::r<bool> Recognition_SAPI::SetYobikake(const std::list<std::string> & yo
 
 	this->RuleGrammar->ClearRule(this->YobikakeRuleHandle);
 	this->DictationGrammar->ClearRule(this->FilterRuleHandleHandle);
+//	this->DictationGrammar->ClearRule(this->FilterRuleHandleHandle2);
+
+
+	SPSTATEHANDLE appendState; //あとに続くを表現するためには、 新規にステートを作らないといけない。
+	hr = this->RuleGrammar->CreateNewState(this->YobikakeRuleHandle, &appendState);
+	if(FAILED(hr))	 return xreturn::windowsError(hr);
+	hr = this->RuleGrammar->AddRuleTransition(appendState , NULL, this->CommandRuleHandle , 1.0f , NULL );
+	if(FAILED(hr))	 return xreturn::windowsError(hr);
+
 
 	this->YobikakeListArray = yobikakeList;
 	for(auto it = this->YobikakeListArray.begin();  this->YobikakeListArray.end() != it ; ++it)
 	{
-		hr = this->RuleGrammar->AddWordTransition(this->YobikakeRuleHandle , NULL , _A2W( it->c_str() ) , L" " , SPWT_LEXICAL , 1.0f , NULL );
+		//ふつー使う呼びかけ
+		hr = this->RuleGrammar->AddWordTransition(this->YobikakeRuleHandle , appendState , _A2W( it->c_str() ) , L" " , SPWT_LEXICAL , 1.0f , NULL );
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-		hr = this->DictationGrammar->AddWordTransition(this->FilterRuleHandleHandle , NULL , _A2W( it->c_str() ) , L" " , SPWT_LEXICAL , 2.0f , NULL );
+		//ディクテーションフィルターの呼びかけ
+//		hr = this->DictationGrammar->AddWordTransition(this->FilterRuleHandleHandle , NULL , _A2W( it->c_str() ) , L" " , SPWT_LEXICAL , 1.0f , NULL );
+		hr = this->DictationGrammar->AddWordTransition(this->FilterRuleHandleHandle , NULL , _A2W( it->c_str() ) , L" " , SPWT_LEXICAL , 1.0f , NULL );
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
-
+//		hr = this->DictationGrammar->AddWordTransition(this->FilterRuleHandleHandle2 , NULL , _A2W( it->c_str() ) , L" " , SPWT_LEXICAL , 2.0f , NULL );
+//		if(FAILED(hr))	 return xreturn::windowsError(hr);
 	}
-	hr = this->DictationGrammar->AddRuleTransition(this->FilterRuleHandleHandle, NULL, SPRULETRANS_DICTATION, 1.0f, NULL);
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
+	//ディクテーションフィルター その1はディクテーションノードを加える
+//	hr = this->DictationGrammar->AddRuleTransition(this->FilterRuleHandleHandle, NULL, SPRULETRANS_DICTATION, 1.0f, NULL);
+//	if(FAILED(hr))	 return xreturn::windowsError(hr);
+	//ディクテーションフィルター その2はあ-んを加える.
+	{
+		wchar_t word[2]; word[0] = L'あ'; word[1] = 0;
+		for(; word[0] < L'ん' ; word[0] ++ )
+		{
+			hr = this->DictationGrammar->AddWordTransition(this->FilterRuleHandleHandle , NULL , word , L" " , SPWT_LEXICAL , 1.0f , NULL );
+			if(FAILED(hr))	 return xreturn::windowsError(hr);
+		}
+	}
 
-	hr = this->DictationGrammar->Commit(0);
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
+	//ルールに変更が加わったのでコミットしないといけません。
+	this->IsNeedUpdateRule = true;
 
 	return true;
 }
@@ -616,7 +668,7 @@ xreturn::r<bool> Recognition_SAPI::SetRecognitionFilter(double temporaryRuleConf
 }
 
 //コマンドに反応する音声認識ルールを構築します
-xreturn::r<bool> Recognition_SAPI::AddCommandRegexp(CallbackDataStruct & callback,const std::string & str)
+xreturn::r<bool> Recognition_SAPI::AddCommandRegexp(const CallbackDataStruct * callback,const std::string & str)
 {
 	this->CallbackDictionary.push_back(callback);
 	assert(this->CallbackDictionary.size() >= 1);
@@ -624,7 +676,7 @@ xreturn::r<bool> Recognition_SAPI::AddCommandRegexp(CallbackDataStruct & callbac
 }
 
 //テンポラリルールに反応する音声認識ルールを構築します
-xreturn::r<bool> Recognition_SAPI::AddTemporaryRegexp(CallbackDataStruct & callback,const std::string & str)
+xreturn::r<bool> Recognition_SAPI::AddTemporaryRegexp(const CallbackDataStruct * callback,const std::string & str)
 {
 	this->CallbackDictionary.push_back(callback);
 	assert(this->CallbackDictionary.size() >= 1);
@@ -632,6 +684,7 @@ xreturn::r<bool> Recognition_SAPI::AddTemporaryRegexp(CallbackDataStruct & callb
 	this->TemporaryRuleCount ++;
 	return AddRegexp(CallbackDictionary.size() - 1,str, this->TemporaryRuleHandle);
 }
+
 //テンポラリルールをすべてクリアします
 xreturn::r<bool> Recognition_SAPI::ClearTemporary()
 {
@@ -674,9 +727,15 @@ xreturn::r<bool> Recognition_SAPI::CommitRule()
 	hr = this->RuleGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
+	//通常ルールのコミット
 	hr = this->RuleGrammar->Commit(0);
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
+	//ディクテーションフィルターのコミット
+	hr = this->DictationGrammar->Commit(0);
+	if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+///これを入れるとキューが詰まる時があるような。(経験則)
 ///	hr = this->RuleEngine->SetRecoState(SPRST_ACTIVE);
 ///	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
@@ -689,10 +748,11 @@ xreturn::r<bool> Recognition_SAPI::CommitRule()
 	}
 	else
 	{
-		hr = this->RuleGrammar->SetRuleState(_A2W("BasicRule"),NULL,SPRS_ACTIVE);
+//		hr = this->RuleGrammar->SetRuleState(_A2W("BasicRule"),NULL,SPRS_ACTIVE);
+		hr = this->RuleGrammar->SetRuleState(_A2W("YobikakeRule"),NULL,SPRS_ACTIVE);
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-		this->PoolMainWindow->SyncInvokeLog("音声認識ルールコミット:BasicRuleだけ commit します",LOG_LEVEL_DEBUG);
+		this->PoolMainWindow->SyncInvokeLog("音声認識ルールコミット:YobikakeRule以下を commit します",LOG_LEVEL_DEBUG);
 	}
 
 	//アップデートが終わったので再びルールに変更が加わるまではアップデートしない。
@@ -700,6 +760,53 @@ xreturn::r<bool> Recognition_SAPI::CommitRule()
 
 	return true;
 }
+
+//メディア情報をアップデートします。
+xreturn::r<bool> Recognition_SAPI::UpdateMedia(const std::string& name ,const std::list<std::string>& list )
+{
+return true;
+/*
+	_USE_WINDOWS_ENCODING;
+	HRESULT hr;
+
+	SPSTATEHANDLE targetHandle = NULL;
+	if (name == "music")
+	{
+		targetHandle = this->MusicRuleHandle;
+	}
+	else if (name == "music")
+	{
+		targetHandle = this->VideoRuleHandle;
+	}
+	else if (name == "book")
+	{
+		targetHandle = this->BookRuleHandle;
+	}
+	else
+	{
+		return xreturn::error("未定義の" + name + "が選択されました。");
+	}
+
+	//単語を追加していきます。
+	for(auto it = list.begin() ; it != list.end() ; ++it )
+	{
+		hr = this->RuleGrammar->AddWordTransition(targetHandle , NULL , _A2W( it->c_str() ) , L" " , SPWT_LEXICAL , 1.0f , NULL );
+		if(FAILED(hr))	 return xreturn::windowsError(hr);
+	}
+
+	//変更したので次回アップデートしてね。
+	this->IsNeedUpdateRule = true;
+	return true;
+*/
+}
+
+
+//このコールバックに関連付けられているものをすべて消す
+xreturn::r<bool> Recognition_SAPI::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback)
+{
+	return true;
+}
+
 
 //音声認識ルールを構築します。 正規表現にも対応しています。
 xreturn::r<bool> Recognition_SAPI::AddRegexp(unsigned int id,const std::string & str ,SPSTATEHANDLE stateHandle ) 
@@ -739,9 +846,19 @@ xreturn::r<bool> Recognition_SAPI::AddRegexp(unsigned int id,const std::string &
             }
 			++p;
         }
+        else if ( *p == L'[' && *(p+1) == L':' )
+        {
+			const wchar_t * end = wcsstr(p+2 , L":]");
+			if (end == NULL)
+			{
+				return xreturn::error("[: があるのに :] がありませんでした");
+			}
+			optstr += std::wstring(p , (end - p) + 2);
+			p = end + 1;
+        }
         else if (*p == L'*' || *p == L'+' || *p == L'.' || *p == L'[' || *p == L']')
         {
-//            throw exception(std::string("") + "現在は、メタ文字 " + p + " は利用できません。利用可能なメタ文字 () | .+ ?");
+			return xreturn::error(std::string("") + "現在は、メタ文字 " + _W2A(p) + " は利用できません。利用可能なメタ文字 () | .+ ?)");
         }
         else
         {
@@ -768,6 +885,7 @@ xreturn::r<bool> Recognition_SAPI::AddRegexp(unsigned int id,const std::string &
 //音声認識ルールを登録する部分の詳細な実行です。正規表現のネストがあるので再起してます。
 xreturn::r<bool> Recognition_SAPI::AddRegexpImpl(const SPPROPERTYINFO* prop,const std::wstring & str, SPSTATEHANDLE stateHandle)
 {
+	_USE_WINDOWS_ENCODING;
 	HRESULT hr;
     std::wstring matchString;
 
@@ -885,6 +1003,70 @@ xreturn::r<bool> Recognition_SAPI::AddRegexpImpl(const SPPROPERTYINFO* prop,cons
 
 			splitPos = p + 1;
             currentRule = stateHandle;
+        }
+        else if (*p == L'[' && *(p+1) == L':') 
+        {
+			//([:music:])かけて
+			const wchar_t * end = wcsstr(p+2 , L":]");
+			if (end == NULL)
+			{
+				return xreturn::error("[: があるのに :] がありませんでした");
+			}
+/*
+			std::wstring spname = std::wstring(p+2,0,end - (p + 2));
+			SPSTATEHANDLE targetHandle = NULL;
+			if (spname == L"music")
+			{
+				targetHandle = this->MusicRuleHandle;
+			}
+			else if (spname == L"vedeo")
+			{
+				targetHandle = this->VideoRuleHandle;
+			}
+			else if (spname == L"book")
+			{
+				targetHandle = this->BookRuleHandle;
+			}
+			else
+			{
+				return xreturn::error(std::string() + "[: " + _W2A(spname.c_str()) + " :] にマッチするルールはありません");
+			}
+
+			//次の遷移へのステートが必要(ステートはルールをくっつけるためののりしろ)
+//			SPSTATEHANDLE nestRuleState;
+//			hr = this->RuleGrammar->CreateNewState(currentRule, &nestRuleState);
+//			if(FAILED(hr))	 return xreturn::windowsError(hr);
+//
+//			hr = this->RuleGrammar->AddRuleTransition(currentRule, nestRuleState, targetHandle , 1.0f , NULL);
+//			if(FAILED(hr))	 return xreturn::windowsError(hr);
+//
+//			hr = this->RuleGrammar->AddRuleTransition(nestRuleState , NULL , targetHandle , 1.0f , NULL );
+//			if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+//			hr = this->RuleGrammar->AddWordTransition(currentRule , NULL , L"テスト" , L" " , SPWT_LEXICAL , 1.0f , prop );
+//			if(FAILED(hr))	 return xreturn::windowsError(hr);
+			SPSTATEHANDLE nestRule;
+			hr = this->RuleGrammar->GetRule(  NULL, this->GlobalRuleNodeCount ++ ,SRADynamic , TRUE ,  &nestRule); 
+			if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+			//次の遷移へのステートが必要(ステートはルールをくっつけるためののりしろ)
+			SPSTATEHANDLE nestRuleState;
+			hr = this->RuleGrammar->CreateNewState(currentRule, &nestRuleState);
+			if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+			//ネストする前の部分を挿入.
+			hr = this->RuleGrammar->AddWordTransition(currentRule , nestRuleState , NULL  , L" " , SPWT_LEXICAL , 1.0f , prop );
+			if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+            //閉じかっこで構文がとまる場合はそこで終端
+			hr = this->RuleGrammar->AddRuleTransition(nestRuleState, NULL, targetHandle, 1.0f , NULL);
+			if(FAILED(hr))	 return xreturn::windowsError(hr);
+
+//			hr = this->RuleGrammar->AddWordTransition(nestRule , NULL , L"テスト" , L" " , SPWT_LEXICAL , 1.0f , prop );
+//			if(FAILED(hr))	 return xreturn::windowsError(hr);
+*/
+			p = end + 1;
+			splitPos = p + 1;
         }
         else if (*p == L'.' && *(p+1) == L'+') 
         {

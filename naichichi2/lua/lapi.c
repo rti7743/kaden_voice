@@ -124,6 +124,24 @@ LUA_API lua_CFunction lua_atpanic (lua_State *L, lua_CFunction panicf) {
   return old;
 }
 
+LUA_API void  lua_setmultibyte(lua_State *L,int usemultibyte){
+  lua_lock(L);
+  L->usemultibyte = usemultibyte;
+  lua_unlock(L);
+}
+
+LUA_API void lua_setusertag (lua_State *L,void* tags) {
+  lua_lock(L);
+  L->usertag = tags;
+  lua_unlock(L);
+}
+LUA_API void* lua_getusertag (lua_State *L) {
+  void *ret;
+  lua_lock(L);
+  ret = L->usertag;
+  lua_unlock(L);
+  return ret;
+}
 
 LUA_API const lua_Number *lua_version (lua_State *L) {
   static const lua_Number version = LUA_VERSION_NUM;

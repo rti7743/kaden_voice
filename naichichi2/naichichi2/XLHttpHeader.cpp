@@ -22,6 +22,7 @@ XLHttpHeader::~XLHttpHeader()
 
 bool XLHttpHeader::Parse(const char * inHeader)
 {
+	_USE_WINDOWS_ENCODING;
 	this->HeaderSize = 0;
 
 	const char * p = inHeader;
@@ -114,7 +115,11 @@ bool XLHttpHeader::Parse(const char * inHeader)
 		int getsep = this->FirstHeader[1].find("?");
 		if (getsep >= 0)
 		{
-			this->Get = XLStringUtil::crosssplit("&","=",this->FirstHeader[1].substr(getsep+1) );
+			std::string str = this->FirstHeader[1].substr(getsep+1);
+			str = XLStringUtil::urldecode( str );
+			str = _U2A(str.c_str());
+
+			this->Get = XLStringUtil::crosssplit("&","=",str );
 			this->FirstHeader[1] = this->FirstHeader[1].substr(0,getsep);
 		}
 	}
@@ -122,7 +127,10 @@ bool XLHttpHeader::Parse(const char * inHeader)
 	{
 		if ( XLStringUtil::strtoupper( this->FirstHeader[0] ) == "POST")
 		{
-			this->Post = XLStringUtil::crosssplit("&","=",p);
+			std::string str = XLStringUtil::urldecode( p );
+			str = _U2A(str.c_str());
+
+			this->Post = XLStringUtil::crosssplit("&","=",str);
 		}
 	}
 

@@ -5,6 +5,7 @@
 #include "XLStringUtil.h"
 #include "windows_encoding.h"
 
+
 MediaFileAnalize::MediaFileAnalize()
 {
 	this->Runner = NULL;
@@ -22,8 +23,9 @@ MediaFileAnalize::~MediaFileAnalize()
 }
 xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::string& luaCommand)
 {
-	this->PtrShell.CreateInstance(__uuidof(Shell32::Shell));
+	this->PoolMainWindow = poolMainWindow;
 
+	this->PtrShell.CreateInstance(__uuidof(Shell32::Shell));
 	const std::string luafilename = poolMainWindow->Config.GetBaseDirectory() + "\\" + luaCommand;
 
 	//スクリプトのロード
@@ -33,20 +35,32 @@ xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::
 
 }
 
-bool MediaFileAnalize::Analize(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias )
+bool MediaFileAnalize::Analize(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank,  std::string* searchdata )
 {
-	if ( ! AnalizeLua(dir, filename , title, artist , album ,  alias) )
+	*part = 0;
+	*rank = 0;
+	if ( ! AnalizeLua(dir, filename , title, artist , album ,  alias , part ,rank) )
 	{
 		return false;
 	}
-	if ( ! AnalizeCOM(dir, filename , title, artist , album ,  alias) )
+	if ( ! AnalizeCOM(dir, filename , title, artist , album ,  alias , part ,rank) )
 	{
 		return false;
 	}
+
+	//sqliteが日本語分かち書きに対応していないので、 バイグラムを作ってあげる
+	*searchdata = MediaFileAnalize::makesearcableData(filename + " " + *title + " " + *artist + " " + *album + " " + *alias);
+
+	//タイトルがないと表示した時にかっこわるいので、タイトルがないならファイル名を入れてあげる。
+	if (title->empty())
+	{
+		*title = XLStringUtil::basenameonly(filename);
+	}
+
 	return true;
 }
 
-bool MediaFileAnalize::AnalizeLua(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias )
+bool MediaFileAnalize::AnalizeLua(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank)
 {
 	if ( this->Runner->IsMethodExist("title") )
 	{
@@ -68,7 +82,7 @@ bool MediaFileAnalize::AnalizeLua(const std::string& dir,const std::string& file
 }
 
 
-bool MediaFileAnalize::AnalizeCOM(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias )
+bool MediaFileAnalize::AnalizeCOM(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank)
 {
 	_variant_t var((short)Shell32::ssfRECENT);
 
@@ -89,3 +103,61 @@ bool MediaFileAnalize::AnalizeCOM(const std::string& dir,const std::string& file
 	return true;
 }
 
+//検索可能データを作る
+std::string MediaFileAnalize::makesearcableData(const std::string& str ) 
+{
+	std::string s = XLStringUtil::chop(str);
+	{
+		if ( this->Runner->IsMethodExist("makeplain") )
+		{
+			s = this->Runner->callFunction("makeplain",s);
+		}
+	}
+	//漢字からよみがなを取ります。
+	std::string yomi =  XLStringUtil::KanjiAndKanakanaToHiragana(str);
+	//よみがなも含めたサーチ可能なデータを作ります。
+	//バイグラムの形成
+	return XLStringUtil::join(" ", XLStringUtil::unique(	XLStringUtil::makebigram(   makeUserSideSearchableData(yomi + " " + str) ) ) );
+}
+
+std::string MediaFileAnalize::makeListToBigram(const std::list<std::string>& list ) const
+{
+	return XLStringUtil::join(" ", 
+			XLStringUtil::unique( 
+				XLStringUtil::array_map(list , [](const std::string& _) -> std::string 
+					{
+						return XLStringUtil::join(" ", XLStringUtil::unique(XLStringUtil::makebigram(_)));
+					} 
+				) 
+		)
+	);
+}
+
+//リストの中身を正規化します。
+std::list<std::string> MediaFileAnalize::makeListToCleanup(const std::list<std::string>& list ) const
+{
+	return 
+		XLStringUtil::array_map(list , [this](const std::string& _) -> std::string 
+			{
+				return this->makeUserSideSearchableData(_);
+			} 
+		) ;
+		
+}
+//ユーザサイドが検索に使うデータを作る
+std::string MediaFileAnalize::makeUserSideSearchableData(const std::string& str ) const
+{
+	std::string s = XLStringUtil::chop(str);
+
+	//いらないキャラクター
+	const char* removeCharTable[] = {
+		"!","\"","#","$","%","&","'","(",")","=","-","~","^","|","\\","[","]","{","}","+",";","*",":","?",",",".","<",">","/"
+		,"。","、","､","｡","★","☆","※","・"
+		,NULL //終端
+	};
+	//読み方の正規化
+	s = XLStringUtil::mb_convert_kana(s,"cHsa");
+	//不要な記号の除去
+	s = XLStringUtil::remove( s , removeCharTable );
+	return s;
+}

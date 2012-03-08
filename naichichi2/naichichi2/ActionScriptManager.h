@@ -15,10 +15,10 @@ public:
 	virtual ~ActionScriptManager();
 	
 	xreturn::r<bool> ActionScriptManager::Create(MainWindow* poolMainWindow,int threadcount);
-	xreturn::r<bool> ActionScriptManager::Regist(const CallbackDataStruct& callback , const std::string & actionName );
+	xreturn::r<bool> ActionScriptManager::Regist(const CallbackDataStruct* callback , const std::string & actionName );
 
 private:
-	xreturn::r<bool> ActionScriptManager::ThreadRun(const CallbackDataStruct& callback ,const std::list<std::string>& args );
+	xreturn::r<bool> ActionScriptManager::ThreadRun(const CallbackDataStruct* callback ,const std::list<std::string>& args );
 
 	boost::thread_group ThreadGroup;
 	boost::asio::io_service IOService;

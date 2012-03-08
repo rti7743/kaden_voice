@@ -82,6 +82,21 @@
     <ClCompile Include="Speak_AquesTalk.cpp">
       <Filter>speak</Filter>
     </ClCompile>
+    <ClCompile Include="MediaFileImageShot.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="XLImage.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerManager.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="Recognition_JuliusPlus.cpp">
+      <Filter>speak</Filter>
+    </ClCompile>
+    <ClCompile Include="Recognition_JuliusPlusRule.cpp">
+      <Filter>speak</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Recognition_SAPI.h">
@@ -169,6 +184,21 @@
       <Filter>mainlogic</Filter>
     </ClInclude>
     <ClInclude Include="Speak_AquesTalk.h">
+      <Filter>speak</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaFileImageShot.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="XLImage.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerManager.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="Recognition_JuliusPlus.h">
+      <Filter>speak</Filter>
+    </ClInclude>
+    <ClInclude Include="Recognition_JuliusPlusRule.h">
       <Filter>speak</Filter>
     </ClInclude>
   </ItemGroup>

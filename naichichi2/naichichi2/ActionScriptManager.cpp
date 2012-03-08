@@ -35,7 +35,7 @@ xreturn::r<bool> ActionScriptManager::Create(MainWindow* poolMainWindow,int thre
 	return true;
 }
 
-xreturn::r<bool> ActionScriptManager::Regist(const CallbackDataStruct& callback , const std::string & actionName )
+xreturn::r<bool> ActionScriptManager::Regist(const CallbackDataStruct* callback , const std::string & actionName )
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
@@ -71,7 +71,7 @@ xreturn::r<bool> ActionScriptManager::Regist(const CallbackDataStruct& callback 
 	return true;
 }
 
-xreturn::r<bool> ActionScriptManager::ThreadRun(const CallbackDataStruct& callback ,const std::list<std::string>& args )
+xreturn::r<bool> ActionScriptManager::ThreadRun(const CallbackDataStruct* callback ,const std::list<std::string>& args )
 {
 	assert(args.size() >= 1);
 	ASSERT___IS_WORKER_THREAD_RUNNING(); //メインスレッド以外で動きます。
@@ -84,11 +84,15 @@ xreturn::r<bool> ActionScriptManager::ThreadRun(const CallbackDataStruct& callba
 	std::map<std::string,std::string>  data;
 	data["action_result"] = runner.callFunction("call",args,true);
 
+	
+
 	this->PoolMainWindow->SyncInvoke( [&](){
 		ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
+		std::string respons;
 		this->PoolMainWindow->ScriptManager.ActionEnd( callback , data );
 	} );
 
 	return true;
 }
+

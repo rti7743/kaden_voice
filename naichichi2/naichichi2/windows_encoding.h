@@ -1,6 +1,6 @@
 ﻿#pragma once
+#ifdef _WINDOWS
 //windows でも UTF8で快適にコーディングできるようにする!!
-#include <windows.h>
 
 namespace windows_encoding
 {
@@ -73,6 +73,7 @@ namespace windows_encoding
 //utf16 -> utf8
 #define _W2U(lpa) (\
 	(lpa == NULL) ? NULL : ( _convert = (lstrlenW(lpa)+1)*2 , windows_encoding::_u16tou8_convert(lpa, (char* )_alloca(_convert),_convert) ) )
+
 /*
 使い方
 void hoge()
@@ -99,4 +100,23 @@ void hoge2()
 }
 */
 
+#else  //_WINDOWS
+//変換領域のバッファの確保
+#define _USE_WINDOWS_ENCODING 
 
+//ascii -> utf16
+#define _A2W(lpa) 
+//utf16 -> acsii
+#define _W2A(lpa) 
+
+//ascii -> utf8
+#define _A2U(lpa) 
+//utf8 -> ascii
+#define _U2A(lpa) 
+
+//utf8 -> utf16
+#define _U2W(lpa) 
+//utf16 -> utf8
+#define _W2U(lpa) 
+
+#endif //_WINDOWS

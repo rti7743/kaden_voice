@@ -169,6 +169,9 @@ struct lua_State {
   struct lua_longjmp *errorJmp;  /* current error recover point */
   ptrdiff_t errfunc;  /* current error handling function (stack index) */
   CallInfo base_ci;  /* CallInfo for first level (C calling Lua) */
+
+  int usemultibyte;  /* multibyte support (If you use SJIS EUC other , this flag 1.  If you use UTF8, this flag 0. ) by rti */
+  void* usertag;    /* Use freely by the user side. :p) by rti */
 };
 
 

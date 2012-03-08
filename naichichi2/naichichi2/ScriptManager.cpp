@@ -97,11 +97,11 @@ void ScriptManager::destoryLua()
 void ScriptManager::BadVoiceRecogntion(int errorCode,const std::string& matString,const std::string& diction,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter,bool dictationCheck)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-	this->PoolMainWindow->SyncInvokeLog(std::string("") + "音声認識失敗しました。認識:" + " yobikake:" + num2str(yobikakeRuleConfidenceFilter) + " basic:" + num2str(basicRuleConfidenceFilter) + " diccheck:" + num2str((int)dictationCheck) + " dic:" + diction + " failmatch:" + matString ,LOG_LEVEL_DEBUG);
+	this->PoolMainWindow->SyncInvokeLog(std::string("") + "音声認識失敗しました。コード:" + num2str(errorCode) + " 認識:" + " yobikake:" + num2str(yobikakeRuleConfidenceFilter) + " basic:" + num2str(basicRuleConfidenceFilter) + " diccheck:" + num2str((int)dictationCheck) + " dic:" + diction + " failmatch:" + matString ,LOG_LEVEL_DEBUG);
 }
 
 //音声認識した結果
-void ScriptManager::VoiceRecogntion(const CallbackDataStruct& callback,const std::map< std::string , std::string >& capture,const std::string& diction,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter)
+void ScriptManager::VoiceRecogntion(const CallbackDataStruct* callback,const std::map< std::string , std::string >& capture,const std::string& diction,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	this->PoolMainWindow->SyncInvokeLog(std::string("") + "音声認識完了しました。認識:" + capture.begin()->second + " diction:" + diction + " yobikake:" + num2str(yobikakeRuleConfidenceFilter) + " basic:" + num2str(basicRuleConfidenceFilter),LOG_LEVEL_DEBUG);
@@ -111,7 +111,7 @@ void ScriptManager::VoiceRecogntion(const CallbackDataStruct& callback,const std
 }
 
 //喋り終わった時
-void ScriptManager::SpeakEnd(const CallbackDataStruct& callback)
+void ScriptManager::SpeakEnd(const CallbackDataStruct* callback)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	this->PoolMainWindow->SyncInvokeLog("spack完了しました。コールバックを打ち返します。",LOG_LEVEL_DEBUG);
@@ -121,20 +121,20 @@ void ScriptManager::SpeakEnd(const CallbackDataStruct& callback)
 }
 
 //汎用的なコールバック打ち返し
-xreturn::r<std::string> ScriptManager::fireCallback(const CallbackDataStruct& callback,const std::map< std::string , std::string >& args) const
+xreturn::r<std::string> ScriptManager::fireCallback(const CallbackDataStruct* callback,const std::map< std::string , std::string >& args) const
 {
-	int func = callback.getFunc();
+	int func = callback->getFunc();
 	if (func == NO_CALLBACK)
 	{
 		return "";
 	}
-	return callback.getRunner()->callbackFunction(func,args);
+	return callback->getRunner()->callbackFunction(func,args);
 }
 
 
 
 //家電制御が終わった時
-void ScriptManager::ActionEnd(const CallbackDataStruct& callback,const std::map< std::string , std::string >& data)
+void ScriptManager::ActionEnd(const CallbackDataStruct* callback,const std::map< std::string , std::string >& data)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	this->PoolMainWindow->SyncInvokeLog("action完了しました。コールバックを打ち返します。",LOG_LEVEL_DEBUG);
@@ -143,38 +143,36 @@ void ScriptManager::ActionEnd(const CallbackDataStruct& callback,const std::map<
 	this->UnrefCallback(callback);
 }
 
-//暇な時の動作
-void ScriptManager::RegistIdle(const CallbackDataStruct& callback,int wariai)
+//トリガーが呼ばれたとき
+void ScriptManager::TriggerCall(const CallbackDataStruct* callback,const std::map< std::string , std::string >& args,std::string * respons)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
+
+	*respons = this->fireCallback(callback,args);
+
+	//トリガーは何度も打てるので、 UnrefCallback はしません。
 }
 
 //HTTPで所定のパスにアクセスがあった時
-void ScriptManager::HttpRequest(const CallbackDataStruct& callback,const std::string & path ,const std::map< std::string , std::string > & request,std::string * respons,WEBSERVER_RESULT_TYPE* type)
+void ScriptManager::HttpRequest(const CallbackDataStruct* callback,const std::string & path ,const std::map< std::string , std::string > & request,std::string * respons,WEBSERVER_RESULT_TYPE* type,std::string* headers)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
 	//webの打ち返しは少々複雑.
-	int func = callback.getFunc();
+	int func = callback->getFunc();
 	if (func == NO_CALLBACK)
 	{
 		*type = WEBSERVER_RESULT_TYPE_NOT_FOUND;
 		*respons = "";
 		return ;
 	}
-	*type = WEBSERVER_RESULT_TYPE_OK;
-	*respons = callback.getRunner()->callbackWebFunction(func,request,type);
+	*respons = callback->getRunner()->callbackWebFunction(func,request,type,headers);
 }
 
 //コールバックを消す通知をします。
-void ScriptManager::UnrefCallback(const CallbackDataStruct& callback)
+void ScriptManager::UnrefCallback(const CallbackDataStruct* callback)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
-	int func = callback.getFunc();
-	if (func == NO_CALLBACK)
-	{
-		return ;
-	}
-	callback.getRunner()->unrefCallback(func);
+	callback->getRunner()->unrefCallback(callback);
 }

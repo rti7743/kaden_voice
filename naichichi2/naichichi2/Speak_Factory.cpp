@@ -55,7 +55,7 @@ xreturn::r<bool> Speak_Factory::Speak(const std::string & str)
 }
 
 
-void Speak_Factory::RegistWaitCallback(CallbackDataStruct & callback)
+void Speak_Factory::RegistWaitCallback(const CallbackDataStruct * callback)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	this->Engine->RegistWaitCallback(callback);
@@ -66,6 +66,16 @@ void Speak_Factory::Cancel()
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	this->Engine->Cancel();
 }
+
+//このコールバックに関連付けられているものをすべて消す
+xreturn::r<bool> Speak_Factory::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback)
+{
+	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
+	auto r = this->Engine->RemoveCallback(callback,is_unrefCallback);
+	if (!r) return xreturn::error(r.getError());
+	return true;
+}
+
 
 std::list<SpeakSentens*> Speak_Factory::SpeakParse(const std::string& speakString,int rate,int volume,int speed)
 {
@@ -149,6 +159,6 @@ SEXYTEST("スピーチ内容のパーステスト")
 {
 	{
 		std::list<SpeakSentens*> r = Speak_Factory::SpeakParse("test123",0,0,0);
-		DeleteAll(r);
+		CDeleteAll(r);
 	}
 }

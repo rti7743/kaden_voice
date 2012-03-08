@@ -203,17 +203,31 @@ std::string SexyTestDumpPairSTL(const _B& begin ,const  _T& end)
 	template<typename _T>
 	struct SexyTestUnit : public SexyTestUnitInterface
 	{
-		SexyTestUnit(bool isHeavyTest,const char* name)
+		SexyTestUnit(bool isHeavyTest,const char* name,bool isToppriority)
 		{
 	#ifndef SEXYTEST_DISABLE
 		testname = name;
 		#ifndef SEXYTEST_DISABLE_HEAVYTEST
 			//全部のテストをやるモードなので、ヘビーなテストでも追加する
-			SexyTestRunner::getSexyTestTestData()->push_back(this);
+			if (isToppriority)
+			{
+				SexyTestRunner::getSexyTestTestData()->push_front(this);
+			}
+			else
+			{
+				SexyTestRunner::getSexyTestTestData()->push_back(this);
+			}
 		#else
 			if (!isHeavyTest)
 			{//ヘビーなテストはやらないモードなので、ライトな奴しかやらない
-				SexyTestRunner::getSexyTestTestData()->push_back(this);
+				if (isToppriority)
+				{
+					SexyTestRunner::getSexyTestTestData()->push_front(this);
+				}
+				else
+				{
+					SexyTestRunner::getSexyTestTestData()->push_back(this);
+				}
 			}
 		#endif //SEXYTEST_DISABLE_HEAVYTEST
 	#endif //SEXYTEST_DISABLE
@@ -231,11 +245,10 @@ std::string SexyTestDumpPairSTL(const _B& begin ,const  _T& end)
 #define _SEXYTEST_LINE_STRCAT(x,y,z) _SEXYTEST_LINE_STRCAT_(x,y,z)
 #define _SEXYTEST_LINE_STRCAT_(x,y,z) x##y##z
 
-#define SEXYTEST(name) SEXYTEST_IMP_(name,false,_SEXYTEST_LINE_STRCAT(SexyTest_sexytest_gid_ , __COUNTER__,__LINE__))
-#define SEXYTEST_HEAVYTEST(name) SEXYTEST_IMP_(name,true,_SEXYTEST_LINE_STRCAT(SexyTest_sexytest_gid_ , __COUNTER__,__LINE__))
-#define SEXYTEST_IMP_(name,heavy,guid) \
-	static SexyTestUnit<struct guid> guid(false,#name); \
+#define SEXYTEST(name) SEXYTEST_IMP_(name,false,_SEXYTEST_LINE_STRCAT(SexyTest_sexytest_gid_ , __COUNTER__,__LINE__),false)
+#define SEXYTEST_HEAVYTEST(name) SEXYTEST_IMP_(name,true,_SEXYTEST_LINE_STRCAT(SexyTest_sexytest_gid_ , __COUNTER__,__LINE__),false)
+#define SEXYTEST_TOP(name) SEXYTEST_IMP_(name,false,_SEXYTEST_LINE_STRCAT(SexyTest_sexytest_gid_ , __COUNTER__,__LINE__),true)
+#define SEXYTEST_HEAVYTEST_TOP(name) SEXYTEST_IMP_(name,true,_SEXYTEST_LINE_STRCAT(SexyTest_sexytest_gid_ , __COUNTER__,__LINE__),true)
+#define SEXYTEST_IMP_(name,heavy,guid,toppriority) \
+	static SexyTestUnit<struct guid> guid(false,#name,toppriority); \
 	void SexyTestUnit<struct guid>::test()
-
-
-

@@ -11,13 +11,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
 	{
 		COMInit cominit;
 		WinSockInit winsockinit;
+		GdiPlusInit gdiPlusInit;
 
 		MainWindow win;
 		try
 		{
 			SexyTestRunner::allrun();
 
-			win.Create(false,hInstance);
+			win.Create(true,hInstance);
 			ret = win.BlockMessageLoop();
 		}
 		catch(xreturn::error & e)

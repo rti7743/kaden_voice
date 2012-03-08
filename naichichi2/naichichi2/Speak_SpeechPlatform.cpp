@@ -60,7 +60,7 @@ xreturn::r<bool> Speak_SpeechPlatform::RegistVoiceBot(const std::string & botnam
 	_USE_WINDOWS_ENCODING;
 	HRESULT hr;
 
-	RSimpleComPtr<IEnumSpObjectTokens>   cpEnum;
+	CComPtr<IEnumSpObjectTokens>   cpEnum;
 	hr = SpEnumTokens(SPCAT_VOICES, NULL, NULL, &cpEnum);
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
@@ -71,7 +71,7 @@ xreturn::r<bool> Speak_SpeechPlatform::RegistVoiceBot(const std::string & botnam
 	std::string foundBotName = "";
 	while (SUCCEEDED(hr) && ulCount--)
 	{
-		RSimpleComPtr<ISpObjectToken>        cpVoiceToken;
+		CComPtr<ISpObjectToken>        cpVoiceToken;
 		hr = cpEnum->Next(1, &cpVoiceToken, NULL);
 		if(FAILED(hr))	 return xreturn::windowsError(hr);
 
@@ -112,7 +112,7 @@ xreturn::r<bool> Speak_SpeechPlatform::Speak(const std::string & str)
 	return true;
 }
 
-xreturn::r<bool> Speak_SpeechPlatform::RegistWaitCallback(CallbackDataStruct & callback)
+xreturn::r<bool> Speak_SpeechPlatform::RegistWaitCallback(const CallbackDataStruct * callback)
 {
 	this->CallbackDictionary.push_back(callback);
 	if (!this->isSpeakingFlg)
@@ -167,4 +167,17 @@ void Speak_SpeechPlatform::FireWaitCallback()
 	}
 	this->CallbackDictionary.clear();
 }
+
+xreturn::r<bool> Speak_SpeechPlatform::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
+{
+	CRemoveIF(this->CallbackDictionary , {
+		if (_ == callback)
+		{
+			return false; //消す.
+		}
+	});
+
+	return true;
+}
+
 

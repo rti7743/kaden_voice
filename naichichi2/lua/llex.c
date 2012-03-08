@@ -277,8 +277,20 @@ static void read_long_string (LexState *ls, SemInfo *seminfo, int sep) {
         break;
       }
       default: {
-        if (seminfo) save_and_next(ls);
-        else next(ls);
+        if (ls->L->usemultibyte) {
+          int ismultibyte = ls->current >= 128;
+
+          if (seminfo) save_and_next(ls);
+          else next(ls);
+
+          if (ismultibyte) {
+            if (seminfo) save_and_next(ls);
+            else next(ls);
+          }
+		} else {
+          if (seminfo) save_and_next(ls);
+          else next(ls);
+		}
       }
     }
   } endloop:
@@ -374,8 +386,17 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
        only_save: save(ls, c);  /* save 'c' */
        no_save: break;
       }
-      default:
-        save_and_next(ls);
+      default: {
+        if (ls->L->usemultibyte) {
+          int ismultibyte = ls->current >= 128;
+          save_and_next(ls);
+          if (ismultibyte) {
+            save_and_next(ls);
+          }
+		} else {
+          save_and_next(ls);
+		}
+      }
     }
   }
   save_and_next(ls);  /* skip delimiter */
@@ -415,6 +436,19 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           next(ls);  /* skip until end of line (or end of file) */
         break;
       }
+      /* start --- hacked by rti */
+      case '/': {  /* '//' (comment) */
+        next(ls);
+        if (ls->current == '/'){ /* short comment */
+           while (!currIsNewline(ls) && ls->current != EOZ)
+             next(ls);  /* skip until end of line (or end of file) */
+           break;
+        }
+        else {
+           return '/';
+        }
+      }
+      /* end --- hacked by rti */
       case '[': {  /* long string or simply '[' */
         int sep = skip_sep(ls);
         if (sep >= 0) {
