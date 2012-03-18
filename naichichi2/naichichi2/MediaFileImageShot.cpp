@@ -96,8 +96,8 @@ xreturn::r<bool> MediaFileImageShot::Shot(const std::string& dir,const std::stri
 		
 		structSize.cx = size;
 		structSize.cy = size;
-//		dwFlags = IEIFLAG_ASPECT | IEIFLAG_SCREEN|IEIFLAG_CACHE;
-		dwFlags = IEIFLAG_SCREEN|IEIFLAG_CACHE;
+		dwFlags = IEIFLAG_ASPECT | IEIFLAG_SCREEN|IEIFLAG_CACHE;
+//		dwFlags = IEIFLAG_SCREEN|IEIFLAG_CACHE;
 		hr = extractImage->GetLocation(pathBufferW, MAX_PATH, NULL, &structSize, 32, &dwFlags);
 		if(SUCCEEDED(hr))
 		{
@@ -116,6 +116,14 @@ xreturn::r<bool> MediaFileImageShot::Shot(const std::string& dir,const std::stri
 			}
 		}
 	}
+	if ( XLStringUtil::baseext_nodotsmall(filename)  == "zip")
+	{//zipファイルだったら、画像を抜きます
+		if ( ConvertZipToJPEGByte(dir,filename,image) )
+		{
+			return true;
+		}
+	}
+	
 /*
 	//アイコン
 	hr = shellFolderDirectory->GetUIObjectOf(NULL, 1,(LPCITEMIDLIST*) &pciItemListFilename, IID_IExtractIcon, NULL, (void **)&extractIcon);
@@ -158,7 +166,7 @@ xreturn::r<bool> MediaFileImageShot::Shot(const std::string& dir,const std::stri
 				}
 			}
 		}
-	}
+	}文
 */
 	//db容量を削減するため、アイコンはショットを撮らないことにした。
 	image->resize(0);
@@ -175,7 +183,7 @@ xreturn::r<bool> MediaFileImageShot::ConvertFileNameToPIDL(const std::string& fu
 	hr = ::SHGetDesktopFolder( &desktopFolder );
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-	ULONG         chEaten;	//文字列のサイズを受け取ります。
+	ULONG         chEaten;	//字列のサイズを受け取ります。
 	ULONG         dwAttributes;	//属性を受け取ります。
 
 	//　実際にITEMIDLISTを取得します。
@@ -218,5 +226,90 @@ xreturn::r<bool> MediaFileImageShot::ConvertHICONtoBytes(HICON hicon,std::vector
 	{
 		return xreturn::error(r1.getError());
 	}
+	return true;
+}
+
+#include "../zlib/contrib/minizip/unzip.h"
+
+//zipファイルから一番最初に存在する画像データを取り出し jpegにして返します。
+//電子書籍zipの表紙データになります。
+xreturn::r<bool> MediaFileImageShot::ConvertZipToJPEGByte(const std::string& dir,const std::string& filename,std::vector<char> * image) const
+{
+	const std::string fullpath = XLStringUtil::pathcombine( dir , filename);
+
+	unzFile zipFile = unzOpen(fullpath.c_str());
+	if (!zipFile)
+	{
+		return false;
+	}
+	std::vector<char> bufferVec(65535);
+	char * buffer = &bufferVec[0];
+
+	bool found = false;
+	do
+	{
+		char filename[MAX_PATH];
+
+		unz_file_info fileInfo;
+		if (unzGetCurrentFileInfo(zipFile, &fileInfo, filename, sizeof(filename), NULL, 0, NULL, 0) != UNZ_OK)
+		{//何かエラーが起きた
+			break;
+		}
+
+		const std::string ext = XLStringUtil::baseext_nodotsmall(filename) ;
+		if ( ext == "jpeg" || ext == "jpg" || ext == "gif" || ext == "png")
+		{//ターゲットは画像ですよ。
+			found = true;
+			break;
+		}
+	}
+	while(unzGoToNextFile(zipFile) != UNZ_END_OF_LIST_OF_FILE);
+
+	if (!found)
+	{//見つからなかった。
+		unzClose(zipFile);
+		return false;
+	}
+
+	//メモリの中にストアさせます。
+	if (unzOpenCurrentFile(zipFile) != UNZ_OK)
+	{
+		unzClose(zipFile);
+		return false;
+	}
+
+	int readSize;
+	std::vector<char> storeFile;
+	while ((readSize = unzReadCurrentFile(zipFile, buffer, 65535)) > 0)
+	{
+		storeFile.insert(storeFile.end() , buffer , buffer + readSize );
+	}
+	unzCloseCurrentFile(zipFile);
+	unzClose(zipFile); //ここでzipは閉じる.
+
+	if(storeFile.empty())
+	{
+		return false;
+	}
+
+	//サムネイル作成
+	XLImage xlimage;
+	auto r1 = xlimage.Load(storeFile);
+	if (!r1)
+	{
+		return xreturn::error(r1.getError());
+	}
+	//GDI plusにサムネイルを作らせる。
+	//そうすると新しいインスタンスになるので、それを受け止める。
+	Gdiplus::Image* newImage = xlimage.GetThumbnailImage(255,255);
+	XLImage newXLimage(newImage);
+
+	//保存 
+	auto r2 = newXLimage.Save(".jpeg",image,70);
+	if (!r2)
+	{
+		return xreturn::error(r1.getError());
+	}
+	//成功
 	return true;
 }

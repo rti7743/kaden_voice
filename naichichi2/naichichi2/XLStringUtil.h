@@ -157,6 +157,9 @@ public:
 	static std::string XLStringUtil::baseext(const std::string &fullpath);
 	//拡張子を取得する. abc.cpp -> "cpp" のような感じになるよ . をつけない
 	static std::string XLStringUtil::baseext_nodot(const std::string &fullpath);
+	//拡張子を取得する. abc.Cpp -> "cpp" のような感じになるよ . をつけないで小文字
+	static std::string XLStringUtil::baseext_nodotsmall(const std::string &fullpath);
+
 	//ベースディレクトリを取得する  c:\\hoge\\hoge.txt -> c:\\hoge にする  最後の\\ は消える。
 	static std::string XLStringUtil::basedir(const std::string &fullpath);
 	//ファイル名を取得する  c:\\hoge\\hoge.txt -> hoge.txt
@@ -197,10 +200,12 @@ public:
 	static std::string XLStringUtil::remove(const std::string &inTarget ,const char** replacetable);
 	//漢字と英語とカタカナをひらがなに変換します
 	static std::string XLStringUtil::KanjiAndKanakanaToHiragana(const std::string &inTarget,const char * option = "");
-	//ローマ字をひらがなにします。
-	static std::string XLStringUtil::RomajiToHiragana(const std::string &inTarget);
-	//かな入力の人がかなを入れ忘れたときに入力される文字からひらがなにします。
-	static std::string XLStringUtil::KanaTypoHiragana(const std::string &inTarget);
+	//typo修正
+	//r	 「ローマ字」を「ひらがな」に変換します。
+	//R	 「ひらがな」を「ローマ字」に変換します。
+	//k	 「かな入力typo」を「ひらがな」に変換します。
+	//K	 「ひらがな」を「かな入力typo」に変換します。
+	static std::string XLStringUtil::mb_convert_typo(const std::string &inTarget,const std::string& option);
 	//みんな大好き PHPのmb_convert_kanaの移植
 	//n	 「全角」数字を「半角」に変換します。
 	//N	 「半角」数字を「全角」に変換します。
@@ -215,6 +220,8 @@ public:
 	//c	 「全角カタカナ」を「全角ひらがな」に変換します。
 	//C	 「全角ひらがな」を「全角カタカナ」に変換します。
 	static std::string XLStringUtil::mb_convert_kana(const std::string &inTarget,const std::string& option);
+	//みんな大好きPHPのescapeshellarg
+	static std::string XLStringUtil::escapeshellarg(const std::string &inStr);
 
 };
 

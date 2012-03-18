@@ -29,17 +29,5 @@ function call()
 		 }
 	)
 	
-	onhttp("/hoge"
-		,function(e){
-			e["hoge"] = "foo";
-			webload("hello.tpl",e);
-		}
-	);
-	onhttp("/hoge2"
-		,function(request){
-			local out = {}
-			out["records"] = findmedia(".mp3")
-			webload("findmedia.tpl",out);
-		}
-	);
+
 }

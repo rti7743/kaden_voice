@@ -21,35 +21,28 @@ function playFromNumber(number)
 function call()
 {
 
-	//メディア検索
-	onhttp("/media_search.json",function(request){
-		if ( not request["search"] ) {
-			webecho_table({},"json");
-			return ;
-		}
-
-		//検索して jsonで返す.
-		local media = findmedia( request["search"]);
-		session[sessionid] = {};
-		session[sessionid]["media"] = media;
-		webecho_table(media ,"json");
-		return ;
-	});
-
 	onhttp("/media_search.html",function(request){
 		if ( not request["search"] ) {
-			webecho_table({},"json");
 			return ;
+		}
+		if ( not request["from"] ) {
+			request["from"] = 0;
+		}
+		if ( not request["to"] ) {
+			request["to"] = request["from"] + 50;
 		}
 
 		//検索して htmlで返す.
-		local media = findmedia( request["search"]);
-		session[sessionid] = {};
-		session[sessionid]["media"] = media;
+		local media = findmedia( request["search"],request["from"],request["to"]);
 
 		local out = {}
 		out["request"] = request
-		out["records"] = media;
+		if ( request["state"] == "reset") {
+			session[sessionid] = {};
+			session[sessionid]["media"] = {}
+		}
+		for k,v in pairs(media) do session[sessionid]["media"][k] = v end
+		out["media"] = media;
 		webload("findmedia_fragment.tpl",out);
 		return ;
 	});

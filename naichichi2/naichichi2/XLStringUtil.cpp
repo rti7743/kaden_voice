@@ -1094,6 +1094,15 @@ SEXYTEST("XLStringUtil::baseext_nodotのてすと")
 		SEXYTEST_EQ(a ,b); 
 	}
 }
+
+//拡張子を取得する. abc.Cpp -> "cpp" のような感じになるよ . をつけないで小文字
+std::string XLStringUtil::baseext_nodotsmall(const std::string &fullpath)
+{
+	const char * p = XLStringUtil::strrchr(fullpath.c_str() , '.');
+	if (!p) return "";
+	return XLStringUtil::strtolower(p + 1);
+}
+
 //ベースディレクトリを取得する  c:\\hoge\\hoge.txt -> c:\\hoge にする  最後の\\ は消える。
 std::string XLStringUtil::basedir(const std::string &fullpath)
 {
@@ -1750,8 +1759,13 @@ std::string XLStringUtil::KanjiAndKanakanaToHiragana(const std::string &inTarget
 #endif
 }
 
-//ローマ字をひらがなにします。
-std::string XLStringUtil::RomajiToHiragana(const std::string &inTarget)
+
+//typo修正
+//r	 「ローマ字」を「ひらがな」に変換します。
+//R	 「ひらがな」を「ローマ字」に変換します。
+//k	 「かな入力typo」を「ひらがな」に変換します。
+//K	 「ひらがな」を「かな入力typo」に変換します。
+std::string XLStringUtil::mb_convert_typo(const std::string &inTarget,const std::string& option)
 {
 	static const char *replaceTableRoma[] = {
 		 "ltsu","っ"
@@ -2030,13 +2044,7 @@ std::string XLStringUtil::RomajiToHiragana(const std::string &inTarget)
 		,"o","お"
 		,NULL,NULL
 	};
-	return XLStringUtil::replace(inTarget ,replaceTableRoma,false );
-}
-
-//かな入力の人がかなを入れ忘れたときに入力される文字からひらがなにします。
-std::string XLStringUtil::KanaTypoHiragana(const std::string &inTarget)
-{
-	static const char *replaceTableRoma[] = {
+	static const char *replaceTableKana[] = {
 		 "4@","う゛"
 		,"a","あ"
 		,"e","い"
@@ -2121,8 +2129,31 @@ std::string XLStringUtil::KanaTypoHiragana(const std::string &inTarget)
 		//,"ヮ","ゎ"
 		,NULL,NULL
 	};
-	return XLStringUtil::replace(inTarget ,replaceTableRoma,false );
+	std::string ret = inTarget;
+	//r	 「ローマ字」を「ひらがな」に変換します。
+	//R	 「ひらがな」を「ローマ字」に変換します。
+	if ( option.find("r") != -1  )
+	{
+		ret = XLStringUtil::replace(ret ,replaceTableRoma,true );
+	}
+	if ( option.find("R") != -1  )
+	{
+		ret = XLStringUtil::replace(ret ,replaceTableRoma,false );
+	}
+
+	//k	 「かな入力typo」を「ひらがな」に変換します。
+	//K	 「ひらがな」を「かな入力typo」に変換します。
+	if ( option.find("k") != -1  )
+	{
+		ret = XLStringUtil::replace(ret ,replaceTableKana,true );
+	}
+	if ( option.find("K") != -1  )
+	{
+		ret = XLStringUtil::replace(ret ,replaceTableKana,false );
+	}
+	return ret;
 }
+
 
 
 //みんな大好き PHPのmb_convert_kanaの移植
@@ -2130,7 +2161,7 @@ std::string XLStringUtil::KanaTypoHiragana(const std::string &inTarget)
 //N	 「半角」数字を「全角」に変換します。
 //a	 「全角」英数字を「半角」に変換します。
 //A	 「半角」英数字を「全角」に変換します 
-//s	 「全角」スペースを「半角」に変換します（U+3000 -> U+0020）。
+//s	 「全角」スペースを「半角」に変換します
 //S	 「半角」スペースを「全角」に変換します（U+0020 -> U+3000）。
 //k	 「全角カタカナ」を「半角カタカナ」に変換します。
 //K	 「半角カタカナ」を「全角カタカナ」に変換します。
@@ -2237,6 +2268,7 @@ std::string XLStringUtil::mb_convert_kana(const std::string &inTarget,const std:
 		,"－","-"
 		,"÷","/"
 		,"＊","*"
+		,"～","~" //UTF-8だと別の～もあるから判断が難しい・・・
 		,NULL,NULL
 	};
 //r	 「全角」英字を「半角」に変換します。
@@ -2293,7 +2325,7 @@ std::string XLStringUtil::mb_convert_kana(const std::string &inTarget,const std:
 		ret = XLStringUtil::replace(ret ,replaceTableSpace,true );
 	}
 
-	const char *replaceTableHankanaToHiragana[] = {
+	static const char *replaceTableHankanaToHiragana[] = {
 		 "ｳﾞ","う゛"
 		,"ｶﾞ","が"
 		,"ｷﾞ","ぎ"
@@ -2307,7 +2339,7 @@ std::string XLStringUtil::mb_convert_kana(const std::string &inTarget,const std:
 		,"ｿﾞ","ぞ"
 		,"ﾀﾞ","だ"
 		,"ﾁﾞ","ぢ"
-		,"ｽﾞ","ず"
+		,"ﾂﾞ","づ"
 		,"ｾﾞ","ぜ"
 		,"ｿﾞ","ぞ"
 		,"ﾊﾞ","ば"
@@ -2335,11 +2367,11 @@ std::string XLStringUtil::mb_convert_kana(const std::string &inTarget,const std:
 		,"ｽ","す"
 		,"ｾ","せ"
 		,"ｿ","そ"
-		,"ﾀﾞ","だ"
-		,"ﾁﾞ","ぢ"
-		,"ﾂﾞ","づ"
-		,"ﾃﾞ","で"
-		,"ﾄﾞ","ど"
+		,"ﾀ","た"
+		,"ﾁ","ち"
+		,"ﾂ","つ"
+		,"ﾃ","て"
+		,"ﾄ","と"
 		,"ﾅ","な"
 		,"ﾆ","に"
 		,"ﾇ","ぬ"
@@ -2378,7 +2410,92 @@ std::string XLStringUtil::mb_convert_kana(const std::string &inTarget,const std:
 		,"ｰ","ー"
 		,NULL,NULL
 	};
-	const char *replaceTableKatakanaToHiragana[] = {
+	static const char *replaceTableHankanaToKatakana[] = {
+		 "ｳﾞ","ヴ"
+		,"ｶﾞ","ガ"
+		,"ｷﾞ","ギ"
+		,"ｸﾞ","グ"
+		,"ｹﾞ","ゲ"
+		,"ｺﾞ","ゴ"
+		,"ｻﾞ","ザ"
+		,"ｼﾞ","ジ"
+		,"ｽﾞ","ズ"
+		,"ｾﾞ","ゼ"
+		,"ｿﾞ","ゾ"
+		,"ﾀﾞ","ダ"
+		,"ﾁﾞ","ヂ"
+		,"ﾂﾞ","ヅ"
+		,"ｾﾞ","ゼ"
+		,"ｿﾞ","ゾ"
+		,"ﾊﾞ","バ"
+		,"ﾋﾞ","ビ"
+		,"ﾌﾞ","ブ"
+		,"ﾍﾞ","ベ"
+		,"ﾎﾞ","ボ"
+		,"ﾊﾟ","パ"
+		,"ﾋﾟ","ピ"
+		,"ﾌﾟ","プ"
+		,"ﾍﾟ","ペ"
+		,"ﾎﾟ","ポ"
+		,"ｱ","ア"
+		,"ｲ","イ"
+		,"ｳ","ウ"
+		,"ｴ","エ"
+		,"ｵ","オ"
+		,"ｶ","カ"
+		,"ｷ","キ"
+		,"ｸ","ク"
+		,"ｹ","ケ"
+		,"ｺ","コ"
+		,"ｻ","サ"
+		,"ｼ","シ"
+		,"ｽ","ス"
+		,"ｾ","セ"
+		,"ｿ","ソ"
+		,"ﾀ","タ"
+		,"ﾁ","チ"
+		,"ﾂ","ツ"
+		,"ﾃ","テ"
+		,"ﾄ","ト"
+		,"ﾅ","ナ"
+		,"ﾆ","ニ"
+		,"ﾇ","ヌ"
+		,"ﾈ","ネ"
+		,"ﾉ","ノ"
+		,"ﾊ","ハ"
+		,"ﾋ","ヒ"
+		,"ﾌ","フ"
+		,"ﾍ","ヘ"
+		,"ﾎ","ホ"
+		,"ﾏ","マ"
+		,"ﾐ","ミ"
+		,"ﾑ","ム"
+		,"ﾒ","メ"
+		,"ﾓ","モ"
+		,"ﾔ","ヤ"
+		,"ﾕ","ユ"
+		,"ﾖ","ヨ"
+		,"ﾗ","リ"
+		,"ﾘ","リ"
+		,"ﾙ","ル"
+		,"ﾚ","レ"
+		,"ﾛ","ロ"
+		,"ｦ","ヲ"
+		,"ﾜ","ワ"
+		,"ﾝ","ン"
+		,"ｧ","ァ"
+		,"ｨ","ィ"
+		,"ｩ","ゥ"
+		,"ｪ","ェ"
+		,"ｫ","ォ"
+		,"ｬ","ャ"
+		,"ｭ","ュ"
+		,"ｮ","ョ"
+		,"ｯ","ッ"
+		,"ｰ","ー"
+		,NULL,NULL
+	};
+	static const char *replaceTableKatakanaToHiragana[] = {
 		 "ヴ","う゛"
 		,"ア","あ"
 		,"イ","い"
@@ -2467,13 +2584,11 @@ std::string XLStringUtil::mb_convert_kana(const std::string &inTarget,const std:
 //K	 「半角カタカナ」を「全角カタカナ」に変換します。
 	if ( option.find("k") != -1 )
 	{
-		ret = XLStringUtil::replace(ret ,replaceTableKatakanaToHiragana,false );
-		ret = XLStringUtil::replace(ret ,replaceTableHankanaToHiragana,true );
+		ret = XLStringUtil::replace(ret ,replaceTableHankanaToKatakana,true );
 	}
 	else if ( option.find("K") != -1)
 	{
-		ret = XLStringUtil::replace(ret ,replaceTableHankanaToHiragana,false );
-		ret = XLStringUtil::replace(ret ,replaceTableKatakanaToHiragana,true );
+		ret = XLStringUtil::replace(ret ,replaceTableHankanaToKatakana,false );
 	}
 
 //c	 「全角カタカナ」を「全角ひらがな」に変換します。
@@ -2499,4 +2614,88 @@ std::string XLStringUtil::mb_convert_kana(const std::string &inTarget,const std:
 	}
 
 	return ret;
+}
+
+SEXYTEST("XLStringUtil::mb_convert_kanaのてすと")
+{
+	{
+//n	 「全角」数字を「半角」に変換します。
+//N	 「半角」数字を「全角」に変換します。
+//a	 「全角」英数字を「半角」に変換します。
+//A	 「半角」英数字を「全角」に変換します 
+//s	 「全角」スペースを「半角」に変換します
+//S	 「半角」スペースを「全角」に変換します
+//k	 「全角カタカナ」を「半角カタカナ」に変換します。
+//K	 「半角カタカナ」を「全角カタカナ」に変換します。
+//h	 「全角ひらがな」を「半角カタカナ」に変換します。
+//H	 「半角カタカナ」を「全角ひらがな」に変換します。
+//c	 「全角カタカナ」を「全角ひらがな」に変換します。
+//C	 「全角ひらがな」を「全角カタカナ」に変換します。
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","h"); //「全角ひらがな」を「半角カタカナ」に変換します。
+		std::string b = "ｱｲｳｴｵアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","H"); //「半角カタカナ」を「全角ひらがな」に変換します。
+		std::string b = "あいうえおアイウエオあいうえお　123１２３ ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","c"); //「全角カタカナ」を「全角ひらがな」に変換します。
+		std::string b = "あいうえおあいうえおｱｲｳｴｵ　123１２３ ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","C"); //「全角ひらがな」を「全角カタカナ」に変換します。
+		std::string b = "アイウエオアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","k"); //「全角カタカナ」を「半角カタカナ」に変換します。
+		std::string b = "あいうえおｱｲｳｴｵｱｲｳｴｵ　123１２３ ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","K"); //「半角カタカナ」を「全角カタカナ」に変換します。
+		std::string b = "あいうえおアイウエオアイウエオ　123１２３ ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","n"); //n	 「全角」数字を「半角」に変換します。
+		std::string b = "あいうえおアイウエオｱｲｳｴｵ　123123 ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","N"); //N	 「半角」数字を「全角」に変換します。
+		std::string b = "あいうえおアイウエオｱｲｳｴｵ　１２３１２３ ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","a"); //a	 「全角」英数字を「半角」に変換します。
+		std::string b = "あいうえおアイウエオｱｲｳｴｵ　123123 ABCABC";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","A"); //A	 「半角」英数字を「全角」に変換します。
+		std::string b = "あいうえおアイウエオｱｲｳｴｵ　１２３１２３ ＡＢＣＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","s"); //s	 「全角」スペースを「半角」に変換します
+		std::string b = "あいうえおアイウエオｱｲｳｴｵ 123１２３ ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+	{
+		std::string a = XLStringUtil::mb_convert_kana("あいうえおアイウエオｱｲｳｴｵ　123１２３ ABCＡＢＣ","S"); //S	 「半角」スペースを「全角」に変換します
+		std::string b = "あいうえおアイウエオｱｲｳｴｵ　123１２３　ABCＡＢＣ";
+		SEXYTEST_EQ(a ,b); 
+	}
+}
+
+
+
+//みんな大好きPHPのescapeshellarg
+std::string XLStringUtil::escapeshellarg(const std::string &inStr)
+{
+	return "\"" + replace(inStr , "\"" , "\\\"") + "\"";
 }

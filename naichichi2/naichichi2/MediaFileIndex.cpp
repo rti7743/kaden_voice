@@ -56,14 +56,14 @@ std::string MediaFileIndex::ImageToBase64(const std::map<std::string,std::string
 	return XLStringUtil::base64encode(&buffer[0],buffer.size());
 }
 
-void MediaFileIndex::Create(MainWindow* poolMainWindow,const std::list<std::string>& mediaDirectoryListArray, const std::string& dbpath,const std::string& filenamehelperLua,const std::map<std::string,std::string>& mediaTargetExt,const std::map<std::string,std::string>& mediaDefualtIcon)
+void MediaFileIndex::Create(MainWindow* poolMainWindow,const std::list<std::string>& mediaDirectoryListArray, const std::string& dbpath,const std::string& filenamehelperLua,const std::string& mecabdir,const std::map<std::string,std::string>& mediaTargetExt,const std::map<std::string,std::string>& mediaDefualtIcon)
 {
 	assert(!this->Thread);
 
 	this->PoolMainWindow = poolMainWindow;
 	this->mediaDirectoryListArray = mediaDirectoryListArray;
 	this->dbpath = dbpath;
-	this->Analize.Create(poolMainWindow,filenamehelperLua);
+	this->Analize.Create(poolMainWindow,filenamehelperLua,mecabdir);
 	this->MediaTargetExt = mediaTargetExt;
 
 	//ディフォルトのアイコンをロードして base64化する.
@@ -127,7 +127,7 @@ xreturn::r<bool> MediaFileIndex::CreateTable(const std::string& name)
 	assert(this->db != NULL);
 
 	int ret ;
-	char create_sql[] = "CREATE VIRTUAL TABLE media  USING FTS3  ( "
+	char create_sql[] = "CREATE VIRTUAL TABLE media  USING FTS4  ( "
 //                       "               id           INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" //fts3では auto inclimenが効かないらしい。
                                                                                                   //ユニーク判定は dir と filename の組み合わせで行う。
                        "               sizehash     uint    NOT NULL"
@@ -163,7 +163,7 @@ xreturn::r<bool> MediaFileIndex::CreateTable(const std::string& name)
 	return true;
 }
 
-xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,std::function<bool(const MediaFileIndex::SearchResult& sr)> callback) const
+xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,unsigned int from,unsigned int to,std::function<bool(const MediaFileIndex::SearchResult& sr)> callback) const
 {
 	_USE_WINDOWS_ENCODING;
 
@@ -174,13 +174,12 @@ xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,std::fun
 	std::list<std::string> wordsArray;
 	std::string typeQuery;
 	std::string orderQuery;
-	std::string limitQuery;
 	auto qlist = XLStringUtil::split(" ",q);
 	for(auto it = qlist.begin() ; it != qlist.end() ; ++it)
 	{
 		if (it->find("type=") == 0)
 		{//検索種類限定
-			typeQuery = SQLAppend(" AND type = %Q ",  it->c_str() + 5);
+			typeQuery = SQLAppend("type = %Q ",  it->c_str() + 5);
 		}
 		else if (it->find("order=") == 0)
 		{//並び順
@@ -194,66 +193,30 @@ xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,std::fun
 			}
 		}
 	}
-	if (limitQuery.empty())
-	{
-		limitQuery = " limit 15";
-	}
 	if (orderQuery.empty())
 	{
-		orderQuery = " order by rank desc,accesstime desc ";
+//		orderQuery = " order by rank desc,accesstime desc ";
 	}
-	std::string sql = "SELECT sizehash,accesstime,rank,type,dir,filename,title,artist,album,alias,image FROM media WHERE 1 = 1 ";
-	sql += typeQuery;
-
-	if (! wordsArray.empty())
+	std::string sql = "SELECT sizehash,accesstime,rank,type,dir,filename,title,artist,album,alias,image FROM media ";
+	std::list<std::string> whereList;
+	if (! typeQuery.empty() )
 	{
-		//入力された文字 そのままでバイグラムを作る
-		std::string wordBiGram =  this->Analize.makeListToBigram(wordsArray);
-		//入力された文字を正規化する。
-		wordsArray = this->Analize.makeListToCleanup(wordsArray);
+		whereList.push_back(typeQuery);
+	}
+	if (! wordsArray.empty() )
+	{
+		std::string searchBigram = this->Analize.makeListToBigram(wordsArray);
+		whereList.push_back( SQLAppend("searchdata MATCH (%Q)",  searchBigram.c_str()) );
+	}
 
-		//正規化しただけのバイグラム
-		std::string KanjiBiGram =  this->Analize.makeListToBigram(wordsArray);
-
-		//誤変換した漢字でも検索できるように読みで探す.
-		std::string YomiBiGram = this->Analize.makeListToBigram(
-			XLStringUtil::array_map(wordsArray,[](const std::string& _){ return XLStringUtil::KanjiAndKanakanaToHiragana(_); } ) 
-		);
-
-		//ローマ字のままで入れた場合の補正
-		std::string romajiTypoBiGram = this->Analize.makeListToBigram(
-			XLStringUtil::array_map(wordsArray,[](const std::string& _){ return XLStringUtil::RomajiToHiragana(_); } ) 
-		);
-
-		//かな入力で変換いれないで入力した場合の補正
-		std::string kanaTypoBiGram = this->Analize.makeListToBigram(
-			XLStringUtil::array_map(wordsArray,[](const std::string& _){ return XLStringUtil::RomajiToHiragana(_); } ) 
-		);
-
-		sql += SQLAppend(" AND searchdata MATCH (%Q)",  wordBiGram.c_str());
-		sql += " UNION "; //sqliteの match OR がどうも上手く動作しないので UNIONで補う。クソDBが
-
-		sql += "SELECT sizehash,accesstime,rank,type,dir,filename,title,artist,album,alias,image FROM media WHERE 1 = 1 ";
-		sql += typeQuery;
-		sql += SQLAppend(" AND searchdata MATCH (%Q)",  KanjiBiGram.c_str());
-		sql += " UNION ";
-
-		sql += "SELECT sizehash,accesstime,rank,type,dir,filename,title,artist,album,alias,image FROM media WHERE 1 = 1 ";
-		sql += typeQuery;
-		sql += SQLAppend(" AND searchdata MATCH (%Q)",  YomiBiGram.c_str());
-		sql += " UNION ";
-
-		sql += "SELECT sizehash,accesstime,rank,type,dir,filename,title,artist,album,alias,image FROM media WHERE 1 = 1 ";
-		sql += typeQuery;
-		sql += SQLAppend(" AND searchdata MATCH (%Q)",  romajiTypoBiGram.c_str());
-		sql += " UNION ";
-
-		sql += "SELECT sizehash,accesstime,rank,type,dir,filename,title,artist,album,alias,image FROM media WHERE 1 = 1 ";
-		sql += typeQuery;
-		sql += SQLAppend(" AND searchdata MATCH (%Q)",  kanaTypoBiGram.c_str());
+	if (! whereList.empty())
+	{
+		sql +=  "WHERE " + XLStringUtil::join(" AND " , whereList);
 	}
 	sql += orderQuery;
-	sql += limitQuery;
+
+	if (from > to) std::swap(from,to);
+	sql += SQLAppend(" limit %d OFFSET %d",  to - from,from );
 
 	this->PoolMainWindow->SyncInvokeLog(std::string() + "検索sql発行:" + sql ,LOG_LEVEL_DEBUG);
 
@@ -264,6 +227,7 @@ xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,std::fun
 		std::string msg =std::string() + "sql発行に失敗しました. sqlite:" + sqlite3_errmsg(this->db) + " SQL:" + sql ;
 		return xreturn::error( msg );
 	}
+	this->PoolMainWindow->SyncInvokeLog(std::string() + "SQL 発行完了done." ,LOG_LEVEL_DEBUG);
 	for (;;) 
 	{
 		ret = sqlite3_step(stm);
@@ -308,6 +272,7 @@ xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,std::fun
 		}
 	}
 	sqlite3_finalize(stm);
+	this->PoolMainWindow->SyncInvokeLog(std::string() + "find done." ,LOG_LEVEL_DEBUG);
 	return true;
 }
 
@@ -434,7 +399,7 @@ xreturn::r< bool > MediaFileIndex::SQLFindDir(const std::string& dir,std::map<st
 {
 	_USE_WINDOWS_ENCODING;
 
-	char * sqlbuffer = sqlite3_mprintf("SELECT filename,sizehash FROM media WHERE dir = %Q" , dir.c_str() );
+	char * sqlbuffer = sqlite3_mprintf("SELECT filename,sizehash FROM media WHERE dir = %Q" , _A2U(dir.c_str()) );
 	if (!sqlbuffer)
 	{
 		return xreturn::error("sql用メモリ確保に失敗しました.");
@@ -482,11 +447,21 @@ xreturn::r<bool > MediaFileIndex::SQLInsertFile(const std::string& dir,const std
 	int rank;
 	int part;
 	std::string searchdata;
-	this->Analize.Analize(dir,filename,&title,&artist,&album,&alias,&part,&rank,&searchdata);
+	auto r1 = this->Analize.Analize(dir,filename,&title,&artist,&album,&alias,&part,&rank,&searchdata);
+	if (!r1)
+	{
+		this->PoolMainWindow->SyncInvokeLog(std::string() + "ファイル解析中にエラーが発生しました。スキップします。 エラー:" + r1.getErrorMessage() , LOG_LEVEL_ERROR);
+	}
 
 	//一覧に出すために、ファイルのスクリーンショットを取得
 	std::vector<char> pngImage;
-	this->ImageShot.Shot(dir,filename,&pngImage);
+	auto r2 = this->ImageShot.Shot(dir,filename,&pngImage);
+	if (!r2)
+	{
+		this->PoolMainWindow->SyncInvokeLog(std::string() + "サムネイル撮影中にエラーが発生しました。スキップします。 エラー:" + r2.getErrorMessage() , LOG_LEVEL_ERROR);
+		pngImage.clear();
+	}
+	this->PoolMainWindow->SyncInvokeLog(std::string() + "index追加:"+dir+"\\"+filename);
 
 	//UTF8に変換
 	std::string dirUTF8 = _A2U(dir.c_str());
@@ -555,11 +530,20 @@ xreturn::r<bool > MediaFileIndex::SQLUpdateFile(const std::string& dir,const std
 	int rank;
 	int part;
 	std::string searchdata;
-	this->Analize.Analize(dir,filename,&title,&artist,&album,&alias,&part,&rank,&searchdata);
+	auto r1 = this->Analize.Analize(dir,filename,&title,&artist,&album,&alias,&part,&rank,&searchdata);
+	if (!r1)
+	{
+		this->PoolMainWindow->SyncInvokeLog(std::string() + "ファイル解析中にエラーが発生しました。スキップします。 エラー:" + r1.getErrorMessage() , LOG_LEVEL_ERROR);
+	}
 
 	//一覧に出すために、ファイルのスクリーンショットを取得
 	std::vector<char> pngImage;
-	this->ImageShot.Shot(dir,filename,&pngImage);
+	auto r2 = this->ImageShot.Shot(dir,filename,&pngImage);
+	if (!r2)
+	{
+		this->PoolMainWindow->SyncInvokeLog(std::string() + "サムネイル撮影中にエラーが発生しました。スキップします。 エラー:" + r2.getErrorMessage() , LOG_LEVEL_ERROR);
+		pngImage.clear();
+	}
 
 	//UTF8に変換
 	std::string dirUTF8 = _A2U(dir.c_str());
@@ -804,7 +788,7 @@ void MediaFileIndex::AppendConvertRecognitionList(std::list<std::string> * list 
 		,"｢","\t"
 		,"｣","\t"
 		,"_","\t"
-		,NULL //終端
+		,NULL,NULL //終端
 	};
 	str2 = XLStringUtil::replace(str2,replaceCharTable);
 

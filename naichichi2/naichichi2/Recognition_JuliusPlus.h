@@ -1,7 +1,7 @@
 ﻿#pragma once;
 #include "common.h"
 #include "Recognition_JuliusPlusRule.h"
-#include <boost/thread.hpp>
+#include "XLMachineLearningLibliear.h"
 
 
 extern "C"{
@@ -84,7 +84,7 @@ private:
 	//結果リストの開放
 	void FreeAllSentenceList(std::list<OncSentence*> *allSentence) const;
 	//plusのスコアを計算します。
-	float computePlusScore(const std::list<OneNode*>& nodes,float score,int sentnum,float mseclen) const;
+	float computePlusScore(float cmscoreAvg,float score,int sentnum,float mseclen) const;
 	//recog から plus 形式に変換します。
 	//メモリを余計に消費しますが、こちらのほうが見やすいと思います。
 	void convertResult(const Recog *recog, std::list<OncSentence*> *allSentence) const;
@@ -105,10 +105,12 @@ private:
 	//正規表現 capture を作ります。
 	const std::map<std::string,std::string> CreateCaptureStringWhereDICT(const OncSentence* Recognition_JuliusPlusResult) const;
 	std::string ConvertYomi(const WORD_INFO * wordinfo,int index) const;
+	//recog から plus 形式に変換します。
+	//メモリを余計に消費しますが、こちらのほうが見やすいと思います。
+	void Recognition_JuliusPlus::convertResultFile(const Recog *recog, std::list<OncSentence*> *allSentence) const;
 
 	//julius のコールバックイベント
 	void OnStatusRecready(Recog *recog);
-	void OnStatusRecstart(Recog *recog);
 	void OnOutputResult(Recog *recog);
 	void OnRecordAdinTrigger(Recog *recog, SP16 *speech, int samplenum);
 
@@ -136,6 +138,8 @@ private:
 	std::vector<SP16> WaveFileData;
 	//ダミーのコールバック
 	CallbackDataStruct* DummyCallback;
+	//Juliusが入力受付状態になっているかのフラグ
+	bool JuliusInputReady;
 
 	//マイクから読み込んで実行するjulius
 	Jconf *jconf;
@@ -149,4 +153,6 @@ private:
 	boost::thread *Thread;
 
 	MainWindow* PoolMainWindow;
+	//SVM識別器
+	XLMachineLearningLibliear SVM;
 };

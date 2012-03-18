@@ -13,18 +13,10 @@
 
 void Recognition_JuliusPlus::OnStatusRecready(Recog *recog)
 {
-	if (recog->jconf->input.speech_input == SP_MIC || recog->jconf->input.speech_input == SP_NETAUDIO) {
-		this->PoolMainWindow->SyncInvokeLog("<<< Julius:please speak >>>");
-
-		//認識したwaveファイルを消去します。
-		this->WaveFileData.clear();
-	}
-}
-void Recognition_JuliusPlus::OnStatusRecstart(Recog *recog)
-{
-	if (recog->jconf->input.speech_input == SP_MIC || recog->jconf->input.speech_input == SP_NETAUDIO) {
-		std::cout << "\r                    \r";
-	}
+	//Juliusが入力待ちになっているかどうか
+	this->JuliusInputReady = true;
+	//認識したwaveファイルを消去します。
+	this->WaveFileData.clear();
 }
 
 //認識結果の一部を waveで保存する.
@@ -96,6 +88,7 @@ bool Recognition_JuliusPlus::checkDictation(Recog *recog,const OncSentence* sent
 	//認識した結果の最初の呼びかけの部分を保存.
 	WaveCutter(recog,sentence->all_frame,(*it3)->begin_frame-1,(*it3)->end_frame, waveFilename );
 
+
 	//もう一つの julius インスタンスで wave ファイルからの認識をやります.
 	//これで過剰マッチを完全に叩き落とします。
 	//結果は、this->DictationCheckString に保存されます。
@@ -139,6 +132,7 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 	}
 
 
+
 	int i = 1;
 	for(auto it = allSentence.begin() ; it != allSentence.end() ; ++it, ++i)
 	{
@@ -164,12 +158,13 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 		}
 
 		bool isok = false;
-		this->PoolMainWindow->SyncInvokeLog(num2str(i) + ". " + "plus_sentence_score:" + num2str((*it)->plus_sentence_score) + " score:" + num2str((*it)->score),LOG_LEVEL_DEBUG);
-		if ( ! ( (*it)->plus_sentence_score >= this->BasicRuleConfidenceFilter ) )
-		{
-			this->PoolMainWindow->SyncInvokeLog(std::string() + "誤認識、スコア(" + num2str((*it)->plus_sentence_score) + ")が足りない。" + num2str(this->BasicRuleConfidenceFilter) + "以上が合格",LOG_LEVEL_DEBUG);
-		}
-		else 
+//スコアによる棄却をやめて、SVMに頼りますw
+//		this->PoolMainWindow->SyncInvokeLog(num2str(i) + ". " + "plus_sentence_score:" + num2str((*it)->plus_sentence_score) + " score:" + num2str((*it)->score),LOG_LEVEL_DEBUG);
+//		if ( ! ( (*it)->plus_sentence_score >= this->BasicRuleConfidenceFilter ) )
+//		{
+//			this->PoolMainWindow->SyncInvokeLog(std::string() + "誤認識、スコア(" + num2str((*it)->plus_sentence_score) + ")が足りない。" + num2str(this->BasicRuleConfidenceFilter) + "以上が合格",LOG_LEVEL_DEBUG);
+//		}
+//		else 
 		{
 			//検出した呼びかけをもう一度再検証する。
 			bool dictationCheck = checkDictation(recog,*it);
@@ -208,17 +203,16 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 			}
 			else
 			{
-				//本当はcapture も渡せるんだけどねー
-				/////C++でやろうとすると 宣言がめんどいので省略するべさー
 				const std::map<std::string,std::string> capture = CreateCaptureStringWhereDICT(*it);
-				/////
-//				callback->callbackFunctionalObject();
+				const double plus_sentence_score = (*it)->plus_sentence_score;
+
 				//マッチしたのでコールバックする
 				std::string matchstring=word.str();
 				this->PoolMainWindow->SyncInvokePopupMessage("音声認識",matchstring);
-				this->PoolMainWindow->SyncInvoke( [=](){
+				this->PoolMainWindow->AsyncInvoke( [=](){
+					//非同期なのでコピーして無効になるようなポインタは使わないでね。
 					this->PoolMainWindow->ScriptManager.VoiceRecogntion
-						(callback,capture,matchstring,0,(*it)->plus_sentence_score);
+						(callback,capture,matchstring,0,plus_sentence_score);
 				} );
 			}
 		}
@@ -298,7 +292,10 @@ const std::map<std::string,std::string> Recognition_JuliusPlus::CreateCaptureStr
 //認識waveファイルの断片が入ります。
 void Recognition_JuliusPlus::OnRecordAdinTrigger(Recog *recog, SP16 *speech, int samplenum)
 {
+	//Waveの断片をつなぎあわせます。
 	this->WaveFileData.insert(WaveFileData.end() , speech , speech + samplenum);
+	//Julius入力中
+	this->JuliusInputReady = false;
 }
 
 //結果リストの開放
@@ -316,7 +313,7 @@ void Recognition_JuliusPlus::FreeAllSentenceList(std::list<OncSentence*> *allSen
 }
 
 //plusのスコアを計算します。
-float Recognition_JuliusPlus::computePlusScore(const std::list<OneNode*>& nodes,float score,int sentnum,float mseclen) const
+float Recognition_JuliusPlus::computePlusScore(float cmscoreAvg,float score,int sentnum,float mseclen) const
 {
 	//まずは、文のスコアを録音時間で割ります。
 	float plus_sentence_score = score / mseclen;
@@ -346,15 +343,8 @@ float Recognition_JuliusPlus::computePlusScore(const std::list<OneNode*>& nodes,
 		break;
 	}
 
-	//cmscore の平均値
-	float cmsplus = 0;
-	for ( auto it = nodes.begin() ; it != nodes.end() ; ++ it )
-	{
-		cmsplus += (*it)->cmscore;
-	}
-	cmsplus = cmsplus / nodes.size();
-	cmsplus = (1 - cmsplus + 1) * 10; //反転させて10倍してペナルティとする。大きいほど罰則がでかい
-
+	//cmscore の平均値を反転させて10倍してペナルティとする。大きいほど罰則がでかい
+	float cmsplus = (1 - cmscoreAvg + 1) * 10; 
 	plus_sentence_score *= cmsplus;	//cmscore によるペナルティを入れる.
 
 	//で、このスコアで見れば、
@@ -490,6 +480,8 @@ void Recognition_JuliusPlus::convertResult(const Recog *recog, std::list<OncSent
 
 			//一文
 			OncSentence * oneSentence = new OncSentence;
+			//cmsscoreの平均値
+			float cmscoreAvg = 0;
 
 			// output word sequence like Julius 
 			//0 , [1 , 2, 3, 4], 5, と先頭と最後を除いている、開始終端、記号を抜くため
@@ -525,6 +517,8 @@ void Recognition_JuliusPlus::convertResult(const Recog *recog, std::list<OncSent
 
 				//cmscoreの数字(このままでは使えない子状態)
 				oneNode->cmscore = s->confidence[i];
+				//平均を求めるために追加します。
+				cmscoreAvg+=oneNode->cmscore;
 
 				//開始フレームとスコアを取得します。
 				for (auto align = s->align; align; align = align->next)
@@ -562,9 +556,12 @@ void Recognition_JuliusPlus::convertResult(const Recog *recog, std::list<OncSent
 			//ので、そのままだと使えない。
 			oneSentence->score = s->score;
 			oneSentence->all_frame = r->result.num_frame;
+
+			//cmscore の平均値
+			cmscoreAvg = cmscoreAvg / oneSentence->nodes.size();
+
 			//多少使えるスコアを計算します。
-			//			oneSentence->plus_sentence_score = computePlusScore(oneSentence->nodes,s->score,r->result.sentnum,mseclen);
-			oneSentence->plus_sentence_score = computePlusScore(oneSentence->nodes,s->score,hypothesisPenalty,mseclen);
+			oneSentence->plus_sentence_score = computePlusScore(cmscoreAvg,s->score,hypothesisPenalty,mseclen);
 			allSentence->push_back(oneSentence);
 		}
 	}
@@ -580,8 +577,11 @@ Recognition_JuliusPlus::Recognition_JuliusPlus()
 	this->jconfFile = NULL;
 	this->IsNeedUpdateRule = true;
 	this->LocalCaptureRuleNodeCount = 0;
+	this->JuliusInputReady = true; //すぎに終了させてしまうシーンもあるのでとりあえず Ready ということにしておく。
 
 	this->Grammer = NULL;
+	//SVM学習モデル
+	this->SVM.LoadModel("__svm_model.dat");
 }
 
 Recognition_JuliusPlus::~Recognition_JuliusPlus()
@@ -1127,6 +1127,12 @@ void Recognition_JuliusPlus::JuliusStop()
 {
 	if (this->recog)
 	{
+		//Juliusがビジーでなくなるまで待機
+		while(! this->JuliusInputReady )
+		{
+			::Sleep(0);
+		}
+
 		//ストリームを閉じる
 		j_close_stream(this->recog);
 
@@ -1195,10 +1201,6 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusStart()
 		{
 			((Recognition_JuliusPlus*)_this)->OnStatusRecready(recog);
 		}
-		static void status_recstart(Recog *recog, void *_this)
-		{
-			((Recognition_JuliusPlus*)_this)->OnStatusRecstart(recog);
-		}
 		static void output_result(Recog *recog, void *_this)
 		{
 			((Recognition_JuliusPlus*)_this)->OnOutputResult(recog);
@@ -1209,7 +1211,6 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusStart()
 		}
 	};
 	callback_add(this->recog, CALLBACK_EVENT_SPEECH_READY, _ref::status_recready, this);
-	callback_add(this->recog, CALLBACK_EVENT_SPEECH_START, _ref::status_recstart, this);
 	callback_add(this->recog, CALLBACK_RESULT, _ref::output_result, this);
 	callback_add_adin(this->recog, CALLBACK_ADIN_TRIGGERED, _ref::record_adin_trigger, this);
 
@@ -1234,11 +1235,18 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusStart()
 	return true;
 }
 
+
+
 //ディクテーションフィルター利用時の認識
 void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 {
 	this->DictationCheckString = "";
-	for(RecogProcess* r = recog->process_list; r ; r=r->next) 
+	//喋った時間の総数
+	const float mseclen = (float)recog->mfcclist->param->samplenum * (float)recog->jconf->input.period * (float)recog->jconf->input.frameshift / 10000.0f;
+	//仮説の数によるペナルティ
+	const int hypothesisPenalty = countHypothesisPenalty(recog);
+
+	for(const RecogProcess* r = recog->process_list; r ; r=r->next) 
 	{
 		//ゴミを消します。
 		if (! r->live || r->result.status < 0 ) 
@@ -1247,35 +1255,122 @@ void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 		}
 
 		// output results for all the obtained sentences
-		auto winfo = r->lm->winfo;
+		const auto winfo = r->lm->winfo;
 		for(auto n = 0; n < r->result.sentnum; n++) 
 		{ // for all sentences
 			const auto s = &(r->result.sent[n]);
 			const auto seq = s->word;
 			const auto seqnum = s->word_num;
 
-			//呼びかけを取得します。
-			for(int i = 0 ; i < seqnum ; i ++)
+			int i_seq;
+			// output word sequence like Julius 
+			//0 , [1 , 2, 3, 4], 5, と先頭と最後を除いている、開始終端、記号を抜くため
+			int i;
+			for(i = 0;i<seqnum;i++)
 			{
-				int i_seq = seq[i];
-				//ゴミデータは無視します。
-				if ( strcmp(winfo->woutput[i_seq]  , "<s>") == 0 || 
-					strcmp(winfo->woutput[i_seq]  , "</s>") == 0 || 
-					strcmp(winfo->woutput[i_seq]  , "gomi") == 0 
-					)
-				{
+				//1単語 --> 単語の集合が文になるよ
+				i_seq = seq[i];
+
+				//開始と終了を飛ばす
+				if (	strcmp(winfo->woutput[i_seq]  , "<s>") == 0 
+					||  strcmp(winfo->woutput[i_seq]  , "</s>") == 0 
+				){
 					continue;
 				}
-				//たぶんこれが呼びかけ。
-				this->DictationCheckString = Recognition_JuliusPlusRule::converPress( ConvertYomi(winfo,i_seq) );
 				break;
 			}
+			if (i >= seqnum) 
+			{
+				continue;
+			}
+			//素性を詰めていきます。
+			std::vector<feature_node> feature_nodeVector;
+			feature_nodeVector.resize(r->lm->am->mfcc->param->header.samplenum * r->lm->am->mfcc->param->veclen + 7 + 1);
+			feature_node* feature_nodeP = &feature_nodeVector[0];
+
+			//dict から plus側のrule を求める
+			int dict = atoi(winfo->wname[i_seq]);
+
+			//マッチよみがなを取得する
+			std::string yomi = ConvertYomi(winfo,i_seq);
+
+			//cmscoreの数字(このままでは使えない子状態)
+			auto cmscore = s->confidence[i];
+			//素性1 cmsscore
+			feature_nodeP->index = 1;
+			feature_nodeP->value = cmscore;
+			feature_nodeP++;
+
+			//julius のスコア 尤度らしい。マイナス値。0に近いほど正しいらしい。
+			//「が」、へんてこな文章を入れても、スコアが高くなってしまうし、長い文章を入れるとスコアが絶望的に低くなる
+			//ので、そのままだと使えない。
+			auto score = s->score;
+
+			//素性2 文章スコア
+			feature_nodeP->index = 2;
+			feature_nodeP->value = score;
+			feature_nodeP++;
+
+			auto all_frame = r->result.num_frame;
+
+			//素性3 フレーム数
+			feature_nodeP->index = 3;
+			feature_nodeP->value = all_frame;
+			feature_nodeP++;
+
+			//素性4 仮説の数によるペナルティ
+			feature_nodeP->index = 4;
+			feature_nodeP->value = hypothesisPenalty;
+			feature_nodeP++;
+
+			//素性5 録音時間
+			feature_nodeP->index = 5;
+			feature_nodeP->value = mseclen;
+			feature_nodeP++;
+
+			//多少使えるスコアを計算します。
+			//			oneSentence->plus_sentence_score = computePlusScore(oneSentence->nodes,s->score,r->result.sentnum,mseclen);
+			auto plus_sentence_score = computePlusScore(cmscore,s->score,hypothesisPenalty,mseclen);
+			//素性6 plusスコア
+			feature_nodeP->index = 6;
+			feature_nodeP->value = plus_sentence_score;
+			feature_nodeP++;
+
+			//素性7 サンプル数？
+			feature_nodeP->index = 7;
+			feature_nodeP->value = r->lm->am->mfcc->param->header.samplenum;
+			feature_nodeP++;
+
+			//素性8～ これがきめてになった。
+			int feature = 8;
+			for(unsigned int vecI = 0 ; vecI < r->lm->am->mfcc->param->header.samplenum ;vecI++ )
+			{
+				for(int vecN = 0 ; vecN < r->lm->am->mfcc->param->veclen ;vecN++ )
+				{
+					feature_nodeP->index = feature;
+					feature_nodeP->value = r->lm->am->mfcc->param->parvec[vecI][vecN];
+					feature++;
+					feature_nodeP++;
+				}
+			}
+
+			//終端
+			feature_nodeP->index = feature;
+			feature_nodeP->value = -1;
+			
+			int classid = this->SVM.Predict(feature_nodeVector);
+			if ( classid != 1 )
+			{
+				std::cout << "SVMによる棄却" << std::endl;
+				this->DictationCheckString = "";
+				return ;
+			}
+			//たぶんこれが呼びかけ
+			this->DictationCheckString = Recognition_JuliusPlusRule::converPress( ConvertYomi(winfo,i_seq) );
 			return ;
 		}
 	}
-	return ;
 }
-
 
 xreturn::r<bool> Recognition_JuliusPlus::JuliusFileStart()
 {

@@ -42,7 +42,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <DisableSpecificWarnings>4996;4995;</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_MBCS;SQLITE_ENABLE_FTS4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS;SQLITE_ENABLE_FTS4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -55,7 +55,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4996;4995;</DisableSpecificWarnings>
-      <PreprocessorDefinitions>_MBCS;SQLITE_ENABLE_FTS4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS;SQLITE_ENABLE_FTS4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

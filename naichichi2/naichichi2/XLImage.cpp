@@ -13,20 +13,23 @@
 
 XLImage::XLImage()
 {
-	this->bitmap = NULL;
+	this->image = NULL;
+}
+XLImage::XLImage(Gdiplus::Image* newImage)
+{
+	this->image = newImage;
 }
 
 XLImage::~XLImage()
 {
 	Clear();
 }
-
 void XLImage::Clear()
 {
-	if (this->bitmap)
+	if (this->image)
 	{
-		delete this->bitmap;
-		this->bitmap = NULL;
+		delete this->image;
+		this->image = NULL;
 	}
 }
 
@@ -36,8 +39,8 @@ xreturn::r<bool> XLImage::Load(const std::string & fileName)
 	_USE_WINDOWS_ENCODING;
 
 	Clear();
-	this->bitmap = Gdiplus::Bitmap::FromFile(_A2W(fileName.c_str()) , TRUE);
-	if (!this->bitmap)
+	this->image = Gdiplus::Bitmap::FromFile(_A2W(fileName.c_str()) , TRUE);
+	if (!this->image)
 	{
 		return xreturn::error(std::string() + "ƒtƒ@ƒCƒ‹" + fileName + "‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½");
 	}
@@ -63,8 +66,8 @@ xreturn::r<bool> XLImage::Load(const std::vector<char> & data)
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 	
 
-	this->bitmap = Gdiplus::Bitmap::FromStream(iStream , TRUE);
-	if (!this->bitmap)
+	this->image = Gdiplus::Bitmap::FromStream(iStream , TRUE);
+	if (!this->image)
 	{
 		return xreturn::error(std::string() + "ƒƒ‚ƒŠ‚©‚ç‰æ‘œ‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½");
 	}
@@ -75,8 +78,8 @@ xreturn::r<bool> XLImage::Load(const std::vector<char> & data)
 xreturn::r<bool> XLImage::Load(HBITMAP hbitmap)
 {
 	Clear();
-	this->bitmap = Gdiplus::Bitmap::FromHBITMAP(hbitmap,NULL);
-	if (!this->bitmap)
+	this->image = Gdiplus::Bitmap::FromHBITMAP(hbitmap,NULL);
+	if (!this->image)
 	{
 		return xreturn::error(std::string() + "HBITMAP‚©‚ç‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½");
 	}
@@ -87,8 +90,8 @@ xreturn::r<bool> XLImage::Load(HBITMAP hbitmap)
 xreturn::r<bool> XLImage::Load(HICON hicon)
 {
 	Clear();
-	this->bitmap = Gdiplus::Bitmap::FromHICON(hicon);
-	if (!this->bitmap)
+	this->image = Gdiplus::Bitmap::FromHICON(hicon);
+	if (!this->image)
 	{
 		return xreturn::error(std::string() + "HBITMAP‚©‚ç‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½");
 	}
@@ -123,11 +126,11 @@ xreturn::r<bool> XLImage::Save(const std::string & fileName,int option) const
 		params.Parameter[0].NumberOfValues	= 1;
 		params.Parameter[0].Value			= &option;
 
-		status = this->bitmap->Save(_A2W(fileName.c_str()) , &clsid ,&params);
+		status = this->image->Save(_A2W(fileName.c_str()) , &clsid ,&params);
 	}
 	else
 	{
-		status = this->bitmap->Save(_A2W(fileName.c_str()) , &clsid);
+		status = this->image->Save(_A2W(fileName.c_str()) , &clsid);
 	}
 	if (status != Gdiplus::Ok)
 	{
@@ -171,11 +174,11 @@ xreturn::r<bool> XLImage::Save(const std::string & ext,std::vector<char> * data,
 		params.Parameter[0].NumberOfValues	= 1;
 		params.Parameter[0].Value			= &option;
 
-		status = this->bitmap->Save(iStream , &clsid ,&params);
+		status = this->image->Save(iStream , &clsid ,&params);
 	}
 	else
 	{
-		status = this->bitmap->Save(iStream , &clsid);
+		status = this->image->Save(iStream , &clsid);
 	}
 	if (status != Gdiplus::Ok)
 	{
@@ -201,8 +204,8 @@ void XLImage::Draw(XLImage* image,int x,int y) const
 	assert(IsEnable()) ;
 	assert(image->IsEnable()) ;
 
-	Gdiplus::Graphics graphics(this->bitmap);
-	graphics.DrawImage(this->bitmap ,x ,y);
+	Gdiplus::Graphics graphics(this->image);
+	graphics.DrawImage(this->image ,x ,y);
 }
 
 //•`‰æ
@@ -211,8 +214,8 @@ void XLImage::Draw(XLImage* image,int x,int y,int width,int height) const
 	assert(IsEnable()) ;
 	assert(image->IsEnable()) ;
 
-	Gdiplus::Graphics graphics(this->bitmap);
-	graphics.DrawImage(this->bitmap ,x ,y,width,height);
+	Gdiplus::Graphics graphics(this->image);
+	graphics.DrawImage(this->image ,x ,y,width,height);
 }
 
 
@@ -222,14 +225,22 @@ void XLImage::Draw(HDC dc,int x,int y) const
 	assert(IsEnable()) ;
 
 	Gdiplus::Graphics graphics(dc);
-	graphics.DrawImage(this->bitmap ,x ,y);
+	graphics.DrawImage(this->image ,x ,y);
 }
 //•`‰æ
 void XLImage::Draw(HDC dc,int x,int y,int width,int height) const
 {
 	Gdiplus::Graphics graphics(dc);
-	graphics.DrawImage(this->bitmap ,x ,y,width,height);
+	graphics.DrawImage(this->image ,x ,y,width,height);
 }
+
+//•ÏŒ`
+Gdiplus::Image* XLImage::GetThumbnailImage(int width,int height) 
+{
+	return this->image->GetThumbnailImage(width,height,NULL,NULL);
+}
+
+
 
 xreturn::r<bool> XLImage::findEncoder(const std::string & ext,CLSID* clsid) const
 {

@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "ScriptManager.h"
 #include "resource.h"
+#include "XLStringUtil.h"
 
 #include "MainWindow.h"
 const std::string HIDDEN_WINDOW_NAME = "hidden";
@@ -340,7 +341,8 @@ bool MainWindow::OnInit()
 		std::map<std::string,std::string> mediaDefualtIcon = this->Config.FindGetsToMap("media__defualticon_"); 
 		std::string dbpath = this->Config.GetBaseDirectory() + "\\media.db"; //this->Config.Get("media__dbpath",""); 
 		std::string filenamehelperLua = this->Config.Get("media__filenamehelper","config_media_filename.lua"); 
-		this->Media.Create(this,mediaDirectoryListArray,dbpath,filenamehelperLua,mediaTargetext,mediaDefualtIcon);
+		std::string mecabdir = this->Config.Get("media__mecabdir","mecab"); 
+		this->Media.Create(this,mediaDirectoryListArray,dbpath,filenamehelperLua,mecabdir,mediaTargetext,mediaDefualtIcon);
 	}
 
 	//アクションのスクリプト管理
@@ -394,7 +396,7 @@ void MainWindow::SyncInvoke(std::function<void (void) > func)
 	);
 }
 
-void MainWindow::AnSyncInvoke(std::function<void (void) > func)
+void MainWindow::AsyncInvoke(std::function<void (void) > func)
 {
 	struct callbackClass
 	{
@@ -488,9 +490,15 @@ void MainWindow::SyncInvokeLog(const std::string& log,LOG_LEVEL level )
 			}
 			//黒白に戻す.
 			SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-			//本文
-			WriteConsole(handle , log.c_str() , log.size(), NULL, NULL);
-			WriteConsole(handle , "\r\n" , 2 , NULL, NULL);
+			//本文 長すぎる文章を一気に書くと表示されないので、一行づつくぎって表示する.
+			std::list<std::string> l = XLStringUtil::split("\r\n",log);
+			for(std::list<std::string>::iterator it = l.begin() ; it != l.end() ; ++it)
+			{
+				WriteConsole(handle , it->c_str() , it->size(), NULL, NULL);
+				WriteConsole(handle , "\r\n" , 2 , NULL, NULL);
+			}
+
+
 		}
 	);
 }

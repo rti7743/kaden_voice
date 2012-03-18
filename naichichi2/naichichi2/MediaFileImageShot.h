@@ -21,5 +21,7 @@ private:
 	xreturn::r<bool> MediaFileImageShot::ConvertHBITMAPtoJPEGByte(HBITMAP hbitmap,std::vector<char> * image) const;
 	//HICONをjpegで保存します
 	xreturn::r<bool> MediaFileImageShot::ConvertHICONtoBytes(HICON hicon,std::vector<char> * image) const;
-
+	//zipファイルから一番最初に存在する画像データを取り出し jpegにして返します。
+	//電子書籍zipの表紙データになります。
+	xreturn::r<bool> MediaFileImageShot::ConvertZipToJPEGByte(const std::string& dir,const std::string& filename,std::vector<char> * image) const;
 };

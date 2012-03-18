@@ -62,7 +62,7 @@ public:
 	//メインスレッドコールバック 関数オブジェクト
 	void MainWindow::SyncInvoke(std::function<void (void) > func);
 	//メインスレッドで後で実行するコールバック
-	void MainWindow::AnSyncInvoke(std::function<void (void) > func);
+	void MainWindow::AsyncInvoke(std::function<void (void) > func);
 
 	
 	

@@ -14,6 +14,7 @@ class XLImage
 {
 public:
 	XLImage();
+	XLImage::XLImage(Gdiplus::Image* newImage);
 	virtual ~XLImage();
 
 	//‰æ‘œ“Ç‚İ‚İ
@@ -38,15 +39,17 @@ public:
 	void XLImage::Draw(HDC dc,int x,int y) const;
 	//•`‰æ
 	void XLImage::Draw(HDC dc,int x,int y,int width,int height) const;
+	//ƒTƒ€ƒlƒCƒ‹‚ğæ“¾‚·‚é
+	Gdiplus::Image* XLImage::GetThumbnailImage(int width,int height) ;
 private:
 	void XLImage::Clear();
 	xreturn::r<bool> XLImage::findEncoder(const std::string & ext,CLSID* clsid) const;
 	bool XLImage::IsEnable() const
 	{
-		return this->bitmap != NULL;
+		return this->image != NULL;
 	}
 
-	Gdiplus::Bitmap* bitmap;
+	Gdiplus::Image* image;
 };
 
 #endif // !defined(AFX_XLImage_H__A51E414C_8F9A_46E5_A5CF_364F04C9FA00__INCLUDED_)

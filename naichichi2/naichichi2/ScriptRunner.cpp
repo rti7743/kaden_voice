@@ -229,7 +229,6 @@ xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name,const
 	lua_newtable(this->LuaInstance);
 	for(std::map<std::string , std::string>::const_iterator i =match.begin() ; i != match.end() ; ++i )
 	{
-		this->PoolMainWindow->SyncInvokeLog(std::string() + " " + i->first + "=>" + i->second ,LOG_LEVEL_DEBUG);
 		lua_pushstringHelper(this->LuaInstance, i->first.c_str() );
 		lua_pushstringHelper(this->LuaInstance, i->second.c_str() );
 		lua_settable(this->LuaInstance, -3);
@@ -268,7 +267,6 @@ xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name,const
 	}
 	for( ; it != list.end() ; ++it)
 	{
-		this->PoolMainWindow->SyncInvokeLog(std::string() + " " + *it,LOG_LEVEL_DEBUG);
 		lua_pushstringHelper(this->LuaInstance, it->c_str() );
 	}
 
@@ -637,7 +635,7 @@ int ScriptRunner::l_speak(lua_State* L)
 int ScriptRunner::l_webload(lua_State* L)
 {
 	ScriptRunner* _this = __this(L);
-	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"webload") ,LOG_LEVEL_DEBUG);
+//	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"webload") ,LOG_LEVEL_DEBUG);
 
 	//テンプレート名
 	if (! lua_isstring(L,-2) )
@@ -768,6 +766,7 @@ int ScriptRunner::l_webload(lua_State* L)
 	//関数呼び出し
 	if ( lua_pcall( L, 1, 0, 0 ) )
 	{
+		std::string a = lua_tostringHelper(L, -1);
 		return luaL_errorHelper(L,func + "のテンプレート" + filename + " の実行中にエラー。 Lua:" + lua_tostringHelper(L, -1));
 	}
 
@@ -1020,6 +1019,16 @@ int ScriptRunner::l_execute(lua_State* L)
 	std::string args= lua_tostringHelper(L,-1);
 	//ベースディレクトリ
 	std::string baseDirectory = _this->PoolMainWindow->Config.GetBaseDirectory();
+
+	//拡張子
+	const std::string ext = XLStringUtil::strtolower(XLStringUtil::baseext_nodot( command ));
+	//動作を変更する拡張子はあるかな？ めったに使わないので、これでも速度に影響はないだろう。
+	const std::string overraideCommand =_this->PoolMainWindow->Config.Get(std::string("action__executeext_") + ext, "");
+	if (! overraideCommand.empty() )
+	{//あるので動作を上書きする.
+		args = XLStringUtil::chop( XLStringUtil::escapeshellarg(command) + " " + args );
+		command = overraideCommand;
+	}
 
 	auto r = ActionImplement::Execute("",command,args , baseDirectory );
 	if (!r)
@@ -1307,29 +1316,41 @@ int ScriptRunner::l_findmedia(lua_State* L)
 	ScriptRunner* _this = __this(L);
 	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"findmedia") ,LOG_LEVEL_DEBUG);
 
-	std::string query;
-
-	auto r1 = ScriptRunner::lua_crossdataToString(L ,-1);
+	auto r1 = ScriptRunner::lua_crossdataToString(L ,-3);
 	if (!r1)
 	{
 		return luaL_errorHelper(L,lua_funcdump(L,"findmedia") + "の第1引数が文字列ではありません");
 	}
-	query = r1;
+	std::string query = r1;
+
+	if (! lua_isnumber(L,-2) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"findmedia") + "の第2引数が数字ではありません");
+	}
+	unsigned int limitfrom = (unsigned int) lua_tonumber(L,-2);
+
+	if (! lua_isnumber(L,-1) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"findmedia") + "の第3引数が数字ではありません");
+	}
+	unsigned int limitto = (unsigned int) lua_tonumber(L,-1);
 
 	//クエリー投げて、結果をlua tableに変換します。
 	lua_newtable(L);
-	int count = 1;
-	_this->PoolMainWindow->Media.SearchQuery(query,
+	lua_pushstringHelper(L, "header_from" );
+	lua_pushunsigned(L,limitfrom + 1 );
+	lua_settable(L, -3);
+	lua_pushstringHelper(L, "header_to" );
+	lua_pushunsigned(L,limitto + 1 );
+	lua_settable(L, -3);
+
+	int count = limitfrom + 1;
+	_this->PoolMainWindow->Media.SearchQuery(query,limitfrom,limitto,
 			[&](const MediaFileIndex::SearchResult& sr) -> bool {
 					//2次元配列
 					lua_pushstringHelper(L, num2str(count) );
 					lua_newtable(L);
 					{
-//sqllite fts3 では 主キーのオートインクリメントが機能しないらしい。ゴミDB。
-//						lua_pushstring(L, "id" );
-//						lua_pushunsigned(L,(unsigned int)sr.id );	//long long ができないので・・・
-//						lua_settable(L, -3);
-
 						lua_pushstring(L, "sizehash" );
 						lua_pushunsigned(L,sr.sizehash );
 						lua_settable(L, -3);
@@ -1384,10 +1405,6 @@ int ScriptRunner::l_findmedia(lua_State* L)
 					}
 					lua_settable(L, -3);
 					count ++;
-					if (count >= 15)
-					{
-						return false;
-					}
 					return true;
 			}
 	);
@@ -1703,8 +1720,7 @@ std::string ScriptRunner::lua_dump(lua_State* L , int index,bool win32_nosjiscon
 	}
 	else if(lua_istable(L, index)) 
 	{
-		std::stringstream out;
-		out << "{" << std::endl;
+		std::string out = "{\r\n";
 		std::string nest_space(nest * 4, ' ');
 		lua_pushnil(L);
 		while (lua_next(L, index - 1) != 0) 
@@ -1715,12 +1731,12 @@ std::string ScriptRunner::lua_dump(lua_State* L , int index,bool win32_nosjiscon
 #else
 			std::string key = lua_tostring(L, -2);
 #endif
-			out << nest_space << key << ":" <<  lua_dump(L,-1 ,win32_nosjisconvert, nest + 1) << std::endl;
+			out += nest_space + key + ":" + lua_dump(L,-1 ,win32_nosjisconvert, nest + 1) + "\r\n";
 
 			lua_pop(L, 1);
 		}
-		out << nest_space << "}";
-		return out.str();
+		out += nest_space + "}\r\n";
+		return out;
 	}
 #ifdef _WINDOWS
 	return win32_nosjisconvert ? lua_typename(L, lua_type(L, index)) : _A2U(lua_typename(L, lua_type(L, index)));

@@ -359,7 +359,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 			PhraseTo phraseTo(pPhrase);
 			if (phraseTo.IsError())
 			{
-				this->PoolMainWindow->AnSyncInvoke( [=](){
+				this->PoolMainWindow->AsyncInvoke( [=](){
 					this->PoolMainWindow->ScriptManager.BadVoiceRecogntion(-5,"","",0,0,false); 
 				} );
 				return false;
@@ -402,7 +402,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 	{//テンポラリルール
 		if (SREngineConfidenceAvg < this->TemporaryRuleConfidenceFilter)
 		{//BAD
-			this->PoolMainWindow->AnSyncInvoke( [=](){
+			this->PoolMainWindow->AsyncInvoke( [=](){
 				this->PoolMainWindow->ScriptManager.BadVoiceRecogntion
 					(-1,matchString,"",0,SREngineConfidenceAvg,false);
 			} );
@@ -410,7 +410,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 		}
 		//上手くマッチしたらのでコールバックする
 		this->PoolMainWindow->SyncInvokePopupMessage("音声認識",matchString);
-		this->PoolMainWindow->AnSyncInvoke( [=](){
+		this->PoolMainWindow->AsyncInvoke( [=](){
 			this->PoolMainWindow->ScriptManager.VoiceRecogntion
 				(this->CallbackDictionary[funcID],capture,"",0,SREngineConfidenceAvg);
 		} );
@@ -423,7 +423,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 	{
 		if (! dictationCheck )
 		{//ディクテーションチェックの結果エラーになった
-			this->PoolMainWindow->AnSyncInvoke( [=](){
+			this->PoolMainWindow->AsyncInvoke( [=](){
 				this->PoolMainWindow->ScriptManager.BadVoiceRecogntion
 					(-2,matchString,dictationString,yobikakeEngineConfidence,SREngineConfidenceAvg,dictationCheck);
 			} );
@@ -434,7 +434,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 	//呼びかけの部分の信頼度
 	if (yobikakeEngineConfidence <  this->YobikakeRuleConfidenceFilter )
 	{//呼びかけの信頼度が足りない
-		this->PoolMainWindow->AnSyncInvoke( [=](){
+		this->PoolMainWindow->AsyncInvoke( [=](){
 			this->PoolMainWindow->ScriptManager.BadVoiceRecogntion
 				(-3,matchString,dictationString,yobikakeEngineConfidence,SREngineConfidenceAvg,dictationCheck);
 		} );
@@ -444,7 +444,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 	//全体を通しての信頼度
 	if (SREngineConfidenceAvg <  this->BasicRuleConfidenceFilter )
 	{//全体を通しての信頼度が足りない
-		this->PoolMainWindow->AnSyncInvoke( [=](){
+		this->PoolMainWindow->AsyncInvoke( [=](){
 			this->PoolMainWindow->ScriptManager.BadVoiceRecogntion
 				(-4,matchString,dictationString,yobikakeEngineConfidence,SREngineConfidenceAvg,dictationCheck);
 		} );
@@ -453,7 +453,7 @@ xreturn::r<bool> Recognition_SAPI::CallbackReco()
 
 	//マッチしたのでコールバックする
 	this->PoolMainWindow->SyncInvokePopupMessage("音声認識",matchString);
-	this->PoolMainWindow->AnSyncInvoke( [=](){
+	this->PoolMainWindow->AsyncInvoke( [=](){
 		this->PoolMainWindow->ScriptManager.VoiceRecogntion
 			(this->CallbackDictionary[funcID],capture,dictationString,yobikakeEngineConfidence,SREngineConfidenceAvg);
 	} );

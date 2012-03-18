@@ -11,7 +11,7 @@ MecabControl::~MecabControl(void)
 {
 }
 
-xreturn::r<bool> MecabControl::Create(MainWindow* poolMainWindow,const std::string& dicpath)
+xreturn::r<bool> MecabControl::Create(const std::string& dicpath)
 {
 	std::string option = std::string("-d ") + dicpath;
 	this->Tagger = MeCab::createTagger(option.c_str());
@@ -24,19 +24,14 @@ xreturn::r<bool> MecabControl::Create(MainWindow* poolMainWindow,const std::stri
 
 void MecabControl::Parse(const std::string& str,const std::function< void(const MeCab::Node* node) >& callbackNode)
 {
-	//ロックするので、 callbackNode の中でとてつもなく重いことしないでね。
+	const MeCab::Node* node = this->Tagger->parseToNode( str.c_str() );
+	if (node == NULL)
 	{
-		boost::unique_lock<boost::mutex> al(this->lock);
-
-		const MeCab::Node* node = this->Tagger->parseToNode( str.c_str() );
-		if (node == NULL)
-		{
-			return ;
-		}
-		for (; node; node = node->next) 
-		{
-			callbackNode(node);
-		}
+		return ;
+	}
+	for (; node; node = node->next) 
+	{
+		callbackNode(node);
 	}
 
 }

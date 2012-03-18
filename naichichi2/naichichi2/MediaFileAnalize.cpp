@@ -21,38 +21,43 @@ MediaFileAnalize::~MediaFileAnalize()
 		this->Runner = NULL;
 	}
 }
-xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::string& luaCommand)
+xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::string& luaCommand,const std::string& mecabCommand)
 {
 	this->PoolMainWindow = poolMainWindow;
 
 	this->PtrShell.CreateInstance(__uuidof(Shell32::Shell));
-	const std::string luafilename = poolMainWindow->Config.GetBaseDirectory() + "\\" + luaCommand;
+	const std::string luafilename = XLStringUtil::pathcombine( poolMainWindow->Config.GetBaseDirectory() , luaCommand);
 
 	//スクリプトのロード
 	this->Runner = new ScriptRunner(poolMainWindow , false );
 	this->Runner->LoadScript(luafilename);
+
+	const std::string mecabdir = XLStringUtil::pathcombine( poolMainWindow->Config.GetBaseDirectory() , mecabCommand);
+	this->Mecab.Create( mecabdir );
 	return true;
 
 }
 
-bool MediaFileAnalize::Analize(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank,  std::string* searchdata )
+xreturn::r<bool> MediaFileAnalize::Analize(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank,  std::string* searchdata )
 {
 	*part = 0;
 	*rank = 0;
-	if ( ! AnalizeLua(dir, filename , title, artist , album ,  alias , part ,rank) )
+	auto r1 = AnalizeLua(dir, filename , title, artist , album ,  alias , part ,rank);
+	if ( ! r1  )
 	{
-		return false;
+		return xreturn::error(r1.getError());
 	}
-	if ( ! AnalizeCOM(dir, filename , title, artist , album ,  alias , part ,rank) )
+	auto r2 = AnalizeCOM(dir, filename , title, artist , album ,  alias , part ,rank);
+	if ( ! r2  )
 	{
-		return false;
+		return xreturn::error(r2.getError());
 	}
 
 	//sqliteが日本語分かち書きに対応していないので、 バイグラムを作ってあげる
 	*searchdata = MediaFileAnalize::makesearcableData(filename + " " + *title + " " + *artist + " " + *album + " " + *alias);
 
 	//タイトルがないと表示した時にかっこわるいので、タイトルがないならファイル名を入れてあげる。
-	if (title->empty())
+	if (makeUserSideSearchableData(*title) == "")
 	{
 		*title = XLStringUtil::basenameonly(filename);
 	}
@@ -60,7 +65,7 @@ bool MediaFileAnalize::Analize(const std::string& dir,const std::string& filenam
 	return true;
 }
 
-bool MediaFileAnalize::AnalizeLua(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank)
+xreturn::r<bool> MediaFileAnalize::AnalizeLua(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank)
 {
 	if ( this->Runner->IsMethodExist("title") )
 	{
@@ -82,25 +87,50 @@ bool MediaFileAnalize::AnalizeLua(const std::string& dir,const std::string& file
 }
 
 
-bool MediaFileAnalize::AnalizeCOM(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank)
+xreturn::r<bool> MediaFileAnalize::AnalizeCOM(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank)
 {
-	_variant_t var((short)Shell32::ssfRECENT);
+	try
+	{
+		_variant_t var((short)Shell32::ssfRECENT);
 
-	Shell32::FolderPtr ptrFolder = this->PtrShell->NameSpace( dir.c_str() );
-	Shell32::FolderItemPtr ptrItem = ptrFolder->ParseName( filename.c_str() );
+		Shell32::FolderPtr ptrFolder = this->PtrShell->NameSpace( dir.c_str() );
+		Shell32::FolderItemPtr ptrItem = ptrFolder->ParseName( filename.c_str() );
 
-	std::string tmpartist;
-	tmpartist = ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 13); //アーティスト
-	if (tmpartist == "") tmpartist = ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 20);
-	*artist		+= tmpartist;
-	*title		+= ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 21);	//タイトル
-	*album		+= ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 14);  //アルバムのタイトル
-	*alias		+= ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 16);	//ジャンル
+		std::string tmpartist;
+		tmpartist = ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 13); //アーティスト
+		if (tmpartist == "") tmpartist = ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 20);
+		*artist		+= tmpartist;
+		*title		+= ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 21);	//タイトル
+		*album		+= ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 14);  //アルバムのタイトル
+		*alias		+= ptrFolder->GetDetailsOf( _variant_t((IDispatch *)ptrItem), 16);	//ジャンル
 
-	ptrItem.Release();
-	ptrFolder.Release();
-
+		ptrItem.Release();
+		ptrFolder.Release();
+	}
+	catch(_com_error& e)
+	{
+		return xreturn::error(std::string()+"com例外Shell32::Shell:" + e.ErrorMessage());
+	}
 	return true;
+}
+
+//漢字その他をすべてひらがなに直します
+std::string MediaFileAnalize::KanjiAndKanakanaToHiragana(const std::string& str)
+{
+	std::string yomi;
+	this->Mecab.Parse(str , [&](const MeCab::Node* node){
+		std::vector<std::string> kammalist = XLStringUtil::split_vector(",",node->feature);
+		if (kammalist.size() > 7 && kammalist[7] != "*")
+		{
+			yomi += kammalist[7];
+		}
+		else
+		{
+			yomi += std::string(node->surface, 0,node->length);
+		}
+	});
+	//mecabだとカタカナ読みしか取れないので、強制的にひらがなに直します。
+	return XLStringUtil::mb_convert_kana(yomi,"cHsa");
 }
 
 //検索可能データを作る
@@ -113,11 +143,33 @@ std::string MediaFileAnalize::makesearcableData(const std::string& str )
 			s = this->Runner->callFunction("makeplain",s);
 		}
 	}
+	std::string cleaupData,yomi,yomiCleaupData,romaji,kana;
+
+	//記号を消したデータを作ります。
+	cleaupData = this->makeUserSideSearchableData(s);
+	if (s == cleaupData) cleaupData = "";
+
+	//クリーンアップした読みも取ります。
+	yomiCleaupData =  KanjiAndKanakanaToHiragana(cleaupData);
+	if (cleaupData == yomiCleaupData) yomiCleaupData = "";
+
 	//漢字からよみがなを取ります。
-	std::string yomi =  XLStringUtil::KanjiAndKanakanaToHiragana(str);
-	//よみがなも含めたサーチ可能なデータを作ります。
+	yomi = KanjiAndKanakanaToHiragana(s);
+	if (yomi == yomiCleaupData) yomi = "";
+
+	//ローマ字のままで入れた場合の補正
+	romaji = XLStringUtil::mb_convert_typo(yomiCleaupData,"r");
+	if (romaji == cleaupData) romaji = "";
+
+	//かな入力で変換いれないで入力した場合の補正
+	kana = XLStringUtil::mb_convert_typo(yomiCleaupData,"k");
+	if (kana == cleaupData) kana = "";
+
+	//元のデータ + 記号消したデータ + 記号消した読み + 読み + ローマ字 + カナ
 	//バイグラムの形成
-	return XLStringUtil::join(" ", XLStringUtil::unique(	XLStringUtil::makebigram(   makeUserSideSearchableData(yomi + " " + str) ) ) );
+	return XLStringUtil::join(" ", XLStringUtil::unique(	XLStringUtil::makebigram(   makeUserSideSearchableData(
+		str + " " + cleaupData + " " + yomiCleaupData + " " + yomi + " " + romaji + " " + kana
+		) ) ) );
 }
 
 std::string MediaFileAnalize::makeListToBigram(const std::list<std::string>& list ) const
