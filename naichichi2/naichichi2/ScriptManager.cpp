@@ -111,10 +111,10 @@ void ScriptManager::VoiceRecogntion(const CallbackDataStruct* callback,const std
 }
 
 //喋り終わった時
-void ScriptManager::SpeakEnd(const CallbackDataStruct* callback)
+void ScriptManager::SpeakEnd(const CallbackDataStruct* callback,const std::string& text)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-	this->PoolMainWindow->SyncInvokeLog("spack完了しました。コールバックを打ち返します。",LOG_LEVEL_DEBUG);
+	this->PoolMainWindow->SyncInvokeLog(std::string() + "spack完了しました。" + text + "コールバックを打ち返します。",LOG_LEVEL_DEBUG);
 
 	std::map<std::string,std::string > dummy;
 	this->fireCallback(callback,dummy);
@@ -153,6 +153,15 @@ void ScriptManager::TriggerCall(const CallbackDataStruct* callback,const std::ma
 	//トリガーは何度も打てるので、 UnrefCallback はしません。
 }
 
+//ウェブメニューからの実行
+void ScriptManager::WebMenuCall(const CallbackDataStruct* callback)
+{
+	std::map< std::string , std::string > args;
+	this->fireCallback(callback,args);
+
+	//ウェブメニューは何度も打てるので、 UnrefCallback はしません。
+}
+
 //HTTPで所定のパスにアクセスがあった時
 void ScriptManager::HttpRequest(const CallbackDataStruct* callback,const std::string & path ,const std::map< std::string , std::string > & request,std::string * respons,WEBSERVER_RESULT_TYPE* type,std::string* headers)
 {
@@ -176,3 +185,4 @@ void ScriptManager::UnrefCallback(const CallbackDataStruct* callback)
 
 	callback->getRunner()->unrefCallback(callback);
 }
+

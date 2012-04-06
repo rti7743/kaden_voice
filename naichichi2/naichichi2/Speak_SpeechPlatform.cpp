@@ -10,32 +10,106 @@
 //////////////////////////////////////////////////////////////////////
 // 構築/消滅
 //////////////////////////////////////////////////////////////////////
-
 Speak_SpeechPlatform::Speak_SpeechPlatform()
 {
-	this->isSpeakingFlg = false;
+	this->Thread = NULL;
+	this->StopFlag = false;
+	this->CancelFlag = false;
 }
 
 Speak_SpeechPlatform::~Speak_SpeechPlatform()
 {
-
+	this->StopFlag = true;
+	this->queue_wait.notify_all();
+	this->Thread->join();
+	delete this->Thread;
 }
 
 //音声認識のためのオブジェクトの構築.
 xreturn::r<bool> Speak_SpeechPlatform::Create(MainWindow* poolMainWindow)
 {
+	assert(this->Thread == NULL);
+	
+	this->PoolMainWindow = poolMainWindow;
+	this->StopFlag = false;
+	this->Thread = new boost::thread([=](){
+		try
+		{
+			this->Run(); 
+		}
+		catch(xreturn::error &e)
+		{
+			this->PoolMainWindow->SyncInvokeError( e.getErrorMessage() );
+		}
+	} );
+	return true;
+}
+
+
+xreturn::r<bool> Speak_SpeechPlatform::Run()
+{
+	_USE_WINDOWS_ENCODING;
+
+	//comの初期化
+	COMInit cominit;
+
+	//エンジンの構築
 	HRESULT hr;
 
 	hr = this->Engine.CoCreateInstance(CLSID_SpVoice);
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
+	//ボットを登録する
+	this->RegistVoiceBot("");
+
 	//http://msdn.microsoft.com/en-us/library/ms720164(v=vs.85).aspx
 	hr = this->Engine->SetInterest(SPFEI(SPEI_END_INPUT_STREAM), SPFEI(SPEI_END_INPUT_STREAM));
 	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-	this->isSpeakingFlg = false;
-	this->Pitch = 0;
+	//文章が来たら読み上げる
+	while(!this->StopFlag)
+	{
+		{
+			boost::unique_lock<boost::mutex> al(this->Lock);
+			this->CancelFlag = false;
+			if (this->SpeakQueue.size() <= 0)
+			{
+				this->queue_wait.wait(al);
+			}
+		}
+		//寝起きかもしれないので終了条件の確認.
+		if (this->StopFlag)
+		{
+			return true;
+		}
 
+		//読み上げる文字列をキューから取得.
+		SpeakTask task;
+		{
+			boost::unique_lock<boost::mutex> al(this->Lock);
+
+			if (this->SpeakQueue.size() <= 0)
+			{
+				continue;
+			}
+			task = *(this->SpeakQueue.begin());
+			this->SpeakQueue.pop_front();
+		}
+		hr = this->Engine->Speak( _A2W(task.text.c_str()) ,  SVSFIsXML,NULL);
+		if(FAILED(hr))	xreturn::windowsError(hr);
+		
+		if (this->CancelFlag)
+		{
+
+		}
+		else
+		{
+			//コールバックする.
+			this->PoolMainWindow->AsyncInvoke( [=](){
+				this->PoolMainWindow->ScriptManager.SpeakEnd(task.callback,task.text);
+			} );
+		}
+	}
 	return true;
 }
 
@@ -49,11 +123,11 @@ xreturn::r<bool> Speak_SpeechPlatform::Setting(int rate,int pitch,unsigned int v
 //	hr = this->Engine->SetVolume(volume);
 //	if(FAILED(hr))	 return xreturn::windowsError(hr);
 
-	this->Pitch = pitch;
+//	this->Pitch = pitch;
 
-	//ボットを登録する
-	return this->RegistVoiceBot(botname);
+	return true;
 }
+
 xreturn::r<bool> Speak_SpeechPlatform::RegistVoiceBot(const std::string & botname)
 {
 	//see http://msdn.microsoft.com/en-us/library/ms719807(v=vs.85).aspxs
@@ -94,90 +168,34 @@ xreturn::r<bool> Speak_SpeechPlatform::RegistVoiceBot(const std::string & botnam
 	return xreturn::error("読み上げるボット" + botname + "がみつかりません。見つかったボット:" + foundBotName);
 }
 
-xreturn::r<bool> Speak_SpeechPlatform::Speak(const std::string & str)
+
+xreturn::r<bool> Speak_SpeechPlatform::Speak(const CallbackDataStruct * callback,const std::string & str)
 {
-	//話し中ならばキューに積む.
-	if ( this->isSpeakingFlg )
-	{
-		this->SpeakQueue.push_back(str);
-		return true;
-	}
+	boost::unique_lock<boost::mutex> al(this->Lock);
 
-	HRESULT hr;
-	_USE_WINDOWS_ENCODING;
-	hr = this->Engine->Speak(_A2W(str.c_str()) , SVSFlagsAsync | SVSFIsXML,NULL);
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
+	//キューに積んで、読み上げスレッドに通知する.
+	this->SpeakQueue.push_back(SpeakTask(callback,str));
+	this->queue_wait.notify_all();
 
-	this->isSpeakingFlg = true;
 	return true;
 }
 
-xreturn::r<bool> Speak_SpeechPlatform::RegistWaitCallback(const CallbackDataStruct * callback)
-{
-	this->CallbackDictionary.push_back(callback);
-	if (!this->isSpeakingFlg)
-	{
-		//今喋っていないなら、一気にコールバックする.
-		this->FireWaitCallback();
-	}
-	return true;
-}
 
 xreturn::r<bool> Speak_SpeechPlatform::Cancel()
 {
-	HRESULT hr;
+	boost::unique_lock<boost::mutex> al(this->Lock);
 
 	this->SpeakQueue.clear();
-
-	hr = this->Engine->Pause();
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
-
+	this->CancelFlag = true;
 	return true;
-}
-
-void Speak_SpeechPlatform::Callback(WPARAM wParam, LPARAM lParam)
-{
-	HRESULT hr;
-	_USE_WINDOWS_ENCODING;
-
-	if ( this->SpeakQueue.size() > 0 )
-	{
-		std::string str = *(this->SpeakQueue.begin());
-		this->SpeakQueue.pop_front();
-
-		hr = this->Engine->Speak( _A2W(str.c_str()) , SVSFlagsAsync | SVSFIsXML,NULL);
-		if(FAILED(hr))	xreturn::windowsError(hr);
-
-		return ;
-	}
-
-	if ( this->SpeakQueue.size() <= 0 )
-	{
-		this->isSpeakingFlg = false;
-		this->FireWaitCallback();
-		return ;
-	}
-}
-
-void Speak_SpeechPlatform::FireWaitCallback()
-{
-	for(auto it = this->CallbackDictionary.begin(); this->CallbackDictionary.end() != it ; ++it )
-	{
-		this->PoolMainWindow->ScriptManager.SpeakEnd( *it );
-	}
-	this->CallbackDictionary.clear();
 }
 
 xreturn::r<bool> Speak_SpeechPlatform::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
 {
-	CRemoveIF(this->CallbackDictionary , {
-		if (_ == callback)
-		{
-			return false; //消す.
-		}
-	});
+	boost::unique_lock<boost::mutex> al(this->Lock);
 
 	return true;
 }
+
 
 

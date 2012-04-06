@@ -56,14 +56,14 @@ std::string MediaFileIndex::ImageToBase64(const std::map<std::string,std::string
 	return XLStringUtil::base64encode(&buffer[0],buffer.size());
 }
 
-void MediaFileIndex::Create(MainWindow* poolMainWindow,const std::list<std::string>& mediaDirectoryListArray, const std::string& dbpath,const std::string& filenamehelperLua,const std::string& mecabdir,const std::map<std::string,std::string>& mediaTargetExt,const std::map<std::string,std::string>& mediaDefualtIcon)
+void MediaFileIndex::Create(MainWindow* poolMainWindow,const std::list<std::string>& mediaDirectoryListArray, const std::string& dbpath,const std::string& filenamehelperLua,const std::map<std::string,std::string>& mediaTargetExt,const std::map<std::string,std::string>& mediaDefualtIcon)
 {
 	assert(!this->Thread);
 
 	this->PoolMainWindow = poolMainWindow;
 	this->mediaDirectoryListArray = mediaDirectoryListArray;
 	this->dbpath = dbpath;
-	this->Analize.Create(poolMainWindow,filenamehelperLua,mecabdir);
+	this->Analize.Create(poolMainWindow,filenamehelperLua);
 	this->MediaTargetExt = mediaTargetExt;
 
 	//ディフォルトのアイコンをロードして base64化する.
@@ -163,7 +163,8 @@ xreturn::r<bool> MediaFileIndex::CreateTable(const std::string& name)
 	return true;
 }
 
-xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,unsigned int from,unsigned int to,std::function<bool(const MediaFileIndex::SearchResult& sr)> callback) const
+xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,unsigned int from,unsigned int to
+	,const std::string& type,std::function<bool(const MediaFileIndex::SearchResult& sr)> callback) const
 {
 	_USE_WINDOWS_ENCODING;
 
@@ -172,37 +173,34 @@ xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,unsigned
 
 	//コマンドパース
 	std::list<std::string> wordsArray;
-	std::string typeQuery;
-	std::string orderQuery;
 	auto qlist = XLStringUtil::split(" ",q);
 	for(auto it = qlist.begin() ; it != qlist.end() ; ++it)
 	{
-		if (it->find("type=") == 0)
-		{//検索種類限定
-			typeQuery = SQLAppend("type = %Q ",  it->c_str() + 5);
-		}
-		else if (it->find("order=") == 0)
-		{//並び順
-			orderQuery = SQLAppend("orderby = %Q ",  it->c_str() + 6);
-		}
-		else 
 		{//それ以外は検索ワード
 			if (!it->empty())
 			{//sqlite検索のために 綺麗な検索データを作る.
-				wordsArray.push_back(XLStringUtil::chop(*it));
+				std::string qq = XLStringUtil::chop(*it);
+				qq = XLStringUtil::mb_convert_kana(qq,"Hca"); //半角カナ、カタカナはひらがなに直します。辞書はひらがなで作っています。
+				qq = XLStringUtil::strtolower(qq);            //全部小文字に
+				wordsArray.push_back(qq);
 			}
 		}
 	}
-	if (orderQuery.empty())
-	{
-//		orderQuery = " order by rank desc,accesstime desc ";
-	}
 	std::string sql = "SELECT sizehash,accesstime,rank,type,dir,filename,title,artist,album,alias,image FROM media ";
 	std::list<std::string> whereList;
-	if (! typeQuery.empty() )
+	if ( type == "music" )
 	{
-		whereList.push_back(typeQuery);
+		whereList.push_back("type = 'music'");
 	}
+	else if ( type == "video" )
+	{
+		whereList.push_back("type = 'video'");
+	}
+	else if ( type == "book" )
+	{
+		whereList.push_back("type = 'book'");
+	}
+
 	if (! wordsArray.empty() )
 	{
 		std::string searchBigram = this->Analize.makeListToBigram(wordsArray);
@@ -213,7 +211,6 @@ xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,unsigned
 	{
 		sql +=  "WHERE " + XLStringUtil::join(" AND " , whereList);
 	}
-	sql += orderQuery;
 
 	if (from > to) std::swap(from,to);
 	sql += SQLAppend(" limit %d OFFSET %d",  to - from,from );
@@ -376,7 +373,16 @@ void MediaFileIndex::Scan()
 		{
 			return ;
 		}
-
+		this->UpdateMedia("video");
+		if(this->StopFlg)
+		{
+			return ;
+		}
+		this->UpdateMedia("book");
+		if(this->StopFlg)
+		{
+			return ;
+		}
 		this->PoolMainWindow->SyncInvoke( [&](){
 			try
 			{
@@ -388,6 +394,13 @@ void MediaFileIndex::Scan()
 			}
 		} );
 		this->PoolMainWindow->SyncInvokeLog(std::string() + "音声正規表現特殊ルールアップデートが完了しました");
+
+		//消えてしまったディレクトリや、除外設定されたディレクトリの検索データを消去します。
+		ScanAndDeleteLostDirectory();
+		if(this->StopFlg)
+		{
+			return ;
+		}
 
 		//スキャンが終わったので待機する
 		break;
@@ -633,6 +646,107 @@ xreturn::r<bool > MediaFileIndex::SQLDeleteFile(const std::string& dir,const std
 	return true;
 }
 
+//消えてしまったディレクトリや、除外設定されたディレクトリの検索データを消去します。(検索データだけね)
+xreturn::r<bool > MediaFileIndex::ScanAndDeleteLostDirectory()
+{
+	_USE_WINDOWS_ENCODING;
+
+	//消すべきディレクトリを格納するリスト
+	std::list<std::string> targetDirectory;
+
+	//DB内のディレクトリについて調査します。
+	{
+		const char * sql = "SELECT DISTINCT dir from media";	//重いね・・
+
+		sqlite3_stmt* stm = NULL;
+		int ret = sqlite3_prepare_v2(this->db,sql, -1, &stm, NULL);
+		if (ret != SQLITE_OK)
+		{
+			std::string msg =std::string() + "sql発行に失敗しました. SQL:" + sql + " sqlite:" + sqlite3_errmsg(this->db);
+			return xreturn::error( msg );
+		}
+		for (;;) 
+		{
+			ret = sqlite3_step(stm);
+			if (ret != SQLITE_ROW) 
+			{
+				break;
+			}
+			else
+			{
+				if(this->StopFlg)
+				{
+					break;
+				}
+				const char* dirUTF8 = (const char*) sqlite3_column_text(stm, 0); //dir
+				const std::string dir = _U2A(dirUTF8);
+
+				//検索対象ディレクトリであることを確認します。
+				if (! IsScanDirectory(dir) )
+				{
+					targetDirectory.push_back(dir);
+					continue;
+				}
+				//ディレクトリの存在を確認
+				if (! (GetFileAttributes( dir.c_str() ) & FILE_ATTRIBUTE_DIRECTORY) )
+				{
+					targetDirectory.push_back(dir);
+					continue;
+				}
+			}
+		}
+		sqlite3_finalize(stm);
+	}
+
+	//次に、削除対処のディレクトリをDBから削除していきます。
+	for(auto it = targetDirectory.begin();it!=targetDirectory.end();++it)
+	{
+		if(this->StopFlg)
+		{
+			break;
+		}
+		//UTF8に変換
+		std::string dirUTF8 = _A2U(it->c_str());
+	
+		//blobがあるからsqlite3_mprintf ではなくて、 bindする
+		const char * sql = "DELETE from media  where dir=?";
+
+		sqlite3_stmt* stm = NULL;
+		int ret = sqlite3_prepare_v2(this->db,sql, -1, &stm, NULL);
+		if (ret != SQLITE_OK)
+		{
+			std::string msg =std::string() + "sql構文構築に失敗しました. SQL:" + sql + " sqlite:" + sqlite3_errmsg(this->db);
+			return xreturn::error( msg );
+		}
+		sqlite3_bind_text(stm, 1, dirUTF8.c_str() ,dirUTF8.size() , SQLITE_STATIC);
+
+		ret = sqlite3_step(stm);
+		if (ret != SQLITE_DONE)
+		{
+			std::string msg =std::string() + "sql発行に失敗しました. SQL:" + sql + " sqlite:" + sqlite3_errmsg(this->db);
+			return xreturn::error( msg );
+		}
+		sqlite3_finalize(stm);
+	}
+
+	return true;
+}
+
+//検索対象ディレクトリであることを確認します。
+bool MediaFileIndex::IsScanDirectory(const std::string& dir ) const 
+{
+	
+	for(auto it = this->mediaDirectoryListArray.begin();it!=this->mediaDirectoryListArray.end();++it)
+	{
+		if ( dir.find(*it) == 0 )
+		{
+			return true;
+		}
+	}
+	//スキャン対象ではありません。
+	return false;
+}
+
 xreturn::r<bool> MediaFileIndex::ScanAndUpdate(const std::string & dir)
 {
 	//SQLLiteに格納されているディレクトリ情報を取得します。
@@ -773,7 +887,7 @@ std::string MediaFileIndex::SQLAppend(const char * sql , ...) const
 void MediaFileIndex::AppendConvertRecognitionList(std::list<std::string> * list , const std::string& text) const
 {
 	//漢字やカタカナをひらがなにします。
-	std::string str2 = XLStringUtil::mb_convert_kana(XLStringUtil::KanjiAndKanakanaToHiragana(text),"cHsa");
+	std::string str2 = XLStringUtil::mb_convert_kana(this->PoolMainWindow->Mecab.KanjiAndKanakanaToHiragana(text),"cHsa");
 	//複数パートに分かれそうな所を \t をいれていきます。
 	const char* replaceCharTable[] = {
 		 "\t"," "

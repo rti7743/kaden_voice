@@ -125,11 +125,11 @@ LRESULT MainWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void MainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	if (wParam == ID_MENU_QUIT)
-	{
+	{//終了
 		SendMessage(this->MainWindowHandle,WM_DESTROY,0,0);
 	}
 	else if (wParam == ID_MENU_DEBUG)
-	{
+	{//デバッグメニューを開く
 		if ( this->IsOpenConsole )
 		{
 			CloseLoggerWindow();
@@ -139,9 +139,10 @@ void MainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 			OpenLoggerWindow();
 		}
 	}
-	else if (wParam == ID_MENU_SETTING)
-	{
-	this->SyncInvokeLog("ID_MENU_SETTING",LOG_LEVEL_DEBUG);
+	else if (wParam == ID_MENU_WEB)
+	{//web画面を開く
+		std::string weburl = this->Httpd.getWebURL("/media_start");
+		ShellExecute(NULL,NULL,weburl.c_str() , NULL,NULL,0);
 	}
 }
 
@@ -288,17 +289,26 @@ bool MainWindow::OnInit()
 	//config読み込み
 	this->Config.Create();
 
+	//mecab
+	{
+		std::string mecabdir = this->Config.Get("setting__mecabdir","mecab"); 
+		mecabdir = XLStringUtil::pathcombine( this->Config.GetBaseDirectory() , mecabdir);
+		this->Mecab.Create(mecabdir);
+	}
+	//部屋の家電をwebから操作するときのインターフェース
+	{
+		std::string thisroom = this->Config.Get("room","myroom"); 
+		this->WebMenu.Create(this,thisroom);
+	}
 	//音声認識エンジン
 	{
 		//認識エンジンの初期化(lua初期より前にやらないとダメ)
 		std::string engine = this->Config.Get("reco__engine", "" );
 		std::list<std::string> yobikakeListArray = this->Config.FindGets("reco__yobikake__");
-		double temporaryRuleConfidenceFilter = this->Config.GetDouble("reco__temporary_rule_confidence_filter",0);
-		double yobikakeRuleConfidenceFilter = this->Config.GetDouble("reco__yobikake_rule_confidence_filter",0);
-		double basicRuleConfidenceFilter = this->Config.GetDouble("reco__command_rule_confidence_filter",0);
-		bool dictation_Filter = this->Config.GetBool("reco__dictation_filter",true);
+		std::list<std::string> cancelListArray = this->Config.FindGets("reco__cancel__");
+		double temporaryRuleConfidenceFilter = this->Config.GetDouble("reco__temporary_rule_confidence_filter",0.7);
 	
-		this->Recognition.Create(engine, this , yobikakeListArray ,temporaryRuleConfidenceFilter,yobikakeRuleConfidenceFilter, basicRuleConfidenceFilter,dictation_Filter);
+		this->Recognition.Create(engine, this , yobikakeListArray ,cancelListArray,temporaryRuleConfidenceFilter);
 	}
 
 	//合成音声
@@ -339,10 +349,9 @@ bool MainWindow::OnInit()
 		std::list<std::string> mediaDirectoryListArray = this->Config.FindGets("media__directory"); 
 		std::map<std::string,std::string> mediaTargetext = this->Config.FindGetsToMap("media__targetext_"); 
 		std::map<std::string,std::string> mediaDefualtIcon = this->Config.FindGetsToMap("media__defualticon_"); 
-		std::string dbpath = this->Config.GetBaseDirectory() + "\\media.db"; //this->Config.Get("media__dbpath",""); 
+		std::string dbpath = XLStringUtil::pathcombine( this->Config.GetBaseDirectory() , "media.db");
 		std::string filenamehelperLua = this->Config.Get("media__filenamehelper","config_media_filename.lua"); 
-		std::string mecabdir = this->Config.Get("media__mecabdir","mecab"); 
-		this->Media.Create(this,mediaDirectoryListArray,dbpath,filenamehelperLua,mecabdir,mediaTargetext,mediaDefualtIcon);
+		this->Media.Create(this,mediaDirectoryListArray,dbpath,filenamehelperLua,mediaTargetext,mediaDefualtIcon);
 	}
 
 	//アクションのスクリプト管理
@@ -543,3 +552,4 @@ void MainWindow::CloseLoggerWindow()
 	this->IsOpenConsole = false;
 	return ;
 }
+

@@ -10,7 +10,7 @@ class MediaFileAnalize
 public:
 	MediaFileAnalize::MediaFileAnalize();
 	virtual MediaFileAnalize::~MediaFileAnalize();
-	xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::string& luaCommand,const std::string& mecabCommand);
+	xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::string& luaCommand);
 
 	xreturn::r<bool> MediaFileAnalize::Analize(const std::string& dir,const std::string& filename , std::string* title,std::string* artist ,std::string* album , std::string* alias ,int * part,int * rank, std::string* searchdata);
 
@@ -32,5 +32,4 @@ private:
 	Shell32::IShellDispatchPtr PtrShell;
 	ScriptRunner* Runner;
 	MainWindow* PoolMainWindow;
-	MecabControl		Mecab;
 };

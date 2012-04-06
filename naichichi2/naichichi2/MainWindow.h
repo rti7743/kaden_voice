@@ -9,6 +9,8 @@
 #include "ActionScriptManager.h"
 #include "MediaFileIndex.h"
 #include "TriggerManager.h"
+#include "WebMenu.h"
+#include "MecabControl.h"
 #include <gdiplus.h>
 
 enum LOG_LEVEL
@@ -103,6 +105,9 @@ public:
 	ActionScriptManager		ActionScriptManager;
 	MediaFileIndex			Media;
 	TriggerManager			TriggerManager;
+	WebMenu					WebMenu;
+
+	MecabControl			Mecab;
 
 	DWORD MainThreadID;
 	bool IsOpenConsole;

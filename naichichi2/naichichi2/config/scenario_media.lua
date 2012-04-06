@@ -31,9 +31,12 @@ function call()
 		if ( not request["to"] ) {
 			request["to"] = request["from"] + 50;
 		}
+		if ( not request["type"] ) {
+			request["type"] = "all";
+		}
 
 		//検索して htmlで返す.
-		local media = findmedia( request["search"],request["from"],request["to"]);
+		local media = findmedia( request["search"],request["from"],request["to"] , request["type"]);
 
 		local out = {}
 		out["request"] = request

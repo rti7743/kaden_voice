@@ -467,9 +467,13 @@ std::map<std::string,std::string> XLStringUtil::crosssplit(const std::string& gl
 	while( (pos = inTarget.find( glue1 , oldpos)) != -1 )
 	{
 		std::string k = inTarget.substr(oldpos , pos - oldpos);
+
+		oldpos = pos + glue1.size();
+
 		int vpos = k.find( glue2 );
 		if (vpos < 0)
 		{
+			r.insert( std::pair<std::string,std::string>(k,"") );
 			continue;
 		}
 
@@ -477,7 +481,6 @@ std::map<std::string,std::string> XLStringUtil::crosssplit(const std::string& gl
 		k = k.substr(0 , vpos);
 		r.insert( std::pair<std::string,std::string>(k,v) );
 
-		oldpos = pos + glue1.size();
 	}
 
 	//最後の残り
@@ -486,6 +489,7 @@ std::map<std::string,std::string> XLStringUtil::crosssplit(const std::string& gl
 		int vpos = k.find( glue2 );
 		if (vpos < 0)
 		{
+			r.insert( std::pair<std::string,std::string>(k,"") );
 			return r;
 		}
 
@@ -498,6 +502,12 @@ std::map<std::string,std::string> XLStringUtil::crosssplit(const std::string& gl
 
 SEXYTEST("XLStringUtil::crosssplitのてすと")
 {
+	
+	{
+		std::map<std::string,std::string> a = XLStringUtil::crosssplit("&","=","room=&menuエアコン&actionだんぼうMAX");
+		std::map<std::string,std::string> b ; b["room"]=""; b["menuエアコン"] = ""; b["actionだんぼうMAX"]="";
+		SEXYTEST_EQ(a ,b); 
+	}
 	{
 		std::map<std::string,std::string> a = XLStringUtil::crosssplit("&","=","a=1&bb=22&ccc=333");
 		std::map<std::string,std::string> b ; b["a"]="1"; b["bb"]="22"; b["ccc"]="333";
@@ -1661,102 +1671,6 @@ std::string XLStringUtil::remove(const std::string &inTarget ,const char** repla
 		}
 	}
 	return ret;
-}
-
-#ifdef _WINDOWS
-//windowsだと COM の IID_IFELanguage  を使います。
-//http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=9739 からダウンロードしてきてね
-//ダウンロードしたら C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include とかにでもぶち込んで
-#include <msime.h>
-
-const IID IID_IFELanguage = { 0x019f7152, 0xe6db, 0x11d0, { 0x83, 0xc3, 0x00, 0xc0, 0x4f, 0xdd, 0xb8, 0x2e }};
-#else
-//linuxだと mecabを読み抽出だけに使う富豪的環境 -llibmecab でよろ
-//#include <mecab.h>
-#include "../mecab/src/mecab.h"
-#endif
-
-//漢字からよみがなを求めます。
-std::string XLStringUtil::KanjiAndKanakanaToHiragana(const std::string &inTarget,const char * option)
-{
-#ifdef _WINDOWS
-	_USE_WINDOWS_ENCODING;
-	HRESULT hr;
-
-	CLSID clsid; //{EB144E8A-AF48-478B-8885-641A0BD2F56A} らしい。
-	hr = CLSIDFromString(L"MSIME.Japan", &clsid);
-	if(FAILED(hr))	 return "";
-	
-	//hr = this->FELanguage.CoCreateInstance(clsid); //うまく __uuidof がとれない.
-	IFELanguage* feLanguage;
-	hr = CoCreateInstance(clsid, NULL, CLSCTX_ALL, IID_IFELanguage, (void **)&feLanguage);
-	if(FAILED(hr))	 return "";
-
-	hr = feLanguage->Open();
-	if(FAILED(hr))	 return "";
-
-	wchar_t* wstr = _A2W( inTarget.c_str() );
-	int totallen = wcslen(wstr);
-	std::string hiragana;
-
-	//長いとダメらしいので適当なリミッターを付ける。
-	const int limiter = 80;
-	int nowPosstion = 0;
-	int nowLen = 0;
-	do
-	{
-		nowLen = totallen - nowPosstion;
-		if (nowLen >= limiter)
-		{
-			nowLen = limiter;
-		}
-
-		MORRSLT *pmorrslt = NULL;
-		hr = feLanguage->GetJMorphResult(FELANG_REQ_REV, FELANG_CMODE_PINYIN | FELANG_CMODE_NOINVISIBLECHAR | FELANG_CMODE_HIRAGANAOUT | FELANG_CMODE_HALFWIDTHOUT, nowLen, wstr + nowPosstion, NULL, &pmorrslt);
-		if(FAILED(hr))
-		{
-			feLanguage->Close();
-			return hiragana;
-		}
-		if (!pmorrslt)
-		{
-			feLanguage->Close();
-			return hiragana;
-		}
-		pmorrslt->pwchOutput[pmorrslt->cchOutput] = 0;
-		hiragana += _W2A(pmorrslt->pwchOutput);
-		::CoTaskMemFree(pmorrslt);
-
-		nowPosstion += nowLen;
-	}
-	while(nowPosstion < totallen);
-
-	feLanguage->Close();
-	return hiragana;
-
-#else
-	MeCab::Tagger * tagger = MeCab::createTagger("-d C:\\Users\\rti\\Desktop\\Dropbox\\naichichi2\\naichichi2\\config\\openjtalk\\dic");
-	if (tagger == NULL)
-	{
-		return "";
-	}
-	const MeCab::Node* node = tagger->parseToNode( inTarget.c_str() );
-
-	std::string yomi;
-	for (; node; node = node->next) 
-	{
-		std::vector<std::string> kammalist = XLStringUtil::split_vector(",",node->feature);
-		if (kammalist.size() > 7 && kammalist[7] != "*")
-		{
-			yomi += kammalist[7];
-		}
-		else
-		{
-			yomi += std::string(node->surface, 0,node->length);
-		}
-	}
-	return mb_convert_kana(yomi,"cHsa");
-#endif
 }
 
 

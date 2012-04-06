@@ -24,7 +24,6 @@
     <ClCompile Include="Recognition_Factory.cpp" />
     <ClCompile Include="Recognition_JuliusPlus.cpp" />
     <ClCompile Include="Recognition_JuliusPlusRule.cpp" />
-    <ClCompile Include="Recognition_SAPI.cpp" />
     <ClCompile Include="ScriptManager.cpp" />
     <ClCompile Include="ScriptRunner.cpp" />
     <ClCompile Include="Speak_AquesTalk.cpp" />
@@ -32,6 +31,7 @@
     <ClCompile Include="Speak_GoogleTranslate.cpp" />
     <ClCompile Include="Speak_SpeechPlatform.cpp" />
     <ClCompile Include="TriggerManager.cpp" />
+    <ClCompile Include="WebMenu.cpp" />
     <ClCompile Include="XLDebugUtil.cpp" />
     <ClCompile Include="XLFileUtil.cpp" />
     <ClCompile Include="XLHttpHeader.cpp" />
@@ -58,7 +58,6 @@
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="methodcallback.h" />
     <ClInclude Include="Recognition_Factory.h" />
-    <ClInclude Include="Recognition_SAPI.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptManager.h" />
     <ClInclude Include="ScriptRunner.h" />
@@ -67,6 +66,7 @@
     <ClInclude Include="Speak_GoogleTranslate.h" />
     <ClInclude Include="Speak_SpeechPlatform.h" />
     <ClInclude Include="TriggerManager.h" />
+    <ClInclude Include="WebMenu.h" />
     <ClInclude Include="windows_encoding.h" />
     <ClInclude Include="XLDebugUtil.h" />
     <ClInclude Include="XLFileUtil.h" />

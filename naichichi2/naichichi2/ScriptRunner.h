@@ -98,10 +98,16 @@ private:
 	static int ScriptRunner::l_gotoweb(lua_State* L);
 	static int ScriptRunner::l_tips(lua_State* L);
 	static int ScriptRunner::l_findmedia(lua_State* L);
+	static int ScriptRunner::l_find_config(lua_State* L);
 	static int ScriptRunner::l_json_encode(lua_State* L);
 	static int ScriptRunner::l_json_decode(lua_State* L);
 	static int ScriptRunner::l_xml_encode(lua_State* L);
 	static int ScriptRunner::l_xml_decode(lua_State* L);
+	static int ScriptRunner::l_webmenu(lua_State* L);
+	static int ScriptRunner::l_webmenusub(lua_State* L);
+	static int ScriptRunner::l_getwebmenu(lua_State* L);
+	static int ScriptRunner::l_callwebmenu(lua_State* L);
+
 
 	static ScriptRunner* __this(lua_State* L);
 	static std::string ScriptRunner::lua_dump(lua_State* L , int index,bool win32_nosjisconvert, int nest);

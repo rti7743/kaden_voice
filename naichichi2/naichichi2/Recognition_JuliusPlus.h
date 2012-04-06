@@ -50,8 +50,9 @@ public:
 	//呼びかけを設定します。
 	//設定したあと、 CommitRule() てしてね。
 	virtual xreturn::r<bool> SetYobikake(const std::list<std::string> & yobikakeList) ;
+	virtual xreturn::r<bool> SetCancel(const std::list<std::string> & cancelList) ;
 	//認識結果で不感染なものを捨てる基準値を設定します。
-	virtual xreturn::r<bool> SetRecognitionFilter(double temporaryRuleConfidenceFilter,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter,bool useDictationFilter) ;
+	virtual xreturn::r<bool> SetRecognitionFilter(double temporaryRuleConfidenceFilter) ;
 	//コマンドに反応する音声認識ルールを構築します
 	virtual xreturn::r<bool> AddCommandRegexp(const CallbackDataStruct * callback,const std::string & str) ;
 	//テンポラリルールに反応する音声認識ルールを構築します
@@ -119,12 +120,10 @@ private:
 	int LocalCaptureRuleNodeCount;
 
 	double TemporaryRuleConfidenceFilter;
-	double YobikakeRuleConfidenceFilter;
-	double BasicRuleConfidenceFilter;
-	bool UseDictationFilter;
 	std::list<std::string> YobikakeListArray;
 
 	Recognition_JuliusPlusRule* TemporaryRuleHandle;
+	Recognition_JuliusPlusRule*	GlobalTemporaryRuleHandle;
 	Recognition_JuliusPlusRule* YobikakeRuleHandle;
 	Recognition_JuliusPlusRule* CommandRuleHandle;
 	int TemporaryRuleCount ;

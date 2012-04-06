@@ -121,6 +121,7 @@ xreturn::r<bool> ScriptRunner::CreateLuaInstance()
 	lua_register(this->LuaInstance, "action", (lua_CFunction)ScriptRunner::l_action);
 	lua_register(this->LuaInstance, "getconfig", (lua_CFunction)ScriptRunner::l_get_config);
 	lua_register(this->LuaInstance, "setconfig", (lua_CFunction)ScriptRunner::l_set_config);
+	lua_register(this->LuaInstance, "findconfig", (lua_CFunction)ScriptRunner::l_find_config);
 	lua_register(this->LuaInstance, "telnet", (lua_CFunction)ScriptRunner::l_telnet);
 	lua_register(this->LuaInstance, "execute", (lua_CFunction)ScriptRunner::l_execute);
 	lua_register(this->LuaInstance, "httpget", (lua_CFunction)ScriptRunner::l_httpget);
@@ -145,6 +146,10 @@ xreturn::r<bool> ScriptRunner::CreateLuaInstance()
 	lua_register(this->LuaInstance, "gotoweb", (lua_CFunction)ScriptRunner::l_gotoweb);
 	lua_register(this->LuaInstance, "tips", (lua_CFunction)ScriptRunner::l_tips);
 	lua_register(this->LuaInstance, "findmedia", (lua_CFunction)ScriptRunner::l_findmedia);
+	lua_register(this->LuaInstance, "webmenu", (lua_CFunction)ScriptRunner::l_webmenu);
+	lua_register(this->LuaInstance, "webmenusub", (lua_CFunction)ScriptRunner::l_webmenusub);
+	lua_register(this->LuaInstance, "getwebmenu", (lua_CFunction)ScriptRunner::l_getwebmenu);
+	lua_register(this->LuaInstance, "callwebmenu", (lua_CFunction)ScriptRunner::l_callwebmenu);
 
 	//thisの保存
 //	lua_pushlightuserdata(this->LuaInstance ,(void*) this);
@@ -371,6 +376,8 @@ int ScriptRunner::l_onvoice_local(lua_State* L)
 
 	return 0;             //戻り値の数を指定
 }
+
+
 
 int ScriptRunner::l_onhttp(lua_State* L)
 {
@@ -604,9 +611,14 @@ int ScriptRunner::l_speak(lua_State* L)
 	ScriptRunner* _this = __this(L);
 	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"speak") ,LOG_LEVEL_DEBUG);
 
-	std::string text;
-
+	if (!_this->IsScenario)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"speak") + "はシナリオモードのみ有効です");
+	}
 	int argc = lua_gettop(L);
+	
+	std::string text;
+	int func;
 	if (argc == 1)
 	{
 		//第1引数
@@ -615,13 +627,31 @@ int ScriptRunner::l_speak(lua_State* L)
 			return luaL_errorHelper(L,lua_funcdump(L,"speak") + "の第1引数が文字列ではありません");
 		}
 		text = lua_tostringHelper(L,-1);
+		//第二引数省略
+		func = NO_CALLBACK;
+	}
+	else if (argc == 2)
+	{
+		//第1引数
+		if (! lua_isstring(L,-2) )
+		{
+			return luaL_errorHelper(L,lua_funcdump(L,"speak") + "の第1引数が文字列ではありません");
+		}
+		text = lua_tostringHelper(L,-2);
+
+		//第2引数
+		if (! lua_isfunction(L,-1) )
+		{
+			return luaL_errorHelper(L,lua_funcdump(L,"speak") + "の第2引数が関数ではありません");
+		}
+		func = luaL_ref(L,LUA_REGISTRYINDEX);
 	}
 	else
 	{
 		return luaL_errorHelper(L,lua_funcdump(L,"speak") + "の引数数が正しくありません。");
 	}
 
-	auto xr = _this->PoolMainWindow->Speak.Speak(text);
+	auto xr = _this->PoolMainWindow->Speak.Speak(_this->CreateCallback( func ) ,text);
 	if(!xr)
 	{
 		return luaL_errorHelper(L,lua_funcdump(L,"speak") + "実行時のエラー:" +xr.getErrorMessage());
@@ -629,7 +659,6 @@ int ScriptRunner::l_speak(lua_State* L)
 
 	return 0;             //戻り値の数を指定
 }
-
 
 //web専用 テンプレートを読み込む
 int ScriptRunner::l_webload(lua_State* L)
@@ -1316,24 +1345,31 @@ int ScriptRunner::l_findmedia(lua_State* L)
 	ScriptRunner* _this = __this(L);
 	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"findmedia") ,LOG_LEVEL_DEBUG);
 
-	auto r1 = ScriptRunner::lua_crossdataToString(L ,-3);
+	auto r1 = ScriptRunner::lua_crossdataToString(L ,-4);
 	if (!r1)
 	{
 		return luaL_errorHelper(L,lua_funcdump(L,"findmedia") + "の第1引数が文字列ではありません");
 	}
 	std::string query = r1;
 
-	if (! lua_isnumber(L,-2) )
+	if (! lua_isnumber(L,-3) )
 	{
 		return luaL_errorHelper(L,lua_funcdump(L,"findmedia") + "の第2引数が数字ではありません");
 	}
-	unsigned int limitfrom = (unsigned int) lua_tonumber(L,-2);
+	unsigned int limitfrom = (unsigned int) lua_tonumber(L,-3);
 
-	if (! lua_isnumber(L,-1) )
+	if (! lua_isnumber(L,-2) )
 	{
 		return luaL_errorHelper(L,lua_funcdump(L,"findmedia") + "の第3引数が数字ではありません");
 	}
-	unsigned int limitto = (unsigned int) lua_tonumber(L,-1);
+	unsigned int limitto = (unsigned int) lua_tonumber(L,-2);
+
+	auto r4 = ScriptRunner::lua_crossdataToString(L ,-1);
+	if (!r4)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"findmedia") + "の第4引数が文字列ではありません");
+	}
+	std::string type = r4;
 
 	//クエリー投げて、結果をlua tableに変換します。
 	lua_newtable(L);
@@ -1345,7 +1381,7 @@ int ScriptRunner::l_findmedia(lua_State* L)
 	lua_settable(L, -3);
 
 	int count = limitfrom + 1;
-	_this->PoolMainWindow->Media.SearchQuery(query,limitfrom,limitto,
+	_this->PoolMainWindow->Media.SearchQuery(query,limitfrom,limitto,type,
 			[&](const MediaFileIndex::SearchResult& sr) -> bool {
 					//2次元配列
 					lua_pushstringHelper(L, num2str(count) );
@@ -1409,6 +1445,32 @@ int ScriptRunner::l_findmedia(lua_State* L)
 			}
 	);
 
+	return 1;
+}
+
+
+int ScriptRunner::l_find_config(lua_State* L)
+{
+	ScriptRunner* _this = __this(L);
+	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"findconfig") ,LOG_LEVEL_DEBUG);
+
+	//キー
+	auto key = ScriptRunner::lua_crossdataToString(L ,-1);
+	if (!key)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"findconfig") + "の第1引数が文字列ではありません");
+	}
+
+	auto configmap = _this->PoolMainWindow->Config.FindGetsToMap(key);
+
+	//lua配列として積み直す
+	lua_newtable(L);
+	for(auto it = configmap.begin() ; it != configmap.end() ; ++it )
+	{
+		lua_pushstringHelper(L, it->first );
+		lua_pushstringHelper(L, it->second );
+		lua_settable(L, -3);
+	}
 	return 1;
 }
 
@@ -1771,6 +1833,176 @@ int ScriptRunner::l_xml_decode(lua_State* L)
 {
 	return 0;
 }
+
+
+int ScriptRunner::l_webmenu(lua_State* L)
+{
+	ScriptRunner* _this = __this(L);
+	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"webmenu") ,LOG_LEVEL_DEBUG);
+
+	if (!_this->IsScenario)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"webmenu") + "はシナリオモードのみ有効です");
+	}
+
+	//第1引数
+	if (! lua_isstring(L,-2) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"webmenu") + "の第1引数が文字列ではありません");
+	}
+	std::string menuname = lua_tostringHelper(L,-2);
+
+	//第2引数
+	if (! lua_isstring(L,-1) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"webmenu") + "の第2引数が文字列ではありません");
+	}
+	std::string image = lua_tostringHelper(L,-1);
+
+	_this->PoolMainWindow->WebMenu.AddMenu( menuname ,image );
+
+	return 0;             //戻り値の数を指定
+}
+
+int ScriptRunner::l_webmenusub(lua_State* L)
+{
+	ScriptRunner* _this = __this(L);
+	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"webmenusub") ,LOG_LEVEL_DEBUG);
+
+	if (!_this->IsScenario)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"webmenusub") + "はシナリオモードのみ有効です");
+	}
+
+	//第1引数
+	if (! lua_isstring(L,-4) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"webmenusub") + "の第1引数が文字列ではありません");
+	}
+	std::string menuname = lua_tostringHelper(L,-4);
+
+	//第2引数
+	if (! lua_isstring(L,-3) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"webmenusub") + "の第2引数が文字列ではありません");
+	}
+	std::string actionname = lua_tostringHelper(L,-3);
+
+	//第3引数
+	if (! lua_isstring(L,-2) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"webmenusub") + "の第3引数が文字列ではありません");
+	}
+	std::string image = lua_tostringHelper(L,-2);
+
+	//第4引数
+	if (! lua_isfunction(L,-1) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"webmenusub") + "の第4引数が関数ではありません");
+	}
+	int func = luaL_ref(L,LUA_REGISTRYINDEX);
+
+	_this->PoolMainWindow->WebMenu.AddMenuSub( menuname ,actionname , image ,_this->CreateCallback( func ) );
+	return 0;             //戻り値の数を指定
+}
+
+int ScriptRunner::l_getwebmenu(lua_State* L)
+{
+	ScriptRunner* _this = __this(L);
+	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"getwebmenu") ,LOG_LEVEL_DEBUG);
+
+	lua_newtable(L);
+	auto rooms = _this->PoolMainWindow->WebMenu.getRooms();
+	for(auto roomIT = rooms->begin() ; roomIT != rooms->end() ; ++ roomIT )
+	{
+		lua_pushstringHelper(L, (*roomIT)->name );
+		lua_newtable(L);
+		{
+			lua_pushstringHelper(L, "name" );
+			lua_pushstringHelper(L, (*roomIT)->name );
+			lua_settable(L, -3);
+
+			lua_pushstringHelper(L, "ip" );
+			lua_pushstringHelper(L, (*roomIT)->ip );
+			lua_settable(L, -3);
+
+			lua_pushstringHelper(L, "menus" );
+			lua_newtable(L);
+			for(auto menuIT = (*roomIT)->menus.begin() ; menuIT != (*roomIT)->menus.end() ; ++ menuIT )
+			{
+				lua_pushstringHelper(L, (*menuIT)->name );
+				lua_newtable(L);
+				{
+					lua_pushstringHelper(L, "name" );
+					lua_pushstringHelper(L, (*menuIT)->name );
+					lua_settable(L, -3);
+
+					lua_pushstringHelper(L, "image" );
+					lua_pushstringHelper(L, (*menuIT)->image );
+					lua_settable(L, -3);
+
+					lua_pushstringHelper(L, "status" );
+					lua_pushstringHelper(L, (*menuIT)->status );
+					lua_settable(L, -3);
+
+					lua_pushstringHelper(L, "actions" );
+					lua_newtable(L);
+					for(auto actionIT = (*menuIT)->actions.begin() ; actionIT != (*menuIT)->actions.end() ; ++ actionIT )
+					{
+						lua_pushstringHelper(L, (*actionIT)->name );
+						lua_newtable(L);
+						{
+							lua_pushstringHelper(L, "name" );
+							lua_pushstringHelper(L, (*actionIT)->name );
+							lua_settable(L, -3);
+
+							lua_pushstringHelper(L, "image" );
+							lua_pushstringHelper(L, (*actionIT)->image );
+							lua_settable(L, -3);
+						}
+						lua_settable(L, -3);
+					}
+					lua_settable(L, -3);
+				}
+				lua_settable(L, -3);
+			}
+			lua_settable(L, -3);
+		}
+		lua_settable(L, -3);
+	}
+	return 1;             //戻り値の数を指定
+}
+
+int ScriptRunner::l_callwebmenu(lua_State* L)
+{
+	ScriptRunner* _this = __this(L);
+	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"callwebmenu") ,LOG_LEVEL_DEBUG);
+
+	//第1引数
+	if (! lua_isstring(L,-3) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"callwebmenu") + "の第1引数が文字列ではありません");
+	}
+	std::string roomname = lua_tostringHelper(L,-3);
+
+	//第2引数
+	if (! lua_isstring(L,-2) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"callwebmenu") + "の第2引数が文字列ではありません");
+	}
+	std::string menuname = lua_tostringHelper(L,-2);
+
+	//第3引数
+	if (! lua_isstring(L,-1) )
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"callwebmenu") + "の第3引数が文字列ではありません");
+	}
+	std::string actionanme = lua_tostringHelper(L,-1);
+
+	_this->PoolMainWindow->WebMenu.Fire(roomname,menuname,actionanme);
+	return 0;             //戻り値の数を指定
+}
+
 
 std::string ScriptRunner::lua_callstack(lua_State* L)
 {

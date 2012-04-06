@@ -5,7 +5,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
                    LPSTR lpszCmdLine, int nCmdShow)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-
+//	_CrtSetBreakAlloc(24862);
 
 	int ret = -1;
 	{

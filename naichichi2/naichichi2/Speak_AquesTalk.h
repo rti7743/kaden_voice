@@ -20,15 +20,26 @@ public:
 	//音声のためのオブジェクトの構築.
 	virtual xreturn::r<bool> Speak_AquesTalk::Create(MainWindow* poolMainWindow);
 	virtual xreturn::r<bool> Speak_AquesTalk::Setting(int rate,int pitch,unsigned int volume,const std::string& botname);
-	virtual xreturn::r<bool> Speak_AquesTalk::Speak(const std::string & str);
-	virtual xreturn::r<bool> Speak_AquesTalk::RegistWaitCallback(const CallbackDataStruct * callback);
+	virtual xreturn::r<bool> Speak_AquesTalk::Speak(const CallbackDataStruct * callback,const std::string & str);
 	virtual xreturn::r<bool> Speak_AquesTalk::Cancel();
 	virtual xreturn::r<bool> Speak_AquesTalk::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
 
 private:
 	void Speak_AquesTalk::Run();
 
-	std::list<std::string> SpeakQueue;
+	struct SpeakTask
+	{
+		SpeakTask()
+		{
+		}
+		SpeakTask(const CallbackDataStruct * callback,const std::string & str) : text(str) , callback(callback)
+		{
+		}
+
+		std::string text;
+		const CallbackDataStruct*	callback;
+	};
+	std::list<SpeakTask> SpeakQueue;
 	MainWindow* PoolMainWindow;
 	std::vector<char> PhontDat; //aques talk2 の場合音声データを選べる。　emptyならディフォルト音声
 
@@ -36,6 +47,7 @@ private:
 	boost::mutex   Lock;
 	boost::condition_variable queue_wait;
 	bool           StopFlag;
+	bool			CancelFlag;
 
 	//AquesTalkを何とかして読み込む
 	xreturn::r<bool> Speak_AquesTalk::LoadAquesTalk();
@@ -55,8 +67,6 @@ private:
 	typedef void  ( __stdcall *AquesTalk_FreeWaveDef)(unsigned char *wav);
 	AquesTalk_SyntheDef		AquesTalk_Synthe;
 	AquesTalk_FreeWaveDef	AquesTalk_FreeWave;
-
-	std::vector<const CallbackDataStruct*> CallbackDictionary;
 };
 
 #endif // !defined(AFX_Speak_AquesTalk_H__1477FE93_D7A8_4F29_A369_60E33C71B2B7__INCLUDED_)

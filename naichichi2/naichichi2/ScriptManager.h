@@ -22,13 +22,15 @@ public:
 	//コールバックを消す通知をします。
 	void ScriptManager::UnrefCallback(const CallbackDataStruct* callback);
 	//喋り終わった時
-	void ScriptManager::SpeakEnd(const CallbackDataStruct* callback);
+	void ScriptManager::SpeakEnd(const CallbackDataStruct* callback,const std::string& text);
 	//HTTPで所定のパスにアクセスがあった時
 	void ScriptManager::HttpRequest(const CallbackDataStruct* callback,const std::string & path ,const std::map< std::string , std::string > & request,std::string * respons,WEBSERVER_RESULT_TYPE* type,std::string* headers);
 	//家電制御が終わった時
 	void ScriptManager::ActionEnd(const CallbackDataStruct* callback,const std::map< std::string , std::string >& data);
 	//トリガーが呼ばれたとき
 	void ScriptManager::TriggerCall(const CallbackDataStruct* callback,const std::map< std::string , std::string >& args,std::string * respons);
+	//ウェブメニューからの実行
+	void ScriptManager::WebMenuCall(const CallbackDataStruct* callback);
 private:
 
 	//luaファイル郡の読み込み

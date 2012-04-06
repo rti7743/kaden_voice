@@ -5,4 +5,8 @@
 function call()
 	onvoice("プロジェクター(?:つけて|オン)"	, function() action("action__projector_on") end);
 	onvoice("プロジェクター(?:けして|オフ)"	, function() action("action__projector_off") end);
+
+	webmenu("プロジェクター","electronics.jpg");
+	webmenusub("プロジェクター","OFF","electronics.jpg",function() action("action__projector_off") end);
+	webmenusub("プロジェクター","ON","electronics.jpg",function() action("action__projector_on") end);
 end

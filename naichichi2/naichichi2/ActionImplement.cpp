@@ -83,7 +83,7 @@ xreturn::r<bool> ActionImplement::Execute(const std::string& targetpc,const std:
 	std::string _command = XLStringUtil::pathseparator(command);
 	std::string _args = XLStringUtil::pathseparator(args);
 
-	::ShellExecute(NULL,NULL,_command.c_str(),_args.c_str(),NULL,SW_SHOWNORMAL);
+	::ShellExecute(NULL,"open",_command.c_str(),_args.c_str(),NULL,SW_SHOWNORMAL);
 
 	//¬Œ÷¸”s‚Ì”»’è‚ª‚¤‚Ü‚­‚¢‚©‚È‚¢‚ª‚ ‚é‚Ì‚ÅA‚Æ‚è‚ ‚¦‚¸‚±‚ê‚ÅB
 	return true;

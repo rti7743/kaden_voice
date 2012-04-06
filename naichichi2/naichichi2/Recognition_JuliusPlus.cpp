@@ -67,11 +67,6 @@ bool Recognition_JuliusPlus::checkYobikake(const std::string & dictationString) 
 //呼びかけがあれば、waveで保存し、もう一つのjuliusインスタンスで再チェックする.
 bool Recognition_JuliusPlus::checkDictation(Recog *recog,const OncSentence* sentence) const
 {
-	if (!this->UseDictationFilter)
-	{//チェックをしないのなら常に true 正解を返す.
-		this->PoolMainWindow->SyncInvokeLog("#checkDictation: no-check",LOG_LEVEL_DEBUG);
-		return true;
-	}
 	auto it3 = sentence->nodes.begin();
 	if (it3 == sentence->nodes.end() )
 	{
@@ -131,8 +126,6 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 		return ;
 	}
 
-
-
 	int i = 1;
 	for(auto it = allSentence.begin() ; it != allSentence.end() ; ++it, ++i)
 	{
@@ -145,7 +138,9 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 		std::stringstream end_frame;
 		std::stringstream plus_node_score;
 
-		for( auto it2 = (*it)->nodes.begin() ; it2 != (*it)->nodes.end() ; ++it2)
+		auto it2 = (*it)->nodes.begin();
+		int firstdict = (*it2)->dictNumber;
+		for(  ; it2 != (*it)->nodes.end() ; ++it2)
 		{
 			word << (*it2)->wordnode->word << " ";
 			yomi << (*it2)->wordnode->yomi << " ";
@@ -157,14 +152,22 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 			plus_node_score << (*it2)->plus_node_score << " ";
 		}
 
+		
+
 		bool isok = false;
-//スコアによる棄却をやめて、SVMに頼りますw
-//		this->PoolMainWindow->SyncInvokeLog(num2str(i) + ". " + "plus_sentence_score:" + num2str((*it)->plus_sentence_score) + " score:" + num2str((*it)->score),LOG_LEVEL_DEBUG);
-//		if ( ! ( (*it)->plus_sentence_score >= this->BasicRuleConfidenceFilter ) )
-//		{
-//			this->PoolMainWindow->SyncInvokeLog(std::string() + "誤認識、スコア(" + num2str((*it)->plus_sentence_score) + ")が足りない。" + num2str(this->BasicRuleConfidenceFilter) + "以上が合格",LOG_LEVEL_DEBUG);
-//		}
-//		else 
+		if ( firstdict != 3 )
+		{
+			if ( ! ( (*it)->plus_sentence_score >= this->TemporaryRuleConfidenceFilter ) )
+			{//テンポラリルールのスコア
+				this->PoolMainWindow->SyncInvokeLog(std::string() + " 誤認識、テンポラリルールとしてスコア評価"+num2str((*it)->plus_sentence_score)+"で不適当。認識単語:" + this->DictationCheckString,LOG_LEVEL_DEBUG);
+			}
+			else
+			{
+				this->PoolMainWindow->SyncInvokeLog(std::string() + " マッチ。テンポラリルールとしてスコア評価"+num2str((*it)->plus_sentence_score)+"。認識単語:" + this->DictationCheckString,LOG_LEVEL_DEBUG);
+				isok = true;
+			}
+		}
+		else
 		{
 			//検出した呼びかけをもう一度再検証する。
 			bool dictationCheck = checkDictation(recog,*it);
@@ -177,9 +180,7 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 				this->PoolMainWindow->SyncInvokeLog(std::string() + " マッチ!!!!!!!!!!!!!",LOG_LEVEL_DEBUG);
 				isok = true;
 			}
-
 		}
-
 		this->PoolMainWindow->SyncInvokeLog(std::string() + " word       :" + word.str(),LOG_LEVEL_DEBUG);
 		this->PoolMainWindow->SyncInvokeLog(std::string() + " yomi       :" + yomi.str(),LOG_LEVEL_DEBUG);
 		this->PoolMainWindow->SyncInvokeLog(std::string() + " dictNumber :" + dictNumber.str(),LOG_LEVEL_DEBUG);
@@ -193,7 +194,7 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 		{//マッチしているのならコールバックを読んであげよう。
 			if ( (*it)->nodes.size() <= 1 )
 			{//呼びかけ + コマンドと2つのものを見るので、それ以下の物には興味ない
-				continue;
+				break;
 			}
 
 			const CallbackDataStruct* callback = SearchCallbackWhereDICT(*it);
@@ -379,7 +380,9 @@ int Recognition_JuliusPlus::countHypothesisPenalty(const Recog *recog) const
 		auto winfo = r->lm->winfo;
 		for(auto n = 0; n < r->result.sentnum; n++) 
 		{ // for all sentences
+			if (r->result.sent == NULL)  continue;
 			const auto s = &(r->result.sent[n]);
+			if (s == NULL) continue;
 			const auto seq = s->word;
 			const auto seqnum = s->word_num;
 
@@ -468,7 +471,9 @@ void Recognition_JuliusPlus::convertResult(const Recog *recog, std::list<OncSent
 		const auto winfo = r->lm->winfo;
 		for(auto n = 0; n < r->result.sentnum; n++) 
 		{ // for all sentences
+			if (r->result.sent == NULL)  continue;
 			const auto s = &(r->result.sent[n]);
+			if (s == NULL) continue;
 			const auto seq = s->word;
 			const auto seqnum = s->word_num;
 
@@ -1009,6 +1014,8 @@ xreturn::r<bool> Recognition_JuliusPlus::Create(MainWindow* poolMainWindow)
 	assert(this->Grammer == NULL);
 	this->PoolMainWindow = poolMainWindow;
 
+	this->DummyCallback = NULL;
+
 	//ルール構文
 	//grammertop
 	//	AddNestRule -- 
@@ -1020,11 +1027,13 @@ xreturn::r<bool> Recognition_JuliusPlus::Create(MainWindow* poolMainWindow)
 	this->YobikakeRuleHandle = new Recognition_JuliusPlusRule(this->DummyCallback);
 	this->CommandRuleHandle = new Recognition_JuliusPlusRule(this->DummyCallback);
 
+	this->GlobalTemporaryRuleHandle = new Recognition_JuliusPlusRule(this->DummyCallback);
 	this->TemporaryRuleHandle = new Recognition_JuliusPlusRule(this->DummyCallback);
 
 	//全部 Grammer に関連付けます。
 	//Grammer が delete されれば、残りもすべてデリートされます。
 	this->Grammer->AddNestRule(this->YobikakeRuleHandle);
+	this->Grammer->AddNestRule(this->GlobalTemporaryRuleHandle);
 	this->Grammer->AddNestRule(this->TemporaryRuleHandle);
 	this->YobikakeRuleHandle->AddNestRule(this->CommandRuleHandle);
 	return true;
@@ -1043,15 +1052,20 @@ xreturn::r<bool> Recognition_JuliusPlus::SetYobikake(const std::list<std::string
 	return true;
 }
 
-//認識結果で不完全なものを捨てる基準値を設定します。
-//xreturn::r<bool> Recognition_JuliusPlus::SetRecognitionFilter(double temporaryRuleConfidenceFilter,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter,bool useDictationFilter)
-xreturn::r<bool> Recognition_JuliusPlus::SetRecognitionFilter(double temporaryRuleConfidenceFilter,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter,bool useDictationFilter)
+xreturn::r<bool> Recognition_JuliusPlus::SetCancel(const std::list<std::string> & cancelList) 
 {
-	//	this->TemporaryRuleConfidenceFilter = temporaryRuleConfidenceFilter;
-	this->TemporaryRuleConfidenceFilter = 0; //今回のデモでは使わない
-	this->YobikakeRuleConfidenceFilter = yobikakeRuleConfidenceFilter;
-	this->BasicRuleConfidenceFilter = basicRuleConfidenceFilter;
-	this->UseDictationFilter = useDictationFilter;
+	for(auto it = cancelList.begin();  cancelList.end() != it ; ++it)
+	{
+		this->GlobalTemporaryRuleHandle->AddWord(*it );
+	}
+	return true;
+}
+
+
+//認識結果で不完全なものを捨てる基準値を設定します。
+xreturn::r<bool> Recognition_JuliusPlus::SetRecognitionFilter(double temporaryRuleConfidenceFilter)
+{
+	this->TemporaryRuleConfidenceFilter = temporaryRuleConfidenceFilter;
 
 	return true;
 }
@@ -1258,7 +1272,9 @@ void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 		const auto winfo = r->lm->winfo;
 		for(auto n = 0; n < r->result.sentnum; n++) 
 		{ // for all sentences
+			if (r->result.sent == NULL)  continue;
 			const auto s = &(r->result.sent[n]);
+			if (s == NULL) continue;
 			const auto seq = s->word;
 			const auto seqnum = s->word_num;
 

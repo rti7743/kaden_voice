@@ -27,7 +27,8 @@ void HttpWorker::HTTP500()
 						"\r\n"
 						<< std::flush;
 
-	boost::asio::write(*this->ConnectSocket,respons );
+	boost::system::error_code ec;
+	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
 void HttpWorker::HTTP404()
 {
@@ -39,7 +40,8 @@ void HttpWorker::HTTP404()
 						"\r\n"
 						<< std::flush;
 
-	boost::asio::write(*this->ConnectSocket,respons );
+	boost::system::error_code ec;
+	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
 
 void HttpWorker::HTTP403()
@@ -52,7 +54,8 @@ void HttpWorker::HTTP403()
 						"\r\n"
 						<< std::flush;
 
-	boost::asio::write(*this->ConnectSocket,respons );
+	boost::system::error_code ec;
+	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
 
 
@@ -68,7 +71,8 @@ void HttpWorker::HTTP302(const std::string& url)
 						"\r\n"
 						<< std::flush;
 
-	boost::asio::write(*this->ConnectSocket,respons );
+	boost::system::error_code ec;
+	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
 void HttpWorker::HTTP200(const std::string& contents,const std::string& headers)
 {
@@ -82,7 +86,8 @@ void HttpWorker::HTTP200(const std::string& contents,const std::string& headers)
 						<< contents 
 						<< std::flush;
 
-	boost::asio::write(*this->ConnectSocket,respons );
+	boost::system::error_code ec;
+	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
 
 void HttpWorker::HTTP200SendFileContent(const std::string& urlpath)
@@ -120,8 +125,9 @@ void HttpWorker::HTTP200SendFileContent(const std::string& urlpath)
 						"Content-Type: " << mime << "\r\n"
 						"\r\n"
 						<< std::flush;
-	boost::asio::write(*this->ConnectSocket,respons );
-	boost::asio::write(*this->ConnectSocket,boost::asio::buffer(&filebinary[0],filebinary.size() ) );
+	boost::system::error_code ec;
+	boost::asio::write(*this->ConnectSocket,respons ,ec);
+	boost::asio::write(*this->ConnectSocket,boost::asio::buffer(&filebinary[0],filebinary.size() ) ,ec);
 }
 
 

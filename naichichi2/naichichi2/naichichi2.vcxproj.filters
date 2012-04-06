@@ -13,9 +13,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Recognition_SAPI.cpp">
-      <Filter>speak</Filter>
-    </ClCompile>
     <ClCompile Include="Speak_SpeechPlatform.cpp">
       <Filter>speak</Filter>
     </ClCompile>
@@ -100,11 +97,11 @@
     <ClCompile Include="MecabControl.cpp">
       <Filter>mainlogic</Filter>
     </ClCompile>
+    <ClCompile Include="WebMenu.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Recognition_SAPI.h">
-      <Filter>speak</Filter>
-    </ClInclude>
     <ClInclude Include="Speak_SpeechPlatform.h">
       <Filter>speak</Filter>
     </ClInclude>
@@ -208,6 +205,9 @@
       <Filter>mainlogic</Filter>
     </ClInclude>
     <ClInclude Include="MecabControl.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="WebMenu.h">
       <Filter>mainlogic</Filter>
     </ClInclude>
   </ItemGroup>

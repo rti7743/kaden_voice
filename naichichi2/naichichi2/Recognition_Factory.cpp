@@ -15,16 +15,12 @@ Recognition_Factory::~Recognition_Factory()
 	delete this->Engine;
 }
 
-xreturn::r<bool> Recognition_Factory::Create(const std::string & name , MainWindow* poolMainWindow,std::list<std::string> yobikakeListArray,double temporaryRuleConfidenceFilter,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter,bool dictation_Filter )
+xreturn::r<bool> Recognition_Factory::Create(const std::string & name , MainWindow* poolMainWindow,std::list<std::string> yobikakeListArray,std::list<std::string> cancelListArray,double temporaryRuleConfidenceFilter)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	assert(this->Engine == NULL);
 
-	if (name == "sapi")
-	{
-		this->Engine = new Recognition_SAPI();
-	}
-	else if (name == "julius")
+	if (name == "julius")
 	{
 		this->Engine = new Recognition_JuliusPlus();
 	}
@@ -34,7 +30,8 @@ xreturn::r<bool> Recognition_Factory::Create(const std::string & name , MainWind
 	}
 	this->Engine->Create(poolMainWindow);
 	this->Engine->SetYobikake(yobikakeListArray);
-	this->Engine->SetRecognitionFilter(temporaryRuleConfidenceFilter,yobikakeRuleConfidenceFilter,basicRuleConfidenceFilter,dictation_Filter);
+	this->Engine->SetCancel(cancelListArray);
+	this->Engine->SetRecognitionFilter(temporaryRuleConfidenceFilter);
 
 	return true;
 }

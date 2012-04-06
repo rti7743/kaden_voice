@@ -89,7 +89,8 @@ bool Recognition_JuliusPlusRule::IsMemberNode(const Recognition_JuliusPlusRule* 
 std::string Recognition_JuliusPlusRule::convertYomi(const std::string& word) 
 {
 	//カタカナひらがな変換
-	std::string w = XLStringUtil::KanjiAndKanakanaToHiragana(word);
+//	std::string w = XLStringUtil::KanjiAndKanakanaToHiragana(word);
+	std::string w = XLStringUtil::mb_convert_kana(word,"cHsa");
 
 	const char * replaceTable1[] = {
 	//特殊ルール

@@ -11,7 +11,7 @@ public:
 	MediaFileIndex();
 	virtual ~MediaFileIndex();
 	void Close();
-	void MediaFileIndex::Create(MainWindow* poolMainWindow,const std::list<std::string>& mediaDirectoryListArray, const std::string& dbpath,const std::string& filenamehelperLua,const std::string& mecabdir,const std::map<std::string,std::string>& mediaTargetExt,const std::map<std::string,std::string>& mediaDefualtIcon);
+	void MediaFileIndex::Create(MainWindow* poolMainWindow,const std::list<std::string>& mediaDirectoryListArray, const std::string& dbpath,const std::string& filenamehelperLua,const std::map<std::string,std::string>& mediaTargetExt,const std::map<std::string,std::string>& mediaDefualtIcon);
 
 	struct SearchResult 
 	{//UTF8な文字列ポインタになります。(開放の義務なし)
@@ -30,7 +30,8 @@ public:
 		const char*				image;	//base64
 		const char*				summary;
 	};
-	xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,unsigned int from,unsigned int to,std::function<bool(const MediaFileIndex::SearchResult& sr)> callback) const;
+	xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,unsigned int from,unsigned int to
+		,const std::string& type,std::function<bool(const MediaFileIndex::SearchResult& sr)> callback) const;
 	xreturn::r< bool > MediaFileIndex::UpdateMedia(const std::string& type) const;
 private:
 	xreturn::r<bool> Open(const std::string& name);
@@ -61,7 +62,10 @@ private:
 	std::string MediaFileIndex::SQLAppend(const char * sql , ...) const;
 	//リストに音声認識で使うデータを追加します。
 	void MediaFileIndex::AppendConvertRecognitionList(std::list<std::string> * list , const std::string& text) const;
-
+	//消えてしまったディレクトリや、除外設定されたディレクトリの検索データを消去します。(検索データだけね)
+	xreturn::r<bool > MediaFileIndex::ScanAndDeleteLostDirectory();
+	//検索対象ディレクトリであることを確認します。
+	bool MediaFileIndex::IsScanDirectory(const std::string& dir ) const ;
 private:
 	sqlite3* db;
 	MainWindow* PoolMainWindow;

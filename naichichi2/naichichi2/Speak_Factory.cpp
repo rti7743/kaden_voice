@@ -23,7 +23,7 @@ xreturn::r<bool> Speak_Factory::Create(const std::string & name , MainWindow* po
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	assert(this->Engine == NULL);
 
-	if (name == "sapi")
+	if (name == "mssp")
 	{
 		this->Engine = new Speak_SpeechPlatform();
 	}
@@ -46,19 +46,12 @@ xreturn::r<bool> Speak_Factory::Create(const std::string & name , MainWindow* po
 	return true;
 }
 
-xreturn::r<bool> Speak_Factory::Speak(const std::string & str)
+xreturn::r<bool> Speak_Factory::Speak(const CallbackDataStruct * callback,const std::string & str)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-	auto r = this->Engine->Speak(str);
+	auto r = this->Engine->Speak(callback,str);
 	if (!r) return xreturn::error(r.getError());
 	return true;
-}
-
-
-void Speak_Factory::RegistWaitCallback(const CallbackDataStruct * callback)
-{
-	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-	this->Engine->RegistWaitCallback(callback);
 }
 
 void Speak_Factory::Cancel()

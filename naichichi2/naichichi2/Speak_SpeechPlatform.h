@@ -15,6 +15,8 @@
 #include <../../../Speech/v11.0/Include/sapi.h>
 #include <../../../Speech/v11.0/Include/sphelper.h>
 
+
+
 class Speak_SpeechPlatform : public ISpeechSpeakInterface
 {
 public:
@@ -24,24 +26,36 @@ public:
 	//音声のためのオブジェクトの構築.
 	virtual xreturn::r<bool> Speak_SpeechPlatform::Create(MainWindow* poolMainWindow);
 	virtual xreturn::r<bool> Speak_SpeechPlatform::Setting(int rate,int pitch,unsigned int volume,const std::string& botname);
-	virtual xreturn::r<bool> Speak_SpeechPlatform::Speak(const std::string & str);
-	virtual xreturn::r<bool> Speak_SpeechPlatform::RegistWaitCallback(const CallbackDataStruct * callback);
+	virtual xreturn::r<bool> Speak_SpeechPlatform::Speak(const CallbackDataStruct * callback,const std::string & str);
 	virtual xreturn::r<bool> Speak_SpeechPlatform::Cancel();
 	virtual xreturn::r<bool> Speak_SpeechPlatform::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
+
 private:
+	xreturn::r<bool> Speak_SpeechPlatform::Run();
 	xreturn::r<bool> Speak_SpeechPlatform::RegistVoiceBot(const std::string & botname);
-	void Speak_SpeechPlatform::FireWaitCallback();
-	void Speak_SpeechPlatform::Callback(WPARAM wParam, LPARAM lParam);
 
-	//ルールベース
-	CComPtr<ISpVoice>			Engine;
-	bool							isSpeakingFlg;
-	int								Pitch;	//なぜか Pitchを指定できないので、xmlで.
+	struct SpeakTask
+	{
+		SpeakTask()
+		{
+		}
+		SpeakTask(const CallbackDataStruct * callback,const std::string & str) : text(str) , callback(callback)
+		{
+		}
 
-	std::list<std::string> SpeakQueue;
+		std::string text;
+		const CallbackDataStruct*	callback;
+	};
+	std::list<SpeakTask> SpeakQueue;
 	MainWindow* PoolMainWindow;
 
-	std::vector<const CallbackDataStruct*> CallbackDictionary;
+	CComPtr<ISpVoice>				Engine;
+
+	boost::thread* Thread;
+	boost::mutex   Lock;
+	boost::condition_variable queue_wait;
+	bool           StopFlag;
+	bool		   CancelFlag;
 };
 
 #endif // !defined(AFX_SAPISpeechRecognition_H__1477FE93_D7A8_4F29_A369_60E33C71B2B7__INCLUDED_)

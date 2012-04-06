@@ -7,29 +7,20 @@
 	if( not out["media"][key]){ break; }
 	local value = out["media"][key];
 ?>
-	<div class="img" id="img_<?= key ?>">
-		<div><a href="javascript:void(0)" onclick="mediaplay(<?= key ?>)">
+	<div class="item" id="item_<?= key ?>">
+		<div><a href="javascript:void(0)">
 			<img width="255" height="255"  src='data:image/jpeg;base64,<?= value["image"] ?>'><br />
 			<div class="msg" ><span class="select_mark"><?= key ?></span><?= value["title"] ?></div>
 		</a></div>
-	</div>
-	<div style="display: none;position: absolute2;" id="popup_<?= key ?>">
-		<table>
-			<tr>
-				<th>ディレクトリ<th><td><?= value["dir"] ?></td>
-			</tr>
-			<tr>
-				<th>ファイル名<th><td><?= value["filename"] ?></td>
-			</tr>
-			<tr>
-				<th>アーティスト<th><td><?= value["artist"] ?></td>
-			</tr>
-			<tr>
-				<th>アルバム<th><td><?= value["album"] ?></td>
-			</tr>
-			<tr>
-				<th>エイリアス<th><td><?= value["alias"] ?></td>
-			</tr>
-		</table>
+		<div class="iteminfo"  id="iteminfo_<?= key ?>" style="display: none;">
+			<span class="iteminfo_filename"><?= value["filename"] ?></span>
+			<table>
+				<tr><th>Folder</th><td><span class="iteminfo_dir"><?= value["dir"] ?></span></td></tr>
+				<tr><th>Artist</th><td><span class="iteminfo_artist"><?= value["artist"] ?></span></td></tr>
+				<tr><th>Album</th><td><span class="iteminfo_album"><?= value["album"] ?></span></td></tr>
+				<tr><th>Alias</th><td><span class="iteminfo_alias"><?= value["alias"] ?></span></td></tr>
+				<tr><th>Rank</th><td><span class="iteminfo_rank"><?= value["rank"] ?></span></td></tr>
+			</table>
+		</div>
 	</div>
 <?lua } ?>

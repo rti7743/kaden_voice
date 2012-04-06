@@ -369,7 +369,8 @@ public:
 	{
 		if (this->Model)
 		{
-			func_free_model_content(this->Model);
+//			func_free_model_content(this->Model);
+			func_free_and_destroy_model(&this->Model);
 //			free_model_content(this->Model);
 			this->Model = NULL;
 		}

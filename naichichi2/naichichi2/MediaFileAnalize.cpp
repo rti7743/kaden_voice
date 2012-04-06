@@ -21,7 +21,7 @@ MediaFileAnalize::~MediaFileAnalize()
 		this->Runner = NULL;
 	}
 }
-xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::string& luaCommand,const std::string& mecabCommand)
+xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::string& luaCommand)
 {
 	this->PoolMainWindow = poolMainWindow;
 
@@ -32,8 +32,6 @@ xreturn::r<bool> MediaFileAnalize::Create(MainWindow* poolMainWindow,const std::
 	this->Runner = new ScriptRunner(poolMainWindow , false );
 	this->Runner->LoadScript(luafilename);
 
-	const std::string mecabdir = XLStringUtil::pathcombine( poolMainWindow->Config.GetBaseDirectory() , mecabCommand);
-	this->Mecab.Create( mecabdir );
 	return true;
 
 }
@@ -54,7 +52,7 @@ xreturn::r<bool> MediaFileAnalize::Analize(const std::string& dir,const std::str
 	}
 
 	//sqliteが日本語分かち書きに対応していないので、 バイグラムを作ってあげる
-	*searchdata = MediaFileAnalize::makesearcableData(filename + " " + *title + " " + *artist + " " + *album + " " + *alias);
+	*searchdata = MediaFileAnalize::makesearcableData(dir + " " + filename + " " + *title + " " + *artist + " " + *album + " " + *alias);
 
 	//タイトルがないと表示した時にかっこわるいので、タイトルがないならファイル名を入れてあげる。
 	if (makeUserSideSearchableData(*title) == "")
@@ -114,48 +112,34 @@ xreturn::r<bool> MediaFileAnalize::AnalizeCOM(const std::string& dir,const std::
 	return true;
 }
 
-//漢字その他をすべてひらがなに直します
-std::string MediaFileAnalize::KanjiAndKanakanaToHiragana(const std::string& str)
-{
-	std::string yomi;
-	this->Mecab.Parse(str , [&](const MeCab::Node* node){
-		std::vector<std::string> kammalist = XLStringUtil::split_vector(",",node->feature);
-		if (kammalist.size() > 7 && kammalist[7] != "*")
-		{
-			yomi += kammalist[7];
-		}
-		else
-		{
-			yomi += std::string(node->surface, 0,node->length);
-		}
-	});
-	//mecabだとカタカナ読みしか取れないので、強制的にひらがなに直します。
-	return XLStringUtil::mb_convert_kana(yomi,"cHsa");
-}
 
 //検索可能データを作る
 std::string MediaFileAnalize::makesearcableData(const std::string& str ) 
 {
-	std::string s = XLStringUtil::chop(str);
+	std::string s = XLStringUtil::strtolower( XLStringUtil::chop(str) );
 	{
 		if ( this->Runner->IsMethodExist("makeplain") )
 		{
 			s = this->Runner->callFunction("makeplain",s);
 		}
 	}
-	std::string cleaupData,yomi,yomiCleaupData,romaji,kana;
+	std::string cleaupData,yomi,yomiCleaupData,romajiKana,romaji,kana;
 
 	//記号を消したデータを作ります。
 	cleaupData = this->makeUserSideSearchableData(s);
 	if (s == cleaupData) cleaupData = "";
 
 	//クリーンアップした読みも取ります。
-	yomiCleaupData =  KanjiAndKanakanaToHiragana(cleaupData);
+	yomiCleaupData =  this->PoolMainWindow->Mecab.KanjiAndKanakanaToHiragana(cleaupData);
 	if (cleaupData == yomiCleaupData) yomiCleaupData = "";
 
 	//漢字からよみがなを取ります。
-	yomi = KanjiAndKanakanaToHiragana(s);
+	yomi = this->PoolMainWindow->Mecab.KanjiAndKanakanaToHiragana(s);
 	if (yomi == yomiCleaupData) yomi = "";
+
+	//ローマ字で記載された単語からひらがなよみを作り検索できるようにします。
+	romajiKana = XLStringUtil::mb_convert_typo(yomiCleaupData,"R");
+	if (yomiCleaupData == romajiKana) romajiKana = "";
 
 	//ローマ字のままで入れた場合の補正
 	romaji = XLStringUtil::mb_convert_typo(yomiCleaupData,"r");
@@ -167,9 +151,9 @@ std::string MediaFileAnalize::makesearcableData(const std::string& str )
 
 	//元のデータ + 記号消したデータ + 記号消した読み + 読み + ローマ字 + カナ
 	//バイグラムの形成
-	return XLStringUtil::join(" ", XLStringUtil::unique(	XLStringUtil::makebigram(   makeUserSideSearchableData(
-		str + " " + cleaupData + " " + yomiCleaupData + " " + yomi + " " + romaji + " " + kana
-		) ) ) );
+	return XLStringUtil::join(" ", XLStringUtil::unique(	XLStringUtil::makebigram(   
+		str + " " + cleaupData + " " + yomiCleaupData + " " + yomi + " " + romajiKana + " " + romaji + " " + kana
+		) ) );
 }
 
 std::string MediaFileAnalize::makeListToBigram(const std::list<std::string>& list ) const

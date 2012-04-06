@@ -18,23 +18,33 @@ public:
 	//音声のためのオブジェクトの構築.
 	virtual xreturn::r<bool> Speak_GoogleTranslate::Create(MainWindow* poolMainWindow);
 	virtual xreturn::r<bool> Speak_GoogleTranslate::Setting(int rate,int pitch,unsigned int volume,const std::string& botname);
-	virtual xreturn::r<bool> Speak_GoogleTranslate::Speak(const std::string & str);
-	virtual xreturn::r<bool> Speak_GoogleTranslate::RegistWaitCallback(const CallbackDataStruct * callback);
+	virtual xreturn::r<bool> Speak_GoogleTranslate::Speak(const CallbackDataStruct * callback,const std::string & str);
 	virtual xreturn::r<bool> Speak_GoogleTranslate::Cancel();
 	virtual xreturn::r<bool> Speak_GoogleTranslate::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
 
 private:
 	void Speak_GoogleTranslate::Run();
 
-	std::list<std::string> SpeakQueue;
+	struct SpeakTask
+	{
+		SpeakTask()
+		{
+		}
+		SpeakTask(const CallbackDataStruct * callback,const std::string & str) : text(str) , callback(callback)
+		{
+		}
+
+		std::string text;
+		const CallbackDataStruct*	callback;
+	};
+	std::list<SpeakTask> SpeakQueue;
 	MainWindow* PoolMainWindow;
 
 	boost::thread* Thread;
 	boost::mutex   Lock;
 	boost::condition_variable queue_wait;
 	bool           StopFlag;
-
-	std::vector<const CallbackDataStruct*> CallbackDictionary;
+	bool			CancelFlag;
 };
 
 #endif // !defined(AFX_Speak_GoogleTranslate_H__1477FE93_D7A8_4F29_A369_60E33C71B2B7__INCLUDED_)

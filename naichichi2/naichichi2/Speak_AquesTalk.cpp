@@ -20,6 +20,7 @@ Speak_AquesTalk::Speak_AquesTalk()
 {
 	this->Thread = NULL;
 	this->StopFlag = false;
+	this->CancelFlag = false;
 }
 
 Speak_AquesTalk::~Speak_AquesTalk()
@@ -121,6 +122,7 @@ void Speak_AquesTalk::Run()
 */
 		{
 			boost::unique_lock<boost::mutex> al(this->Lock);
+			this->CancelFlag = false;
 			if (this->SpeakQueue.size() <= 0)
 			{
 				this->queue_wait.wait(al);
@@ -133,7 +135,7 @@ void Speak_AquesTalk::Run()
 		}
 
 		//読み上げる文字列をキューから取得.
-		std::string word;
+		SpeakTask task;
 		{
 			boost::unique_lock<boost::mutex> al(this->Lock);
 
@@ -141,7 +143,7 @@ void Speak_AquesTalk::Run()
 			{
 				continue;
 			}
-			word = *(this->SpeakQueue.begin());
+			task = *(this->SpeakQueue.begin());
 			this->SpeakQueue.pop_front();
 		}
 
@@ -151,11 +153,11 @@ void Speak_AquesTalk::Run()
 		unsigned char * wavData = NULL;
 		if (getVersion() == 1)
 		{
-			wavData = this->AquesTalk_Synthe(word.c_str(), speed ,&size  );
+			wavData = this->AquesTalk_Synthe(task.text.c_str(), speed ,&size  );
 		}
 		else 
 		{
-			wavData = this->AquesTalk2_Synthe(word.c_str(), speed ,&size , (void*) (this->PhontDat.empty() ? NULL : &this->PhontDat[0])  );
+			wavData = this->AquesTalk2_Synthe(task.text.c_str(), speed ,&size , (void*) (this->PhontDat.empty() ? NULL : &this->PhontDat[0])  );
 		}
 		if (wavData == NULL)
 		{//エラー
@@ -195,21 +197,17 @@ void Speak_AquesTalk::Run()
 		{
 			return;
 		}
-		//キューを消化していたらコールバックする.
+
+		if (!this->CancelFlag)
 		{
-			boost::unique_lock<boost::mutex> al(this->Lock);
 
-			if (this->SpeakQueue.size() <= 0)
-			{
-				this->PoolMainWindow->SyncInvoke( [&](){
-					for(auto it = this->CallbackDictionary.begin(); this->CallbackDictionary.end() != it ; ++it )
-					{
-						this->PoolMainWindow->ScriptManager.SpeakEnd(*it);
-					}
-					this->CallbackDictionary.clear();
-				} );
-
-			}
+		}
+		else
+		{
+			//コールバックする.
+			this->PoolMainWindow->AsyncInvoke( [=](){
+				this->PoolMainWindow->ScriptManager.SpeakEnd(task.callback,task.text);
+			} );
 		}
 	}
 }
@@ -243,24 +241,12 @@ xreturn::r<bool> Speak_AquesTalk::Setting(int rate,int pitch,unsigned int volume
 	return true;
 }
 
-xreturn::r<bool> Speak_AquesTalk::Speak(const std::string & str)
+xreturn::r<bool> Speak_AquesTalk::Speak(const CallbackDataStruct * callback,const std::string & str)
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
 	//キューに積んで、読み上げスレッドに通知する.
-	this->SpeakQueue.push_back(str);
-	this->queue_wait.notify_all();
-
-	return true;
-}
-
-xreturn::r<bool> Speak_AquesTalk::RegistWaitCallback(const CallbackDataStruct * callback)
-{
-	boost::unique_lock<boost::mutex> al(this->Lock);
-
-	this->CallbackDictionary.push_back(callback);
-
-	//一応、キュー街がないかどうか確認してもらおう.
+	this->SpeakQueue.push_back(SpeakTask(callback,str));
 	this->queue_wait.notify_all();
 
 	return true;
@@ -271,6 +257,7 @@ xreturn::r<bool> Speak_AquesTalk::Cancel()
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
 	this->SpeakQueue.clear();
+	this->CancelFlag = true;
 	return true;
 }
 
@@ -281,12 +268,6 @@ int Speak_AquesTalk::getVersion() const
 
 xreturn::r<bool> Speak_AquesTalk::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
 {
-	CRemoveIF(this->CallbackDictionary , {
-		if (_ == callback)
-		{
-			return false; //消す.
-		}
-	});
 	return true;
 }
 

@@ -8,8 +8,7 @@ struct ISpeechSpeakInterface
 	//音声のためのオブジェクトの構築.
 	virtual xreturn::r<bool> Create(MainWindow* poolMainWindow) = 0;
 	virtual xreturn::r<bool> Setting(int rate,int pitch,unsigned int volume,const std::string& botname) = 0;
-	virtual xreturn::r<bool> Speak(const std::string & str) = 0;
-	virtual xreturn::r<bool> RegistWaitCallback(const CallbackDataStruct * callback) = 0;
+	virtual xreturn::r<bool> Speak(const CallbackDataStruct * callback,const std::string & str) = 0;
 	virtual xreturn::r<bool> Cancel() = 0;
 	virtual xreturn::r<bool> RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) = 0;
 };
@@ -30,8 +29,7 @@ public:
 	virtual ~Speak_Factory();
 
 	xreturn::r<bool> Create(const std::string & name , MainWindow* poolMainWindow,int rate,int pitch,unsigned int volume,const std::string& botname);
-	xreturn::r<bool> Speak(const std::string & str);
-	void RegistWaitCallback(const CallbackDataStruct * callback);
+	xreturn::r<bool> Speak(const CallbackDataStruct * callback,const std::string & str);
 	void Cancel();
 	xreturn::r<bool> RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback);
 

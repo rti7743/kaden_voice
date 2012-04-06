@@ -19,6 +19,7 @@ Speak_GoogleTranslate::Speak_GoogleTranslate()
 {
 	this->Thread = NULL;
 	this->StopFlag = false;
+	this->CancelFlag = false;
 }
 
 Speak_GoogleTranslate::~Speak_GoogleTranslate()
@@ -55,19 +56,6 @@ void Speak_GoogleTranslate::Run()
 
 	while(!this->StopFlag)
 	{
-/*
-		bool istask = false;
-		//キューがあるかどうか確認.
-		{
-			boost::unique_lock<boost::mutex> al(this->Lock);
-			istask = (this->SpeakQueue.size() >= 1);
-		}
-		//タスクがないならば、タスクが入るまで寝る.
-		if (!istask)
-		{
-			
-		}
-*/
 		{
 			boost::unique_lock<boost::mutex> al(this->Lock);
 			if (this->SpeakQueue.size() <= 0)
@@ -82,15 +70,16 @@ void Speak_GoogleTranslate::Run()
 		}
 
 		//読み上げる文字列をキューから取得.
-		std::string url;
+		SpeakTask task;
 		{
 			boost::unique_lock<boost::mutex> al(this->Lock);
+			this->CancelFlag = false;
 
 			if (this->SpeakQueue.size() <= 0)
 			{
 				continue;
 			}
-			url = *(this->SpeakQueue.begin());
+			task = *(this->SpeakQueue.begin());
 			this->SpeakQueue.pop_front();
 		}
 		//ダウンロードの準備
@@ -99,7 +88,7 @@ void Speak_GoogleTranslate::Run()
 
 		XLHttpRequerst downloader;
 		std::map<std::string , std::string> param;
-		param["q"]		= _A2U(url.c_str());
+		param["q"]		= _A2U(task.text.c_str());
 		param["hl"]		= lang;
 		param["lr"]		= std::string("") + "lang_" + lang;
 		param["ie"]		= encoding;
@@ -137,21 +126,16 @@ void Speak_GoogleTranslate::Run()
 			return;
 		}
 
-		//キューを消化していたらコールバックする.
+		if (!this->CancelFlag)
 		{
-			boost::unique_lock<boost::mutex> al(this->Lock);
 
-			if (this->SpeakQueue.size() <= 0)
-			{
-				this->PoolMainWindow->SyncInvoke( [&](){
-					for(auto it = this->CallbackDictionary.begin(); this->CallbackDictionary.end() != it ; ++it )
-					{
-						this->PoolMainWindow->ScriptManager.SpeakEnd(*it);
-					}
-					this->CallbackDictionary.clear();
-				} );
-
-			}
+		}
+		else
+		{
+			//コールバックする.
+			this->PoolMainWindow->AsyncInvoke( [=](){
+				this->PoolMainWindow->ScriptManager.SpeakEnd(task.callback,task.text);
+			} );
 		}
 	}
 }
@@ -162,47 +146,30 @@ xreturn::r<bool> Speak_GoogleTranslate::Setting(int rate,int pitch,unsigned int 
 	return true;
 }
 
-xreturn::r<bool> Speak_GoogleTranslate::Speak(const std::string & str)
+xreturn::r<bool> Speak_GoogleTranslate::Speak(const CallbackDataStruct * callback,const std::string & str)
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
 	//キューに積んで、読み上げスレッドに通知する.
-	this->SpeakQueue.push_back(str);
+	this->SpeakQueue.push_back(SpeakTask(callback,str));
 	this->queue_wait.notify_all();
 
 	return true;
 }
 
-xreturn::r<bool> Speak_GoogleTranslate::RegistWaitCallback(const CallbackDataStruct * callback)
-{
-	boost::unique_lock<boost::mutex> al(this->Lock);
-
-	this->CallbackDictionary.push_back(callback);
-
-	//一応、キュー街がないかどうか確認してもらおう.
-	this->queue_wait.notify_all();
-
-	return true;
-}
 
 xreturn::r<bool> Speak_GoogleTranslate::Cancel()
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
 	this->SpeakQueue.clear();
+	this->CancelFlag = true;
 	return true;
 }
 
 xreturn::r<bool> Speak_GoogleTranslate::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
-
-	CRemoveIF(this->CallbackDictionary , {
-		if (_ == callback)
-		{
-			return false; //消す.
-		}
-	});
 
 	return true;
 }

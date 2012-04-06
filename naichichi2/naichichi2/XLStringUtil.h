@@ -198,8 +198,6 @@ public:
 	static std::string XLStringUtil::replace(const std::string &inTarget ,const char** replacetable,bool isrev = false);
 	//remove 複数の候補を一括削除  const char * replacetable[] = {"A","B","あ","うえお" , NULL}
 	static std::string XLStringUtil::remove(const std::string &inTarget ,const char** replacetable);
-	//漢字と英語とカタカナをひらがなに変換します
-	static std::string XLStringUtil::KanjiAndKanakanaToHiragana(const std::string &inTarget,const char * option = "");
 	//typo修正
 	//r	 「ローマ字」を「ひらがな」に変換します。
 	//R	 「ひらがな」を「ローマ字」に変換します。
