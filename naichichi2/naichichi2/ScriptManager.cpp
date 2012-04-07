@@ -123,6 +123,11 @@ void ScriptManager::SpeakEnd(const CallbackDataStruct* callback,const std::strin
 //汎用的なコールバック打ち返し
 xreturn::r<std::string> ScriptManager::fireCallback(const CallbackDataStruct* callback,const std::map< std::string , std::string >& args) const
 {
+	if (callback == NULL)
+	{
+		return "";
+	}
+
 	int func = callback->getFunc();
 	if (func == NO_CALLBACK)
 	{

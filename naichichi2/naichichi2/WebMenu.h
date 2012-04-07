@@ -8,8 +8,7 @@ public:
 	struct Action
 	{
 		std::string name;
-		std::string image;
-		const CallbackDataStruct* func;
+		std::string action;
 	};
 	struct Menu
 	{
@@ -36,9 +35,7 @@ public:
 	const std::vector<Room*>* getRooms() const;
 	const std::string getRoomName() const;
 	bool checkRoomname(const std::string& roomname) const;
-	void AddMenu(const std::string& menuname,const std::string& image);
-	void AddMenu(const std::string& roomname,const std::string& roomip,const std::string& menuname,const std::string& image);
-	void AddMenuSub(const std::string& menuname,const std::string& actionname,const std::string& image,const CallbackDataStruct* callback);
-	bool AddMenuSub(const std::string& roomname,const std::string& menuname,const std::string& actionname,const std::string& image,const CallbackDataStruct* callback);
-	bool Fire(const std::string& roomname,const std::string& menuname,const std::string& actionname);
+	void AddMenu(const std::string& roomname,const std::string& roomip,const std::string& menuname,const std::string& menuimage,const std::string& menustate,const std::string& actionname,const std::string& actioncommand);
+	xreturn::r<bool> Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& action);
+	xreturn::r<bool> Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& menuname,const std::string& actionname);
 };

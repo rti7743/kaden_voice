@@ -80,7 +80,7 @@ xreturn::r<std::string> ActionImplement::HttpPost(const std::string& url,const s
 
 xreturn::r<bool> ActionImplement::Execute(const std::string& targetpc,const std::string& command,const std::string& args,const std::string& directory)
 {
-	std::string _command = XLStringUtil::pathseparator(command);
+	std::string _command = XLStringUtil::pathcombine(directory , command);
 	std::string _args = XLStringUtil::pathseparator(args);
 
 	::ShellExecute(NULL,"open",_command.c_str(),_args.c_str(),NULL,SW_SHOWNORMAL);

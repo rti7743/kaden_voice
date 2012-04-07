@@ -15,7 +15,4 @@ function call(){
 		action("action__light_off");
 	});
 
-	webmenu("しょうめい","electronics.jpg");
-	webmenusub("しょうめい","OFF","electronics.jpg",function() action("action__light_off") end);
-	webmenusub("しょうめい","ON","electronics.jpg",function() action("action__light_on") end);
 }

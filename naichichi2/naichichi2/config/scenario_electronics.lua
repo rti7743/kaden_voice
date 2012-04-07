@@ -10,7 +10,6 @@ function call()
 		out["nowroom"] = request["nowroom"];
 		if (not out["nowroom"] or out["nowroom"] == "")
 		{
-		out["nowroom"] = "121212";
 			//現在の部屋を選択
 			for key,value in pairs(out["webmenu"]) do
 				if ( value["ip"] == "") {

@@ -13,10 +13,4 @@ function call()
 	onvoice("だんぼう(?:けして|オフ)"	, function() action("action__aircon_heater_off") end);
 	onvoice("だんぼうマックス"			, function() action("action__aircon_heater_max") end);
 	
-	webmenu("エアコン","electronics.jpg");
-	webmenusub("エアコン","OFF","electronics.jpg",function() action("action__aircon_cooler_off") end);
-	webmenusub("エアコン","クーラーON","electronics.jpg",function() action("action__aircon_cooler_on") end);
-	webmenusub("エアコン","クーラーMAX","electronics.jpg",function() action("action__aircon_cooler_on") end);
-	webmenusub("エアコン","だんぼうON","electronics.jpg",function() action("action__aircon_heater_on") end);
-	webmenusub("エアコン","だんぼうMAX","electronics.jpg",function() action("action__aircon_heater_max") end);
 end

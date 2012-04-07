@@ -6,7 +6,4 @@ function call()
 	onvoice("ディスプレイ(?:つけて|オン)"	, function() action("action__display_on") end);
 	onvoice("ディスプレイ(?:けして|オフ)"	, function() action("action__display_off") end);
 
-	webmenu("ディスプレイ","electronics.jpg");
-	webmenusub("ディスプレイ","OFF","electronics.jpg",function() action("action__display_off") end);
-	webmenusub("ディスプレイ","ON","electronics.jpg",function() action("action__display_on") end);
 end

@@ -7,7 +7,4 @@ function call()
 	onvoice("もうふ(?:つけて|オン)"	, function() action("action__moufu_on") end);
 	onvoice("もうふ(?:けして|オフ)"	, function() action("action__moufu_off") end);
 
-	webmenu("もうふ","electronics.jpg");
-	webmenusub("もうふ","OFF","electronics.jpg",function() action("action__moufu_off") end);
-	webmenusub("もうふ","ON","electronics.jpg",function() action("action__moufu_on") end);
 end

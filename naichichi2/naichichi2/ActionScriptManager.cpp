@@ -84,8 +84,6 @@ xreturn::r<bool> ActionScriptManager::ThreadRun(const CallbackDataStruct* callba
 	std::map<std::string,std::string>  data;
 	data["action_result"] = runner.callFunction("call",args,true);
 
-	
-
 	this->PoolMainWindow->SyncInvoke( [&](){
 		ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 

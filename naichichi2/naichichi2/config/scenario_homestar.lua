@@ -6,7 +6,4 @@ function call()
 	onvoice("ホームスター(?:つけて|オン)"	, function() action("action__homestar_on") end);
 	onvoice("ホームスター(?:けして|オフ)"	, function() action("action__homestar_off") end);
 
-	webmenu("ホームスター","electronics.jpg");
-	webmenusub("ホームスター","OFF","electronics.jpg",function() action("action__homestar_off") end);
-	webmenusub("ホームスター","ON","electronics.jpg",function() action("action__homestar_on") end);
 end

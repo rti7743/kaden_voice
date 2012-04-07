@@ -103,8 +103,6 @@ private:
 	static int ScriptRunner::l_json_decode(lua_State* L);
 	static int ScriptRunner::l_xml_encode(lua_State* L);
 	static int ScriptRunner::l_xml_decode(lua_State* L);
-	static int ScriptRunner::l_webmenu(lua_State* L);
-	static int ScriptRunner::l_webmenusub(lua_State* L);
 	static int ScriptRunner::l_getwebmenu(lua_State* L);
 	static int ScriptRunner::l_callwebmenu(lua_State* L);
 
