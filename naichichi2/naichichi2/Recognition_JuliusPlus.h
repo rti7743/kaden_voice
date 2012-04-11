@@ -80,7 +80,7 @@ private:
 	xreturn::r<bool> JuliusFileStart();
 
 	//juliusに食べさせる dfa と dict を生成します
-	bool MakeJuliusRule(Recognition_JuliusPlusRule* toprule,bool no_nest ,std::ostream* dfa , std::ostream* dict  );
+	bool MakeJuliusRule(Recognition_JuliusPlusRule* toprule,bool isNest , bool isInsertGomiNode ,std::ostream* dfa , std::ostream* dict  );
 
 	//結果リストの開放
 	void FreeAllSentenceList(std::list<OncSentence*> *allSentence) const;

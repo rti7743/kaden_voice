@@ -1,0 +1,6 @@
+-gram __temp__regexp_test_file
+-C hmm_ptm.jconf
+-input rawfile -demo
+-rejectshort 10
+-n 10 -output 6
+-walign

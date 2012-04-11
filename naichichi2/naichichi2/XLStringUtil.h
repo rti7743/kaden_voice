@@ -166,6 +166,10 @@ public:
 	static std::string XLStringUtil::basename(const std::string &fullpath);
 	//ファイル名だけ(拡張子なし)を取得する  c:\\hoge\\hoge.txt -> hoge
 	static std::string XLStringUtil::basenameonly(const std::string &fullpath);
+	//先頭から a と b の同一部分の文字数を返す
+	static int XLStringUtil::strmatchpos(const std::string& a,const std::string& b);
+	//フルパスかどうか
+	static bool XLStringUtil::isfullpath(const std::string& dir,const std::string& pathsep = "");
 	//相対パスから絶対パスに変換する
 	static std::string XLStringUtil::pathcombine(const std::string& base,const std::string& dir,const std::string& pathsep = "");
 	//パスの区切り文字を平らにする.

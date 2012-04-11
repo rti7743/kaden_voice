@@ -405,7 +405,7 @@ std::string HttpServer::WebPathToRealPath(const std::string& urlpath)
 {
 	//パスの区切りを / で統一します。
 	const std::string _webroot = XLStringUtil::replace(this->Webroot , "\\" , "/");
-	std::string realpath = XLStringUtil::pathcombine(_webroot,urlpath,"/");
+	std::string realpath = XLStringUtil::pathcombine("./",_webroot + "\\" + urlpath,"/");
 
 	//webrootより上にアクセスしていないか？
 	if (realpath.find(_webroot) != 0)

@@ -224,7 +224,6 @@ xreturn::r< bool > MediaFileIndex::SearchQuery(const std::string& query,unsigned
 		std::string msg =std::string() + "sql発行に失敗しました. sqlite:" + sqlite3_errmsg(this->db) + " SQL:" + sql ;
 		return xreturn::error( msg );
 	}
-	this->PoolMainWindow->SyncInvokeLog(std::string() + "SQL 発行完了done." ,LOG_LEVEL_DEBUG);
 	for (;;) 
 	{
 		ret = sqlite3_step(stm);

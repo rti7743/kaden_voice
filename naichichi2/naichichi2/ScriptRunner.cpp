@@ -1056,8 +1056,9 @@ int ScriptRunner::l_execute(lua_State* L)
 		args = XLStringUtil::chop( XLStringUtil::escapeshellarg(command) + " " + args );
 		command = overraideCommand;
 	}
+	command = XLStringUtil::pathcombine(baseDirectory,command);
 
-	auto r = ActionImplement::Execute("",command,args , baseDirectory );
+	auto r = ActionImplement::Execute("",command,args);
 	if (!r)
 	{
 		return luaL_errorHelper(L,lua_funcdump(L,"execute") + "がエラーになりました。 " + r.getFullErrorMessage() );

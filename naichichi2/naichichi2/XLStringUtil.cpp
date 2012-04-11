@@ -1185,6 +1185,45 @@ SEXYTEST("XLStringUtil::basenameonly‚Ì‚Ä‚·‚Æ")
 	}
 }
 
+//ƒtƒ‹ƒpƒX‚©‚Ç‚¤‚©
+bool XLStringUtil::isfullpath(const std::string& dir,const std::string& pathsep)
+{
+#ifdef _WINDOWS
+	std::string _pathsep = pathsep.empty() ? "\\" : pathsep;
+#else
+	std::string _pathsep = pathsep.empty() ? "/" : pathsep;
+#endif
+	std::string _dir = pathseparator(dir,pathsep);
+
+#ifdef _WINDOWS
+	if ( XLStringUtil::strpos(_dir,pathsep + pathsep ) == 0 )
+	{// \\\\hogehoge
+		return true;
+	}
+	if ( XLStringUtil::strpos(_dir,":" + pathsep ) == 1 )
+	{// c:\\ 
+		return true;
+	}
+#else
+	if ( XLStringUtil::strpos(_dir,pathsep) == 0 )
+	{// /var/hog ...
+		return true;
+	}
+#endif
+	return false;
+}
+
+//æ“ª‚©‚ç a ‚Æ b ‚Ì“¯ˆê•”•ª‚Ì•¶š”‚ğ•Ô‚·
+int XLStringUtil::strmatchpos(const std::string& a,const std::string& b)
+{
+	const char * _x;
+	const char * _a = a.c_str();
+	const char * _b = b.c_str();
+	_x = _a;
+	while(*_a++ == *_b++ && *_a != 0 );
+
+	return (int)(_x - _a);
+}
 
 std::string XLStringUtil::pathcombine(const std::string& base,const std::string& dir,const std::string& pathsep)
 {
@@ -1196,7 +1235,16 @@ std::string XLStringUtil::pathcombine(const std::string& base,const std::string&
 	std::string _base = pathseparator(base,pathsep);
 	std::string _dir = pathseparator(dir,pathsep);
 
-	std::list<std::string> nodes = split(_pathsep,_base + _pathsep + _dir);
+	std::list<std::string> nodes ; 
+	if ( XLStringUtil::isfullpath(_dir,_pathsep) )
+	{
+		nodes = split(_pathsep,_dir);
+	}
+	else
+	{
+		nodes = split(_pathsep,_base + _pathsep + _dir);
+	}
+
 	std::list<std::string>::iterator i = nodes.begin();
 	std::list<std::string> useNodes;
 	for( ; i != nodes.end() ; ++ i )
@@ -1245,6 +1293,18 @@ std::string XLStringUtil::pathcombine(const std::string& base,const std::string&
 }
 SEXYTEST("XLStringUtil::pathcombine")
 {
+	{
+		std::string a = XLStringUtil::pathcombine("c:\\Program Files\\hogehoge" , "c:\\Program Files\\hogehoge\\aaa.txt","\\");
+		SEXYTEST_EQ(a ,"c:\\Program Files\\hogehoge\\aaa.txt");
+	}
+	{
+		std::string a = XLStringUtil::pathcombine("c:\\Program Files\\hogehoge" , "c:\\Program Files\\hogehoge2\\aaa.txt","\\");
+		SEXYTEST_EQ(a ,"c:\\Program Files\\hogehoge2\\aaa.txt");
+	}
+	{
+		std::string a = XLStringUtil::pathcombine("c:\\Program Files\\hogehoge" , "c:\\home\\hogehoge2\\aaa.txt","\\");
+		SEXYTEST_EQ(a ,"c:\\home\\hogehoge2\\aaa.txt");
+	}
 	{
 		std::string a = XLStringUtil::pathcombine("./config/webroot" , "./hello.tpl","\\");
 		SEXYTEST_EQ(a ,".\\config\\webroot\\hello.tpl");

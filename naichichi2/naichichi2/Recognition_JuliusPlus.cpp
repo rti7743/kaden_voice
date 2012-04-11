@@ -8,6 +8,7 @@
 #include "Recognition_Factory.h"
 #include "Recognition_JuliusPlus.h"
 #include "MainWindow.h"
+#include "XLFileUtil.h"
 
 #define issjiskanji(c)	((0x81 <= (unsigned char)(c&0xff) && (unsigned char)(c&0xff) <= 0x9f) || (0xe0 <= (unsigned char)(c&0xff) && (unsigned char)(c&0xff) <= 0xfc))
 
@@ -38,6 +39,11 @@ void Recognition_JuliusPlus::WaveCutter(Recog *recog,int all_frame,int startfrea
 	startfream *= of_fream;
 	endfream *= of_fream;
 	//recog->jconf->input.framesize;
+
+	if (XLFileUtil::Exist(filename))
+	{//先客をどける
+		XLFileUtil::move(filename , filename + num2str(time(NULL)) + ".wav" );
+	}
 
 	FILE *recfile_fp = wrwav_open( (char*) filename.c_str(), recog->jconf->input.sfreq);
 	if(recfile_fp)
@@ -597,7 +603,7 @@ Recognition_JuliusPlus::~Recognition_JuliusPlus()
 	this->Grammer = NULL;
 }
 
-bool Recognition_JuliusPlus::MakeJuliusRule(Recognition_JuliusPlusRule* toprule,bool no_nest , std::ostream* dfa , std::ostream* dict  )
+bool Recognition_JuliusPlus::MakeJuliusRule(Recognition_JuliusPlusRule* toprule,bool isNest , bool isInsertGomiNode ,std::ostream* dfa , std::ostream* dict  )
 {
 	struct reverse_automaton
 	{
@@ -617,8 +623,10 @@ bool Recognition_JuliusPlus::MakeJuliusRule(Recognition_JuliusPlusRule* toprule,
 		int dictGomiNumer ;
 		Recognition_JuliusPlus* _this;
 
+		bool isInsertGomiNode;
 
-		void fire(Recognition_JuliusPlusRule* toprule,bool no_nest)
+
+		void fire(Recognition_JuliusPlusRule* toprule,bool isNest)
 		{
 			this->dfaNumber = 3;
 			this->dictNumber = 3;
@@ -638,20 +646,22 @@ bool Recognition_JuliusPlus::MakeJuliusRule(Recognition_JuliusPlusRule* toprule,
 
 			*dfa << 2 << " " << -1 << " " << -1 << " " << 1 << " " << 0 << std::endl;
 
-			//ゴミを入れることで juliusの確率計算がかたよるバグを回避する.
-			//あ-ん までの一文字のごみを作成します。
-			*dfa << firstRuleNumber << " " << this->dictGomiNumer << " " << 1 << " " << 0 << " " << 0 << std::endl;
-
-			//SJISなどではいいんだけどUTFが絡むと問題は深刻なので、愚直にテーブルを作るよ
-			const char* akasatanaMapping[] = {"あ" , "い" , "う" , "え" , "お" ,"か" , "き" , "く" , "け" , "こ" ,"さ" , "し" , "す" , "せ" , "そ" ,"た" , "ち" , "つ" , "て" , "と" 
-				,"な" , "に" , "ぬ" , "ね" , "の" ,"は" , "ひ" , "ふ" , "へ" , "ほ" ,"ま" , "み" , "む" , "め" , "も" ,"や" , "ゆ" , "よ" 
-				,"ら" , "り" , "る" , "れ" , "ろ" ,"わ" , "ん" };
-			for(int akasataI = 0 ; akasataI <  sizeof(akasatanaMapping)/sizeof(akasatanaMapping[0]) ; ++akasataI )
+			if ( this->isInsertGomiNode )
 			{
-				*dict << this->dictGomiNumer	<< "\t" << "[gomi]" << "\t" << Recognition_JuliusPlusRule::convertYomi(akasatanaMapping[akasataI]) << std::endl;
-			}
+				//ゴミを入れることで juliusの確率計算がかたよるバグを回避する.
+				//あ-ん までの一文字のごみを作成します。
+				*dfa << firstRuleNumber << " " << this->dictGomiNumer << " " << 1 << " " << 0 << " " << 0 << std::endl;
 
-			if (!no_nest)
+				//SJISなどではいいんだけどUTFが絡むと問題は深刻なので、愚直にテーブルを作るよ
+				const char* akasatanaMapping[] = {"あ" , "い" , "う" , "え" , "お" ,"か" , "き" , "く" , "け" , "こ" ,"さ" , "し" , "す" , "せ" , "そ" ,"た" , "ち" , "つ" , "て" , "と" 
+					,"な" , "に" , "ぬ" , "ね" , "の" ,"は" , "ひ" , "ふ" , "へ" , "ほ" ,"ま" , "み" , "む" , "め" , "も" ,"や" , "ゆ" , "よ" 
+					,"ら" , "り" , "る" , "れ" , "ろ" ,"わ" , "ん" };
+				for(int akasataI = 0 ; akasataI <  sizeof(akasatanaMapping)/sizeof(akasatanaMapping[0]) ; ++akasataI )
+				{
+					*dict << this->dictGomiNumer	<< "\t" << "[gomi]" << "\t" << Recognition_JuliusPlusRule::convertYomi(akasatanaMapping[akasataI]) << std::endl;
+				}
+			}
+			if (isNest)
 			{//通常のネストするルーチン
 				func(toprule,1,0 , firstRuleNumber);
 			}
@@ -720,9 +730,12 @@ bool Recognition_JuliusPlus::MakeJuliusRule(Recognition_JuliusPlusRule* toprule,
 				if (nestrules->size() <= 0 && words->size() >= 1)
 				{//単語だけのノードの場合、終端になる。
 					*dfa << termNumber << " " << dictNumber << " " << number << " " << 0 << " " << 0 << std::endl;
-					if (currentrule == _this->YobikakeRuleHandle)
+					if ( this->isInsertGomiNode )
 					{
-						*dfa << termNumber << " " << this->dictGomiNumer << " " << number << " " << 0 << " " << 0 << std::endl;
+						if (currentrule == _this->YobikakeRuleHandle)
+						{
+							*dfa << termNumber << " " << this->dictGomiNumer << " " << number << " " << 0 << " " << 0 << std::endl;
+						}
 					}
 				}
 				else
@@ -788,14 +801,21 @@ bool Recognition_JuliusPlus::MakeJuliusRule(Recognition_JuliusPlusRule* toprule,
 			*dfa << termNumber << " " << dictNumber << " " << number << " " << 0 << " " << 0 << std::endl;
 			if (currentrule == _this->YobikakeRuleHandle)
 			{
-				*dfa << termNumber << " " << this->dictGomiNumer << " " << number << " " << 0 << " " << 0 << std::endl;
+				if ( this->isInsertGomiNode )
+				{
+					if (currentrule == _this->YobikakeRuleHandle)
+					{
+						*dfa << termNumber << " " << this->dictGomiNumer << " " << number << " " << 0 << " " << 0 << std::endl;
+					}
+				}
 			}
 		}
 	} maton;
 	maton._this = this;
 	maton.dfa = dfa;
 	maton.dict = dict;
-	maton.fire( toprule ,no_nest);
+	maton.isInsertGomiNode = isInsertGomiNode;
+	maton.fire( toprule ,isNest);
 
 	return true;
 }
@@ -1119,12 +1139,12 @@ xreturn::r<bool> Recognition_JuliusPlus::CommitRule()
 	//マイクから入力用
 	std::ofstream dfa("__temp__regexp_test.dfa");
 	std::ofstream dict("__temp__regexp_test.dict");
-	this->MakeJuliusRule(this->Grammer,false, &dfa,&dict);
+	this->MakeJuliusRule(this->Grammer,true,true, &dfa,&dict);
 
 	//ディクテーションフィルター用
 	std::ofstream dfaFile("__temp__regexp_test_file.dfa");
 	std::ofstream dictFile("__temp__regexp_test_file.dict");
-	this->MakeJuliusRule(this->YobikakeRuleHandle,true,&dfaFile,&dictFile);
+	this->MakeJuliusRule(this->YobikakeRuleHandle,false,false,&dfaFile,&dictFile);
 
 	this->JuliusStop();
 	this->JuliusFileStart();

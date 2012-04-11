@@ -1,0 +1,6 @@
+-gram __temp__regexp_test
+-C hmm_ptm.jconf
+-input mic -demo
+-n 10 -output 6
+-rejectshort 1000
+-walign
