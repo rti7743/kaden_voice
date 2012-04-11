@@ -28,7 +28,7 @@ bool XLFileUtil::Exist(const std::string & inFileName)
 }
 
 //íœ
-bool XLFileUtil::unlink(const std::string & inFileName)
+bool XLFileUtil::del(const std::string & inFileName)
 {
 	::unlink(XLStringUtil::pathseparator(inFileName).c_str());
 	return true;

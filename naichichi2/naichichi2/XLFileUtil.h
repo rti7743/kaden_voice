@@ -18,7 +18,7 @@ public:
 	//ファイルが存在するか?
 	static bool XLFileUtil::Exist(const std::string & inFileName);
 	//削除
-	static bool XLFileUtil::unlink(const std::string & inFileName);
+	static bool XLFileUtil::del(const std::string & inFileName);
 	static bool XLFileUtil::copy(const std::string & inFileNameA,const std::string & inFileNameB);
 	static bool XLFileUtil::move(const std::string & inFileNameA,const std::string & inFileNameB);
 	//ファイルをすべて string に読み込む.

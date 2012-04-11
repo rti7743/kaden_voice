@@ -40,11 +40,6 @@ void Recognition_JuliusPlus::WaveCutter(Recog *recog,int all_frame,int startfrea
 	endfream *= of_fream;
 	//recog->jconf->input.framesize;
 
-	if (XLFileUtil::Exist(filename))
-	{//先客をどける
-		XLFileUtil::move(filename , filename + num2str(time(NULL)) + ".wav" );
-	}
-
 	FILE *recfile_fp = wrwav_open( (char*) filename.c_str(), recog->jconf->input.sfreq);
 	if(recfile_fp)
 	{
@@ -103,11 +98,21 @@ bool Recognition_JuliusPlus::checkDictation(Recog *recog,const OncSentence* sent
 	j_recognize_stream(this->recogFile);
 	this->PoolMainWindow->SyncInvokeLog(std::string() + "#" + this->DictationCheckString ,LOG_LEVEL_DEBUG);
 
-	//内容のチェック
-	if (! checkYobikake( this->DictationCheckString ) )
-	{
+	if ( this->DictationCheckString.empty() )
+	{//SVMで棄却
+//		XLFileUtil::move(waveFilename , waveFilename + num2str(time(NULL)) + "_PP.wav" );
+		XLFileUtil::del(waveFilename);
 		return false;
 	}
+
+	//内容のチェック
+	if (! checkYobikake( this->DictationCheckString ) )
+	{//SVMはすり抜けたが、ディクテーションフィルタで棄却
+		XLFileUtil::move(waveFilename , waveFilename + num2str(time(NULL)) + "_D.wav" );
+		return false;
+	}
+	XLFileUtil::move(waveFilename , waveFilename + num2str(time(NULL)) + "_X.wav" );
+	
 
 	return true;
 }
@@ -216,11 +221,14 @@ void Recognition_JuliusPlus::OnOutputResult(Recog *recog)
 				//マッチしたのでコールバックする
 				std::string matchstring=word.str();
 				this->PoolMainWindow->SyncInvokePopupMessage("音声認識",matchstring);
+/*
+//テストなので無力化する
 				this->PoolMainWindow->AsyncInvoke( [=](){
 					//非同期なのでコピーして無効になるようなポインタは使わないでね。
 					this->PoolMainWindow->ScriptManager.VoiceRecogntion
 						(callback,capture,matchstring,0,plus_sentence_score);
 				} );
+*/
 			}
 		}
 
@@ -1144,7 +1152,7 @@ xreturn::r<bool> Recognition_JuliusPlus::CommitRule()
 	//ディクテーションフィルター用
 	std::ofstream dfaFile("__temp__regexp_test_file.dfa");
 	std::ofstream dictFile("__temp__regexp_test_file.dict");
-	this->MakeJuliusRule(this->YobikakeRuleHandle,false,false,&dfaFile,&dictFile);
+	this->MakeJuliusRule(this->YobikakeRuleHandle,false,true,&dfaFile,&dictFile);
 
 	this->JuliusStop();
 	this->JuliusFileStart();
@@ -1321,7 +1329,7 @@ void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 			}
 			//素性を詰めていきます。
 			std::vector<feature_node> feature_nodeVector;
-			feature_nodeVector.resize(r->lm->am->mfcc->param->header.samplenum * r->lm->am->mfcc->param->veclen + 7 + 1);
+			feature_nodeVector.resize(r->lm->am->mfcc->param->header.samplenum * r->lm->am->mfcc->param->veclen + 9 + 1);
 			feature_node* feature_nodeP = &feature_nodeVector[0];
 
 			//dict から plus側のrule を求める
@@ -1377,8 +1385,18 @@ void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 			feature_nodeP->value = r->lm->am->mfcc->param->header.samplenum;
 			feature_nodeP++;
 
-			//素性8～ これがきめてになった。
-			int feature = 8;
+			//素性8 ゴミから拾い上げれたか？
+			feature_nodeP->index = 8;
+			feature_nodeP->value = dict * 100.f;
+			feature_nodeP++;
+
+			//素性8 文章スコア/フレーム数
+			feature_nodeP->index = 9;
+			feature_nodeP->value = (int)(score/all_frame);
+			feature_nodeP++;
+
+			//素性9～ これがきめてになった。
+			int feature = 10;
 			for(unsigned int vecI = 0 ; vecI < r->lm->am->mfcc->param->header.samplenum ;vecI++ )
 			{
 				for(int vecN = 0 ; vecN < r->lm->am->mfcc->param->veclen ;vecN++ )
