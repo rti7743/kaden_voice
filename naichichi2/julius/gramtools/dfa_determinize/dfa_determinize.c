@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file   dfa_determinize.c
  * 
  * @brief  Determinize DFA for Julian grammar.

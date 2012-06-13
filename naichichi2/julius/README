@@ -1,0 +1,23 @@
+音声認識エンジン julius をハックして遊ぼう。
+julius「マナの本当の力を思い知れ!!」
+=========================================================
+julius-4.2.1
+=========================================================
+julius-4.2.1 に julius-plus を組み込んだものです。
+ソースコードの文字コードのエンコーディングが問題なんですが、一応、windowsでも linux でも動作します。
+クロスプラットフォームです。
+
+windows
+VS2010 で julius-4.2.1\msvc\julius-plus.sln を開いてください。
+
+
+linux
+sudo apt-get install flex g++ 'libboost*-dev' libboost-thread-dev binutils-dev  libboost-system-dev libasound2-dev
+
+./configure --with-mictype=alsa
+make
+
+cd julius-plus
+make
+
+./julius-plus

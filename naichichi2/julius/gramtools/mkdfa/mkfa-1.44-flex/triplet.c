@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -6,7 +6,7 @@
  */
 #include "mkfa.h"
 
-typedef struct _TFA{                 /* 3$B$DAH%j%9%HMQ(B */
+typedef struct _TFA{                 /* 3つ組リスト用 */
     int stat;
     int inp;
     int ns;
@@ -18,15 +18,15 @@ void r_makeTriplet( FA *fa, FILE *fp );
 int getNewStatNo( FA *fa );
 FA *processTripletQueue( FA *fa );
 
-static int FAprocessed = 0;    /* $B8=:_$N%9%F%C%W$K$*$$$F=hM}$5$l$?(BFA$B$N?t(B */
-extern int FAtotal;            /* FA$B$NAm?t(B */
-static int TFAtravTotal = 0;   /* 3$B$DAH:n@.;~$KN)$A4s$C$?%N!<%I?t(B */
-static int TFAtravSuccess = 0; /* $B$=$N$&$A:#$^$G$KN)$A4s$C$F$$$J$+$C$??t(B */
+static int FAprocessed = 0;    /* 現在のステップにおいて処理されたFAの数 */
+extern int FAtotal;            /* FAの総数 */
+static int TFAtravTotal = 0;   /* 3つ組作成時に立ち寄ったノード数 */
+static int TFAtravSuccess = 0; /* そのうち今までに立ち寄っていなかった数 */
 
-extern char FAfile[ 1024 ];    /* FA$B%U%!%$%kL>(B(DFAorNFA) */
-extern FA *FAlist;             /* FA$B%M%C%H%o!<%/$K$*$1$k3+;O(BFA$B$N%]%$%s%?(B */
-extern int NoNewLine;          /* $BJ#?t$NI=<(%b!<%I$G2~9TLdBj$r2r7h$9$k(B */
-extern char Clipboard[ 1024 ]; /* sprintf$BMQ$N0l;~=q$-9~$_%P%C%U%!(B */
+extern char FAfile[ 1024 ];    /* FAファイル名(DFAorNFA) */
+extern FA *FAlist;             /* FAネットワークにおける開始FAのポインタ */
+extern int NoNewLine;          /* 複数の表示モードで改行問題を解決する */
+extern char Clipboard[ 1024 ]; /* sprintf用の一時書き込みバッファ */
 
 extern int SW_Verbose;
 extern int SW_Quiet;

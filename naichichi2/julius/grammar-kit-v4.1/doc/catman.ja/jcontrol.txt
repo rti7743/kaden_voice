@@ -1,0 +1,132 @@
+JCONTROL(1)                                           JCONTROL(1)
+
+
+
+NAME
+       jcontrol  - simple program to control Julius / Julian mod-
+       ule via API
+
+SYNOPSIS
+       jcontrol hostname [portnum]
+
+DESCRIPTION
+       jcontrol は，他のホストで動作中の julius を，APIを介してコ
+       ントロールする簡単なコンソールプログラムです． Julius への
+       コマンド送信，およびJuliusからのメッセージ受信を行うことが
+       できます．
+
+       起 動後，jcontrol は，指定ホスト上において「モジュールモー
+       ド」で動作中の Julius または Julian に対し，接続を試 み ま
+       す． 接続確立後，jcontrol はユーザーからのコマンド入力待ち
+       状態となります．
+
+       jcontrol はユーザーが入力したコマンドを解釈し，対応するAPI
+       コ マンドを Julius へ送信します．また，Julius から認識結果
+       や入力トリガ情報などのメッセージが送信されてきたときは，そ
+       の内容を標準出力へ書き出します．
+
+       APIの詳細については関連文書をご覧下さい．
+
+OPTIONS
+       hostname
+              接 続先のホスト名（Julius / Julian がモジュールモー
+              ドで動作中）
+
+       portnum
+              (optional) ポート番号 (default=10500)
+
+COMMANDS (COMMON)
+       起動後，jcontrol に対して以下のコマンド文字列を標準入力 か
+       ら入力できます．
+
+       pause   認識を中断する．認識途中の場合，そこで入力を中断し
+              て第2パスまで認識が終わってから中断する．
+
+       terminate
+              認識を中断する．認識途中の場合，入力を破棄して即 時
+              中断する．
+
+       resume 認識を再開．
+
+       inputparam arg
+              文 法切り替え時に音声入力であった場合の入力中音声の
+              扱いを指定． "TERMINATE", "PAUSE", "WAIT"のうちいず
+              れかを指定．
+
+       version
+              バージョン文字列を返す
+
+       status システムの状態(active/sleep)を返す．
+
+GRAMMAR COMMANDS (Julian)
+       Julian 用のコマンドです：
+
+       changegram prefix
+              認識文法を "prefix.dfa" と "prefix.dict" に切り替え
+              る． Julian 内の文法は全て消去され，指定された文 法
+              に置き換わる．
+
+       addgram prefix
+              認識文法として "prefix.dfa" と "prefix.dict" を追加
+              する．
+
+       deletegram ID
+              指定されたIDの認識文法を削除する．指定文法は Julian
+              か ら削除される．ID は Julian から送られる GRAMINFO
+              内に記述されている．
+
+       deactivategram ID
+              指定されたIDの認識文法を，一時的にOFFにする．OFF に
+              された文法は認識処理から一時的に除外される．このOFF
+              にされた文法は Julian 内に保持され， "activategram"
+              コマンドで再び ON にできる．
+
+       activategram ID
+              一時的に OFF になっていた文法を再び ON にする．
+
+EXAMPLE
+       Julius  および Julian からのメッセージは "> " を行の先頭に
+       つけてそのまま標準出力に出力されます．出力内容の詳細につい
+       ては，関連文書を参照してください．
+
+       (1) Julius / Julian をモジュールモードでホスト host で起動
+       する．
+           % julian -C xxx.jconf ... -input mic -module
+
+       (2) (他の端末で) jcontrol を起動し，通信を開始する．
+           % jcontrol host
+           connecting to host:10500...done
+           > <GRAMINFO>
+           >  # 0: [active] 99words, 42categories, 135nodes (new)
+           > </GRAMINFO>
+           > <GRAMINFO>
+           >  # 0: [active] 99words, 42categories, 135 nodes
+           >   Grobal:      99words, 42categories, 135nodes
+           > </GRAMINFO>
+           > <INPUT STATUS="LISTEN" TIME="1031583083"/>
+        -> pause
+        -> resume
+           > <INPUT STATUS="LISTEN" TIME="1031583386"/>
+        -> addgram test
+           ....
+
+
+SEE ALSO
+       julius(1), julian(1)
+
+BUGS
+       バ グ 報 告・問い合わせ・コメントなどは julius@kuis.kyoto-
+       u.ac.jp までお願いします．
+
+COPYRIGHT
+       Copyright (c) 2002-2003 奈良先端科学技術大学院大学
+
+AUTHORS
+       李 晃伸 (奈良先端大) が実装しました．
+
+LICENSE
+       Julius の使用許諾に準じます．
+
+
+
+                              LOCAL                   JCONTROL(1)

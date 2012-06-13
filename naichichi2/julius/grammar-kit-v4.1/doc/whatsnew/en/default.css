@@ -1,0 +1,57 @@
+body {
+	color: black;
+	background: #fffff8;
+}
+P {
+	text-indent: 1em;
+	line-height: 120%;
+}
+
+H2 {
+	color: #449944;
+	border-width: 0pt 0pt 3pt 10pt;
+	border-color: #006600;
+	border-style: solid;
+	text-indent: 10pt;
+}
+H2.julian {
+	color: #4444aa;
+	border-color: #000088;
+}
+H3 {
+	margin-top: 1.5em;
+	border-width: 0pt 0pt 2pt 0pt;
+	border-color: #449944;
+	border-style: solid;
+}
+H3.julian {
+	border-color: #444499;
+}
+pre {
+	color: #550000;
+	background: #eeeecc;
+	border-width: 0pt 1pt;
+	border-color: gray;
+	border-style: solid;
+	font-family: courier, monospace;
+	padding: 0.5em;
+}
+pre.normal {
+	color: black;
+	background: #fffff8;
+	font-size: small;
+	border-width: 0pt;
+}
+pre.license {
+	color: #000000;
+	background: #f0fff0;
+	border-width: 1pt 1pt;
+	border-color: gray;
+	border-style: solid;
+	padding: 0.5em;
+	font-size: small;
+}
+code {
+	font-family: courier, monospace;
+}
+

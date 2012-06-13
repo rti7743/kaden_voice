@@ -1,8 +1,8 @@
-/**
+﻿/**
  * @file   japi_procss.c.
  * 
  * <JA>
- * @brief  �⥸�塼�륳�ޥ��������
+ * @brief  モジュールコマンド送信部
  * </JA>
  * 
  * <EN>

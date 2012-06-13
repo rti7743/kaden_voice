@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -19,8 +19,8 @@ typedef unsigned int CLASSFLAGS;
 #define CLASSFLAG_MAX sizeof(CLASSFLAGS)*8
 
 typedef struct _BODY{
-    char name[ SYMBOL_LEN ];         /* $B9=@.$9$k%/%i%9$NL>A0(B */
-    FLAG abort;                      /* BODY$B$NESCf=*N;%U%i%0(B */
+    char name[ SYMBOL_LEN ];         /* 構成するクラスの名前 */
+    FLAG abort;                      /* BODYの途中終了フラグ */
     struct _BODY *next;
 } BODY;
 
@@ -30,45 +30,45 @@ typedef struct _BODYLIST{
 } BODYLIST;
 
 typedef struct _CLASS{
-    short no;                        /* $B%/%i%9HV9f(B $BHs=*C<$H=*C<$GFHN)3dEv(B
-					$BHs=*C<$O(B#31$B$^$G$NEPO?!"$=$NB>$O(B#-1 */
-    char name[ SYMBOL_LEN ];         /* $B%/%i%9$NL>A0(B */
-    struct _CLASS *next;             /* $B<!$N%/%i%9$X$N%]%$%s%?(B */
-    BODYLIST *bodyList;              /* $B%/%i%9$N%\%G%#$N%j%9%H$X$N%]%$%s%?(B */
-    int branch;                      /* $BDj5A?t(B */
-    FLAG usedFA;                     /* $B%/%i%9$,;HMQ$5$l$?$+(B */
+    short no;                        /* クラス番号 非終端と終端で独立割当
+					非終端は#31までの登録、その他は#-1 */
+    char name[ SYMBOL_LEN ];         /* クラスの名前 */
+    struct _CLASS *next;             /* 次のクラスへのポインタ */
+    BODYLIST *bodyList;              /* クラスのボディのリストへのポインタ */
+    int branch;                      /* 定義数 */
+    FLAG usedFA;                     /* クラスが使用されたか */
     FLAG used;
-    FLAG tmp;                        /* $B:G>.2=$N$?$a0l;~E*$K$G$-$?%/%i%9$+(B */
+    FLAG tmp;                        /* 最小化のため一時的にできたクラスか */
 } CLASS;
 
 /*
-   bodyList, branch $B$O=*C<$HHs=*C<$G0UL#$,A4$/0c$&(B
+   bodyList, branch は終端と非終端で意味が全く違う
    non-terminal:
-    bodyList: $B9=@.$9$k%/%i%9L>$N%j%9%H$N%j%9%H$X$N%]%$%s%?(B
-    branch:   $BG[Ns$N?t(B($BDj5A$N?t$@$1B8:_$9$k(B)
+    bodyList: 構成するクラス名のリストのリストへのポインタ
+    branch:   配列の数(定義の数だけ存在する)
    terminal:
-    bodyList: $B$=$N=*C<5-9f$K3:Ev$9$k<B:]$NC18l(B
-    branch:   $BC18l$N<oN`$K(B-1$B$r$+$1$?$b$N(B
-   $B=*C<$HHs=*C<$O@5Ii$GH=CG$9$k(B
+    bodyList: その終端記号に該当する実際の単語
+    branch:   単語の種類に-1をかけたもの
+   終端と非終端は正負で判断する
 */
 
 typedef struct _ARC{
-    int inp;                         /* $BF~NO(B */
-    struct _FA *fa;                  /* $BA+0\@h$N(BFA */
-    CLASSFLAGS start;                /* $B%/%i%93+;O%U%i%0(B */
-    CLASSFLAGS accpt;                /* $B%/%i%9<uM}%U%i%0(B */
-    struct _ARC *next;               /* $B%j%9%H$N<!9`L\(B */
+    int inp;                         /* 入力 */
+    struct _FA *fa;                  /* 遷移先のFA */
+    CLASSFLAGS start;                /* クラス開始フラグ */
+    CLASSFLAGS accpt;                /* クラス受理フラグ */
+    struct _ARC *next;               /* リストの次項目 */
 } ARC;
 
 typedef struct _UNIFYARC{
-    int inp;                         /* $BF~NO(B */
-    struct _FA *us;                  /* FA$B<!>uBV(B */
-    CLASSFLAGS start;                /* $B%/%i%93+;O%U%i%0(B */
-    CLASSFLAGS accpt;                /* $B%/%i%9<uM}%U%i%0(B */
-    struct _UNIFYARC *next;          /* $B%j%9%H$N<!9`L\(B */
-    FLAG reserved;                   /* $B<+8J%k!<%W$N;^$rM;9g$9$k;~$O!"JQ49(B
-					$B=hM}$,40A4$K=*N;$7$F$+$i9T$J$&!#$=(B
-					$B$NL$=hM}%U%i%0(B */
+    int inp;                         /* 入力 */
+    struct _FA *us;                  /* FA次状態 */
+    CLASSFLAGS start;                /* クラス開始フラグ */
+    CLASSFLAGS accpt;                /* クラス受理フラグ */
+    struct _UNIFYARC *next;          /* リストの次項目 */
+    FLAG reserved;                   /* 自己ループの枝を融合する時は、変換
+					処理が完全に終了してから行なう。そ
+					の未処理フラグ */
 } UNIFYARC;
 
 typedef struct _FALIST{
@@ -78,19 +78,19 @@ typedef struct _FALIST{
 
 typedef struct _FA{
     /* common */
-    int stat;                        /* $B>uBVHV9f(B(3$B$DAH:n@.;~$K?6$i$l$k(B) */
-    ARC *nsList;                     /* $BF~NO$H<!>uBV%j%9%H(B */
-    CLASSFLAGS start;                /* $B%/%i%93+;O%U%i%0(B($BA4$F$N%"!<%/$N(Bor) */
-    CLASSFLAGS accpt;                /* $B%/%i%9<uM}%U%i%0(B($BA4$F$N%"!<%/$N(Bor) */
-    CLASSFLAGS aStart;               /* $BCeL\Cf$N%"!<%/$N%/%i%93+;O%U%i%0(B */
-    FLAG traversed;                  /* $BN)4s(B 1:NFA->DFA 2:3$B$DAH:n@.;~(B */
+    int stat;                        /* 状態番号(3つ組作成時に振られる) */
+    ARC *nsList;                     /* 入力と次状態リスト */
+    CLASSFLAGS start;                /* クラス開始フラグ(全てのアークのor) */
+    CLASSFLAGS accpt;                /* クラス受理フラグ(全てのアークのor) */
+    CLASSFLAGS aStart;               /* 着目中のアークのクラス開始フラグ */
+    FLAG traversed;                  /* 立寄 1:NFA->DFA 2:3つ組作成時 */
 
     /* for DFA */
-    int psNum;                       /* ARC$B$G;X$5$l$F$$$k%"!<%/?t(B */
-                   /* connectUnifyFA$B$G$O(Bincrement$B$5$l$J$$$3$H$KCm0U!#(B */
-    UNIFYARC *usList;                /* NFA->DFA$B$GM;9g$5$l$?<!>uBV(B */
-    FALIST *group;                   /* $BM;9g$7$?$H$-$N9=@.$9$k>uBV(B */
-    FLAG volatiled;    /* $B%"!<%/JQ99Cf$N$?$a8IN)H=Dj$r<h$j$d$a$m$N0U(B */
+    int psNum;                       /* ARCで指されているアーク数 */
+                   /* connectUnifyFAではincrementされないことに注意。 */
+    UNIFYARC *usList;                /* NFA->DFAで融合された次状態 */
+    FALIST *group;                   /* 融合したときの構成する状態 */
+    FLAG volatiled;    /* アーク変更中のため孤立判定を取りやめろの意 */
 } FA;
 
 void errMes( char *fmt, ... );

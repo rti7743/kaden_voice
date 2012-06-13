@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GRAMMAR>
+<RULE name="WORD" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="SYLS"/>
+      <RULEREF name="WORD"/>
+    </P>
+    <P>
+			<RULEREF name="NOISE"/>
+      <RULEREF name="SYLS"/>
+      <RULEREF name="WORD"/>
+    </P>
+    <P>
+      <RULEREF name="SYLS"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="S" toplevel="ACTIVE">
+  <L>
+    <P>
+      <RULEREF name="WORD"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="SYLS" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="SYL"/>
+      <RULEREF name="N"/>
+    </P>
+    <P>
+      <RULEREF name="SYL"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="N" toplevel="INACTIVE">
+  <L propname="N">
+    <P valstr="ん">ん</P>
+  </L>
+</RULE>
+<RULE name="SYL" toplevel="INACTIVE">
+  <L propname="SYL">
+    <P valstr="あ">あ</P>
+    <P valstr="い">い</P>
+    <P valstr="う">う</P>
+    <P valstr="え">え</P>
+    <P valstr="お">お</P>
+    <P valstr="か">か</P>
+    <P valstr="き">き</P>
+    <P valstr="く">く</P>
+    <P valstr="け">け</P>
+    <P valstr="こ">こ</P>
+    <P valstr="さ">さ</P>
+    <P valstr="し">し</P>
+    <P valstr="す">す</P>
+    <P valstr="せ">せ</P>
+    <P valstr="そ">そ</P>
+    <P valstr="た">た</P>
+    <P valstr="ち">ち</P>
+    <P valstr="つ">つ</P>
+    <P valstr="て">て</P>
+    <P valstr="と">と</P>
+    <P valstr="な">な</P>
+    <P valstr="に">に</P>
+    <P valstr="ぬ">ぬ</P>
+    <P valstr="ね">ね</P>
+    <P valstr="の">の</P>
+    <P valstr="は">は</P>
+    <P valstr="ひ">ひ</P>
+    <P valstr="ふ">ふ</P>
+    <P valstr="へ">へ</P>
+    <P valstr="ほ">ほ</P>
+    <P valstr="ま">ま</P>
+    <P valstr="み">み</P>
+    <P valstr="む">む</P>
+    <P valstr="め">め</P>
+    <P valstr="も">も</P>
+    <P valstr="や">や</P>
+    <P valstr="ゆ">ゆ</P>
+    <P valstr="よ">よ</P>
+    <P valstr="ら">ら</P>
+    <P valstr="り">り</P>
+    <P valstr="る">る</P>
+    <P valstr="れ">れ</P>
+    <P valstr="ろ">ろ</P>
+    <P valstr="わ">わ</P>
+    <P valstr="が">が</P>
+    <P valstr="ぎ">ぎ</P>
+    <P valstr="ぐ">ぐ</P>
+    <P valstr="げ">げ</P>
+    <P valstr="ご">ご</P>
+    <P valstr="ざ">ざ</P>
+    <P valstr="じ">じ</P>
+    <P valstr="ず">ず</P>
+    <P valstr="ぜ">ぜ</P>
+    <P valstr="ぞ">ぞ</P>
+    <P valstr="だ">だ</P>
+    <P valstr="で">で</P>
+    <P valstr="ど">ど</P>
+    <P valstr="ば">ば</P>
+    <P valstr="び">び</P>
+    <P valstr="ぶ">ぶ</P>
+    <P valstr="べ">べ</P>
+    <P valstr="ぼ">ぼ</P>
+    <P valstr="ぱ">ぱ</P>
+    <P valstr="ぴ">ぴ</P>
+    <P valstr="ぷ">ぷ</P>
+    <P valstr="ぺ">ぺ</P>
+    <P valstr="ぽ">ぽ</P>
+    <P valstr="きゃ">きゃ</P>
+    <P valstr="きゅ">きゅ</P>
+    <P valstr="きょ">きょ</P>
+    <P valstr="しゃ">しゃ</P>
+    <P valstr="しゅ">しゅ</P>
+    <P valstr="しょ">しょ</P>
+    <P valstr="ちゃ">ちゃ</P>
+    <P valstr="ちゅ">ちゅ</P>
+    <P valstr="ちょ">ちょ</P>
+    <P valstr="にゃ">にゃ</P>
+    <P valstr="にゅ">にゅ</P>
+    <P valstr="にょ">にょ</P>
+    <P valstr="ひゃ">ひゃ</P>
+    <P valstr="ひゅ">ひゅ</P>
+    <P valstr="ひょ">ひょ</P>
+    <P valstr="みゃ">みゃ</P>
+    <P valstr="みゅ">みゅ</P>
+    <P valstr="みょ">みょ</P>
+    <P valstr="りゃ">りゃ</P>
+    <P valstr="りゅ">りゅ</P>
+    <P valstr="りょ">りょ</P>
+    <P valstr="ぎゃ">ぎゃ</P>
+    <P valstr="ぎゅ">ぎゅ</P>
+    <P valstr="ぎょ">ぎょ</P>
+    <P valstr="じゃ">じゃ</P>
+    <P valstr="じゅ">じゅ</P>
+    <P valstr="じょ">じょ</P>
+    <P valstr="びゃ">びゃ</P>
+    <P valstr="びゅ">びゅ</P>
+    <P valstr="びょ">びょ</P>
+    <P valstr="ぴゃ">ぴゃ</P>
+    <P valstr="ぴゅ">ぴゅ</P>
+    <P valstr="ぴょ">ぴょ</P>
+    <P valstr="てぃ">/てぃ/ち;</P>
+    <P valstr="でぃ">/でぃ/ぢ;</P>
+    <P valstr="でゅ">/でゅ/ぢゅ;</P>
+    <P valstr="とぅ">/とぅ/つ;</P>
+    <P valstr="どぅ">/どぅ/づ;</P>
+    <P valstr="ふぁ">/ふぁ/は;</P>
+    <P valstr="ふぃ">/ふぃ/ひ;</P>
+    <P valstr="ふぇ">/ふぇ/へ;</P>
+    <P valstr="ふぉ">/ふぉ/ほ;</P>
+    <P valstr="ちぇ">ちぇ</P>
+    <P valstr="しぇ">しぇ</P>
+    <P valstr="じぇ">じぇ</P>
+    <P valstr="あー">あー</P>
+    <P valstr="いー">いー</P>
+    <P valstr="うー">うー</P>
+    <P valstr="えー">えー</P>
+    <P valstr="おー">おー</P>
+    <P valstr="かー">かー</P>
+    <P valstr="きー">きー</P>
+    <P valstr="くー">くー</P>
+    <P valstr="けー">けー</P>
+    <P valstr="こー">こー</P>
+    <P valstr="さー">さー</P>
+    <P valstr="しー">しー</P>
+    <P valstr="すー">すー</P>
+    <P valstr="せー">せー</P>
+    <P valstr="そー">そー</P>
+    <P valstr="たー">たー</P>
+    <P valstr="ちー">ちー</P>
+    <P valstr="つー">つー</P>
+    <P valstr="てー">てー</P>
+    <P valstr="とー">とー</P>
+    <P valstr="なー">なー</P>
+    <P valstr="にー">にー</P>
+    <P valstr="ぬー">ぬー</P>
+    <P valstr="ねー">ねー</P>
+    <P valstr="のー">のー</P>
+    <P valstr="はー">はー</P>
+    <P valstr="ひー">ひー</P>
+    <P valstr="ふー">ふー</P>
+    <P valstr="へー">へー</P>
+    <P valstr="ほー">ほー</P>
+    <P valstr="まー">まー</P>
+    <P valstr="みー">みー</P>
+    <P valstr="むー">むー</P>
+    <P valstr="めー">めー</P>
+    <P valstr="もー">もー</P>
+    <P valstr="やー">やー</P>
+    <P valstr="ゆー">ゆー</P>
+    <P valstr="よー">よー</P>
+    <P valstr="らー">らー</P>
+    <P valstr="りー">りー</P>
+    <P valstr="るー">るー</P>
+    <P valstr="れー">れー</P>
+    <P valstr="ろー">ろー</P>
+    <P valstr="わー">わー</P>
+    <P valstr="がー">がー</P>
+    <P valstr="ぎー">ぎー</P>
+    <P valstr="ぐー">ぐー</P>
+    <P valstr="げー">げー</P>
+    <P valstr="ごー">ごー</P>
+    <P valstr="ざー">ざー</P>
+    <P valstr="じー">じー</P>
+    <P valstr="ずー">ずー</P>
+    <P valstr="ぜー">ぜー</P>
+    <P valstr="ぞー">ぞー</P>
+    <P valstr="だー">だー</P>
+    <P valstr="でー">でー</P>
+    <P valstr="どー">どー</P>
+    <P valstr="ばー">ばー</P>
+    <P valstr="びー">びー</P>
+    <P valstr="ぶー">ぶー</P>
+    <P valstr="べー">べー</P>
+    <P valstr="ぼー">ぼー</P>
+    <P valstr="ぱー">ぱー</P>
+    <P valstr="ぴー">ぴー</P>
+    <P valstr="ぷー">ぷー</P>
+    <P valstr="ぺー">ぺー</P>
+    <P valstr="ぽー">ぽー</P>
+    <P valstr="きゃー">きゃー</P>
+    <P valstr="きゅー">きゅー</P>
+    <P valstr="きょー">きょー</P>
+    <P valstr="しゃー">しゃー</P>
+    <P valstr="しゅー">しゅー</P>
+    <P valstr="しょー">しょー</P>
+    <P valstr="ちゃー">ちゃー</P>
+    <P valstr="ちゅー">ちゅー</P>
+    <P valstr="ちょー">ちょー</P>
+    <P valstr="にゃー">にゃー</P>
+    <P valstr="にゅー">にゅー</P>
+    <P valstr="にょー">にょー</P>
+    <P valstr="ひゃー">ひゃー</P>
+    <P valstr="ひゅー">ひゅー</P>
+    <P valstr="ひょー">ひょー</P>
+    <P valstr="みゃー">みゃー</P>
+    <P valstr="みゅー">みゅー</P>
+    <P valstr="みょー">みょー</P>
+    <P valstr="りゃー">りゃー</P>
+    <P valstr="りゅー">りゅー</P>
+    <P valstr="りょー">りょー</P>
+    <P valstr="ぎゃー">ぎゃー</P>
+    <P valstr="ぎゅー">ぎゅー</P>
+    <P valstr="ぎょー">ぎょー</P>
+    <P valstr="じゃー">じゃー</P>
+    <P valstr="じゅー">じゅー</P>
+    <P valstr="じょー">じょー</P>
+    <P valstr="びゃー">びゃー</P>
+    <P valstr="びゅー">びゅー</P>
+    <P valstr="びょー">びょー</P>
+    <P valstr="ぴゃー">ぴゃー</P>
+    <P valstr="ぴゅー">ぴゅー</P>
+    <P valstr="ぴょー">ぴょー</P>
+    <P valstr="てぃー">/てぃー/ちー;</P>
+    <P valstr="でぃー">/でぃー/ぢー;</P>
+    <P valstr="でゅー">/でゅー/ぢゅー;</P>
+    <P valstr="とぅー">/とぅー/つー;</P>
+    <P valstr="どぅー">/どぅー/づー;</P>
+    <P valstr="ふぁー">/ふぁー/はー;</P>
+    <P valstr="ふぃー">/ふぃー/ひー;</P>
+    <P valstr="ふぇー">/ふぇー/へー;</P>
+    <P valstr="ふぉー">/ふぉー/ほー;</P>
+    <P valstr="ちぇー">ちぇー</P>
+    <P valstr="しぇー">しぇー</P>
+    <P valstr="じぇー">じぇー</P>
+  </L>
+</RULE>
+<RULE name="NOISE" toplevel="INACTIVE">
+  <L>
+    <P>//@sp;</P>
+  </L>
+</RULE>
+</GRAMMAR>

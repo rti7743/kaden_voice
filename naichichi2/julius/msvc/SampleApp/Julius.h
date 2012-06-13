@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 
  * cJulius: JuliusLib wrapper class for C++
  *

@@ -1,8 +1,9 @@
-/**
+Ôªø/**
  * @file   main.c
  * 
  * <JA>
- * @brief  Julius/Julian •·•§•ÅE * </JA>
+ * @brief  Julius/Julian „É°„Ç§„É≥
+ * </JA>
  * 
  * <EN>
  * @brief  Main function of Julius/Julian
@@ -207,8 +208,8 @@ main(int argc, char *argv[])
   callback_add(recog, CALLBACK_DEBUG_PASS2_PUSH, visual2_next_word, NULL);
   /* below should be called at result */
   visual2_best(now, winfo);
-  /* ≤ª¿ººË§ÅE˛§ﬂ§œ•≥°º•ÅE–•√•Ø§«ø∑µ¨∫˚‹Æ */
-  /* ¬ÅE•—•π§««ßº±∑ÅEÃΩ–Œœª˛§À∞ ≤º§Úº¬π‘ */
+  /* Èü≥Â£∞Âèñ„ÇäËæº„Åø„ÅØ„Ç≥„Éº„É´„Éê„ÉÉ„ÇØ„ÅßÊñ∞Ë¶è‰ΩúÊàê */
+  /* Á¨¨2„Éë„Çπ„ÅßË™çË≠òÁµêÊûúÂá∫ÂäõÊôÇ„Å´‰ª•‰∏ã„ÇíÂÆüË°å */
   visual2_best(now, recog->model->winfo);
 #endif
   

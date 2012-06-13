@@ -2,7 +2,7 @@
  * @file   julius.h
  * 
  * <JA>
- * @brief  Julius �ѤΥȥåץإå��ե�����E * </JA>
+ * @brief  Julius ﾍﾑ､ﾎ･ﾈ･ﾃ･ﾗ･ﾘ･ﾃ･ﾀ･ﾕ･｡･､･・ * </JA>
  * 
  * <EN>
  * @brief  Top common header for Julius

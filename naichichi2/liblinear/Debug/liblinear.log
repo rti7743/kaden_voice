@@ -1,0 +1,33 @@
+﻿2012/05/28 10:59:12 にビルドを開始しました。
+     1>ノード 4 上のプロジェクト "C:\Users\rti\Desktop\Dropbox\git\naichichi2\liblinear\liblinear.vcxproj" (rebuild ターゲット)。
+     1>_PrepareForClean:
+         ファイル "Debug\liblinear.lastbuildstate" を削除しています。
+       InitializeBuildStatus:
+         "AlwaysCreate" が指定されたため "Debug\liblinear.unsuccessfulbuild" を作成しています。
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /wd4996 /wd4819 /analyze- /errorReport:prompt blas\daxpy.c blas\ddot.c blas\dnrm2.c blas\dscal.c
+         dscal.c
+         dnrm2.c
+         ddot.c
+         daxpy.c
+         コードを生成中...
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /wd4996 /wd4819 /analyze- /errorReport:prompt linear.cpp tron.cpp
+         tron.cpp
+         linear.cpp
+         コードを生成中...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"C:\Users\rti\Desktop\Dropbox\git\naichichi2\Debug\liblinear.lib" /NOLOGO Debug\daxpy.obj
+         Debug\ddot.obj
+         Debug\dnrm2.obj
+         Debug\dscal.obj
+         Debug\linear.obj
+         Debug\tron.obj
+         liblinear.vcxproj -> C:\Users\rti\Desktop\Dropbox\git\naichichi2\Debug\liblinear.lib
+       FinalizeBuildStatus:
+         ファイル "Debug\liblinear.unsuccessfulbuild" を削除しています。
+         "Debug\liblinear.lastbuildstate" のタッチ タスクを実行しています。
+     1>プロジェクト "C:\Users\rti\Desktop\Dropbox\git\naichichi2\liblinear\liblinear.vcxproj" (rebuild ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:01.26

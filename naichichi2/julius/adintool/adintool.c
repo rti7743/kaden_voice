@@ -35,7 +35,7 @@
  * @author Akinobu LEE
  * @date   Wed Mar 23 20:43:32 2005
  *
- * $Revision: 1.10 $
+ * $Revision: 1.14 $
  * 
  */
 /*
@@ -102,7 +102,7 @@ opt_help(Jconf *jconf, char *arg[], int argnum)
   fprintf(stderr, "    file        speech file (filename given from prompt)\n");
   fprintf(stderr, "    adinnet     from adinnet client (I'm server)\n");
   fprintf(stderr, "    stdin       standard tty input\n");
-  fprintf(stderr, "    (\"-input xxx\" can be used instead, as same as Julius)\n");
+  fprintf(stderr, "  (other input can be specified by \"-input xxx\" as in Julius)\n");
   fprintf(stderr, "outputdev: output data to:\n");
   fprintf(stderr, "    file        speech file (\"foo.0000.wav\" - \"foo.N.wav\"\n");
   fprintf(stderr, "    adinnet     to adinnet server (I'm client)\n");
@@ -119,7 +119,11 @@ opt_help(Jconf *jconf, char *arg[], int argnum)
   fprintf(stderr, "    -startid id     (file-out) recording start id (%04d)\n", startid);
 
   fprintf(stderr, "Recording and Pause segmentation options:\n");
+
+  fprintf(stderr, " (input segmentation: on for file/mic/stdin, off for adinnet)\n");
   fprintf(stderr, "  [-nosegment]          not segment input speech\n");
+  fprintf(stderr, "  [-segment]            force segmentation of input speech\n");
+  fprintf(stderr, "  [-cutsilence]         (same as \"-segment\")\n");
   fprintf(stderr, "  [-oneshot]            record only the first segment\n");
   fprintf(stderr, "  [-freq frequency]     sampling frequency in Hz    (%ld)\n", jconf->am_root->analysis.para_default.smp_freq);
   fprintf(stderr, "  [-48]                 48000Hz recording with down sampling (16kHz only)\n");
@@ -127,12 +131,15 @@ opt_help(Jconf *jconf, char *arg[], int argnum)
   fprintf(stderr, "  [-zc zerocrossnum]    silence cut zerocross num   (%d)\n", jconf->detect.zero_cross_num);
   fprintf(stderr, "  [-headmargin msec]    head margin length          (%d)\n", jconf->detect.head_margin_msec);
   fprintf(stderr, "  [-tailmargin msec]    tail margin length          (%d)\n", jconf->detect.tail_margin_msec);
+  fprintf(stderr, "  [-chunksize sample]   chunk size for processing   (%d)\n", jconf->detect.chunk_size);
   fprintf(stderr, "  [-nostrip]            do not strip zero samples\n");
   fprintf(stderr, "  [-zmean]              remove DC by zero mean\n");
   fprintf(stderr, "  [-raw]                output in RAW format\n");
   fprintf(stderr, "  [-autopause]          automatically pause at each input end\n");
   fprintf(stderr, "  [-loosesync]          loose sync of resume among servers\n");
   fprintf(stderr, "  [-rewind msec]        rewind input if spoken while pause at resume\n");
+  fprintf(stderr, "  [-C jconffile]        load jconf to set parameters (ignore other options\n");
+  
   fprintf(stderr, "\nLibrary configuration: ");
   confout_version(stderr);
   confout_audio(stderr);
@@ -162,6 +169,7 @@ opt_in(Jconf *jconf, char *arg[], int argnum)
     break;
   case 's':
     jconf->input.speech_input = SP_STDIN;
+    jconf->detect.silence_cut = 1;
     break;
   case 'a':
     jconf->input.speech_input = SP_ADINNET;
@@ -286,6 +294,12 @@ static boolean
 opt_nosegment(Jconf *jconf, char *arg[], int argnum)
 {
   jconf->detect.silence_cut = 0;
+  return TRUE;
+}
+static boolean
+opt_segment(Jconf *jconf, char *arg[], int argnum)
+{
+  jconf->detect.silence_cut = 1;
   return TRUE;
 }
 static boolean
@@ -1007,6 +1021,7 @@ main(int argc, char *argv[])
   j_add_option("-startid", 1, 1, "recording start id (-out file)", opt_startid);
   j_add_option("-freq", 1, 1, "sampling frequency in Hz", opt_freq);
   j_add_option("-nosegment", 0, 0, "not segment input speech, record all", opt_nosegment);
+  j_add_option("-segment", 0, 0, "force segment input speech", opt_segment);
   j_add_option("-oneshot", 0, 0, "exit after the first input", opt_oneshot);
   j_add_option("-raw", 0, 0, "save in raw (BE) format", opt_raw);
   j_add_option("-autopause", 0, 0, "automatically pause at each input end", opt_autopause);
@@ -1112,8 +1127,21 @@ main(int argc, char *argv[])
   /* interrupt handling */
   /**********************/
   if (signal(SIGINT, interrupt_record) == SIG_ERR) {
-    fprintf(stderr, "Warning: signal intterupt may collapse output\n");
+    fprintf(stderr, "Warning: signal interruption may collapse output\n");
   }
+  if (signal(SIGTERM, interrupt_record) == SIG_ERR) {
+    fprintf(stderr, "Warning: signal interruption may collapse output\n");
+  }
+#ifdef SIGPIPE
+  if (signal(SIGPIPE, interrupt_record) == SIG_ERR) {
+    fprintf(stderr, "Warning: signal interruption may collapse output\n");
+  }
+#endif
+#ifdef SIGQUIT
+  if (signal(SIGQUIT, interrupt_record) == SIG_ERR) {
+    fprintf(stderr, "Warning: signal interruption may collapse output\n");
+  }
+#endif
 
   /***************************/
   /* initialize input device */

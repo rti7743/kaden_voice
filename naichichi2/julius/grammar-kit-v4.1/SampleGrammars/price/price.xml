@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GRAMMAR>
+<RULE name="S" toplevel="ACTIVE">
+  <L>
+    <P>
+      <RULEREF name="HMM"/>
+      <RULEREF name="PRICE"/>
+      <RULEREF name="HMM"/>
+    </P>
+    <P>
+      <RULEREF name="HMM"/>
+      <RULEREF name="PRICE"/>
+    </P>
+    <P>
+      <RULEREF name="PRICE"/>
+      <RULEREF name="HMM"/>
+    </P>
+    <P>
+      <RULEREF name="PRICE"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="N10" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM10"/>
+      <RULEREF name="NUM1"/>
+    </P>
+    <P>
+      <RULEREF name="NUM10"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUM9910S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM9999"/>
+      <RULEREF name="NUM10000S"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUM9910SLOOP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM9910S"/>
+      <RULEREF name="NUM9910SLOOP"/>
+    </P>
+    <P>
+      <RULEREF name="NUM9910S"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="N100" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM100"/>
+      <RULEREF name="N10"/>
+    </P>
+    <P>
+      <RULEREF name="NUM100"/>
+      <RULEREF name="NUM1"/>
+    </P>
+    <P>
+      <RULEREF name="NUM100"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="PRICE" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUMBER"/>
+      <RULEREF name="YEN"/>
+      <RULEREF name="ABOUT"/>
+    </P>
+    <P>
+      <RULEREF name="NUMBER"/>
+      <RULEREF name="YEN"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUMBER" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM9910SLOOP"/>
+      <RULEREF name="NUM9999"/>
+    </P>
+    <P>
+      <RULEREF name="NUM9910SLOOP"/>
+    </P>
+    <P>
+      <RULEREF name="NUM9999"/>
+    </P>
+    <P>
+      <RULEREF name="ZERO"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="N1000" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM1000"/>
+      <RULEREF name="N100"/>
+    </P>
+    <P>
+      <RULEREF name="NUM1000"/>
+      <RULEREF name="N10"/>
+    </P>
+    <P>
+      <RULEREF name="NUM1000"/>
+      <RULEREF name="NUM1"/>
+    </P>
+    <P>
+      <RULEREF name="NUM1000"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUM9999" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="N1000"/>
+    </P>
+    <P>
+      <RULEREF name="N100"/>
+    </P>
+    <P>
+      <RULEREF name="N10"/>
+    </P>
+    <P>
+      <RULEREF name="NUM1"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="HMM" toplevel="INACTIVE">
+  <L>
+    <P>えー</P>
+    <P>えーと</P>
+    <P>えーっと</P>
+    <P>えーっとー</P>
+    <P>あー</P>
+    <P>あーと</P>
+    <P>あーっと</P>
+    <P>/んー/んん;</P>
+    <P>/んーと/んんと;</P>
+    <P>/んーっと/んんっと;</P>
+    <P>あのー</P>
+    <P>そのー</P>
+    <P>と</P>
+    <P>っと</P>
+    <P>うーん</P>
+    <P>うーんと</P>
+    <P>です</P>
+    <P>になります</P>
+    <P>でございます</P>
+    <P>/でお願いします/でおねがいします;</P>
+  </L>
+</RULE>
+<RULE name="ZERO" toplevel="INACTIVE">
+  <L propname="ZERO">
+    <P valstr="0">/零/れー;</P>
+  </L>
+</RULE>
+<RULE name="NUM10000S" toplevel="INACTIVE">
+  <L propname="NUM10000S">
+    <P valstr="10000">/万/まん;</P>
+  </L>
+</RULE>
+<RULE name="NUM100" toplevel="INACTIVE">
+  <L propname="NUM100">
+    <P valstr="100">/百/ひゃく;</P>
+    <P valstr="200">/二百/にひゃく;</P>
+    <P valstr="300">/三百/さんびゃく;</P>
+    <P valstr="400">/四百/よんひゃく;</P>
+    <P valstr="500">/五百/ごひゃく;</P>
+    <P valstr="600">/六百/ろっぴゃく;</P>
+    <P valstr="700">/七百/ななひゃく;</P>
+    <P valstr="800">/八百/はっぴゃく;</P>
+    <P valstr="900">/九百/きゅーひゃく;</P>
+  </L>
+</RULE>
+<RULE name="NUM10" toplevel="INACTIVE">
+  <L propname="NUM10">
+    <P valstr="10">/十/じゅー;</P>
+    <P valstr="20">/二十/にじゅー;</P>
+    <P valstr="30">/三十/さんじゅー;</P>
+    <P valstr="40">/四十/よんじゅー;</P>
+    <P valstr="50">/五十/ごじゅー;</P>
+    <P valstr="60">/六十/ろくじゅー;</P>
+    <P valstr="70">/七十/ななじゅー;</P>
+    <P valstr="70">/七十/しちじゅー;</P>
+    <P valstr="80">/八十/はちじゅー;</P>
+    <P valstr="90">/九十/きゅーじゅー;</P>
+  </L>
+</RULE>
+<RULE name="YEN" toplevel="INACTIVE">
+  <L>
+    <P>/円/えん;</P>
+  </L>
+</RULE>
+<RULE name="NUM1" toplevel="INACTIVE">
+  <L propname="NUM1">
+    <P valstr="1">/一/いち;</P>
+    <P valstr="2">/二/に;</P>
+    <P valstr="2">/二/にー;</P>
+    <P valstr="3">/三/さん;</P>
+    <P valstr="4">/四/よん;</P>
+    <P valstr="5">/五/ご;</P>
+    <P valstr="5">/五/ごー;</P>
+    <P valstr="6">/六/ろく;</P>
+    <P valstr="7">/七/なな;</P>
+    <P valstr="7">/七/しち;</P>
+    <P valstr="8">/八/はち;</P>
+    <P valstr="9">/九/きゅー;</P>
+  </L>
+</RULE>
+<RULE name="NUM1000" toplevel="INACTIVE">
+  <L propname="NUM1000">
+    <P valstr="1000">/千/せん;</P>
+    <P valstr="1000">/一千/いっせん;</P>
+    <P valstr="2000">/二千/にせん;</P>
+    <P valstr="3000">/三千/さんぜん;</P>
+    <P valstr="4000">/四千/よんせん;</P>
+    <P valstr="5000">/五千/ごせん;</P>
+    <P valstr="6000">/六千/ろくせん;</P>
+    <P valstr="7000">/七千/ななせん;</P>
+    <P valstr="8000">/八千/はっせん;</P>
+    <P valstr="9000">/九千/きゅーせん;</P>
+  </L>
+</RULE>
+<RULE name="ABOUT" toplevel="INACTIVE">
+  <L propname="ABOUT">
+    <P valstr="about">くらい</P>
+    <P valstr="about">ぐらい</P>
+  </L>
+</RULE>
+</GRAMMAR>

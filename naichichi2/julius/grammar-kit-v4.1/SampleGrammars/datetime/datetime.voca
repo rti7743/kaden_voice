@@ -1,0 +1,286 @@
+%HMM	
+えー	e:
+えーと	e: t o
+えーっと	e: q t o
+えーっとー	e: q t o:
+あー	a:
+あーと	a: t o
+あーっと	a: q t o
+#あっあ	a q a
+んー	 N N
+んーと	 N N t o
+んーっと	 N q t o
+あのー	a n o:
+そのー	s o n o:
+と	t o
+っと	q t o
+うーん	u: N
+うーんと	u: N t o
+	
+%NOISE	
+sp	sp
+	
+%NO_B	
+silB	silB
+	
+%NO_E	
+silE	silE
+	
+%TODAY	
+今日は	ky o: w a
+今日	ky o:
+	
+%NOW	
+今は	i m a w a
+今	i m a
+	
+%DESU	
+です	d e s u
+になります	n i n a r i m a s u
+でお願いします	d e o n e g a i sh i m a s u
+	
+%JAPAERA	
+平成	h e: s e:
+昭和	sh o: w a
+大正	t a i sh o:
+明治	m e: j i
+西暦	s e: r e k i
+	
+%MONTH	
+一月	i ch i g a ts u
+二月	n i g a ts u
+三月	s a N g a ts u
+四月	sh i g a ts u
+五月	g o g a ts u
+六月	r o k u g a ts u
+七月	sh i ch i g a ts u
+七月	h i ch i g a ts u
+八月	h a ch i g a ts u
+九月	k u g a ts u
+十月	j u: g a ts u
+十一月	j u: i ch i g a ts u
+十二月	j u: n i g a ts u
+	
+%DAY	
+一日	ts u i t a ch i
+一日	i ch i n i ch i
+二日	f u ts u k a
+三日	m i q k a
+四日	y o q k a
+五日	i ts u k a
+五日	g o n i ch i
+六日	m u i k a
+六日	r o k u n i ch i
+七日	n a n o k a
+七日	n a n a n i ch i
+七日	sh i ch i n i ch i
+七日	h i ch i n i ch i
+八日	y o: k a
+九日	k o k o n o k a
+九日	k u n i ch i
+十日	t o: k a
+十一日	j u: i ch i n i ch i
+十二日	j u: n i n i ch i
+十三日	j u: s a N n i ch i
+十四日	j u: y o N n i ch i
+十四日	j u: y o q k a
+十五日	j u: g o n i ch i
+十六日	j u: r o k u n i ch i
+十七日	j u: n a n a n i ch i
+十七日	j u: sh i ch i n i ch i
+十八日	j u: h a ch i n i ch i
+十九日	j u: k u n i ch i
+二十日	n i j u: n i ch i
+二十日	h a ts u k a
+二十一日	n i j u: i ch i n i ch i
+二十二日	n i j u: n i n i ch i
+二十三日	n i j u: s a N n i ch i
+二十四日	n i j u: y o N n i ch i
+二十四日	n i j u: y o q k a
+二十五日	n i j u: g o n i ch i
+二十六日	n i j u: r o k u n i ch i
+二十七日	n i j u: n a n a n i ch i
+二十七日	n i j u: sh i ch i n i ch i
+二十八日	n i j u: h a ch i n i ch i
+二十九日	n i j u: k u n i ch i
+三十日	s a N j u: n i ch i
+三十一日	s a N j u: i ch i n i ch i
+	
+%WEEK	
+月曜	g e ts u y o:
+火曜	k a y o:
+水曜	s u i y o:
+木曜	m o k u y o:
+金曜	k i N y o:
+土曜	d o y o:
+日曜	n i ch i y o:
+月曜日	g e ts u y o: b i
+火曜日	k a y o: b i
+水曜日	s u i y o: b i
+木曜日	m o k u y o: b i
+金曜日	k i N y o: b i
+土曜日	d o y o: b i
+日曜日	n i ch i y o: b i
+	
+%NUM1	
+一	i ch i
+#一	i q
+#一	h i t o
+二	n i
+二	n i i
+#二	f u t a
+三	s a N
+#三	m i q
+四	sh i
+四	y o N
+四	y o
+五	g o
+#五	g o:
+六	r o k u
+#六	r o q
+七	n a n a
+七	sh i ch i
+八	h a ch i
+#八	h a q
+九	ky u:
+九	k u
+	
+%NUM10	
+十	j u:
+#十	j u q
+二十	n i j u:
+#二十	n i j u q
+三十	s a N j u:
+#三十	s a N j u q
+四十	y o N j u:
+#四十	y o N j u q
+五十	g o j u:
+#五十	g o j u q
+六十	r o k u j u:
+#六十	r o k u j u q
+七十	n a n a j u:
+七十	sh i ch i j u:
+#七十	n a n a j u q
+八十	h a ch i j u:
+#八十	h a ch i j u q
+九十	ky u: j u:
+#九十	ky u: j u q
+	
+%NUM100	
+百	hy a k u
+#百	hy a q
+二百	n i hy a k u
+#二百	n i hy a q
+三百	s a N by a k u
+#三百	s a N by a q
+四百	y o N hy a k u
+#四百	y o N hy a q
+五百	g o hy a k u
+#五百	g o hy a q
+六百	r o q py a k u
+七百	n a n a hy a k u
+八百	h a q py a k u
+九百	ky u: hy a k u
+#九百	ky u: hy a q
+	
+%NUM1000	
+千	s e N
+#千	ch i
+一千	i q s e N
+二千	n i s e N
+	
+%NEN	
+年	n e N
+	
+%24HOUR	
+零時	r e: j i
+一時	i ch i j i
+二時	n i j i
+三時	s a N j i
+四時	y o j i
+五時	g o j i
+六時	r o k u j i
+七時	n a n a j i
+七時	sh i ch i j i
+八時	h a ch i j i
+九時	k u j i
+十時	j u: j i
+十一時	j u: i ch i j i
+十二時	j u: n i j i
+十三時	j u: s a N j i
+十四時	j u: y o j i
+十五時	j u: g o j i
+十六時	j u: r o k u j i
+十七時	j u: n a n a j i
+十七時	j u: sh i ch i j i
+十八時	j u: h a ch i j i
+十九時	j u: k u j i
+二十時	n i j u: j i
+二十一時	n i j u: i ch i j i
+二十二時	n i j u: n i j i
+二十三時	n i j u: s a N j i
+二十四時	n i j u: y o j i
+	
+%12HOUR	
+零時	r e: j i
+一時	i ch i j i
+二時	n i j i
+三時	s a N j i
+四時	y o j i
+五時	g o j i
+六時	r o k u j i
+七時	n a n a j i
+七時	sh i ch i j i
+八時	h a ch i j i
+九時	k u j i
+十時	j u: j i
+十一時	j u: i ch i j i
+十二時	j u: n i j i
+	
+%AMPM	
+朝	a s a
+午前	g o z e N
+夕方	y u: g a t a
+午後	g o g o
+	
+%NO	
+の	n o
+	
+%NOON	
+正午	sh o: g o
+	
+%MIN1
+零分	r e: f u N
+一分	i q p u N
+二分	n i f u N
+三分	s a N p u N
+四分	y o N f u N
+五分	g o f u N
+六分	r o q p u N
+七分	n a n a f u N
+七分	sh i ch i f u N
+八分	h a ch i f u N
+八分	h a q p u N
+九分	ky u: f u N
+	
+%MIN10
+十分	j u q p u N
+十分	j i q p u N
+二十分	n i j u q p u N
+二十分	n i j i q p u N
+三十分	s a N j u q p u N
+三十分	s a N j i q p u N
+四十分	y o N j u q p u N
+四十分	y o N j i q p u N
+五十分	g o j u q p u N
+五十分	g o j i q p u N
+半	h a N
+	
+%JUST	
+ちょうど	ch o: d o
+	
+%ABOUT	
+前	m a e
+過ぎ	s u g i
+くらい	k u r a i
+ぐらい	g u r a i

@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-2022-JP">
+<link rel="stylesheet" type="text/css" href="default.css">
+<html> <head>
+<title>What's New in Rev.3.4</title>
+</head>
+<body>
+<h1>Rev.3.4 の変更点</h1>
+
+Julius/Julian rev.3.4 の主な改善点は，Julianの統合・単語信頼度のサポート・クラスN-gram のサポートおよび細かいバグ修正です．Rev.3.3p4 から 3.4 への具体的な変更点は以下のとおりです。
+<ul>
+<li><a href="#julian">Julian（記述文法ベースの認識）の統合</a>
+<li><a href="#license">ライセンスの使用制限条項の撤廃</a>
+<li>機能拡張
+  <ul>
+  <li><a href="#cm">単語信頼度のサポート</a>（重要）
+  <li><a href="#class">クラスN-gramのサポート</a>（重要）
+  <li><a href="#recordwav">録音ファイル形式をWAVに変更</a>
+  </ul>
+<li><a href="#bugfix">バグの修正</a>
+  <ul>
+  <li><a href="#bug_adin">音声入力・切り出しに関する修正</a>（重要）
+  <li><a href="#bug_am">一部の音響モデルがある条件で正しく計算できないバグを修正</a>
+  <li><a href="#bug_bingram">バイナリN-gramの非互換性チェック</a>
+  <li><a href="#bug_module">モジュールモードの出力の修正</a>
+  <li><a href="#sysinfo">起動時のSystem Infoの出力書式を変更</a>
+  </ul>
+<li><a href="#other">その他</a>
+</ul>
+
+なお、個々のソースファイルの変更点についてはこちらをご覧ください。
+<ul>
+<li><a href="ChangedFiles_3.4.xls">ChangedFiles_3.4.xls</a>（MS Excel形式）
+</ul>
+
+以下に各項目の詳細を述べます。また、これらの変更に伴うオプション指定の変更について、<a href="#optsummary">本ドキュメントの末尾</a>にまとめておきます。
+
+<h2><a name="julian">Julian（記述文法ベースの認識）の統合</a></h2>
+
+本バージョンより、記述文法に基づく認識を行うエンジン「Julian」がJuliusに統合され、Julius/Julianともにフリーソフトウェアとして無償利用できるようになりました。
+<p>
+Julian は、Julius をもとに作られた、有限状態文法(DFA)に基づく連続音声認識パーザです。認識対象とする文のパターンを記述した認識用文法（有限状態文法）を与えることで、入力音声に対してその文法規則の元で最も尤もらしい単語系列を探しだし、文字列として出力します。 
+<p>
+ディクテーションベースの Julius と異なり、Julianは人手で記述した認識文法を用いるので、小語彙の音声対話システムや音声コマンド入力など比較的小規模な音声認識システムに有用です。 またJulian では Julius で培われた音声認識の高精度化技術が多く含まれており、数千語の認識を非常に高速かつ高精度に行うことができます。
+<p>
+コンパイル時に<code>configure</code>オプション<code>--enable-julian</code>を指定することで、Julian をコンパイルできます。
+Julian は多くのコンポーネントを Julius と共有していますので、使用方法はほぼ同バージョンのJulius と同じです。 
+<p>
+Julianは、これまで<a href="http://www.lang.astem.or.jp/CSRC/">連続音声認識コンソーシアム</a>の会員にのみ配布されてきましたが、コンソーシアム活動の終了に伴い、Rev.3.4 より Julius とともに無償配布されることになりました。
+<p>
+Julius のアーカイブには、Julian および認識用文法の作成ツールが含まれています。Julian のコンパイル方法、使い方、および認識用文法の作成方法については、<a href="../doc/index.html">付属のドキュメント</a>の以下の項目をご覧ください。（一部記述が古い部分があります）
+<ul>
+<li><a href="../doc/top.html">Julius/Julianについて</a>
+<li><a href="../doc/install.html">Julius/Julianのインストール</a>
+<li><a href="../julius/00readme-julian-ja.txt">オンラインマニュアル</a>
+<li><a href="../doc/julian_dfa.html">認識用文法の記述方法</a>
+<li><a href="../gramtools/00readme-ja.txt">文法作成ツールの使い方</a>
+</ul>
+
+<h2><a name="license">ライセンスの使用制限条項の撤廃</a></h2>
+
+Juliusはこれまでもフリーソフトウェアとして無償公開してきましたが、
+これまでのJuliusの利用ライセンス中に、下記のような条項がありました。
+<pre>
+4. あなたは、本ソフトウェアを原子力関連、航空管制その他の交通関連、医
+療、救急関連、警備関連その他人の生命、身体、財産等に重大な損害が発生す
+る危険を有するシステムに使用してはいけません。
+</pre>
+この利用範囲に関する制限条項のために、Juliusは厳密にはフリーソフトウェアの定義に当てはまらず、自由な利用が憚られる可能性があるとの指摘を受けました。これをうけて、Rev.3.4より上記の利用条件を改めたライセンスに改訂しました。
+詳しいライセンスの内容については以下をご覧ください。
+<ul>
+<li><a href="../LICENSE.txt">新ライセンス (rev.3.4以降)</a>
+</ul>
+
+<h2><a name="cm">単語信頼度のサポート</a></h2>
+
+Julius/Julianにおいて、認識結果に新たに「単語信頼度」を付与する機能が追加されました。以下に詳しく述べます。
+
+<h3>単語信頼度とは</h3>
+
+単語信頼度とは、認識システムの出す認識結果をどれだけ「信頼」してよいかを表す尺度です。認識システムがどれだけの確信をもってその認識結果を導き出したかを表す尺度とも言えることから、「確信度」とも呼ばれます。値は 0.0 〜 1.0 の値で、数値が高いほど信頼度が高い、すなわちその単語に競合するような他の候補が見あたらなかったことを示し、0 に近づくほど信頼度が低い、すなわち認識過程においてその単語のほかにも似たスコアをもつ単語の候補が多く競合していたことを示します。
+<p>
+この単語信頼度を用いることで、認識結果の処理において、信頼度の低い単語を認識結果から除外したり、信頼度の高い単語のみを用いて意図抽出やコマンド検出を行うといった処理を行うことができます。ただし、この信頼度はあくまで、認識エンジン自身が与えられた言語モデル・音響モデルの元で算出する「確信の度合い」にすぎません。確信度と認識精度の間にある程度高い相関はありますが、必ずしも常に「確信度が高い＝必ず正解」あるいは「確信度が低い＝必ず誤り」とは限りません。利用に際しては、この点をご留意ください。
+
+<h3>算出アルゴリズム</h3>
+
+このJulius/Julianで用いている単語信頼度算出アルゴリズムは、単語事後確率に基づく手法の一種で、探索中の部分文仮説のスコアから事後確率を近似的に算出することで、従来の単語グラフを用いる方法に比べて高速性を重視した計算方法となっています。詳しくは以下の文献をご覧ください。
+<ul>
+<li>李晃伸、河原達也、鹿野清宏、 "２パス探索アルゴリズムにおける高速な単語事後確率に基づく信頼度算出法", 情報処理学会研究報告, 2003-SLP-49-48, 2003-12
+<li>Akinobu Lee, Kiyohiso Shikano, Tatsuya Kawahara, "Real-Time Word Confidence Scoring using Local Posterior probabilities on Tree Trellis Search," Proceedings of IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP2004), May 2004 (accepted).
+</ul>
+
+<h3>使い方</h3>
+
+単語信頼度の出力は、以下のように第2パスの認識結果中に出力されます（赤文字の部分）。
+値は 0.0 〜 1.0 の範囲です。
+<pre>
+### Recognition: 2nd pass (RL heuristic best-first with 3-gram)
+samplenum=288
+sentence1:  個人技 が 、 随所 で 光っ た 。 
+wseq1: &lt;s&gt; 個人技+コジンギ+2 が+ガ+58 、+、+75 随所+ズイショ+2 で+デ+58 光っ+ヒカッ+光る+44/17/8 た+タ+70/47/2 。+。+74 &lt;/s&gtl
+phseq1: silB | k o j i N g i | g a | sp | z u i sh o | d e | h i k a q | t a | sp | silE
+<font color="red"><b>cmscore1: 0.667 0.262 0.217 0.925 0.732 0.610 0.808 0.544 0.897 1.000</b></font>
+score1: -6941.169434
+822 generated, 712 pushed, 28 nodes popped in 288
+</pre>
+認識結果の各単語の単語信頼度がスペース区切りで出力されます。なお<code>silB</code>, <code>silE</code>等の出力文字列を持たない単語も1単語として含んでいる点に注意してください（すなわち sentence行 ではなく wseq行に対応）。
+
+<h3>モジュールモードでの出力</h3>
+
+モジュールモードで、クライアントへ第２パスの認識結果とともに単語信頼度を送ることができるようになりました。下記のように出力されます。
+<pre>
+&lt;WHYPO WORD="個人技" CLASS="個人技+コジンギ+2" PHONE="k o j i N g i" <font color="red">CM="0.262"</font>/&gt;
+</pre>
+信頼度を出力するには、サーバー側(Julius/Julian側)で起動時オプション "-outcode" の引数に "C" を追加してください。以下は第2パスで単語表記・単語列・音素列・スコア・信頼度を出力する場合の Julius 側の設定です。
+<pre>
+ % julius .... -outcode WLPSC
+</pre>
+
+<h3>設定</h3>
+
+単語信頼度の計算はデフォルトで有効になっています。無効にする場合は<code>configure</code>で<code>--disable-cm</code>を指定してください。
+<p>
+信頼度計算のスムージング係数alphaを変更することが出来ます。この係数は事後確率計算におけるゆう度のダイナミックレンジを補正する係数で、0 に近いほど信頼度の値分布が平坦化します。単語信頼度の性能は、この係数によっても左右されます。値を変更するにはオプション <code>-cmalpha</code> で指定してください。デフォルトは 0.05 です（値の意味については上記の算出アルゴリズムの文献等をご覧ください）。
+
+<h2><a name="class">クラスN-gramのサポート</a></h2>
+
+Rev.3.4 のJuliusで、新たにクラスN-gramをサポートしました。
+JuliusではクラスN-gramを以下の２つに分けて記述します。
+<ol>
+<li>クラス間のN-gram接続確率
+<li>クラス内の単語生起確率
+</ol>
+以下にJuliusでのクラスN-gramの記述方法を説明します。
+
+<h3>クラス間N-gram</h3>
+クラス間のN-gram確率は、通常の単語N-gramと全く同様に、クラス名を単位としたN-gramとして与えます。ARPA 形式の前向き2-gramファイルおよび後ろ向き3-gramファイル、あるいはそれらを <code>mkbingram</code> でバイナリ化したバイナリN-gramファイルとして与えることができます。
+
+<h3>クラス内単語生起確率</h3>
+
+各クラスに属する単語については、そのクラス内での生起確率と読みなどの定義を単語辞書上で定義します。まず通常の単語N-gramの場合は、辞書中の単語エントリは以下のようになっています。
+<pre>
+単語表記 [出力文字列] 音素列・・・
+</pre>
+クラスN-gramを用いる場合は、これらの前に「属するクラス名」、「クラス内単語生起確率」を以下のように記述します。
+<pre>
+<font color="red">クラス間N-gram上のクラス名 @クラス内単語生起確率の対数値</font> 単語表記 [出力文字列] 音素列・・・
+</pre>
+第1カラム目の「クラス名」は、クラス間のN-gramでのクラス名を表記します。
+第2カラム目の「クラス内単語生起確率の対数値」は、その単語のクラス内での生起確率を、<u>常用対数(log10)で</u>指定します。
+<p>
+認識実行時には、このようにして作成したクラス付き単語辞書を、通常と同様に
+<code>-v</code> で指定します。形式はJulius側で自動判別されます。もちろん、
+同時に使用するクラスN-gramと第1カラム目の名前の対応がとれている必要があります。
+
+<h3>部分クラスN-gramについて</h3>
+
+Juliusの内部では、単語N-gramとクラスN-gramを明示的に区別しておらず、単語N-gramはすべて「1クラス1単語からなるクラスN-gram」として処理しています。このため、単語エントリとクラスエントリを混在させることが可能です。たとえば単語N-gramにおいて一部の品詞カテゴリのみをクラス化する、といったような部分クラスN-gramを使用することができます。
+<p>
+このような部分クラスN-gramを使用する場合、単語N-gramのエントリは通常と同じように単語辞書で記述し、クラス化されたエントリについてのみ、上記のようにクラスの情報を記述します。以下は、地名が「＜地名＞」でクラス化されている部分クラスN-gramを想定した場合の辞書の記述例です。
+<pre>
+今日+42	[今日]	ky o:
+は+16	[は]	w a
+＜地名＞ @-2.33251 京都+52 [京都] ky o: t o
+＜地名＞ @-1.68893 奈良+52 [奈良] n a r a
+＜地名＞ @-2.63574 和歌山+52 [和歌山] w a k a y a m a
+出張+6	[出張]	sh u q ch o:
+です+67	[です]	d e s u
+</pre>
+
+<h3>設定</h3>
+
+クラスN-gramサポートはデフォルトで有効になっています。クラスN-gramサポートにより単語辞書のメモリ使用量が（語彙数）x 4byte 増えます。クラスN-gramサポートを無効にしたい場合は<code>configure</code>で<code>--disable-class-ngram</code>を指定してください。
+
+<h2><a name="recordwav">録音ファイル形式をWAVに変更</a></h2>
+
+Julius/Julian および付属ツールで音声データをファイルに記録する際のファイル形式を、RAW形式から WAV 形式に変更しました。具体的には、以下の機能やツールにおいて、録音される音声ファイルの形式がデフォルトでwav形式になります。
+<ul>
+<li>Julius/Julian の <code>-record</code> オプション
+<li><code>adinrec</code>
+<li><code>adintool</code>
+</ul>
+なお、<code>adinrec</code>、<code>adintool</code> ではオプション <code>-raw</code>で従来と同じRAW形式での録音が可能です。
+
+<h2><a name="bugfix">バグの修正</a></h2>
+
+<h3><a name="bug_adin">音声入力・切り出しに関する修正</a></h3>
+
+音声入力および音声区間切り出しに関する下記の修正を行いました。
+<ul>
+<li><code>Julius</code>,<code>adinrec</code>,<code>adintool</code>の音声切り出しのレベルしきい値(<code>-lv</code>)のデフォルト値を、3000から2000に変更
+<li>音声区間検出において末尾の無音部が長くなることがあるバグを修正
+<li>数フレームの短い入力を行うと落ちることがある脆弱性を修正
+<li>DATLink/NetAudioでコンパイルに失敗するバグを修正
+<li>マイクデバイスでモノラルの録音が出来ない場合に、代わりにステレオ録音を行いその左チャンネルを認識する機能を追加
+</ul>
+
+<h3><a name="bug_am">一部の音響モデルがある条件で正しく計算できないバグを修正</a></h3>
+
+tied-mixture ベースの音響モデルで、mixture 定義の一部に欠けがある場合に、Gaussian pruning をオフ (<code>-gprune none</code>) に指定すると正しく音響尤度の計算ができないバグを修正しました。
+
+<h3><a name="bug_module">モジュールモードの出力の修正</a></h3>
+
+<ul>
+<li>第２パスで認識誤り時の出力するタグ<code>&lt;RECOGFAIL&gt;</code>を<code>&lt;RECOGFAIL/&gt;</code>に訂正。
+<li>第２パスで<code>-n</code>で指定した数の文候補が見つからずに探索を終了したときに<code>&lt;/RECOGOUT&gt;</code>が出力されないバグを修正
+</ul>
+
+<h3><a name="bug_bingram">バイナリN-gramの非互換性チェック</a></h3>
+
+6万語以上の語彙を用いる設定（<code>./configure --enable-words-int</code>）の場合、通常設定で作成したバイナリN-gramは使用できません。上記の設定でコンパイルしたmkbingramを用いて作成しなおす必要があります。
+<p>
+Rev.3.4 では、JuliusのバイナリN-gram読み込み時にこの非互換性をチェックし、合わない場合はエラー終了するように改善しました。
+
+<h3><a name="sysinfo">起動時のSystem Infoの出力書式を変更</a></h3>
+
+起動時のSystem Infoの出力書式を再構成しました。
+
+<h2><a nema="other">その他</a></h2>
+
+<ul>
+<li><code>-setting</code>オプションでエンジンのコンパイル時の設定を出力するようにしました。
+<li>全ソースのCopyright表示を更新しました。
+<li>音声ファイル名入力プロンプトでreadlineライブラリを使用しないようにしました。
+<li><code>-version</code>を<code>-setting</code>に変更
+<li><code>-hipass</code>を<code>-hifreq</code>に、<code>-lopass</code>を<code>-lofreq</code>に変更
+</ul>
+なお古いオプションもこれまで通り受け付けます。
+
+<h2><a name="optsummary">オプション変更一覧</a></h2>
+
+Julius-3.4 で変更された<code>configure</code>オプションおよび起動時オプションの一覧です。
+<br><br>
+<code>configure</code>オプション：
+<ul>
+<li>新規追加：<code><a href="#julian">--enable-julian</a></code>
+<li>新規追加：<code><a href="#lmfix">--disable-cm</a></code>
+<li>新規追加：<code><a href="#class">--disable-class-ngram</a></code>
+</ul>
+起動時オプション：
+<ul>
+<li>新規追加：<code><a href="#cm">-cmalpha value</a></code>
+<li>新規追加：<code><a href="#cm">-outcode C</a></code>
+<li>デフォルト変更：<code><a href="#bug_adin">-lv 2000</a></code>
+<li>新規追加：<code><a href="#other">-setting</a></code>
+<li>新規追加：<code><a href="#other">-hifreq</a></code>
+<li>新規追加：<code><a href="#other">-lofreq</a></code>
+</ul>
+
+<hr>
+<small><i>$Id: WhatsNew_3.4.html,v 1.4 2004/02/25 03:39:25 ri Exp $</i></small><br>
+</body> </html>

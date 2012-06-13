@@ -52,40 +52,40 @@
 NJD_SET_ACCENT_PHRASE_RULE_H_START;
 
 /*
-  Rule 01 �ǥե���ȤϤ��äĤ���
-  Rule 02 ��̾��פ�Ϣ³�Ϥ��äĤ���
-  Rule 03 �ַ��ƻ�פθ�ˡ�̾��פ��������̤Υ�������ȶ��
-  Rule 04 ��̾��,����ư��촴�פθ�ˡ�̾��פ��������̤Υ�������ȶ��
-  Rule 05 ��ư��פθ�ˡַ��ƻ��or��̾��פ��������̤Υ�������ȶ��
-  Rule 06 ������ס�����³��ס���Ϣ�λ�פ�ñ�ȤΥ�������ȶ��
-  Rule 07 ��̾��,�����ǽ�סʤ��٤ơ��ʤɡˤ�ñ�ȤΥ�������ȶ��
-  Rule 08 �ֽ����or�ֽ�ư��ס���°��ˤ����ˤ��äĤ���
-  Rule 09 �ֽ����or�ֽ�ư��ס���°��ˤθ�Ρֽ���ס��ֽ�ư��װʳ��ʼ�Ω��ˤ��̤Υ�������ȶ��
-  Rule 10 ��*,�����פθ�Ρ�̾��פ��̤Υ�������ȶ��
-  Rule 11 �ַ��ƻ�,��Ω�פϡ�ư��,Ϣ��*��or�ַ��ƻ�,Ϣ��*��or�ֽ���,��³����,�ơ�or�ֽ��졤��³����,�ǡפ���³����������ˤ��äĤ���
-  Rule 12 ��ư��,��Ω�פϡ�ư��,Ϣ��*��or��̾��,������³��or�ֽ���,��³����,�ơ�or�ֽ���,��³����,�ǡפ���³����������ˤ��äĤ���
-  Rule 13 �ֵ���פ�ñ�ȤΥ�������ȶ��
+  Rule 01 デフォルトはくっつける
+  Rule 02 「名詞」の連続はくっつける
+  Rule 03 「形容詞」の後に「名詞」がきたら別のアクセント句に
+  Rule 04 「名詞,形容動詞語幹」の後に「名詞」がきたら別のアクセント句に
+  Rule 05 「動詞」の後に「形容詞」or「名詞」がきたら別のアクセント句に
+  Rule 06 「副詞」，「接続詞」，「連体詞」は単独のアクセント句に
+  Rule 07 「名詞,副詞可能」（すべて，など）は単独のアクセント句に
+  Rule 08 「助詞」or「助動詞」（付属語）は前にくっつける
+  Rule 09 「助詞」or「助動詞」（付属語）の後の「助詞」，「助動詞」以外（自立語）は別のアクセント句に
+  Rule 10 「*,接尾」の後の「名詞」は別のアクセント句に
+  Rule 11 「形容詞,非自立」は「動詞,連用*」or「形容詞,連用*」or「助詞,接続助詞,て」or「助詞，接続助詞,で」に接続する場合に前にくっつける
+  Rule 12 「動詞,非自立」は「動詞,連用*」or「名詞,サ変接続」or「助詞,接続助詞,て」or「助詞,接続助詞,で」に接続する場合に前にくっつける
+  Rule 13 「記号」は単独のアクセント句に
 */
 
-#define NJD_SET_ACCENT_PHRASE_MEISHI "̾��"
-#define NJD_SET_ACCENT_PHRASE_KEIYOUSHI "���ƻ�"
-#define NJD_SET_ACCENT_PHRASE_DOUSHI "ư��"
-#define NJD_SET_ACCENT_PHRASE_FUKUSHI "����"
-#define NJD_SET_ACCENT_PHRASE_SETSUZOKUSHI "��³��"
-#define NJD_SET_ACCENT_PHRASE_RENTAISHI "Ϣ�λ�"
-#define NJD_SET_ACCENT_PHRASE_JODOUSHI "��ư��"
-#define NJD_SET_ACCENT_PHRASE_JOSHI "����"
-#define NJD_SET_ACCENT_PHRASE_KIGOU "����"
-#define NJD_SET_ACCENT_PHRASE_KEIYOUDOUSHI_GOKAN "����ư��촴"
-#define NJD_SET_ACCENT_PHRASE_FUKUSHI_KANOU "�����ǽ"
-#define NJD_SET_ACCENT_PHRASE_SETSUBI "����"
-#define NJD_SET_ACCENT_PHRASE_HIJIRITSU "��Ω"
-#define NJD_SET_ACCENT_PHRASE_RENYOU "Ϣ��"
-#define NJD_SET_ACCENT_PHRASE_SETSUZOKUJOSHI "��³����"
-#define NJD_SET_ACCENT_PHRASE_SAHEN_SETSUZOKU "������³"
-#define NJD_SET_ACCENT_PHRASE_TE "��"
-#define NJD_SET_ACCENT_PHRASE_DE "��"
-#define NJD_SET_ACCENT_PHRASE_SETTOUSHI "��Ƭ��"
+#define NJD_SET_ACCENT_PHRASE_MEISHI "名詞"
+#define NJD_SET_ACCENT_PHRASE_KEIYOUSHI "形容詞"
+#define NJD_SET_ACCENT_PHRASE_DOUSHI "動詞"
+#define NJD_SET_ACCENT_PHRASE_FUKUSHI "副詞"
+#define NJD_SET_ACCENT_PHRASE_SETSUZOKUSHI "接続詞"
+#define NJD_SET_ACCENT_PHRASE_RENTAISHI "連体詞"
+#define NJD_SET_ACCENT_PHRASE_JODOUSHI "助動詞"
+#define NJD_SET_ACCENT_PHRASE_JOSHI "助詞"
+#define NJD_SET_ACCENT_PHRASE_KIGOU "記号"
+#define NJD_SET_ACCENT_PHRASE_KEIYOUDOUSHI_GOKAN "形容動詞語幹"
+#define NJD_SET_ACCENT_PHRASE_FUKUSHI_KANOU "副詞可能"
+#define NJD_SET_ACCENT_PHRASE_SETSUBI "接尾"
+#define NJD_SET_ACCENT_PHRASE_HIJIRITSU "非自立"
+#define NJD_SET_ACCENT_PHRASE_RENYOU "連用"
+#define NJD_SET_ACCENT_PHRASE_SETSUZOKUJOSHI "接続助詞"
+#define NJD_SET_ACCENT_PHRASE_SAHEN_SETSUZOKU "サ変接続"
+#define NJD_SET_ACCENT_PHRASE_TE "て"
+#define NJD_SET_ACCENT_PHRASE_DE "で"
+#define NJD_SET_ACCENT_PHRASE_SETTOUSHI "接頭詞"
 
 NJD_SET_ACCENT_PHRASE_RULE_H_END;
 

@@ -1,4 +1,4 @@
-//{{NO_DEPENDENCIES}}
+ï»¿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by SampleApp.rc
 //
@@ -24,7 +24,7 @@
 #define IDM_PAUSE                       32774
 #define IDM_RESUME                      32775
 
-// V‚µ‚¢ƒIƒuƒWƒFƒNƒg‚ÌŸ‚ÌŠù’è’l
+// æ–°ã—ã„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æ¬¡ã®æ—¢å®šå€¤
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS

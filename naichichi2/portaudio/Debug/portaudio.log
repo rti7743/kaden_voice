@@ -1,0 +1,58 @@
+﻿2012/05/28 10:59:11 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\rti\Desktop\Dropbox\git\naichichi2\portaudio\portaudio.vcxproj" (rebuild ターゲット)。
+     1>_PrepareForClean:
+         ファイル "Debug\portaudio.lastbuildstate" を削除しています。
+       InitializeBuildStatus:
+         "AlwaysCreate" が指定されたため "Debug\portaudio.unsuccessfulbuild" を作成しています。
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Isrc\common /Iinclude /Isrc\os\win /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /D _CRT_SECURE_NO_WARNINGS /D ALLOW_SMP_DANGERS /D PA_NO_ASIO /D PA_NO_WMME /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /wd4996 /analyze- /errorReport:prompt src\common\pa_allocation.c src\common\pa_converters.c src\common\pa_cpuload.c src\common\pa_debugprint.c src\common\pa_dither.c src\common\pa_front.c src\common\pa_process.c src\common\pa_ringbuffer.c src\common\pa_skeleton.c src\common\pa_stream.c src\common\pa_trace.c src\hostapi\dsound\pa_win_ds.c src\hostapi\dsound\pa_win_ds_dynlink.c src\os\win\pa_win_hostapis.c src\os\win\pa_win_util.c src\os\win\pa_win_waveformat.c src\os\win\pa_win_wdmks_utils.c src\os\win\pa_x86_plain_converters.c
+         pa_x86_plain_converters.c
+     1>c:\users\rti\desktop\dropbox\git\naichichi2\portaudio\src\os\win\pa_x86_plain_converters.c(128): warning C4305: '初期化中' : 'double' から 'const float' へ切り詰めます。
+         pa_win_wdmks_utils.c
+     1>c:\users\rti\desktop\dropbox\git\naichichi2\portaudio\src\os\win\pa_win_wdmks_utils.c(219): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+         pa_win_waveformat.c
+         pa_win_util.c
+         pa_win_hostapis.c
+         pa_win_ds_dynlink.c
+         pa_win_ds.c
+         pa_trace.c
+         pa_stream.c
+         pa_skeleton.c
+         pa_ringbuffer.c
+         pa_process.c
+         pa_front.c
+         pa_dither.c
+         pa_debugprint.c
+     1>c:\users\rti\desktop\dropbox\git\naichichi2\portaudio\src\common\pa_debugprint.c : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+         pa_cpuload.c
+         pa_converters.c
+         pa_allocation.c
+         コードを生成中...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"C:\Users\rti\Desktop\Dropbox\git\naichichi2\Debug\portaudio.lib" /NOLOGO Debug\pa_allocation.obj
+         Debug\pa_converters.obj
+         Debug\pa_cpuload.obj
+         Debug\pa_debugprint.obj
+         Debug\pa_dither.obj
+         Debug\pa_front.obj
+         Debug\pa_process.obj
+         Debug\pa_ringbuffer.obj
+         Debug\pa_skeleton.obj
+         Debug\pa_stream.obj
+         Debug\pa_trace.obj
+         Debug\pa_win_ds.obj
+         Debug\pa_win_ds_dynlink.obj
+         Debug\pa_win_hostapis.obj
+         Debug\pa_win_util.obj
+         Debug\pa_win_waveformat.obj
+         Debug\pa_win_wdmks_utils.obj
+         Debug\pa_x86_plain_converters.obj
+         portaudio.vcxproj -> C:\Users\rti\Desktop\Dropbox\git\naichichi2\Debug\portaudio.lib
+       FinalizeBuildStatus:
+         ファイル "Debug\portaudio.unsuccessfulbuild" を削除しています。
+         "Debug\portaudio.lastbuildstate" のタッチ タスクを実行しています。
+     1>プロジェクト "C:\Users\rti\Desktop\Dropbox\git\naichichi2\portaudio\portaudio.vcxproj" (rebuild ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:23.86

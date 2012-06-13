@@ -1,0 +1,35 @@
+#%NOISE	
+#sp	sp
+	
+%NO_B	
+silB	silB
+	
+%NO_E	
+silE	silE
+	
+%YES	
+はい	h a i
+はい	h a: i
+	
+%NO	
+いいえ	i i e
+いいえ	i: e
+	
+#%HMM	
+#えー	e:
+#えーと	e: t o
+#えーっと	e: q t o
+#えーっとー	e: q t o:
+#あー	a:
+#あーと	a: t o
+#あーっと	a: q t o
+#あっあ	a q a
+#ん	 N
+#んと	 N t o
+#んっと	 N q t o
+#あのー	a n o:
+#そのー	s o n o:
+#と	t o
+#っと	q t o
+#うーん	u: N
+#うーんと	u: N

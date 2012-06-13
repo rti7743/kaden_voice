@@ -1,0 +1,54 @@
+MKBINHMM(1)                                           MKBINHMM(1)
+
+
+
+NAME
+       mkbinhmm  -  make binary hmmdefs for Julius from HTK ascii
+       format hmmdefs
+
+SYNOPSIS
+       mkbinhmm ascii_hmmdefs_file binhmm_file
+
+DESCRIPTION
+       mkbinhmm は，HTK形式のアスキー形 式 のHMM 定 義 ファ イ ル
+       をJulius 用 の バ イナリ形式へ変換する．これのバイナリ形式
+       のHMM定義ファイルを使用することにより， Juliusの起動を高速
+       化することができます．
+
+       mkbinhmm は gzip 圧縮されたHMM定義ファイルをそのまま読み込
+       めます．
+
+OPTIONS
+       ascii_hmmdefs_file
+              変換元のHTK形式の（アスキー形式の）HMM定義ファイ ル
+              のパス名．
+
+       bingmm_file
+              出 力 先のJulius用バイナリ形式HMM定義ファイルのパス
+              名．
+
+USAGE
+       バイナリ形式HMM定義モデルをJuliusで使うには，Julius で音響
+       モデル指定時に，元の ASCII形式ファイルの代わりにこのファイ
+       ルを指定するだけでよい． ascii/binary の形式はJuliusで自動
+       判別される．
+
+SEE ALSO
+       julius(1)
+
+BUGS
+       バ グ 報 告・問い合わせ・コメントなどは julius@kuis.kyoto-
+       u.ac.jp までお願いします．
+
+COPYRIGHT
+       Copyright (c) 2003 奈良先端科学技術大学院大学
+
+AUTHORS
+       李 晃伸 (奈良先端大) が実装しました．
+
+LICENSE
+       Julius の使用許諾に準じます．
+
+
+
+                              LOCAL                   MKBINHMM(1)

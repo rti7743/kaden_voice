@@ -1,4 +1,4 @@
-// SampleApp.cpp
+﻿// SampleApp.cpp
 //
 
 #include "stdafx.h"

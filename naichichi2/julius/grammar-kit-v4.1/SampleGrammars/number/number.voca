@@ -1,0 +1,138 @@
+%HMM	
+§®°º	e:
+§®°º§»	e: t o
+§®°º§√§»	e: q t o
+§®°º§√§»°º	e: q t o:
+§¢°º	a:
+§¢°º§»	a: t o
+§¢°º§√§»	a: q t o
+#§¢§√§¢	a q a
+§Û°º	 N N
+§Û°º§»	 N N t o
+§Û°º§√§»	 N N q t o
+§¢§Œ°º	a n o:
+§Ω§Œ°º	s o n o:
+§»	t o
+§√§»	q t o
+§¶°º§Û	u: N
+§¶°º§Û§»	u: N t o
+
+%NOISE	
+NS	sp
+	
+%NO_B	
+silB	silB
+	
+%NO_E	
+silE	silE
+
+#%DIGIT	
+#£±	i ch i
+#£±	i q
+#£≤	n i
+#£≤	n i:
+#£≥	s a N
+#£¥	sh i
+#£¥	y o N
+#£µ	g o
+#£µ	g o:
+#£∂	r o k u
+#£∑	n a n a
+#£∑	sh i ch i
+#£∑	h i ch i
+#£∏	h a ch i
+#£∏	h a q
+#£π	ky u:
+#§Œ	n o
+	
+%NUM1	
+∞Ï	i ch i
+∞Ï	i q
+#∞Ï	h i t o
+∆Û	n i
+∆Û	n i:
+#∆Û	f u t a
+ª∞	s a N
+#ª∞	m i q
+ªÕ	sh i
+ªÕ	y o N
+∏ﬁ	g o
+∏ﬁ	g o:
+œª	r o k u
+œª	r o q
+º∑	n a n a
+º∑	sh i ch i
+º∑	h i ch i
+»¨	h a ch i
+»¨	h a q
+∂Â	ky u:
+∂Â	k u
+	
+%NUM10	
+ΩΩ	j u:
+ΩΩ	j u q
+∆ÛΩΩ	n i j u:
+∆ÛΩΩ	n i j u q
+ª∞ΩΩ	s a N j u:
+ª∞ΩΩ	s a N j u q
+ªÕΩΩ	y o N j u:
+ªÕΩΩ	y o N j u q
+∏ﬁΩΩ	g o j u:
+∏ﬁΩΩ	g o j u q
+œªΩΩ	r o k u j u:
+œªΩΩ	r o k u j u q
+º∑ΩΩ	n a n a j u:
+º∑ΩΩ	sh i ch i j u:
+º∑ΩΩ	h i ch i j u:
+º∑ΩΩ	n a n a j u q
+»¨ΩΩ	h a ch i j u:
+»¨ΩΩ	h a ch i j u q
+∂ÂΩΩ	ky u: j u:
+∂ÂΩΩ	ky u: j u q
+	
+%NUM100	
+…¥	hy a k u
+…¥	hy a q
+∆Û…¥	n i hy a k u
+∆Û…¥	n i hy a q
+ª∞…¥	s a N by a k u
+ª∞…¥	s a N by a q
+ªÕ…¥	y o N hy a k u
+ªÕ…¥	y o N hy a q
+∏ﬁ…¥	g o hy a k u
+∏ﬁ…¥	g o hy a q
+œª…¥	r o q py a k u
+º∑…¥	n a n a hy a k u
+»¨…¥	h a q py a k u
+∂Â…¥	ky u: hy a k u
+∂Â…¥	ky u: hy a q
+	
+%NUM1000	
+¿È	s e N
+∞Ï¿È	i q s e N
+∆Û¿È	n i s e N
+ª∞¿È	s a N z e N
+ªÕ¿È	y o N s e N
+∏ﬁ¿È	g o s e N
+œª¿È	r o k u s e N
+º∑¿È	n a n a s e N
+»¨¿È	h a q s e N
+∂Â¿È	ky u: s e N
+	
+%NUM10000S	
+À¸	m a N
+≤Ø	o k u
+√˚	ch o:
+	
+%ZERO	
+ŒÌ	r e:
+	
+%ABOUT	
+§Ø§È§§	k u r a i
+§∞§È§§	g u r a i
+	
+%DESU	
+§«§π	d e s u
+§À§ §Í§ﬁ§π	n i n a r i m a s u
+§«§¥§∂§§§ﬁ§π	d e g o z a i m a s u
+§«§™¥Í§§§∑§ﬁ§π	d e o n e g a i sh i m a s u

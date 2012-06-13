@@ -123,6 +123,9 @@ OPTIONS
           At Linux, you can choose API at run time by specifying alsa, oss and
           esd.
 
+        -chunk_size  samples
+          Audio fragment size in number of samples. (default: 1000)
+
         -lv  thres
           Level threshold for speech input detection. Values should be in
           range from 0 to 32767. (default: 2000)

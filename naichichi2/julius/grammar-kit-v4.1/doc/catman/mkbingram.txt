@@ -1,0 +1,56 @@
+MKBINGRAM(1)                                         MKBINGRAM(1)
+
+
+
+NAME
+       mkbingram - make binary N-gram from two arpa LMs
+
+SYNOPSIS
+       mkbingram 2gram.arpa rev3gram.arpa bingram
+
+DESCRIPTION
+       mkbingram  makes a binary N-gram file for Julius from word
+       2-gram and reverse word 3-gram LMs in ARPA  standard  for-
+       mat.  Using the binary file, the initial startup of Julius
+       becomes much faster.
+
+       Note that the word 2-gram and reverse word  3-gram  should
+       be  trained in the same corpus, same parameters (i.e. cut-
+       off thresholds) and have the same vocabulary.
+
+       mkbingram can read gzipped ARPA file.
+
+OPTIONS
+       2gram.arpa
+              word 2-gram file in ARPA standard format.
+
+       rev3gram.arpa
+              reverse word 3-gram in ARPA standard format.
+
+       bingram
+              binary N-gram file (Julius format).
+
+USAGE
+       Instead of two ARPA LMs with option "-nlr" and "-nrl", you
+       can  specify the generated binary N-gram file using option
+       "-d" like this:
+
+
+SEE ALSO
+       julius(1)
+
+COPYRIGHT
+       Copyright (c) 1991-2003 Kyoto University, Japan
+       Copyright (c) 2000-2003  Nara  Institute  of  Science  and
+       Technology, Japan
+
+AUTHORS
+       LEE Akinobu (NAIST, Japan)
+       contact: julius@kuis.kyoto-u.ac.jp
+
+LICENSE
+       Same as Julius.
+
+
+
+                              LOCAL                  MKBINGRAM(1)

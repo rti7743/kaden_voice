@@ -1,0 +1,3 @@
+-gram SampleGrammars/fruit/fruit
+-C hmm_ptm.jconf
+-input rawfile

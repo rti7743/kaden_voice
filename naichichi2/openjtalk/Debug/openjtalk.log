@@ -1,0 +1,64 @@
+﻿2012/03/03 2:21:28 にビルドを開始しました。
+     1>ノード 3 上のプロジェクト "C:\Users\rti\Desktop\Dropbox\naichichi2\openjtalk\openjtalk.vcxproj" (rebuild ターゲット)。
+     1>InitializeBuildStatus:
+         "AlwaysCreate" が指定されたため "Debug\openjtalk.unsuccessfulbuild" を作成しています。
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D CHARSET_SHIFT_JIS /D _MBCS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /wd4996 /wd4995 /wd4244 /wd4018 /wd4305 /wd4101 /analyze- /errorReport:prompt hts_engine_API\bin\hts_engine.c hts_engine_API\lib\HTS_audio.c hts_engine_API\lib\HTS_engine.c hts_engine_API\lib\HTS_gstream.c hts_engine_API\lib\HTS_label.c hts_engine_API\lib\HTS_misc.c hts_engine_API\lib\HTS_model.c hts_engine_API\lib\HTS_pstream.c hts_engine_API\lib\HTS_sstream.c hts_engine_API\lib\HTS_vocoder.c open_jtalk\jpcommon\jpcommon.c open_jtalk\jpcommon\jpcommon_label.c open_jtalk\jpcommon\jpcommon_node.c open_jtalk\njd2jpcommon\njd2jpcommon.c open_jtalk\njd\njd.c open_jtalk\njd\njd_node.c open_jtalk\njd_set_accent_phrase\njd_set_accent_phrase.c open_jtalk\njd_set_accent_type\njd_set_accent_type.c open_jtalk\njd_set_digit\njd_set_digit.c open_jtalk\njd_set_long_vowel\njd_set_long_vowel.c open_jtalk\njd_set_pronunciation\njd_set_pronunciation.c open_jtalk\njd_set_unvoiced_vowel\njd_set_unvoiced_vowel.c
+         njd_set_unvoiced_vowel.c
+         njd_set_pronunciation.c
+         njd_set_long_vowel.c
+         njd_set_digit.c
+         njd_set_accent_type.c
+         njd_set_accent_phrase.c
+         njd_node.c
+         njd.c
+         njd2jpcommon.c
+         jpcommon_node.c
+         jpcommon_label.c
+         jpcommon.c
+         HTS_vocoder.c
+         HTS_sstream.c
+         HTS_pstream.c
+         HTS_model.c
+         HTS_misc.c
+         HTS_label.c
+         HTS_gstream.c
+         HTS_engine.c
+         コードを生成中...
+         コンパイル中...
+         HTS_audio.c
+         hts_engine.c
+         コードを生成中...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"C:\Users\rti\Desktop\Dropbox\naichichi2\Debug\openjtalk.lib" /NOLOGO Debug\hts_engine.obj
+         Debug\HTS_audio.obj
+         Debug\HTS_engine.obj
+         Debug\HTS_gstream.obj
+         Debug\HTS_label.obj
+         Debug\HTS_misc.obj
+         Debug\HTS_model.obj
+         Debug\HTS_pstream.obj
+         Debug\HTS_sstream.obj
+         Debug\HTS_vocoder.obj
+         Debug\jpcommon.obj
+         Debug\jpcommon_label.obj
+         Debug\jpcommon_node.obj
+         Debug\njd2jpcommon.obj
+         Debug\njd.obj
+         Debug\njd_node.obj
+         Debug\njd_set_accent_phrase.obj
+         Debug\njd_set_accent_type.obj
+         Debug\njd_set_digit.obj
+         Debug\njd_set_long_vowel.obj
+         Debug\njd_set_pronunciation.obj
+         Debug\njd_set_unvoiced_vowel.obj
+     1>Debug\HTS_engine.obj : warning LNK4042: オブジェクトの指定が重複しています。余分なものは無視されます。
+         openjtalk.vcxproj -> C:\Users\rti\Desktop\Dropbox\naichichi2\Debug\openjtalk.lib
+       FinalizeBuildStatus:
+         ファイル "Debug\openjtalk.unsuccessfulbuild" を削除しています。
+         "Debug\openjtalk.lastbuildstate" のタッチ タスクを実行しています。
+     1>プロジェクト "C:\Users\rti\Desktop\Dropbox\naichichi2\openjtalk\openjtalk.vcxproj" (rebuild ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:05.32

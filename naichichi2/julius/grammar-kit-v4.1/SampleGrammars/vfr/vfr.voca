@@ -1,0 +1,179 @@
+###  サンプル語彙ファイル  ###
+###  服装選択タスク用語彙  ###
+###   96単語 + 3無音モデル ###
+
+## ここで定める単語カテゴリ ＝ .grammarでの終端シンボル
+
+% TARGET1_N		# 上着
+上着		u w a g i
+スーツ		s u: ts u
+
+% TARGET2_N		# シャツ
+シャツ		sh a ts u
+カッター	k a q t a:
+
+% COLOR_N		# 色言葉
+赤		a k a
+橙		d a i d a i
+黄		k i
+黄緑		k i m i d o r i
+緑		m i d o r i
+青緑		a o m i d o r i
+青		a o
+青紫		a o m u r a s a k i
+紫		m u r a s a k i
+赤紫		a k a m u r a s a k i
+白		sh i r o
+黒		k u r o
+灰		h a i
+
+% IRO_N			# 名詞(色)
+色		i r o
+
+% KANZI_N 		# 名詞(感じ)
+感じ		k a N j i
+
+% GARA_N		# 名詞(柄)
+柄		g a r a
+
+% PATTERN_N		# 柄言葉
+チェック	ch e q k u
+縦縞		t a t e j i m a
+横縞		y o k o j i m a
+無地		m u j i
+
+% DIRECTION_N		# 方向を示す言葉
+上		u e
+下		sh i t a
+右		m i g i
+左		h i d a r i
+右下		m i g i sh i t a
+右上		m i g i u e
+左下		h i d a r i sh i t a
+左上		h i d a r i u e
+
+% ONAZI_N		# 名詞(同じ)
+同じ		o n a j i
+
+% PREV_N		# 前を表す言葉
+一つ前		h i t o ts u m a e
+前		m a e
+
+% ZYOUTAI_N		# 名詞(状態)
+状態		j o: t a i
+状態		j o u t a i
+
+% HUKU_N		# 服装言葉
+服		h u k u
+服装		h u k u s o:
+服装		h u k u s o u
+
+% SIZIGO_N		# 近接指示
+これ		k o r e
+今の		i m a n o
+
+% NUM_N			# 序数
+１		i ch i
+２		n i
+３		s a N
+４		y o N
+４		y o
+５		g o
+６		r o k u
+７		n a n a
+７		sh i ch i
+８		h a ch i
+９		ky u:
+９		k u
+
+% BANGOU_N		# 名詞(番)
+番		b a N
+
+% KEIYOU_A		# 形容詞の語幹
+明る		a k a r u
+暗		k u r a
+暖か		a t a t a k a
+冷た		ts u m e t a
+
+% KEIDOU_A		# 形容動詞の語幹
+派手		h a d e
+地味		j i m i
+
+% TOSHITA_A		# 「何々とした」の語幹
+はっきり	h a q k i r i
+ぼんやり	b o N y a r i
+
+% RENTAI_SIZI_A		# 近接指示の連体形
+この		k o n o
+今の		i m a n o
+
+% KU_AT			# 形容詞語尾		
+く		k u
+% NI_AT			# 形容動詞語尾
+に		n i
+% TO_AT			# 「何々とした」の語尾
+と		t o
+% I_AT			# 形容詞語尾
+い		i
+% NA_AT			# 形容動詞語尾
+な		n a
+% TOSHITA_AT		# 「何々とした」の語尾
+とした		t o sh i t a
+
+% GEN_NOR_AD		# 限量詞(通常)
+もっと		m o q t o
+さらに		s a r a n i
+
+% GEN_SML_AD 		# 限量詞(少し)
+もう少し	m o: s u k o sh i
+もう少し	m o u s u k o sh i
+少し		s u k o sh i
+
+% SURU_V		# 動詞(する)
+して		sh i t e
+
+% KUDASAI_V		# 動詞(下さい)
+下さい		k u d a s a i
+
+% UNITY_V		# 動詞(統一)
+統一して	t o: i ts u sh i t e
+統一して	t o u i ts u sh i t e
+同じにして	o n a j i n i sh i t e
+
+% KOUKAN_V		# 動詞(交換)
+交換して	k o: k a N sh i t e
+交換して	k o u k a N sh i t e
+入れ替えて	i r e k a e t e
+
+% KIOKU_V		# 動詞(記憶)
+記憶して	k i o k u sh i t e
+覚えて		o b o e t e
+覚えておいて	o b o e t e o i t e
+
+% MODORU_V		# 動詞(戻る)
+戻って		m o d o q t e
+戻して		m o d o sh i t e
+
+% YARINAOSI_V		# 動詞(やり直す)
+やり直して	y a r i n a o sh i t e
+
+% QUIT_V		# 動詞(終了)
+やめます	y a m e m a s u
+終了します	sh u: ry o: sh i m a s u
+
+% WO			# を
+を		o
+% TO			# と
+と		t o
+% NI			# に
+に		n i
+% NO			# の
+の		n o
+
+## 無音用エントリ
+% NS_B			# 文頭無音
+silB     	silB
+% NS_E			# 文末無音
+silE     	silE
+% NOISE			# 文中ショートポーズ
+sp       	sp

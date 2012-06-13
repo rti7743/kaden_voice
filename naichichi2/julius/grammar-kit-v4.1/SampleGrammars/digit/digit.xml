@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GRAMMAR>
+<RULE name="S" toplevel="ACTIVE">
+  <L>
+    <P>
+      <RULEREF name="HMM"/>
+      <RULEREF name="NOISE"/>
+      <RULEREF name="DIGNUM"/>
+      <RULEREF name="NOISE"/>
+      <RULEREF name="DESU"/>
+    </P>
+    <P>
+      <RULEREF name="DIGNUM"/>
+      <RULEREF name="NOISE"/>
+      <RULEREF name="DESU"/>
+    </P>
+    <P>
+      <RULEREF name="HMM"/>
+      <RULEREF name="NOISE"/>
+      <RULEREF name="DIGNUM"/>
+    </P>
+    <P>
+      <RULEREF name="DIGNUM"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="DIGLOOP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NOISE"/>
+      <RULEREF name="DIGIT"/>
+      <RULEREF name="DIGLOOP"/>
+    </P>
+    <P>
+      <RULEREF name="DIGIT"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="DIGNUM" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="DIGLOOP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="HMM" toplevel="INACTIVE">
+  <L>
+    <P>えー</P>
+    <P>えーと</P>
+    <P>えーっと</P>
+    <P>えーっとー</P>
+    <P>あー</P>
+    <P>あーと</P>
+    <P>あーっと</P>
+    <P>/んー/んん;</P>
+    <P>/んーと/んんと;</P>
+    <P>/んーっと/んんっと;</P>
+    <P>あのー</P>
+    <P>そのー</P>
+    <P>と</P>
+    <P>っと</P>
+    <P>うーん</P>
+    <P>うーんと</P>
+  </L>
+</RULE>
+<RULE name="DESU" toplevel="INACTIVE">
+  <L>
+    <P>です</P>
+  </L>
+</RULE>
+<RULE name="NOISE" toplevel="INACTIVE">
+  <L>
+    <P>//@sp;</P>
+  </L>
+</RULE>
+<RULE name="DIGIT" toplevel="INACTIVE">
+  <L propname="DIGIT">
+    <P valstr="0">/０/ぜろ;</P>
+    <P valstr="0">/０/れー;</P>
+    <P valstr="0">/０/まる;</P>
+    <P valstr="1">/１/いち;</P>
+    <P valstr="2">/２/にっ;</P>
+    <P valstr="2">/２/にー;</P>
+    <P valstr="3">/３/さん;</P>
+    <P valstr="4">/４/しっ;</P>
+    <P valstr="4">/４/しー;</P>
+    <P valstr="4">/４/よん;</P>
+    <P valstr="5">/５/ご;</P>
+    <P valstr="5">/５/ごー;</P>
+    <P valstr="6">/６/ろく;</P>
+    <P valstr="7">/７/なな;</P>
+    <P valstr="7">/７/しち;</P>
+    <P valstr="7">/７/ひち;</P>
+    <P valstr="8">/８/はち;</P>
+    <P valstr="9">/９/きゅー;</P>
+    <P valstr="and">の</P>
+  </L>
+</RULE>
+</GRAMMAR>

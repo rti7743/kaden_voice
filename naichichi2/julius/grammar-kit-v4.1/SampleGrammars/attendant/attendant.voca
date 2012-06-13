@@ -1,0 +1,49 @@
+% NAME
+小泉	k o i z u m i 
+片山	k a t a y a m a 
+森山	m o r i y a m a 
+田中	t a n a k a 
+塩川	sh i o k a w a 
+遠山	t o: y a m a 
+坂口	s a k a g u ch i 
+武部	t a k e b e 
+平沼	h i r a n u m a 
+扇	o: g i 
+川口	k a w a g u ch i 
+福田	f u k u d a 
+村井	m u r a i 
+中谷	n a k a t a n i 
+尾身	o m i 
+柳澤	y a n a g i s a w a 
+竹中	t a k e n a k a 
+石原	i sh i h a r a 
+安倍	a b e 
+上野	u e n o 
+古川	f u r u k a w a 
+津野	ts u n o
+
+% FILL_E
+お願い	o n e g a i 
+お願いします	o n e g a i sh i m a s u 
+さん	s a N 
+さんお願い	s a N o n e g a i 
+さんお願いします	s a N o n e g a i sh i m a s u 
+
+% FILL_B
+えー	e: 
+えーと	e: t o 
+えーと	e: q t o 
+あのー	a n o: 
+
+% ANSWER
+ええ	e: 
+はい	h a i 
+いいえ	i i e 
+
+## 無音用エントリ
+% NS_B			# 文頭無音
+silB		silB
+% NS_E			# 文末無音
+silE		silE
+% NOISE			# 文中ショートポーズ
+sp		sp

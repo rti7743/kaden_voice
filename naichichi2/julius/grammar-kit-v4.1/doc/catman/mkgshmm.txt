@@ -1,0 +1,54 @@
+MKGSHMM(1)                                             MKGSHMM(1)
+
+
+
+NAME
+       mkgshmm - convert monophone HMM to GS HMM for Julius
+
+SYNOPSIS
+       mkgshmm monophone_hmmdefs > outputfile
+
+DESCRIPTION
+       mkgshmm  converts  monophone HMM definition file (hmmdefs)
+       in HTK format to a special  format  for  Gaussian  Mixture
+       Selection (GMS) in Julius.
+
+       GMS  is an algorithm to reduce the amount of acoustic com-
+       putation with triphone HMM, by pre-selection of  promising
+       gaussian mixtures using likelihoods of corresponding mono-
+       phone mixtures.
+
+       For more details, please  consult  related  documents  and
+       papers
+
+EXAMPLE
+       (1)  Prepare  a  monophone  model which was trained by the
+       same corpus as target triphone model.
+
+       (2) Convert the monophone model using mkgshmm.
+
+           % mkgshmm monophone > gshmmfile
+
+       (3) Specify the output file in Julius with option "-gshmm"
+
+           % julius -C foo.jconf -gshmm gshmmfile
+
+
+SEE ALSO
+       julius(1)
+
+COPYRIGHT
+       Copyright (c) 1991-2003 Kyoto University, Japan
+       Copyright  (c)  2000-2003  Nara  Institute  of Science and
+       Technology, Japan
+
+AUTHORS
+       LEE Akinobu (NAIST, Japan)
+       contact: julius@kuis.kyoto-u.ac.jp
+
+LICENSE
+       Same as Julius.
+
+
+
+                              LOCAL                    MKGSHMM(1)

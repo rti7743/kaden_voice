@@ -46,6 +46,10 @@ OPTIONS
           esdは，音声デバイスの共有手段として多くの Linuxのデスクトップ環境で
           利用されている EsounD daemon から入力する．
 
+        -chunk_size  samples
+          音声入力の処理バッファ（フラグメント）のサイズ．値はサンプル
+          数．(default: 1000)
+
         -lv  thres
           振幅レベルのしきい値．値は 0 から 32767 の範囲で指定する． (default:
           2000)

@@ -1,0 +1,69 @@
+0	[えー]	e:
+0	[えーと]	e: t o
+0	[えーっと]	e: q t o
+0	[えーっとー]	e: q t o:
+0	[あー]	a:
+0	[あーと]	a: t o
+0	[あーっと]	a: q t o
+0	[んー]	N N
+0	[んーと]	N N t o
+0	[んーっと]	N N q t o
+0	[あのー]	a n o:
+0	[そのー]	s o n o:
+0	[と]	t o
+0	[っと]	q t o
+0	[うーん]	u: N
+0	[うーんと]	u: N t o
+0	[です]	d e s u
+0	[になります]	n i n a r i m a s u
+0	[でございます]	d e g o z a i m a s u
+0	[でお願いします]	d e o n e g a i sh i m a s u
+1	[sp]	sp
+2	[silB]	silB
+3	[silE]	silE
+4	[一]	i ch i
+4	[二]	n i
+4	[二]	n i:
+4	[三]	s a N
+4	[四]	y o N
+4	[五]	g o
+4	[五]	g o:
+4	[六]	r o k u
+4	[七]	n a n a
+4	[七]	sh i ch i
+4	[八]	h a ch i
+4	[九]	ky u:
+5	[十]	j u:
+5	[二十]	n i j u:
+5	[三十]	s a N j u:
+5	[四十]	y o N j u:
+5	[五十]	g o j u:
+5	[六十]	r o k u j u:
+5	[七十]	n a n a j u:
+5	[七十]	sh i ch i j u:
+5	[八十]	h a ch i j u:
+5	[九十]	ky u: j u:
+6	[百]	hy a k u
+6	[二百]	n i hy a k u
+6	[三百]	s a N by a k u
+6	[四百]	y o N hy a k u
+6	[五百]	g o hy a k u
+6	[六百]	r o q py a k u
+6	[七百]	n a n a hy a k u
+6	[八百]	h a q py a k u
+6	[九百]	ky u: hy a k u
+7	[千]	s e N
+7	[一千]	i q s e N
+7	[二千]	n i s e N
+7	[三千]	s a N z e N
+7	[四千]	y o N s e N
+7	[五千]	g o s e N
+7	[六千]	r o k u s e N
+7	[七千]	n a n a s e N
+7	[八千]	h a q s e N
+7	[九千]	ky u: s e N
+8	[万]	m a N
+9	[零]	r e:
+10	[円]	e N
+11	[くらい]	k u r a i
+11	[ぐらい]	g u r a i

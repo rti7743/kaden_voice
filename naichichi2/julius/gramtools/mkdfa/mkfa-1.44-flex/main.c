@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -16,19 +16,19 @@ void usage( void );
 
 char VerNo[] = VER_NO;
 
-CLASS *ClassList = NULL;       /* $B%/%i%9$N@~7A%j%9%H(B */
-CLASS *ClassListTail = NULL;   /* $B%/%i%9$N@~7A%j%9%H$N:G8eHx$N%N!<%I(B */
-CLASS *StartSymbol = NULL;     /* $B3+;O5-9f$N%/%i%9(B */
+CLASS *ClassList = NULL;       /* クラスの線形リスト */
+CLASS *ClassListTail = NULL;   /* クラスの線形リストの最後尾のノード */
+CLASS *StartSymbol = NULL;     /* 開始記号のクラス */
 
-char GramFile[ 1024 ];         /* $BJ8K!%U%!%$%kL>(B */
-char VocaFile[ 1024 ];         /* $B8lWC%U%!%$%kL>(B */
-char FAfile[ 1024 ];           /* FA$B%U%!%$%kL>(B(DFAorNFA) */
-char HeaderFile[ 1024 ];       /* $B%X%C%@%U%!%$%kL>(B */
-int NoNewLine = 0;             /* $BJ#?t$NI=<(%b!<%I$G2~9TLdBj$r2r7h$9$k(B */
-FA *FAlist = NULL;             /* FA$B%M%C%H%o!<%/$K$*$1$k3+;O(BFA$B$N%]%$%s%?(B */
-char Clipboard[ 1024 ];        /* sprintf$BMQ$N0l;~=q$-9~$_%P%C%U%!(B */
+char GramFile[ 1024 ];         /* 文法ファイル名 */
+char VocaFile[ 1024 ];         /* 語彙ファイル名 */
+char FAfile[ 1024 ];           /* FAファイル名(DFAorNFA) */
+char HeaderFile[ 1024 ];       /* ヘッダファイル名 */
+int NoNewLine = 0;             /* 複数の表示モードで改行問題を解決する */
+FA *FAlist = NULL;             /* FAネットワークにおける開始FAのポインタ */
+char Clipboard[ 1024 ];        /* sprintf用の一時書き込みバッファ */
 
-static int optF = 0;           /* -f $B$,;XDj$5$l$?(B(-dfa$B$H$NLdBj2r7h$K(B) */
+static int optF = 0;           /* -f が指定された(-dfaとの問題解決に) */
 
 int SW_SentList = 0;
 int SW_NoWarning = 0;

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -27,21 +27,21 @@ FALIST *volatileFA( FALIST *volatileList, FA *fa );
 void unvolatileFA( FALIST *volatileList );
 void verboseGroup( FALIST *group );
 
-static FALIST *GroupList = NULL; /* $B>uBVM;9g$5$l$??7>uBV$N%j%9%H(B */
+static FALIST *GroupList = NULL; /* 状態融合された新状態のリスト */
 
-static int DFAtravTotal = 0;   /* DFA$B:n@.;~$KN)$A4s$C$?%N!<%I?t(B */
-static int DFAtravSuccess = 0; /* $B$=$N$&$A:#$^$G$KN)$A4s$C$F$$$J$+$C$??t(B */
-static int FAprocessed = 0;    /* $B8=:_$N%9%F%C%W$K$*$$$F=hM}$5$l$?(BFA$B$N?t(B */
-extern int FAtotal;            /* FA$B$NAm?t(B */
+static int DFAtravTotal = 0;   /* DFA作成時に立ち寄ったノード数 */
+static int DFAtravSuccess = 0; /* そのうち今までに立ち寄っていなかった数 */
+static int FAprocessed = 0;    /* 現在のステップにおいて処理されたFAの数 */
+extern int FAtotal;            /* FAの総数 */
 
-extern FA *FAlist;             /* FA$B%M%C%H%o!<%/$K$*$1$k3+;O(BFA$B$N%]%$%s%?(B */
-extern char FAfile[ 1024 ];    /* FA$B%U%!%$%kL>(B(DFAorNFA) */
+extern FA *FAlist;             /* FAネットワークにおける開始FAのポインタ */
+extern char FAfile[ 1024 ];    /* FAファイル名(DFAorNFA) */
 extern int SW_Verbose;
 extern int SW_Quiet;
 extern int SW_SemiQuiet;
 extern int SW_Compati;
-extern int NoNewLine;          /* $BJ#?t$NI=<(%b!<%I$G2~9TLdBj$r2r7h$9$k(B */
-extern char Clipboard[ 1024 ]; /* sprintf$BMQ$N0l;~=q$-9~$_%P%C%U%!(B */
+extern int NoNewLine;          /* 複数の表示モードで改行問題を解決する */
+extern char Clipboard[ 1024 ]; /* sprintf用の一時書き込みバッファ */
 
 void makeDFA( void )
 {
@@ -57,8 +57,8 @@ void makeDFA( void )
 	}
 	NoNewLine = 0;
     }
-    /* $B2?$+%P%0$,$"$C$?$H$-62$$$,8IN)%k!<%W$N%A%'%C%/$,(B
-       $BIT2DG=$J$N$G$7$g$&$,$J$$(B */
+    /* 何かバグがあったとき恐いが孤立ループのチェックが
+       不可能なのでしょうがない */
     FAtotal = FAprocessed;
     if( SW_Verbose ){
 	verboseMes( "** traversing efficiency ( success/total )" );
@@ -119,7 +119,7 @@ void r_makeDFA( FA *fa )
 		unifyingDstFA = chkGroup( group, accptFlag,
 					 startFlag,&newFlag );
 	    } else {
-		/* $B$3$N2<(B4$B9T$O%V%m%C%/30$N(Bwhile$B$KBP$7$F$N$b$N(B */
+		/* この下4行はブロック外のwhileに対してのもの */
 		freeFAlist( group );
 		prevarc = curarc;
 		curarc = curarc->next;
@@ -163,9 +163,9 @@ void r_makeDFA( FA *fa )
 void connectUnifyFA( FA *fa, int inp, FA *nextFA, FLAG reserved,
 		    CLASSFLAGS accpt, CLASSFLAGS start )
 {
-    /* unifyFA$B$X$N%"!<%/$N%j%9%H$KF~NO$N<-=q=g$GE,@Z0LCV$KA^F~(B
-       $B$^$?F1$8$b$N$,$"$k>l9gEPO?$7$J$$(B */
-    /* nextFA $B$N(BpsNum$B$r%$%s%/%j%a%s%H$7$J$$(B */
+    /* unifyFAへのアークのリストに入力の辞書順で適切位置に挿入
+       また同じものがある場合登録しない */
+    /* nextFA のpsNumをインクリメントしない */
     UNIFYARC *newArc;
     UNIFYARC *curArc = NULL;
     UNIFYARC *nextArc;
@@ -274,10 +274,10 @@ ARC *unifyFA( FA *dstFA, ARC *prevarc, ARC *curarc, FA *prevFA )
 }
 
 ARC *unconnectFA( FA *srcFA, ARC *arcPrev, ARC *arc )
-/* $B@Z$C$?%"!<%/$N<!$N%"!<%/$rJV$9(B */
+/* 切ったアークの次のアークを返す */
 {
-    /* $B;XDj$NA0%N!<%I$H$N@\B3$r@Z$j!">CLG$9$Y$-$J$i<!%N!<%I$9$Y$F$H$N@\B3$r(B
-       $B@Z$C$F>CLG$5$;$k!#(B*/
+    /* 指定の前ノードとの接続を切り、消滅すべきなら次ノードすべてとの接続を
+       切って消滅させる。*/
 
     ARC *arcNext = arc->next;
     FA *vanishFA;
@@ -310,8 +310,8 @@ void killFA( FA *fa )
 }
 
 int chkIsolatedLoop( FA *vanishFA, FA *curFA )
-/* $B$b$7<+J,$,>CLG$9$k$H2>Dj$7$?$i<+J,$X$N%"!<%/$,L5$/$J$k$+$r%A%'%C%/(B
-   $B$9$J$o$A%k!<%W$K$h$k@8$-;D$j$r6n=|$9$k(B */
+/* もし自分が消滅すると仮定したら自分へのアークが無くなるかをチェック
+   すなわちループによる生き残りを駆除する */
 {
     ARC *arc;
     int result;
@@ -331,8 +331,8 @@ int chkIsolatedLoop( FA *vanishFA, FA *curFA )
 }
 
 void killIsolatedLoop( FA *vanishFA, FA *curFA )
-/* $B$b$7<+J,$,>CLG$9$k$H2>Dj$7$?$i<+J,$X$N%"!<%/$,L5$/$J$k$+$r%A%'%C%/(B
-   $B$9$J$o$A%k!<%W$K$h$k@8$-;D$j$r6n=|$9$k(B */
+/* もし自分が消滅すると仮定したら自分へのアークが無くなるかをチェック
+   すなわちループによる生き残りを駆除する */
 {
     ARC *arc;
     ARC *prevarc = NULL;
@@ -355,8 +355,8 @@ void killIsolatedLoop( FA *vanishFA, FA *curFA )
 
 FALIST *appendGroup( FALIST *groupTop, FA *fa )
 {
-    /* fa$B$,M;9g>uBV$G$J$$$J$i(BFA$B$N%]%$%s%?$r%=!<%H$7$F%0%k!<%W%j%9%H$X(B
-       $BM;9g>uBV$J$i$=$N9=@.%j%9%H$H%0%k!<%W%j%9%H$r9g$o$;$F%=!<%H$9$k(B */
+    /* faが融合状態でないならFAのポインタをソートしてグループリストへ
+       融合状態ならその構成リストとグループリストを合わせてソートする */
 
     FALIST *preAtom = NULL;
     FALIST *curAtom = groupTop;
@@ -373,9 +373,9 @@ FALIST *appendGroup( FALIST *groupTop, FA *fa )
 	}
 	return( insertFAlist( groupTop, preAtom, curAtom, fa ) );
     } else {
-	/* srcCurAtom$B$,%=!<%H$5$l$F$$$k$3$H$rMxMQ$9$l$P$b$C$H=hM}$,B.$/$J$k$,(B
-	   $B$=$&$9$k$H$J$<$+>uBV?t$,B?>/A}$($F$7$^$&$N$GI,$:$7$bJ]>Z$5$l$F$$$J$$$+$b(B
-	   "for"$B$NCm<a$r<h$C$F!"(BpreAtom = NULL; curAtom = groupTop;(2$B8D=j(B) $B$r;&$9(B */
+	/* srcCurAtomがソートされていることを利用すればもっと処理が速くなるが
+	   そうするとなぜか状態数が多少増えてしまうので必ずしも保証されていないかも
+	   "for"の注釈を取って、preAtom = NULL; curAtom = groupTop;(2個所) を殺す */
 	for( srcCurAtom = fa->group; srcCurAtom != NULL;
 	    srcCurAtom = srcCurAtom->next ){
 	    if( curAtom == NULL ){

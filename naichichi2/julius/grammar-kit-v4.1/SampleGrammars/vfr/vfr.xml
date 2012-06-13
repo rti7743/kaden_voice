@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GRAMMAR>
+<RULE name="RYOUIKI_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="IRO_N"/>
+    </P>
+    <P>
+      <RULEREF name="GARA_N"/>
+    </P>
+    <P>
+      <RULEREF name="IRO_N"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="GARA_N"/>
+    </P>
+    <P>
+      <RULEREF name="GARA_N"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="IRO_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="S" toplevel="ACTIVE">
+  <L>
+    <P>
+      <RULEREF name="CHANGE_COLOR_S"/>
+    </P>
+    <P>
+      <RULEREF name="IMAGE_S"/>
+    </P>
+    <P>
+      <RULEREF name="CHANGE_PATTERN_S"/>
+    </P>
+    <P>
+      <RULEREF name="CURSOR_MOVE_S"/>
+    </P>
+    <P>
+      <RULEREF name="UNITY_S"/>
+    </P>
+    <P>
+      <RULEREF name="EXCHANGE_S"/>
+    </P>
+    <P>
+      <RULEREF name="UNDO_S"/>
+    </P>
+    <P>
+      <RULEREF name="SAVE_S"/>
+    </P>
+    <P>
+      <RULEREF name="LOAD_S"/>
+    </P>
+    <P>
+      <RULEREF name="QUIT_S"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="MODORU_VP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="MODORU_V"/>
+      <RULEREF name="KUDASAI_V"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="COLOR_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="COLOR_N"/>
+    </P>
+    <P>
+      <RULEREF name="COLOR_N"/>
+      <RULEREF name="IRO_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="TARGET_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET1_N"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET2_N"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET1_N"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="TARGET2_N"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET2_N"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="TARGET1_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="KOUKAN_VP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="KOUKAN_V"/>
+      <RULEREF name="KUDASAI_V"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="TARGET_SINGLE_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET1_N"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET2_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="CURSOR_MOVE_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET_SINGLE_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="MOVE_NP"/>
+      <RULEREF name="NO"/>
+      <RULEREF name="GARA_N"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="MOVE_NP"/>
+      <RULEREF name="NO"/>
+      <RULEREF name="GARA_N"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="ZYOUTAIHUKU_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="ZYOUTAI_N"/>
+    </P>
+    <P>
+      <RULEREF name="HUKU_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="YARINAOSI_VP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="YARINAOSI_V"/>
+      <RULEREF name="KUDASAI_V"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="TARGET_UNITY_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET1_N"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="TARGET2_N"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET2_N"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="TARGET1_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="UNDO_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="PREV_N"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="MODORU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="MODORU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="YARINAOSI_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="IMAGE_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="IMG_AP"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="IMG_AP"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="GENRYOUSHI_PH"/>
+      <RULEREF name="IMG_AP"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="GENRYOUSHI_PH"/>
+      <RULEREF name="IMG_AP"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="LOAD_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUMBER_NP"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="LOAD_VP"/>
+    </P>
+    <P>
+      <RULEREF name="NUMBER_NP"/>
+      <RULEREF name="NO"/>
+      <RULEREF name="HUKU_N"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="LOAD_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="QUIT_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="QUIT_V"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="EXCHANGE_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET_DOUBLE_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="KOUKAN_VP"/>
+    </P>
+    <P>
+      <RULEREF name="KOUKAN_VP"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET_DOUBLE_NP"/>
+      <RULEREF name="NO"/>
+      <RULEREF name="RYOUIKI_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="KOUKAN_VP"/>
+    </P>
+    <P>
+      <RULEREF name="RYOUIKI_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="KOUKAN_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="ZYOUTAI_SIZI_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="RENTAI_SIZI_A"/>
+      <RULEREF name="ZYOUTAIHUKU_NP"/>
+    </P>
+    <P>
+      <RULEREF name="SIZIGO_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="LOAD_VP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="SURU_V"/>
+      <RULEREF name="KUDASAI_V"/>
+    </P>
+    <P>
+      <RULEREF name="MODORU_V"/>
+      <RULEREF name="KUDASAI_V"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="IMG_RENYOU_ADJ" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="KEIYOU_A"/>
+      <RULEREF name="KU_AT"/>
+    </P>
+    <P>
+      <RULEREF name="KEIDOU_A"/>
+      <RULEREF name="NI_AT"/>
+    </P>
+    <P>
+      <RULEREF name="TOSHITA_A"/>
+      <RULEREF name="TO_AT"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="MOVE_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="DIRECTION_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUMBER_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM_N"/>
+      <RULEREF name="BANGOU_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="UNITY_VP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="UNITY_V"/>
+      <RULEREF name="KUDASAI_V"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="GENRYOUSHI_PH" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="GEN_NOR_AD"/>
+    </P>
+    <P>
+      <RULEREF name="GEN_SML_AD"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="UNITY_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET_UNITY_NP"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="UNITY_VP"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET_UNITY_NP"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="ONAZI_N"/>
+      <RULEREF name="RYOUIKI_NP"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="UNITY_VP"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET_UNITY_NP"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="ONAZI_N"/>
+      <RULEREF name="RYOUIKI_NP"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="KIOKU_VP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="KIOKU_V"/>
+      <RULEREF name="KUDASAI_V"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="CHANGE_PATTERN_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="PATTERN_N"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="PATTERN_N"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="IMG_RENTAI_ADJ" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="KEIYOU_A"/>
+      <RULEREF name="I_AT"/>
+    </P>
+    <P>
+      <RULEREF name="KEIDOU_A"/>
+      <RULEREF name="NA_AT"/>
+    </P>
+    <P>
+      <RULEREF name="TOSHITA_A"/>
+      <RULEREF name="TOSHITA_AT"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="SURU_VP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="SURU_V"/>
+      <RULEREF name="KUDASAI_V"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="TARGET_DOUBLE_NP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET1_N"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="TARGET2_N"/>
+    </P>
+    <P>
+      <RULEREF name="TARGET2_N"/>
+      <RULEREF name="TO"/>
+      <RULEREF name="TARGET1_N"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="IMG_AP" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="IMG_RENYOU_ADJ"/>
+    </P>
+    <P>
+      <RULEREF name="IMG_RENTAI_ADJ"/>
+      <RULEREF name="KANZI_N"/>
+      <RULEREF name="NI"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="CHANGE_COLOR_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TARGET_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="COLOR_NP"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="COLOR_NP"/>
+      <RULEREF name="NI"/>
+      <RULEREF name="SURU_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="SAVE_S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="ZYOUTAI_SIZI_NP"/>
+      <RULEREF name="WO"/>
+      <RULEREF name="KIOKU_VP"/>
+    </P>
+    <P>
+      <RULEREF name="KIOKU_VP"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="I_AT" toplevel="INACTIVE">
+  <L propname="I_AT">
+    <P valstr="い">い</P>
+  </L>
+</RULE>
+<RULE name="NI" toplevel="INACTIVE">
+  <L propname="NI">
+    <P valstr="に">に</P>
+  </L>
+</RULE>
+<RULE name="WO" toplevel="INACTIVE">
+  <L propname="WO">
+    <P valstr="を">/を/お;</P>
+  </L>
+</RULE>
+<RULE name="TARGET1_N" toplevel="INACTIVE">
+  <L propname="TARGET1_N">
+    <P valstr="上着">/上着/うわぎ;</P>
+    <P valstr="スーツ">/スーツ/すーつ;</P>
+  </L>
+</RULE>
+<RULE name="KEIDOU_A" toplevel="INACTIVE">
+  <L propname="KEIDOU_A">
+    <P valstr="派手">/派手/はで;</P>
+    <P valstr="地味">/地味/じみ;</P>
+  </L>
+</RULE>
+<RULE name="TO" toplevel="INACTIVE">
+  <L propname="TO">
+    <P valstr="と">と</P>
+  </L>
+</RULE>
+<RULE name="TARGET2_N" toplevel="INACTIVE">
+  <L propname="TARGET2_N">
+    <P valstr="シャツ">/シャツ/しゃつ;</P>
+    <P valstr="カッター">/カッター/かったー;</P>
+  </L>
+</RULE>
+<RULE name="TOSHITA_A" toplevel="INACTIVE">
+  <L propname="TOSHITA_A">
+    <P valstr="はっきり">はっきり</P>
+    <P valstr="ぼんやり">ぼんやり</P>
+  </L>
+</RULE>
+<RULE name="ZYOUTAI_N" toplevel="INACTIVE">
+  <L propname="ZYOUTAI_N">
+    <P valstr="状態">/状態/じょーたい;</P>
+    <P valstr="状態">/状態/じょうたい;</P>
+  </L>
+</RULE>
+<RULE name="QUIT_V" toplevel="INACTIVE">
+  <L propname="QUIT_V">
+    <P valstr="やめます">やめます</P>
+    <P valstr="終了します">/終了します/しゅーりょーします;</P>
+  </L>
+</RULE>
+<RULE name="SIZIGO_N" toplevel="INACTIVE">
+  <L propname="SIZIGO_N">
+    <P valstr="これ">これ</P>
+    <P valstr="今の">/今の/いまの;</P>
+  </L>
+</RULE>
+<RULE name="COLOR_N" toplevel="INACTIVE">
+  <L propname="COLOR_N">
+    <P valstr="赤">/赤/あか;</P>
+    <P valstr="橙">/橙/だいだい;</P>
+    <P valstr="黄">/黄/き;</P>
+    <P valstr="黄緑">/黄緑/きみどり;</P>
+    <P valstr="緑">/緑/みどり;</P>
+    <P valstr="青緑">/青緑/あおみどり;</P>
+    <P valstr="青">/青/あお;</P>
+    <P valstr="青紫">/青紫/あおむらさき;</P>
+    <P valstr="紫">/紫/むらさき;</P>
+    <P valstr="赤紫">/赤紫/あかむらさき;</P>
+    <P valstr="白">/白/しろ;</P>
+    <P valstr="黒">/黒/くろ;</P>
+    <P valstr="灰">/灰/はい;</P>
+  </L>
+</RULE>
+<RULE name="NI_AT" toplevel="INACTIVE">
+  <L propname="NI_AT">
+    <P valstr="に">に</P>
+  </L>
+</RULE>
+<RULE name="PATTERN_N" toplevel="INACTIVE">
+  <L propname="PATTERN_N">
+    <P valstr="チェック">/チェック/ちぇっく;</P>
+    <P valstr="縦縞">/縦縞/たてじま;</P>
+    <P valstr="横縞">/横縞/よこじま;</P>
+    <P valstr="無地">/無地/むじ;</P>
+  </L>
+</RULE>
+<RULE name="KUDASAI_V" toplevel="INACTIVE">
+  <L propname="KUDASAI_V">
+    <P valstr="下さい">/下さい/ください;</P>
+  </L>
+</RULE>
+<RULE name="IRO_N" toplevel="INACTIVE">
+  <L propname="IRO_N">
+    <P valstr="色">/色/いろ;</P>
+  </L>
+</RULE>
+<RULE name="SURU_V" toplevel="INACTIVE">
+  <L propname="SURU_V">
+    <P valstr="して">して</P>
+  </L>
+</RULE>
+<RULE name="GEN_NOR_AD" toplevel="INACTIVE">
+  <L propname="GEN_NOR_AD">
+    <P valstr="もっと">もっと</P>
+    <P valstr="さらに">さらに</P>
+  </L>
+</RULE>
+<RULE name="PREV_N" toplevel="INACTIVE">
+  <L propname="PREV_N">
+    <P valstr="一つ前">/一つ前/ひとつまえ;</P>
+    <P valstr="前">/前/まえ;</P>
+  </L>
+</RULE>
+<RULE name="GEN_SML_AD" toplevel="INACTIVE">
+  <L propname="GEN_SML_AD">
+    <P valstr="もう少し">/もう少し/もーすこし;</P>
+    <P valstr="もう少し">/もう少し/もうすこし;</P>
+    <P valstr="少し">/少し/すこし;</P>
+  </L>
+</RULE>
+<RULE name="RENTAI_SIZI_A" toplevel="INACTIVE">
+  <L propname="RENTAI_SIZI_A">
+    <P valstr="この">この</P>
+    <P valstr="今の">/今の/いまの;</P>
+  </L>
+</RULE>
+<RULE name="KU_AT" toplevel="INACTIVE">
+  <L propname="KU_AT">
+    <P valstr="く">く</P>
+  </L>
+</RULE>
+<RULE name="NO" toplevel="INACTIVE">
+  <L propname="NO">
+    <P valstr="の">の</P>
+  </L>
+</RULE>
+<RULE name="NA_AT" toplevel="INACTIVE">
+  <L propname="NA_AT">
+    <P valstr="な">な</P>
+  </L>
+</RULE>
+<RULE name="YARINAOSI_V" toplevel="INACTIVE">
+  <L propname="YARINAOSI_V">
+    <P valstr="やり直して">/やり直して/やりなおして;</P>
+  </L>
+</RULE>
+<RULE name="TOSHITA_AT" toplevel="INACTIVE">
+  <L propname="TOSHITA_AT">
+    <P valstr="とした">とした</P>
+  </L>
+</RULE>
+<RULE name="KIOKU_V" toplevel="INACTIVE">
+  <L propname="KIOKU_V">
+    <P valstr="記憶して">/記憶して/きおくして;</P>
+    <P valstr="覚えて">/覚えて/おぼえて;</P>
+    <P valstr="覚えておいて">/覚えておいて/おぼえておいて;</P>
+  </L>
+</RULE>
+<RULE name="KANZI_N" toplevel="INACTIVE">
+  <L propname="KANZI_N">
+    <P valstr="感じ">/感じ/かんじ;</P>
+  </L>
+</RULE>
+<RULE name="BANGOU_N" toplevel="INACTIVE">
+  <L propname="BANGOU_N">
+    <P valstr="番">/番/ばん;</P>
+  </L>
+</RULE>
+<RULE name="KEIYOU_A" toplevel="INACTIVE">
+  <L propname="KEIYOU_A">
+    <P valstr="明る">/明る/あかる;</P>
+    <P valstr="暗">/暗/くら;</P>
+    <P valstr="暖か">/暖か/あたたか;</P>
+    <P valstr="冷た">/冷た/つめた;</P>
+  </L>
+</RULE>
+<RULE name="HUKU_N" toplevel="INACTIVE">
+  <L propname="HUKU_N">
+    <P valstr="服">/服/ふく;</P>
+    <P valstr="服装">/服装/ふくそー;</P>
+    <P valstr="服装">/服装/ふくそう;</P>
+  </L>
+</RULE>
+<RULE name="MODORU_V" toplevel="INACTIVE">
+  <L propname="MODORU_V">
+    <P valstr="戻って">/戻って/もどって;</P>
+    <P valstr="戻して">/戻して/もどして;</P>
+  </L>
+</RULE>
+<RULE name="NUM_N" toplevel="INACTIVE">
+  <L propname="NUM_N">
+    <P valstr="1">/１/いち;</P>
+    <P valstr="2">/２/に;</P>
+    <P valstr="3">/３/さん;</P>
+    <P valstr="4">/４/よん;</P>
+    <P valstr="4">/４/よ;</P>
+    <P valstr="5">/５/ご;</P>
+    <P valstr="6">/６/ろく;</P>
+    <P valstr="7">/７/なな;</P>
+    <P valstr="7">/７/しち;</P>
+    <P valstr="8">/８/はち;</P>
+    <P valstr="9">/９/きゅー;</P>
+    <P valstr="9">/９/く;</P>
+  </L>
+</RULE>
+<RULE name="GARA_N" toplevel="INACTIVE">
+  <L propname="GARA_N">
+    <P valstr="柄">/柄/がら;</P>
+  </L>
+</RULE>
+<RULE name="ONAZI_N" toplevel="INACTIVE">
+  <L propname="ONAZI_N">
+    <P valstr="同じ">/同じ/おなじ;</P>
+  </L>
+</RULE>
+<RULE name="KOUKAN_V" toplevel="INACTIVE">
+  <L propname="KOUKAN_V">
+    <P valstr="交換して">/交換して/こーかんして;</P>
+    <P valstr="交換して">/交換して/こうかんして;</P>
+    <P valstr="入れ替えて">/入れ替えて/いれかえて;</P>
+  </L>
+</RULE>
+<RULE name="UNITY_V" toplevel="INACTIVE">
+  <L propname="UNITY_V">
+    <P valstr="統一して">/統一して/とーいつして;</P>
+    <P valstr="統一して">/統一して/とういつして;</P>
+    <P valstr="同じにして">/同じにして/おなじにして;</P>
+  </L>
+</RULE>
+<RULE name="DIRECTION_N" toplevel="INACTIVE">
+  <L propname="DIRECTION_N">
+    <P valstr="上">/上/うえ;</P>
+    <P valstr="下">/下/した;</P>
+    <P valstr="右">/右/みぎ;</P>
+    <P valstr="左">/左/ひだり;</P>
+    <P valstr="右下">/右下/みぎした;</P>
+    <P valstr="右上">/右上/みぎうえ;</P>
+    <P valstr="左下">/左下/ひだりした;</P>
+    <P valstr="左上">/左上/ひだりうえ;</P>
+  </L>
+</RULE>
+<RULE name="TO_AT" toplevel="INACTIVE">
+  <L propname="TO_AT">
+    <P valstr="と">と</P>
+  </L>
+</RULE>
+</GRAMMAR>

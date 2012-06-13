@@ -1,8 +1,8 @@
-/**
+ï»¿/**
  * @file   japi.h
  * 
  * <JA>
- * @brief  jcontrol ¶¦ÄÌ¥Ø¥Ã¥À¥Õ¥¡¥¤¥ë
+ * @brief  jcontrol å…±é€šãƒ˜ãƒƒãƒ€ãƒ•ã‚¡ã‚¤ãƒ«
  * </JA>
  * 
  * <EN>

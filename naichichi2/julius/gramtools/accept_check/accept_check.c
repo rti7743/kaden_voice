@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -149,8 +149,8 @@ get_wtoken()
   return(TRUE);
 }
 
-/* $B>uBV(Bstateid$B$K$F(Biseq$BHVL\$NF~NO$,<u$1IU$1$i$l$k$+$I$&$+$rJV$9(B */
-/* $B?<$5M%@hC5:w(B */
+/* 状態stateidにてiseq番目の入力が受け付けられるかどうかを返す */
+/* 深さ優先探索 */
 static void
 put_state(int s, int l)
 {
@@ -232,7 +232,7 @@ accept_main()
   nseq_reached = nseq;
 
   for (i=0;i<dfa->state_num;i++) {
-    if ((dfa->st[i].status & INITIAL_S) != 0) { /* $B=i4|>uBV$+$i(B */
+    if ((dfa->st[i].status & INITIAL_S) != 0) { /* 初期状態から */
       if (can_accept_recursive(i, nseq-1)) {
 	printf("accepted\n");
 	return;

@@ -113,6 +113,10 @@ JULIUS(1)                                                            JULIUS(1)
                  デバイスの共有手段として多くの Linuxのデスクトップ環境で利用
                  されている EsounD daemon からの入 力を認識する．
 
+               -chunk_size  samples
+                 音声入力の処理バッファ（フラグメント）のサイズ．値はサンプル
+                 数．(default: 1000)
+
                -filelist  filename
                  (-input rawfile|mfcfile 時) filename内に列挙されている全ての
                  ファ イルについて認識を順次行う． filenameには認識する入力
@@ -342,6 +346,11 @@ JULIUS(1)                                                            JULIUS(1)
                  る． 単語の読み（N-gramエントリ名），あるいは"#"+単語番号（辞
                  書ファ イルの行番号-1）で指定する．デフォルトはそれぞれ
                  "<s>", "</s>" である．
+
+               -mapunk  word_string
+                 unknown に対応する単語名を指定する．デフォルトは， "<unk>" あ
+                 るいは "<UNK>" である．この単語は， 認識辞書において N-gram
+                 にない単語を指定した場合にマッピングされ る単語である．
 
                -iwspword
                  ポーズに対応する無音単語を辞書に追加する．追加される単語の内
@@ -999,4 +1008,4 @@ REFERENCES
 
 
 
-                                  10/02/2008                         JULIUS(1)
+                                  02/11/2009                         JULIUS(1)

@@ -1,0 +1,66 @@
+0	[</s>]	 silE
+1	[<s>]	 silB
+2	[gomi]	a
+2	[gomi]	i
+2	[gomi]	u
+2	[gomi]	e
+2	[gomi]	o
+2	[gomi]	k a
+2	[gomi]	k i
+2	[gomi]	k u
+2	[gomi]	k e
+2	[gomi]	k o
+2	[gomi]	s a
+2	[gomi]	sh i
+2	[gomi]	s u
+2	[gomi]	s e
+2	[gomi]	s o
+2	[gomi]	t a
+2	[gomi]	ch i
+2	[gomi]	ts u
+2	[gomi]	t e
+2	[gomi]	t o
+2	[gomi]	n a
+2	[gomi]	n i
+2	[gomi]	n u
+2	[gomi]	n e
+2	[gomi]	n o
+2	[gomi]	h a
+2	[gomi]	h i
+2	[gomi]	f u
+2	[gomi]	h e
+2	[gomi]	h o
+2	[gomi]	m a
+2	[gomi]	m i
+2	[gomi]	m u
+2	[gomi]	m e
+2	[gomi]	m o
+2	[gomi]	y a
+2	[gomi]	y u
+2	[gomi]	y o
+2	[gomi]	r a
+2	[gomi]	r i
+2	[gomi]	r u
+2	[gomi]	r e
+2	[gomi]	r o
+2	[gomi]	w a
+2	[gomi]	N
+3	[_k o N py u: t a:_]	 k o N py u: t a:
+3	[_k o N py u: t a_]	 k o N py u: t a
+4	[_d e N t a k u_]	 d e N t a k u
+5	[_k i d o:_]	 k i d o:
+5	[_j i q k o:_]	 j i q k o:
+6	[_e a k o N_]	 e a k o N
+7	[_ts u k e t e_]	 ts u k e t e
+7	[_o N_]	 o N
+8	[_e a k o N_]	 e a k o N
+9	[_k e sh i t e_]	 k e sh i t e
+9	[_o f u_]	 o f u
+10	[_d e N k i_]	 d e N k i
+11	[_ts u k e t e_]	 ts u k e t e
+11	[_o N_]	 o N
+12	[_d e N k i_]	 d e N k i
+13	[_k e sh i t e_]	 k e sh i t e
+13	[_o f u_]	 o f u
+14	[_o N g a k u k a k e t e_]	 o N g a k u k a k e t e
+15	[_d o i ts u m u r a_]	 d o i ts u m u r a

@@ -1,0 +1,5 @@
+-gram SampleGrammars/fruit/fruit
+-C hmm_ptm.jconf
+-input mic -demo
+-1pass
+

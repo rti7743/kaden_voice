@@ -1,14 +1,23 @@
 CXX ?= g++
 CC ?= gcc
-CFLAGS = -Wall -Wconversion -O3 -fPIC
+
+#FPUHINT=-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -mabi=aapcs-linux -fforce-addr -fomit-frame-pointer -fstrength-reduce
+FPUHINT=
+
+CFLAGS = -Wall -Wconversion -O3 -fPIC $(FPUHINT)
 LIBS = blas/blas.a
 SHVER = 1
 #LIBS = -lblas
+AR     = ar rcv
+RANLIB = ranlib 
 
-all: train predict
+all: train predict lib
 
 lib: linear.o tron.o blas/blas.a
 	$(CXX) -shared -dynamiclib linear.o tron.o blas/blas.a -o liblinear.so.$(SHVER)
+	$(AR) liblinear.a $?
+	$(RANLIB) liblinear.a
+
 
 train: tron.o linear.o train.c blas/blas.a
 	$(CXX) $(CFLAGS) -o train train.c tron.o linear.o $(LIBS)

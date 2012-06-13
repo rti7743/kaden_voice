@@ -57,6 +57,9 @@ OPTIONS
         -d  old_bingram_file
           バイナリN-gramを読み込む（古いバイナリ形式の変換用）
 
+        -swap
+          文頭記号 <s> と文末記号 </s> を入れ替える．
+
        output_bingram_file
           出力先のバイナリN-gramファイル名
 
@@ -83,4 +86,4 @@ LICENSE
 
 
 
-                                  10/02/2008                      MKBINGRAM(1)
+                                  02/11/2009                      MKBINGRAM(1)

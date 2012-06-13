@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<link rel="stylesheet" type="text/css" href="default.css">
+<html> <head>
+<title>What's New in Rev.3.3p4</title>
+</head>
+<body>
+<h2>What's New in Rev.3.3p4</h2>
+Major changes has been made since Rev.3.3, mainly for improved stability and some extensions for acoustic model.  The changes from Rev.3.3 are summarized as below:
+<ul>
+<li><a href="#record">Add new recording option <code>-record</code></a>
+<li><a href="#adinfix">Many fixes in A/D-in</a>
+<li><a href="#am">Extensions for acoustic model</a>
+<ul>
+<li><a href="#iwsp">New support for context-free inter-word short pause</a>
+<li><a href="#skip">Can deal direct skip transition within a model</a>
+<li><a href="#iwspword">New function to add pause word to dictionary</a>
+</ul>
+<li><a href="#bugs">Other bug fixes</a>
+</ul>
+
+<h2><a name="record">New Input Recording Function by <code>-record</code></a></h2>
+
+Julius/Julian now can record all triggered inputs sequencially to each file.
+To enable, please specify a directory to store the recorded data.
+<pre>
+ % julius .... -record directory_name
+</pre>
+All the input to Julius and Julian, regardless of its source type (mic/file/network), will be recorded to the specified directory, with filename of the recorded system time.  For example, if an input was occured on 14:53.24 on Feb. 22, 2004, the filename will be:
+<pre>
+2004.0222.145324.raw
+</pre>
+The format is 16bit, monoral, and the sampling rate depends on the source.  The file format is big endian, raw (no header) on Julius/Julian earlier than 3.4, and versions later than 3.4 uses WAV format.
+
+<h2><a name="adinfix">Many Fixes at A/D-in</a></h2>
+
+Input delay are greatly improved, and many bugs has been fixed for the A/D-in routines from 3.3 to 3.3p4:
+<br><BR>
+From 3.3 to 3.3p2:
+<ul>
+<li>Fix segfaults in MFCC parameter file input on Solaris.
+<li>Fix hangup when specifying "-module" and "-input adinnet" at the same time.
+</ul>
+From 3.3p2 to 3.3p3:
+<ul>
+<li>Input buffering algorithm altered: input delay has been improved from about 200ms to about 50ms (approximately).
+<li>Avoid blocking when another process holds /dev/dsp.
+<li>Support for libsndfile-1.0.x.
+<li>Support for ALSA-0.9.x and later.  Note that the configure script still prefer OSS than ALSA, so you have to specify explicitly to use ALSA API instead of OSS, by "--with-mictype=alsa".
+</ul>
+From 3.3p3 to 3.3p4:
+<ul>
+<li>Fix occasional hangup when Julius/Julian runs long time with microphone input.
+<li>Tell client input error status when input was too long.
+<li>Improved buffering for inputs shorter than 1000 samples.
+<li>Improved transfer blocking with network input (adinnet)
+</ul>
+
+<h2><a name="am">Extensions for Acoustic Model</a></h2>
+
+<h3><a name="iwsp">New Support for Context-Free Inter-Word Short Pause</a></h3>
+
+On multi-path version of Julius/Julian, a special handling of inter-word short pause has been implemented.  
+<p>
+Specifying option "<code>-iwsp</code>" adds a short pause HMM to all the words in dictionary to handle occasional short pause between words.  The added pause HMM will be specially handled as a "Phone Context-Free" (skipped as a triphone context of surrounding phones, and the phone itself will also be unchanged by the context phones) and "Skippable" model, to capture the acoustic property of inter-word short pause, like the figure below:
+<p align=left>
+<img src="3.3p4-iwsp.gif" width="451" height="170">
+</p>
+The model name of the short pause to be added should be specified by option <code>-spmodel</code>.  The default name is "sp".
+<p>
+Further, you can add an extra transition score to the transition of each short pause model, to control the insertion probability.  The score can be specified by "<code>-iwsppenalty</code>".  The value over zero will accelerate the insertion, and specifying value below zero will increase rendency to inhibit the insertion.  The default is 0.0.
+<p>
+This "<code>-iwsp</code>" option can be applied to <b>only multi-path version of Julius / Julian</b>.
+
+<h3><a name="skip">Direct skip transition handling</a></h3>
+
+On multi-path version of Julius/Julian from 3.3p4, a direct transition from initial state to final state has been allowed.  This means that Julius / Julian later than this version can deal with any transition within a model which is allowed in HTK.
+<p>
+There are still a few limitation: you should not define a word in which all consisting phones has direct transitions from initial state to final state.  It means that the word itself can be skippable, but Julius / Julian cannot deal with such kind of word-level skipping for now.  Such kind of word-level skipping should be considered in language model level, in our current implementation.
+<p>
+This capability of dealing direct skip transition is provided by <b>only multi-path version of Julius / Julian</b>.
+
+<h3><a name="iwspword">Adding an anonymous pause word to dictionary</a></h3>
+
+Specifying "<code>-iwspword</code>" in Julius will add a pause word entry to the dictionary.  This option may be effective if you are using N-gram language model which does not consider the location of long silence or breath in a sentence.  Specifying this option may improve the recognition accuracy.
+<P>
+The default word to be added is:
+<pre>
+&lt;UNK&gt; [sp] sp sp
+</pre>
+You can also specify the entry above by "<code>-iwspentry</code>", like this:
+<pre>
+ % julius .... -iwspword -iwspentry "&lt;UNK&gt; [sp] sil"
+</pre>
+
+<h2><a name="bugs">Other Bug Fixes</a></h2>
+
+These bugs that are not included in the above sections has been fixed.
+<br><br>
+From 3.3 to 3.3p1,
+<ul>
+<li>the default value of LM weights and penalty which was wrongly set to 0 has been fixed (enbuged at 3.3).
+<li>Robustness of parsing dictionary has been improved.
+<li>Wrong output of "<code>-separatescore</code>" with monophone AM has been fixed.
+</ul>
+From 3.3p1 to 3.3p2,
+<ul>
+<li>tty output flushing improved.
+</ul>
+
+<h2><a name="optsummary">Modified Options</a></h2>
+
+A list of modified and new configure options and run-time options on 3.3p4 is below:
+<br><br>
+<code>configure</code> opotions:
+<ul>
+<li>Not changed.
+</ul>
+Run-time options:
+<ul>
+<li>New: <code><a href="#iwsp">-iwsp</a></code> (mutli-path version)
+<li>New: <code><a href="#iwsp">-iwsppenalty value</a></code> (mutli-path version)
+<li>New: <code><a href="#iwspword">-iwspword</a></code> (for Julius only)
+<li>New: <code><a href="#iwspword">-iwspentry wordentry</a></code> (for Julius only)
+<li>New: <code><a href="#iwsp">-spmodel modelname</a></code>
+<li>New: <code><a href="#record">-record directory</a></code>
+</ul>
+
+<hr>
+<small><i>$Id: WhatsNew_3.3p4.html,v 1.1 2004/04/28 08:02:13 ri Exp $</i></small><br>
+</body> </html>

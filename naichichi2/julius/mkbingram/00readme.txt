@@ -61,6 +61,9 @@ OPTIONS
         -d  old_bingram_file
           Read in a binary N-gram file.
 
+        -swap
+          Swap BOS word <s> and EOS word </s> in N-gram.
+
        output_bingram_file
           binary N-gram file name to output.
 
@@ -91,4 +94,4 @@ LICENSE
 
 
 
-                                  10/02/2008                      MKBINGRAM(1)
+                                  02/11/2009                      MKBINGRAM(1)

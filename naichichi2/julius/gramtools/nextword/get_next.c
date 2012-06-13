@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -15,12 +15,12 @@ extern WORD_INFO *winfo;
 extern DFA_INFO *dfa;
 extern char **termname;
 
-/* $B%U%i%0C#(B */
+/* フラグ達 */
 extern boolean no_term_file;
 extern boolean verbose_flag;
 extern boolean term_mode;
 
-/* $B<!$K@\B32DG=$J%+%F%4%j$HA+0\@h>uBV$N=89g$rJV$9(B */
+/* 次に接続可能なカテゴリと遷移先状態の集合を返す */
 int
 next_terms(int stateid, int *termbuf, int *nextstatebuf)
 {
@@ -47,7 +47,7 @@ next_terms(int stateid, int *termbuf, int *nextstatebuf)
   return cnum;
 }     
 
-/* $B%+%F%4%jHV9f$N=EJ#$rHr$1$k(B */
+/* カテゴリ番号の重複を避ける */
 int
 compaction_int(int *a, int num)
 {

@@ -1,4 +1,4 @@
-/* $Id: acconfig.h,v 1.1.1.1 2007/09/28 02:50:55 sumomo Exp $ */
+﻿/* $Id: acconfig.h,v 1.1.1.1 2007/09/28 02:50:55 sumomo Exp $ */
 /* use microphone input */
 #undef USE_MIC
 

@@ -135,6 +135,12 @@ stdinは標準入力からの音声入力を認識する．
 esdは，音声デバイスの共有手段として多くの Linuxのデスクトップ環境で利用されている EsounD daemon からの入 力を認識する．
 .RE
 .PP
+\fB \-chunk_size \fR \fIsamples\fR
+.RS 3n
+音声入力の処理バッファ（フラグメント）のサイズ．値はサンプ
+ル数．(default: 1000)
+.RE
+.PP
 \fB \-filelist \fR \fIfilename\fR
 .RS 3n
 (\fB\-input rawfile|mfcfile\fR

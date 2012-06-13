@@ -1,0 +1,7 @@
+-dfa attendant.dfa
+-v attendant.dict
+#
+#-h ../../../phone_m/jnas/ptm-3000x64/hmmdefs,rclass,tmix.gz
+#-hlist ../../../phone_m/logicalTri
+#-b 600
+#-input mic

@@ -70,7 +70,7 @@ void PaUtil_SetDebugPrintFunction(PaUtilLogCallback cb)
 }
 
 /*
- If your platform doesn’t have vsnprintf, you are stuck with a
+ If your platform doesnç¨š have vsnprintf, you are stuck with a
  VERY dangerous alternative, vsprintf (with no n)
  */
 

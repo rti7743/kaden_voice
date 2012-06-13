@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<link rel="stylesheet" type="text/css" href="default.css">
+<html> <head>
+<title>What's New in Rev.3.4</title>
+</head>
+<body>
+<h1>What's New in Rev.3.4</h1>
+
+On Julius/Julian rev.3.4, remarkable progress has been done, including integration of grammar-based recognizer Julian, real-time word confidence scoring, support for class N-gram, improved stability, and so on.  The changes from rev.3.3p4 to 3.4 are:
+<ul>
+<li><a href="#julian">Julian (grammar-based recognizer) has been integrated</a>
+<li><a href="#license">License modified to conform requirement as an open-source product</a>
+<li>New features:
+  <ul>
+  <li><a href="#cm">Word confidence scoring support</a>
+  <li><a href="#class">Class N-gram support</a>
+  <li><a href="#recordwav">Recording format changed to .wav</a>
+  </ul>
+<li><a href="#bugfix">Bug Fixes</a>
+  <ul>
+  <li><a href="#bug_adin">Fixed bug in A/D-in input detection</a>
+  <li><a href="#bug_am">Fixed computation routine for a tied-mixture AM</a>
+  <li><a href="#bug_module">Fixed message bug in module mode</a>
+  <li>Small changes on text format of "System Info" at startup
+  </ul>
+<li><a href="#other">Others</a>
+</ul>
+
+Details are shown in the following.
+
+<h2><a name="julian">Julian (grammar-based recognizer) has been Integrated</a></h2>
+
+A grammar-based two-pass speech recognizer "Julian", has been integrated to Julius.  Now, Julius and Julian are distributed together with one package as an open source software.
+<p>
+Julian is a speech recognition software based on definite finite state automaton grammar.  Instead of word N-gram, Julian uses a task grammar as a language model.  A task grammar is a set of rule and patterns of acceptable words or word sequences.
+Unlike Julius, which uses statistical word N-gram as language model, Julian uses hand-written (or auto-generated) task grammar as a lingistic constraint.  As the allowed hypotheses are strictly defined by the grammar, it is efficient for recognition system of small vocabulary (i.e. voice command, isolated word recognition, spoken dialogue system of small task).
+<p>
+Julian is derived from Julius to directly drive the grammar constraint, and most codes are shared with Julius.  Actually, Julian can be compiled from the source code of Julius by simply specifying "<code>--enable-julian</code>" to <code>configure</code>.  Since major speech recognition techniques in Julius are incorporated to Julian, it can also performs very well.  For example, it can execute recognition of over a thousand words in real time with less than PentiumIII 300MHz machine.
+<p>
+Julian was once a product of <a href="http://www.lang.astem.or.jp/CSRC/">Continuous Speech Recognition Consortium, Japan</a>, and has been distributed only for the members of CSRC.  Since the consortium has been successfully finished three years activity, now it becomes available for free from rev.3.4.
+<p>
+The archive of Julius-3.4 also includes Julian and several grammar construction tool.  Please see the documents below about their usage.
+<ul>
+<li><a href="../../julius/00readme-julian.txt">Manual of Julian</a>
+<li><a href="../../gramtools/00readme.txt">Manual of grammar construction tools</a>
+<li><a href="../../Sample-julian.jconf">Sample jconf file for Julian</a>
+</ul>
+
+<h2><a name="license">License Modified to Conform Requirement as an Open-Source Product</a></h2>
+
+The license term of Julius/Julian has been modified to conforms to a definition of "open-source software."
+<p>
+ABOUT LICENSE: the original license term is in Japanese, but we summarized the license term as below for convenience and quick understanding.  Please consult the original Japanese <code>LICENSE</code> file in the source archive for precise details.
+<pre>
+Generally, the license of Julius is similar to that of BSD license.
+There are NO obligation to make your source code free like GPL, and NO
+restriction on its usage, even for a commercial purpose.
+
+Re-distribution and modification of all or part of Julius is also
+permitted, provided that you attach the copyright notice below to your
+package, along with the original Japanese license document in the package
+(LICENSE.txt)
+
+  Copyright (c) 1991-2004 Kyoto University, Japan
+  Copyright (c) 1997-2000 Information Promotion Agency, Japan
+  Copyright (c) 2000-2004 Nara Institute of Science and Technology, Japan
+</pre>
+<ul>
+<li><a href="../../LICENSE.txt">License term (rev.3.4 and later, in Japanese)</a>
+</ul>
+
+<h2><a name="cm">Word Confidence Scoring Support</a></h2>
+
+Julius/Julian is now capable of annotating a so-called "<i>confidence scores</i>" (aka confidence measure) to the recognized words. 
+
+<h3>General description of confidence scoring</h3>
+
+A word confidence score indicates how the recognizer is "confident"
+abotu each recognized word.  They are usually computed on the basis of its
+relative outstandingness among many competing word hypotheses
+generated on the recognition process.  Confidence score can be
+considered as the reliability of the reconizer's output.  So it can be
+used to reject out-of-vocabulary or out-of-grammar words by defining some threshold.
+
+<h3>Algorithm used in Julius/Julian</h3>
+
+The confidence scoring algorithm in Julius/Julian is a kind of word posterior probability based scoring, and uses originally depeloped algorithm for faster, light-weight, real-time computation using search-time heuristic scores.  For more details, please see the paper below:
+<ul>
+<li>Akinobu Lee, Kiyohiso Shikano, Tatsuya Kawahara, "Real-Time Word Confidence Scoring using Local Posterior probabilities on Tree Trellis Search," Proceedings of IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP2004), May 2004 (accepted).
+</ul>
+
+<h3>How to use</h3>
+
+Confidence scoring is enabled by default. They will be output with "cmscore" heading with other recognition results.  Value range is from 0.0 to 1.0, and higher value means that it is more confident.  
+<p>
+In module mode, the confidence score will be annotated by "CM" attribute in WHYPO tag.
+To output the confidence score on module mode, please add "<code>C</code>" argument to the "<code>-outcode</code>" option.  Below is an example to tell Julius / Julian to output recognized words ("<code>W</code>"), their LM entries ("<code>L</code>"), phoneme sequences ("<code>P</code>"), scores ("<code>S</code>"), and confidence scores ("<code>C</code>") to a client on module mode
+<pre>
+ % julius .... -outcode WLPSC -module
+</pre>
+
+<h3>Configuration</h3>
+
+To fine-tune the scoring accuracy, the smoothing coefficient <i>alpha</i> can be changed by runtime option "<code>-cmalpha</code>".  This coefficient is used to smooth and compensate the dynamic range of hypotheses likelihoods for computation of word confidence.  The default value is 0.05, and smaller value (close to zero) will cause the total distribution of confidence scores to be leveled to the middle (0.5).  The performance of confidence scores may varies by this value, and optimizing this value to the target set may improve the scoring accuracy.  (However, leaving this value to the default may work well in most cases).
+<p>
+To disable confidence measuring, specify "<code>--disable-cm</code>" to <code>configure</code>.
+
+<h2><a name="class">Class N-gram support</a></h2>
+
+Class N-gram is newly supported in Julius.  Below describes the format of class N-gram for Julius.
+
+<h3>How to write a class N-gram for Julius</h3>
+
+In Julius, class N-gram should be written into two parts, 
+<ol>
+<li>Inter-class N-gram connection probability on N-gram file, and
+<li>Intra-class word probability on word dictionary.
+</ol>
+
+The inter-class N-gram connection probabilities should be written in the same way as the word N-gram, using the class names as their entry.
+<p>
+The intra-class word probability, i.e. word appearance probabilities within the belonging class, should be written as an additional field in the word dictionary.  The normal word dictionary is written in the following style:
+<pre>
+WordName [OutputString] phone1 phone2 ...
+</pre>
+When using a class N-gram, you should insert the belonging class entry name and the intra-class probability of the word at the beginning.  The probability should be written in log10, with the preceding indicator "<code>@</code>".
+<pre>
+<font color="red">ClassName @IntraClassLogProb</font> WordName [OutputString] phone1 phone2 ...
+</pre>
+<p>
+Table below shows the correspondence between word N-gram and Class N-gram.
+<table border=1>
+<tr>Files<th></th><th>Word N-gram</th><th>Class N-gram</th></tr>
+<tr><th>N-gram file(s)</th><td>Word N-gram</td><td>Inter-class N-gram</td></tr>
+<tr><th>Dictionary</th><td>Word entry</td><td>Word entry + Intra-class probability</td></tr>
+</table>
+
+<h3>Configuration</h3>
+
+Class N-gram support is enabled by default.  When you are not using class N-gram, the recognitino speed will not degrade.  However, there are unused memory for intra-class probability which wastes memory for 4bytes per word.  If you want to disable class N-gram for memory efficiency, please specify "<code>--disable-class-ngram</code>" to <code>configure</code>.
+
+<h2><a name="recordwav">Recording format changed to .wav</a></h2>
+
+Speech/sound recording format in Julius/Julian (<code>-record</code>), <code>adintool</code>, <code>adinrec</code> is changed to Microsoft WAVE format (.wav).  You can still record in RAW format by specifying "<code>-raw</code>" on adintool and adinrec.
+
+<h2><a name="bugfix">Bug Fixes</a></h2>
+
+<h3><a name="bug_adin">Fixed bug in A/D-in input detection</a></h3>
+
+Following bugs relating speech input and detection has been fixed:
+<ul>
+<li>The default level threshold of <code>Julius</code>, <code>adinrec</code>, <code>adintool</code> was changed from 3000 to 2000.
+<li>Too long trailing silence (twice specified in <code>-tailmargin</code>) has been fixed.
+<li>Avoid segfault in several frame (&lt;100ms) input.
+<li>Fixed compilation error with DATLink/NetAudio device.
+<li>Add beta support for stereo microphone (use left channel only)
+</ul>
+
+<h3><a name="bug_am">Fixed a computation for a tied-mixture AM</a></h3>
+
+Fixed mis-computation of acoustic likelihood that happens when all the following conditions are matched: tied-mixture acoustic model is used, the model has some lacking mixtures in the mixture PDF, and specifying no Gaussian pruning option "<code>-gprune none</code>".
+
+<h3><a name="bug_module">Fixed message bug in module mode</a></h3>
+
+<ul>
+<li>Fixed tag format from <code>&lt;RECOGFAIL&gt;</code> to <code>&lt;RECOGFAIL/&gt;</code>.
+<li>Fixed no output of end tag <code>&lt;/RECOGOUT&gt;</code> when the 2nd search terminate with hypothesis overflow.
+</ul>
+
+<h2><a nema="other">Others</a></h2>
+
+<ul>
+<li>Specifying "<code>-setting</code>" will output the configuration options and exit.
+<li>Copyright updated.
+<li>Stopped using readline library.
+<li>Changed option "<code>-version</code>" to "<code>-setting</code>"
+<li>Changed option "<code>-hipass</code>" to "<code>-hifreq</code>", "<code>-lopass</code>" to "<code>-lofreq</code>". The old options are still acceptable.
+</ul>
+
+<h2><a name="optsummary">List of Modified Options</a></h2>
+
+<code>configure</code> options:
+<ul>
+<li>New: <code><a href="#julian">--enable-julian</a></code>
+<li>New: <code><a href="#lmfix">--disable-cm</a></code>
+<li>New: <code><a href="#class">--disable-class-ngram</a></code>
+</ul>
+Runtime options: 
+<ul>
+<li>New: <code><a href="#cm">-cmalpha value</a></code>
+<li>New: <code><a href="#cm">-outcode C</a></code>
+<li>Default changed: <code><a href="#bug_adin">-lv 2000</a></code>
+<li>New: <code><a href="#other">-setting</a></code>
+<li>New: <code><a href="#other">-hifreq</a></code>
+<li>New: <code><a href="#other">-lofreq</a></code>
+</ul>
+
+<hr>
+<small><i>$Id: WhatsNew_3.4.html,v 1.1 2004/04/28 08:02:13 ri Exp $</i></small><br>
+</body> </html>

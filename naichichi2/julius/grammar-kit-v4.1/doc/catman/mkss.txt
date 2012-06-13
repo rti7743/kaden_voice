@@ -1,0 +1,59 @@
+MKSS(1)                                                   MKSS(1)
+
+
+
+NAME
+       mkss - compute average spectrum from mic input for SS
+
+SYNOPSIS
+       mkss [options..] filename
+
+DESCRIPTION
+       mkss  is a tool for estimating noise spectrum for spectral
+       subtraction on Julius.  It reads a few  seconds  of  sound
+       data from microphone input, and saves the average spectrum
+       to a file.  The output file can be used as a  noise  spec-
+       trum data in Julius (option "-ssload").
+
+       Output format is RAW (no header), 16bit (signed short, big
+       endian), monoral.  If the file already exist, it  will  be
+       overridden.
+
+OPTIONS
+       -freq threshold
+              Sampling frequency (Hz, default=16000)
+
+       -len msec
+              length to record in milliseconds (default: 3000).
+
+       -fsize samplenum
+              frame size in number of samples (default: 400).
+
+       -fshift samplenum
+              frame shift in number of samples (default: 160).
+
+USAGE
+       Start mkss and stay quiet for 3 seconds.  Then the average
+       noise spectrum will be recorded  to  the  specified  file.
+       When  you start Julius, specify option "-ssload thatfile",
+       and you can use microphone input  with  spectral  subtrac-
+       tion.
+
+SEE ALSO
+       julius(1)
+
+COPYRIGHT
+       Copyright (c) 1991-2003 Kyoto University, Japan
+       Copyright  (c)  2000-2003  Nara  Institute  of Science and
+       Technology, Japan
+
+AUTHORS
+       LEE Akinobu (NAIST, Japan)
+       contact: julius@kuis.kyoto-u.ac.jp
+
+LICENSE
+       Same as Julius.
+
+
+
+                              LOCAL                       MKSS(1)

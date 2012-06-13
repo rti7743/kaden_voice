@@ -1,0 +1,620 @@
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.TH JULIUS 1 LOCAL
+.UC 6
+.SH NAME
+Julius - open source multi-purpose LVCSR engine
+.SH SYNOPSIS
+.B julius [-C jconffile] [options ...]
+.SH DESCRIPTION
+.I Julius
+is a high-performance, multi-purpose, free speech recognition engine
+for researchers and developers.  It is capable of performing almost
+real-time recognition of continuous speech with over 60k-word
+vocabulary on most current PCs.
+.PP
+.I Julius
+needs an N-gram language model, word dictionary and an acoustic model
+to execute a recognition.  Standard model formats (i.e. ARPA and HTK)
+with any word/phone units and sizes are supported, so users can build
+a recognition system for various target using their own language model
+and acoustic models.  For details about basic models and their
+availability, please see the documents contained in this package.
+.PP
+.I Julius
+can perform recognition on audio files, live microphone input,
+network input and feature parameter files.  The maximum size of
+vocabulary is 65,535 words.
+.SH "RECOGNITION MODELS"
+.I Julius
+supports the following models.
+.Ip "Acoustic Models" 10
+Sub-word HMM (Hidden Markov Model) in HTK format are supported.
+Phoneme models (monophone), context dependent phoneme models
+(triphone), tied-mixture and phonetic tied-mixture models of any unit
+can be used.  When using context dependent models, interword context is
+also handled.
+.Ip "Language model" 10
+2-gram and reverse 3-gram language models are used.  The Standard ARPA
+format is supported.  In addition, a binary format N-gram is also
+supported for efficiency.  The tool
+.I mkbingram.
+can convert binary N-gram from the ARPA language models.
+.SH SPEECH INPUT
+Both live speech input and recorded speech file input are supported.
+Live input stream from microphone device, DatLink (NetAudio) device and
+tcpip network input using 
+.I adintool
+is supported.  Speech waveform files (16bit WAV (no compression),
+RAW format, and many other formats will be acceptable if compiled with 
+.I libsndfile
+library).  Feature parameter files in HTK format are also
+supported.
+.PP
+Note that 
+.I Julius
+itself can only extract MFCC_E_D_N_Z features from speech data.
+If you use an acoustic HMM trained by other feature type, only the
+HTK parameter file of the same feature type can be used.
+.SH "SEARCH ALGORITHM OVERVIEW"
+Recognition algorithm of
+.I Julius
+is based on a two-pass strategy.  Word 2-gram and reverse word 3-gram
+is used on the respective passes.  The entire input is processed on
+the first pass, and again the final searching process is performed
+again for the input, using the result of the first pass to narrow the
+search space.  Specifically, the recognition algorithm is based on a
+tree-trellis heuristic search combined with left-to-right
+frame-synchronous beam search and right-to-left stack decoding search.
+.PP
+When using context dependent phones (triphones), interword contexts
+are taken into consideration.  For tied-mixture and phonetic
+tied-mixture models, high-speed acoustic likelihood calculation is
+possible using gaussian pruning.
+.PP
+For more details, see the related document or web page below.
+.SH "OPTIONS"
+The options below specify the models, system behaviors and various
+search parameters.  These option can be set all at once at the command
+line, but it is recommended that you write them in a text file as a
+"jconf file", and specify the file with "-C" option.
+.SS Speech Input
+.Ip "-input {rawfile|mfcfile|mic|adinnet|netaudio|stdin}"
+Select speech data input source.  'rawfile' is waveform file, and
+'mfcfile' is HTK format parametera file.  These file names should be
+specified after startup from stdin).  'mic' means microphone device,
+and 'adinnet' means receiving waveform data via tcpip network from an
+adinnet client. 'netaudio' is from DatLink/NetAudio input, and 'stdin'
+means data input from standard input.
+.sp
+WAV (no compression) and RAW (noheader, 16bit, BigEndian) are
+supported for waveform file input.  Other format can be supported
+using external library.  To see what format is actually supported, see
+the help message using option "-help".  For stdin input, only WAV and
+RAW is supported.
+.br
+(default: mfcfile)
+.Ip "\-filelist file"
+(With -input rawfile|mfcfile) perform recognition on all files listed
+in the file.
+.Ip "\-adport portnum"
+(With -input adinnet) adinnet port number (default: 5530)
+.Ip "\-NA server:unit"
+(With -input netaudio) set the server name and unit ID of the Datlink
+unit.
+.Ip "\-zmean  \-nozmean"
+With speech input, this options enable/disable whether to remove DC
+offset using zero mean source. (default: disabled (-nozmean))
+.Ip "\-nostrip"
+Julius by default removes zero samples in input speech data.  In some
+cases, such invalid data may be recorded at the start or end of
+recording.  This option inhibit this automatic removal.
+.Ip "\-record directory"
+Auto-save input speech data successively under the directory.  Each
+segmented inputs are recorded to a file each by one.  The file name of
+the recorded data is generated from system time when the input starts,
+in a style of "YYYY.MMDD.HHMMSS.wav".  File format is 16bit monoral
+WAV.  Invalid for mfcfile input.  With input rejection by "-rejectshort",
+the rejected input will also be recorded even if they are rejected.
+.Ip "\-rejectshort msec"
+Reject input shorter than specified milliseconds.  Search will be
+terminated and no result will be output.  In module mode, '<REJECTED
+REASON="..."/>' message will be sent to client.  With "-record", the
+rejected input will also be recorded even if they are rejected. 
+(default: 0 = off)
+.SS Speech Detection
+Options in this section is invalid for mfcfile input.
+.Ip "\-cutsilence"
+.Ip "\-nocutsilence"
+Force silence cutting (=speech segment detection) to ON/OFF. (default: ON
+for mic/adinnet, OFF for files)
+.Ip "\-lv threslevel"
+Level threshold (0 - 32767) for speech triggering.  If audio input
+amplitude goes over this threshold for a period, Julius begin the 1st
+pass recognition.  If the level goes below this level after
+triggering, it is the end of the speech segment. (default: 2000)
+.Ip "\-zc zerocrossnum"
+Zero crossing threshold per a second (default: 60)
+.Ip "\-headmargin msec"
+Margin at the start of speech segment in milliseconds. (default: 300)
+.Ip "\-tailmargin msec"
+Margin at the end of speech segment in milliseconds. (default: 400)
+.SS Acoustic Analysis
+.Ip "\-smpFreq frequency"
+Set sampling frequency of input speech in Hz.  Sampling rate can also
+be specified using "\-smpPeriod".  Be careful that this frequency
+should be the same as the trained conditions of acoustic model you use.
+This should be specified for microphone input and RAW file input
+when using other than default rate.  Also see "\-fsize", "\-fshift",
+"\-delwin".
+.br
+(default: 16000 (Hz) = 625ns).
+.Ip "\-smpPeriod period"
+Set sampling frequency of input speech by its sampling period
+(nanoseconds).  The sampling rate can also be specified using
+"\-smpFreq".  Be careful that the input frequency should be the same
+as the trained conditions of acoustic model you use. This should be
+specified for microphone input and RAW file input when using other
+than default rate.  Also see "\-fsize", "\-fshift", "\-delwin".
+.br
+(default: 625 (ns) = 16000Hz).
+.Ip "\-fsize sample"
+Analysis window size in number of samples. (default: 400).
+.Ip "\-fshift sample"
+Frame shift in number of samples (default: 160).
+.Ip "\-delwin frame"
+Delta window size in number of samples (default: 2).
+.Ip "\-lofreq frequency"
+Enable band-limiting for MFCC filterbank computation: set lower
+frequency cut-off.  Also see "\-hifreq".
+.br
+(default: -1 = disabled)
+.Ip "\-hifreq frequency"
+Enable band-limiting for MFCC filterbank computation: set upper
+frequency cut-off.  Also see "\-lofreq".
+.br
+(default: -1 = disabled)
+.Ip "\-sscalc"
+Perform spectral subtraction using head part of each file.  With this
+option, Julius assume there are certain length of silence at each
+input file.  Valid only for rawfile input.  Conflict with "\-ssload".
+.Ip "\-sscalclen"
+With "\-sscalc", specify the length of head part silence in
+milliseconds (default: 300)
+.Ip "\-ssload filename"
+Perform spectral subtraction for speech input using pre-estimated
+noise spectrum from file.  The noise spectrum data should be computed
+beforehand by 
+.I mkss.
+Valid for all speech input.  Conflict with "\-sscalc".
+.Ip "\-ssalpha value"
+Alpha coefficient of spectral subtraction for "\-sscals" and
+"\-ssload".  Noise will be subtracted
+stronger as this value gets larger, but distortion of the resulting
+signal also becomes remarkable.  (default: 2.0)
+.Ip "\-ssfloor value"
+Flooring coefficient of spectral subtraction.  The spectral parameters
+that go under zero after subtraction will be substituted by the source
+signal with this coefficient multiplied. (default: 0.5)
+.SS Language Model (word N-gram)
+.Ip "\-nlr 2gram_filename"
+2-gram language model file in standard ARPA format.
+.Ip "\-nrl rev_3gram_filename"
+Reverse 3-gram language model file.  This is required for the
+second search pass.  If this is not defined then only the first pass
+will take place.
+.Ip "\-d bingram_filename"
+Use binary format language model instead of ARPA formats.  The
+2-gram and 3-gram model can be combined and converted to this binary
+format using
+.I mkbingram.
+Julius can read this format much faster than ARPA format.
+.Ip "\-lmp lm_weight lm_penalty"
+.Ip "\-lmp2 lm_weight2 lm_penalty2"
+Language model score weights and word insertion penalties for the
+first and second passes respectively.
+.sp
+The hypothesis language scores are scaled as shown below:
+.sp
+lm_score1 = lm_weight * 2-gram_score + lm_penalty
+lm_score2 = lm_weight2 * 3-gram_score + lm_penalty2
+.sp
+The defaults are dependent on acoustic model:
+.sp
+  First-Pass | Second-Pass
+ --------------------------
+  5.0 -1.0   |  6.0  0.0 (monophone)
+  8.0 -2.0   |  8.0 -2.0 (triphone,PTM)
+  9.0  8.0   | 11.0 -2.0 (triphone,PTM, setup=v2.1)
+.Ip "\-transp float"
+Additional insertion penalty for transparent words. (default: 0.0)
+.SS Word Dictionary
+.Ip "\-v dictionary_file"
+Word dictionary file (required).
+.Ip "\-silhead {WORD|WORD[OUTSYM]|#num}"
+.Ip "\-siltail {WORD|WORD[OUTSYM]|#num}"
+Sentence start and end silence word as defined in the dictionary.
+(default: "<s>" / "</s>")
+.sp
+Julius deal these words as fixed start-word and end-word of recognition.
+They can be defined in several formats as shown below.
+.sp
+.RS 4
+.TS
+.if \n+(b.=1 .nr d. \n(.c-\n(c.-1
+.de 35
+.ps \n(.s
+.vs \n(.vu
+.in \n(.iu
+.if \n(.u .fi
+.if \n(.j .ad
+.if \n(.j=0 .na
+..
+.nf
+.nr #~ 0
+.if n .nr #~ 0.6n
+.ds #d .d
+.if \(ts\n(.z\(ts\(ts .ds #d nl
+.fc
+.nr 33 \n(.s
+.rm 80 81
+.nr 80 0
+.nr 38 \wWord_name
+.if \n(80<\n(38 .nr 80 \n(38
+.nr 38 \wWord_name[output_symbol]
+.if \n(80<\n(38 .nr 80 \n(38
+.nr 38 \w#Word_ID
+.if \n(80<\n(38 .nr 80 \n(38
+.80
+.rm 80
+.nr 81 0
+.nr 38 \wExample
+.if \n(81<\n(38 .nr 81 \n(38
+.nr 38 \w<s>
+.if \n(81<\n(38 .nr 81 \n(38
+.nr 38 \w<s>[silB]
+.if \n(81<\n(38 .nr 81 \n(38
+.nr 38 \w#14
+.if \n(81<\n(38 .nr 81 \n(38
+.81
+.rm 81
+.nr 38 1n
+.nr 79 0
+.nr 40 \n(79+(0*\n(38)
+.nr 80 +\n(40
+.nr 41 \n(80+(3*\n(38)
+.nr 81 +\n(41
+.nr TW \n(81
+.if t .if \n(TW>\n(.li .tm Table at line 103 file julius.man is too wide - \n(TW units
+.fc  
+.nr #T 0-1
+.nr #a 0-1
+.eo
+.de T#
+.ds #d .d
+.if \(ts\n(.z\(ts\(ts .ds #d nl
+.mk ##
+.nr ## -1v
+.ls 1
+.ls
+..
+.ec
+.ta \n(80u \n(81u 
+.nr 31 \n(.f
+.nr 35 1m
+\&\h'|\n(40u'\h'|\n(41u'Example
+.ta \n(80u \n(81u 
+.nr 31 \n(.f
+.nr 35 1m
+\&\h'|\n(40u'Word_name\h'|\n(41u'<s>
+.ta \n(80u \n(81u 
+.nr 31 \n(.f
+.nr 35 1m
+\&\h'|\n(40u'Word_name[output_symbol]\h'|\n(41u'<s>[silB]
+.ta \n(80u \n(81u 
+.nr 31 \n(.f
+.nr 35 1m
+\&\h'|\n(40u'#Word_ID\h'|\n(41u'#14
+.fc
+.nr T. 1
+.T# 1
+.35
+.TE
+.if \n-(b.=0 .nr c. \n(.c-\n(d.-7
+.RE
+.sp
+     (Word_ID is the word position in the dictionary
+      file starting from 0)
+.Ip "\-forcedict"
+Ignore dictionary errors and force running.  Words with errors will be
+dropped from dictionary at startup.
+.SS Acoustic Model (HMM)
+.Ip "\-h hmmfilename"
+HMM definition file to use.  Format (ascii/binary) will be
+automatically detected. (required)
+.Ip "\-hlist HMMlistfilename"
+HMMList file to use.  Required when using triphone based HMMs.  This
+file provides a mapping between the logical triphones names genertated
+from phone sequence in the dictionary and the HMM definition names.
+.Ip "\-iwcd1 {best N|max|avg}"
+When using a triphone model, select method to handle inter-word triphone
+context on the first and last phone of a word in the first pass.
+.sp
+best N: use average likelihood of N-best scores from the same
+        context triphones (default, N=3)
+.br
+max: use maximum likelihood of the same
+     context triphones
+.br
+avg: use average likelihood of the same
+     context triphones
+.Ip "\-force_ccd / \-no_ccd "
+Normally Julius determines whether the specified acoustic model is a
+context-dependent model from the model names, i.e., whether the model
+names contain character '+' and '-'.  You can explicitly specify by
+these options to avoid mis-detection.  These will override the
+automatic detection result.
+.Ip "\-notypecheck"
+Disable checking of input parameter type. (default: enabled)
+.SS Acoustic Computation
+Gaussian Pruning will be automatically enabled when using
+tied-mixture based acoutic model.  It is disabled by default
+for non tied-mixture models, but you can activate pruning to those
+models by explicitly specifying "\-gprune".  Gaussian Selection needs a
+monophone model converted by 
+.I mkgshmm.
+.Ip "\-gprune {safe|heuristic|beam|none}"
+Set the Gaussian pruning technique to use.
+.br
+(default: 'safe' (setup=standard), 'beam' (setup=fast) for tied mixture
+model, 'none' for non tied-mixture model)
+.Ip "\-tmix K"
+With Gaussian Pruning, specify the number of Gaussians to compute per
+mixture codebook. Small value will speed up computation,
+but likelihood error will grow larger. (default: 2)
+.Ip "\-gshmm hmmdefs"
+Specify monophone hmmdefs to use for Gaussian Mixture Selectio.
+Monophone model for GMS is generated from an ordinary monophone HMM
+model using
+.I mkgshmm.
+This option is disabled by default. (no GMS applied)
+.Ip "\-gsnum N"
+When using GMS, specify number of monophone state to select from whole
+monophone states. (default: 24)
+.SS Inter-word Short Pause Handling
+.Ip "\-iwspword"
+Add a word entry to the dictionary that should correspond to
+inter-word short pauses that may occur in input speech.  This may
+improve recognition accuracy in some language model that has no
+inter-word pause modeling.  The word entry can be specified by
+"-iwspentry".
+.Ip "\-iwspentry"
+Specify the word entry that will be added by "-iwspword".
+(default: "<UNK> [sp] sp sp")
+.Ip "\-iwsp"
+(Multi-path version only) Enable inter-word context-free short pause
+handling.  This option appends a skippable short pause model for every
+word end.  The added model will be skipped on inter-word context
+handling.  The HMM model to be appended can be specified by "-spmodel"
+option. 
+.Ip "\-spmodel"
+Specify short-pause model name that will be used in "-iwsp". (default: "sp")
+.SS Short-pause Segmentation
+The short pause segmentation can be used for sucessive decoding of a
+long utterance.  Enabled when compiled with '--enable-sp-segment'.
+.Ip "\-spdur"
+Set the short-pause duration threshold in number of frames.  If a
+short-pause word has the maximum likelihood in successive frames
+longer than this value, then interrupt the first pass and start the
+second pass. (default: 10) 
+.SS Search Parameters (First Pass)
+.Ip "\-b beamwidth"
+Beam width (number of HMM nodes) on the first pass.  This value
+defines search width on the 1st pass, and has great effect on the
+total processing time.  Smaller width will speed up the decoding, but
+too small value will result in a substantial increase of recognition
+errors due to search failure.  Larger value will make the search
+stable and will lead to failure-free search, but processing time and
+memory usage will grow in proportion to the width.
+.sp
+Default value is acoustic model dependent:
+  400 (monophone)
+  800 (triphone,PTM)
+ 1000 (triphone,PTM, setup=v2.1)
+.Ip "\-sepnum N"
+Number of high frequency words to be separated from the lexicon
+tree. (default: 150)
+.Ip "\-1pass"
+Only perform the first pass search.  This mode is automatically set
+when no 3-gram language model has been specified (-nlr).
+.Ip "\-realtime"
+.Ip "\-norealtime"
+Explicitly specify whether real-time (pipeline) processing will be
+done in the first pass or not.  For file input, the default is OFF
+(-norealtime), for microphone, adinnet and NetAudio input, the default
+is ON (-realtime).  This option relates to the way CMN is performed:
+when OFF CMN is calculated for each input independently, when the
+realtime option is ON the previous 5 second of input is always
+used.  Also refer to "\-progout".
+.Ip "\-cmnsave filename"
+Save last CMN parameters computed while recognition to the specified
+file.  The parameters will be saved to the file in each time a input
+is recognized, so the output file always keeps the last CMN
+parameters.  If output file already exist, it will be overridden.
+.Ip "\-cmnload filename"
+Load initial CMN parameters previously saved in a file by "-cmnsave".
+This option enables Julius to recognize the first utterance of a live
+microphone input or adinnet input with CMN.
+.SS Search Parameters (Second Pass)
+.Ip "\-b2 hyponum"
+Beam width (number of hypothesis) in second pass.  If the count of
+word expantion at a certain length of hypothesis reaches this limit
+while search, shorter hypotheses are not expanded further.  This
+prevents search to fall in breadth-first-like status stacking on the
+same position, and improve search failure.  (default: 30)
+.Ip "\-n candidatenum"
+The search continues till 'candidate_num' sentence hypotheses have
+been found.  The obtained sentence hypotheses are sorted by score, and
+final result is displayed in the order (see also the "-output" option).
+.sp
+The possibility that the optimum hypothesis is correctly found
+increases as this value gets increased, but the processing time also
+becomes longer.
+.sp
+Default value depends on the  engine setup on compilation time:
+.br
+  10  (standard)
+   1  (fast, v2.1)
+.Ip "\-output N"
+The top N sentence hypothesis will be Output at the end of search.
+Use with "-n" option. (default: 1)
+.Ip "\-cmalpha float"
+This parameter decides smoothing effect of word confidence measure.
+(default: 0.05)
+.Ip "\-sb score"
+Score envelope width for enveloped scoring.  When calculating
+hypothesis score for each generated hypothesis, its trellis expansion
+and viterbi operation will be pruned in the middle of the speech if
+score on a frame goes under [current maximum score of the frame-
+width].  Giving small value makes the second pass faster, but
+computation error may occur.  (default: 80.0)
+.Ip "\-s stack_size"
+The maximum number of hypothesis that can be stored on the stack
+during the search.  A larger value may give more stable results, but
+increases the amount of memory required. (default: 500) 
+.Ip "\-m overflow_pop_times"
+Number of expanded hypotheses required to discontinue the search.  If
+the number of expanded hypotheses is greater then this threshold then,
+the search is discontinued at that point.  The larger this value is,
+The longer Julius gets to give up search (default: 2000)
+.Ip "\-lookuprange nframe"
+When performing word expansion on the second pass, this option sets
+the number of frames before and after to look up next word hypotheses
+in the word trellis.  This prevents the omission of short words, but
+with a large value, the number of expanded hypotheses increases and
+system becomes slow. (default: 5)
+.SS "Forced Alignment"
+.Ip "\-walign"
+Do viterbi alignment per word units from the recognition result.  The
+word boundary frames and the average acoustic scores per frame are
+calculated.
+.Ip "\-palign"
+Do viterbi alignment per phoneme (model) units from the recognition
+result.  The phoneme boundary frames and the average acoustic scores per
+frame are calculated.
+.Ip "\-salign"
+Do viterbi alignment per HMM state from the recognition result.  The
+state boundary frames and the average acoustic scores per frame are
+calculated.
+.SS Server Module Mode
+.Ip "\-module [port]"
+Run Julius on "Server Module Mode".  After startup, Julius waits for
+tcp/ip connection from client.  Once connection is established, Julius
+start communication with the client to process incoming commands from
+the client, or to output recognition results, input trigger
+information and other system status to the client.  The multi-grammar
+mode is only supported at this Server Module Mode.  The default port
+number is 10500.
+.I jcontrol
+is sample client contained in this package.
+.Ip "\-outcode [W][L][P][S][C][w][l][p][s]"
+(Only for Server Module Mode) Switch which symbols of recognized words
+to be sent to client.  Specify 'W' for output symbol, 'L' for N-gram
+entry, 'P' for phoneme sequence, 'S' for score, and 'C' for confidence
+score, respectively.  Capital letters are for the second pass (final
+result), and small letters are for results of the first pass.  For
+example, if you want to send only the output symbols and phone
+sequences as a recognition result to a client, specify "-outcode WP".
+.SS Message Output
+.Ip "\-separatescore"
+Output the language and acoustic scores separately.
+.Ip "\-quiet"
+Omit phoneme sequence and score, only output the best word sequence
+hypothesis.
+.Ip "\-progout"
+Enable progressive output of the partial results on the first pass.
+.Ip "\-proginterval msec"
+set the output time interval of "-progout" in milliseconds.
+.Ip "\-demo"
+Equivalent to "-progout -quiet"
+.SS OTHERS
+.Ip "\-debug"
+(For debug) output enoumous internal status and debug information.
+.Ip "\-C jconffile"
+Load the jconf file.  The options written in the file are included and
+expanded at the point.  This option can also be used within other
+jconf file for recursive expansion.
+.Ip "\-check wchmm"
+(For debug) turn on interactive check mode of tree lexicon structure
+at startup.
+.Ip "\-check triphone"
+(For debug) turn on interactive check mode of model mapping between 
+Acoustic model, HMMList and dictionary at startup.
+.Ip "\-setting"
+Display compile-time engine configuration and exit.
+.Ip "\-help "
+Display a brief description of all options.
+.SH "EXAMPLES"
+For examples of system usage, refer to the tutorial section in the
+Julius documents.
+.SH "NOTICE"
+Note about jconf files: relative paths in a jconf file are interpreted
+as relative to the jconf file itself, not to the current directory.
+.SH "SEE ALSO"
+julian(1), jcontrol(1), adinrec(1), adintool(1), mkbingram(1),
+mkgsmm(1), wav2mfcc(1), mkss(1)
+.PP
+http://julius.sourceforge.jp/
+.SH DIAGNOSTICS
+Julius normally will return the exit status 0.  If an error occurs,
+Julius exits abnormally with exit status 1.  If an input file cannot be
+found or cannot be loaded for some reason then Julius will skip
+processing for that file.
+.SH BUGS
+There are some restrictions to the type and size of the models Julius
+can use.  For a detailed explanation refer to the Julius documentation.
+For bug-reports, inquires and comments please contact
+julius@kuis.kyoto-u.ac.jp or julius@is.aist-nara.ac.jp.
+.SH COPYRIGHT
+Copyright (c) 1991-2004 Kyoto University, Japan
+.br
+Copyright (c) 1997-2000 Information-technology Promotion Agency, Japan
+.br
+Copyright (c) 2000-2004 Nara Institute of Science and Technology, Japan
+.SH AUTHORS
+.Ip "Rev.1.0 (1998/02/20)"
+Designed by Tatsuya KAWAHARA and Akinobu LEE (Kyoto University)
+.sp
+Development by Akinobu LEE (Kyoto University)
+.Ip "Rev.1.1 (1998/04/14)"
+.Ip "Rev.1.2 (1998/10/31)"
+.Ip "Rev.2.0 (1999/02/20)"
+.Ip "Rev.2.1 (1999/04/20)"
+.Ip "Rev.2.2 (1999/10/04)"
+.Ip "Rev.3.0 (2000/02/14)"
+.Ip "Rev.3.1 (2000/05/11)"
+Development of above versions by Akinobu LEE (Kyoto University)
+.Ip "Rev.3.2 (2001/08/15)"
+.Ip "Rev.3.3 (2002/09/11)"
+.Ip "Rev.3.4 (2003/10/01)"
+.Ip "Rev.3.4.1 (2004/02/25)"
+.Ip "Rev.3.4.2 (2004/04/30)"
+Development of above versions by Akinobu LEE (Nara Institute of
+Science and Technology)
+.SH "THANKS TO"
+From rev.3.2, Julius is released by the "Information Processing
+Society, Continuous Speech Consortium".
+.PP
+The Windows DLL version was developed and released by Hideki BANNO
+(Nagoya University).
+.PP
+The Windows Microsoft Speech API compatible version was developed by
+Takashi SUMIYOSHI (Kyoto University).

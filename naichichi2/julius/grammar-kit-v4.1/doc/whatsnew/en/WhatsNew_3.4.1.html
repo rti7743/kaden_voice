@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<link rel="stylesheet" type="text/css" href="default.css">
+<html> <head>
+<title>What's New in Rev.3.4.1</title>
+</head>
+<body>
+<h1>What's New in Rev.3.4.1</h1>
+
+Julius rev.3.4.1 is a minor revision of rev.3.4, but has many improvements including recognition algorithm fixes, stable I/O via network, support for binary HMM file and new visualization feature.  The changes from rev.3.4 are:
+<ul>
+<li>Improvements
+  <ul>
+  <li><a href="#algo">Some fixes on search algorithm</a>
+  <li><a href="#mfcc">Faster MFCC computation</a>
+  </ul>
+<li>New features
+  <ul>
+  <li><a href="#binhmm">Binary HMM support</a>
+  <li><a href="#zmean">Remove input DC offset</a>
+  <li><a href="#visualize">Search space visualization option</a>
+  <li><a href="#modparam">Output input length in module mode</a>
+  </ul>
+<li><a href="#bugfix">Bug fixes</a>, mainly for module mode and adinnet network speech input
+</ul>
+
+Details are shown in the following.
+
+<h2><a name="algo">Some Fixes on Search Algorithm</a></h2>
+
+Two improvements for search algorithm of Julius has been implemented.  They may improve accuracy on narrow beam-width condition.  These are enabled by default, but you can still disable them.  The details and their effects are summarized below.
+
+<h3><a name="lmfix">Fix double LM scoring of expanded words at the 2nd pass</a></h3>
+
+In the previous version, both left-to-right 2-gram probability at the 1st pass and right-to-left 3-gram probability at the 2nd pass were doubly added to the expanded words while the recognition process.  This double LM scoring problem has been fixed in thie version.
+<p>
+Fixing this problem resulted in slight improvement of accuracy.  The following table is an experimental result on IPA'98 testset (Japanese newspaper reading task of 46 speakers, 200 sentences, PTM(GD)).  The fixed decoder ("3.4+LMfix") improves accuracy to a small amount.
+<p align=center>
+<table border="1">
+<tr bgcolor="#ffffbb"><th>Revision</th><th>Word %Correct</th><th>Word Accuracy</th></tr>
+<tr><td>3.4</td><td>92.1</td><td>90.6</td></tr>
+<tr bgcolor="#ffeecc"><td>3.4+LMfix</td><td>92.3</td><td>91.2</td></tr>
+</table>
+</p>
+This fix is enabled by default.  To disable this fix and make the search algorihm as same as the previous versions, please specify "<code>--disable-lmfix</code>" to <code>configure</code>.
+
+<h3><a name="iwcdbest">New inter-word triphone computation</a></h3>
+
+On acoustic likelihood computation of cross-word triphone on word edge on the 1st pass, Julius used the <b>maximum</b> likelihood of all the possible triphone whose bi-phone contexts are the same.  From this version, we implemented another method that uses the <b>average of N-best likelihoods</b>.
+<p>
+The new method can be specified by the option "<code>-iwcd1 best N</code>", where <code>N</code> is the number of best triphone scores to be averaged.
+<p>
+From rev.3.4.1, this new method has become default, but previous methods still exist for backward compatibility.  As a result, rev.3.4.1 has three options for the inter-word triphone computation.
+<ul>
+<li>"<code>-iwcd1 best N</code>": average of top N score (default of Julius-3.4.1and later, N=3)
+<li>"<code>-iwcd1 max</code>": maximum score (default of Julius-3.4 and earlier)
+<li>"<code>-iwcd1 avg</code>": average score (default of Julian)
+</ul>
+"<code>-iwcd1 best 1</code>" equals to "<code>-iwcd1 max</code>", and "<code>-iwcd1 best [maximum_value]</code>" equals to "<code>-iwcd1 average</code>".
+<p>
+Experimental result of this new method on the same testset is show in the table below.  Small improvement was observed on this testset.
+<p align=center>
+<table border="1">
+<tr bgcolor="#ffffbb"><th>Revision</th><th>Word %Correct</th><th>Word Accuracy</th></tr>
+<tr><td>3.4</td><td>92.1</td><td>90.6</td></tr>
+<tr bgcolor="#ffeecc"><td>3.4+iwcdbest(N=3)</td><td>92.2</td><td>91.2</td></tr>
+</table>
+To disable this fix and make the search algorihm as the same as previous versions, please specify "<code>-iwcd1 max</code>" to the runtime option.
+<p>
+
+<h3>Evaluation summary</h3>
+
+With these two improvements, The recognition performance of rev.3.4.1 as compared with rev. 3.4 are improved in our testset, as summarized in the next figure.
+<p align=center>
+<a href="3.4.1-jnas-full.gif"><img src="3.4.1-jnas.gif" width=429 height=186></a>
+</p>
+The improvement was found especially for the narrow beam condition (fast).  Optimizing language model weights and insertion penalty ("3.4.1-LMtuned" in the figure) resulted in more improvement.
+
+<h2><a name="mfcc">Faster MFCC computation</a></h2>
+
+Feature extraction routine for MFCC parameters now uses trigonometric table to speed up the computation.  Approximately only from 8kBytes to 12kBytes are used for the table.  The computation result is not changed.
+<p>
+If you want to disable this, please specify "<code>--disable-mfcc-table</code>" to <code>configure</code>.
+
+<h2><a name="binhmm">Binary HMM support</a></h2>
+
+Original binary HMM format is implemented to Julius/Julian, which makes startup faster.  A convertion tool called "<code>mkbinhmm</code>" is also included in the distribution.  You can convert an ascii hmmdefs file in HTK format to the binary format like this:
+<pre>
+ % mkbinhmm hmmdefs binary_HMM
+</pre>
+To use the binary HMM on Julius/Julian, you can specify it as the same way, with "<code>-h</code>" option.  The format will be automatically detected by Julius/Julian.
+<pre>
+ % julius ... -h binary_HMM
+</pre>
+<p>
+This binary format is not compatible with the Binary format used in HTK.
+
+<h2><a name="zmean">Remove input DC offset</a></h2>
+
+New option "<code>-zmean</code>" to remove DC offset of speech input.  If you specify "<code>-zmean</code>", computed offset will be subtracted from the input.
+For file input, the offset will be computed using the whole input.  For microphone input, the first 3 seconds of silence from system startup are used to determine the offset.  
+
+<h2><a name="visualize">Search Space Visualization Option</a></h2>
+
+From this version, Julius/Julian can show the recognition process with X11/GTK. For each input, whole word hypotheses generated in the 1st pass, and hypothesis expansion process on the 2nd pass are dynamically displayed on X11 Window system.  When you are using word graph option ("<code>configure --enable-word-graph --enable-wpair</code>"), the word graph will be also displayed.  You can also play the recognized input with sox.
+<p>
+This options is disabled by default.  To enable this, specify "<code>--enable-visualize</code>" to <code>configure</code>.  It needs GTK library for compilation.
+<pre>
+ % ./configure --enable-visualize
+</pre>
+Figure below shows the screen shot.
+<p align=left>
+<a href="visualize1.gif"><img src="visualize1.gif" width=400 height=300></a>
+</p>
+
+<h2><a name="modparam">Output Input Length in Module Mode</a></h2>
+
+The input length will be output to client when using module mode ("<code>-module</code>").  The output style is as follows:
+<pre>
+&lt;INPUTPARAM FRAMES="frame_length" MSEC="length_in_msec"&gt;
+</pre>
+
+<h2><a name="bugfix">Bug Fixes</a></h2>
+
+<h3>Networked speech input/output fixed</h3>
+
+The following bugs are fixed relating networked speech input / output.
+<ul>
+<li>Recognition does not start immediately when begin receiving speech.
+<li>With (<code>-module</code>), <code>PAUSE</code> and <code>TERMINATE</code> command from client does not work.
+<li>Multiple fork on connection.
+<li>Memory leak in adin-cut.c.
+<li>Uncapable of sending multiple files with <code>adintool</code>.
+</ul>
+
+<h3>Successive Decoding updated</h3>
+
+Many bugs relating successive decoding option (--enable-sp-segment) has been fixed.
+<ul>
+<li>Microphone input has been supported, fixing two bugs
+<ul>
+<li>Immediate segmentation after resuming.
+<li>Mis-computation of acoustic likelihood for the first several frames.
+</ul>
+<li>Fixed wrong word hypothesis passing between segment when sentence end.
+<li>CMN will be done for detection basis, not segment basis.
+<li>Short pause model to detect segmental point can be specified using "<code>-spmodel</code>" option.
+<li>File counter now works correctly.
+<li>Output more messages relating segment length and retract point.
+<li>Work with "<code>-record</code>".
+</ul>
+
+<h3>Memory leak with alignment fixed</h3>
+
+Memory leaks in word/phone/state-level alignment option ("<code>-walign</code>", "<code>-palign</code>", "<code>-salign</code>") has been fixed.
+
+<h3>CMN can now be off</h3>
+
+CMN was always applied even if acoustic model does not require it.  Now it can be switched correctly according to the property of acoustic model.
+
+<h3>Other fixes</h3>
+
+Fix reading of wav files made by Windows sound recoder.
+<p>
+"<code>Sample.jconf</code>", "<code>Sample-julian.jconf</code>" updated for recent version.
+<p>
+<a href="../../gramtools/00readme.txt">Manual for grammar construction tool</a> has been added.
+<p>
+
+<h2><a name="optsummary">List of Modified Options</a></h2>
+<code>configure</code> option:
+<ul>
+<li>New: <code><a href="#visualize">--enable-visualize</a></code>
+<li>New: <code><a href="#lmfix">--disable-lmfix</a></code>
+<li>New: <code><a href="#mfcc">--disable-mfcc-table</a></code>
+<li>New: <code><a href="#bugfix">--enable-fork</a></code>
+</ul>
+Runtime options:
+<ul>
+<li>New: <code><a href="#iwcdbest">-iwcd1 best N</a></code>
+<li>New: <code><a href="#zmean">-zmean</a></code>
+</ul>
+
+<hr>
+<small><i>$Id: WhatsNew_3.4.1.html,v 1.1 2004/04/28 08:02:13 ri Exp $</i></small><br>
+</body> </html>

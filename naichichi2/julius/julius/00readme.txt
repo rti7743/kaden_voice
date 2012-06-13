@@ -196,6 +196,9 @@ OPTIONS
                  At Linux, you can choose API at run time by specifying alsa,
                  oss and esd.
 
+               -chunk_size  samples
+                 Audio fragment size in number of samples. (default: 1000)
+
                -filelist  filename
                  (With -input rawfile|mfcfile) perform recognition on all
                  files listed in the file. The file should contain input file
@@ -493,6 +496,11 @@ OPTIONS
                  Silence word defined in the dictionary, for silences at the
                  beginning of sentence and end of sentence. (default: "<s>",
                  "</s>")
+
+               -mapunk  word_string
+                 Specify unknown word. Default is "<unk>" or "<UNK>". This
+                 will be used to assign word probability on unknown words,
+                 i.e. words in dictionary that are not in N-gram vocabulary.
 
                -iwspword
                  Add a word entry to the dictionary that should correspond to
@@ -1279,4 +1287,4 @@ THANKS TO
 
 
 
-                                  10/02/2008                         JULIUS(1)
+                                  02/11/2009                         JULIUS(1)

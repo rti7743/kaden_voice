@@ -1,0 +1,548 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="julius">
+      <UniqueIdentifier>{464bad21-fb8b-461b-93ee-b00b693a028b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{e2d2a533-2468-46d9-953c-81f2b212a4e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\libsent\src\phmm\addlog.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\adin-cut.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\adin\adin_file.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\adin\adin_portaudio.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\adin\adin_tcpip.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\aptree.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\backtrellis.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\beam.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\calc_mix.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\calc_tied_mix.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\callback.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\cdhmm.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\cdset.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\check_hmm_restriction.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\check_hmmtype.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\chkhmmlist.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\confnet.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\confout.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\dfa\cpair.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\default.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\dfa_decode.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\dfa\dfa_lookup.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\dfa\dfa_malloc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\dfa\dfa_util.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\adin\ds48to16.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\endian.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\factoring_sub.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\gmm.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\gms.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\gms_gprune.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\gprune_beam.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\gprune_common.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\gprune_heu.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\gprune_none.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\gprune_safe.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\gramlist.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\graphout.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\guess_cdHMM.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\gzfile.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\hmm_check.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\hmm_lookup.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\dfa\init_dfa.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\init_ngram.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\init_phmm.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\voca\init_voca.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\instance.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\jfunc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\jlog.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\m_adin.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\m_chkparam.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\m_fusion.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\m_info.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\m_jconf.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\m_options.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\m_usage.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\wav2mfcc\mfcc-core.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\dfa\mkcpair.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\dfa\mkterminfo.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\mkwhmm.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\multi-gram.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\mybmalloc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\mymalloc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\mystrtok.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\ngram_access.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\ngram_compact_context.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\ngram_decode.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\ngram_lookup.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\ngram_malloc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\ngram_read_arpa.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\ngram_read_bin.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\ngram_util.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\ngram\ngram_write_bin.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\outprob.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\outprob_init.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\outprob_style.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\wav2mfcc\para.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\anlz\param_malloc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\anlz\paramselect.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\anlz\paramtypes.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\pass1.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\plugin.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\ptree.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\put_htkdata_info.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\qsort.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\dfa\rddfa.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_data.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_dens.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_mpdf.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_options.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_regtree.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_state.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_streamweight.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_tiedmix.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_trans.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmdef_var.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\rdhmmlist.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\anlz\rdparam.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\net\rdwt.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\read_binhmm.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\read_binhmmlist.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\readfile.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\realtime-1stpass.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\recogmain.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\search_bestfirst_main.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\search_bestfirst_v1.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\search_bestfirst_v2.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\net\server-client.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\spsegment.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\wav2mfcc\ss.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\util\strcasecmp.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\anlz\strip.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\anlz\strip_mfcc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\useropt.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\msvc\config\version.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\voca\voca_load_htkdict.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\voca\voca_load_wordlist.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\voca\voca_lookup.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\voca\voca_malloc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\voca\voca_util.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\phmm\vsegment.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\wav2mfcc\wav2mfcc-buffer.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\wav2mfcc\wav2mfcc-pipe.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\wav2mfcc.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\wchmm.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\wchmm_check.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libjulius\src\word_align.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\write_binhmm.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\hmminfo\write_binhmmlist.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\anlz\wrsamp.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\anlz\wrwav.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\adin\zc-e.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libsent\src\adin\zmean.c">
+      <Filter>julius</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\julius-plus\JuliusPlus.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\julius-plus\JuliusPlusRule.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\julius-plus\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libsent\include\sent\adin.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\beam.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\callback.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\msvc\config\config-msvc-libjulius.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\msvc\config\config-msvc-libsent.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\define.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\dfa.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\extern.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\global.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\graph.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\hmm.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\hmm_calc.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\htk_defs.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\htk_hmm.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\htk_param.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\jconf.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\jfunc.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\julius.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\juliuslib.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\src\adin\lpfcoef_2to1.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\src\adin\lpfcoef_3to4.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\machines.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\mfcc.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\misc.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\multi-gram.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\ngram2.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\plugin.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\ptree.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\recog.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\search.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\speech.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\stddefs.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\tcpip.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\trellis.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\useropt.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\util.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libsent\include\sent\vocabulary.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libjulius\include\julius\wchmm.h">
+      <Filter>julius</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\julius-plus\JuliusPlusRule.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\julius-plus\xreturn.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\julius-plus\JuliusPlus.h">
+      <Filter>main</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

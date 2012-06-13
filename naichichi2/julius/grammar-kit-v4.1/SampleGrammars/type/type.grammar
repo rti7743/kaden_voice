@@ -1,0 +1,8 @@
+### CSRC 講習会 音節タイプライタ
+
+S : NS_B WORD NS_E
+WORD : WORD SYLS
+WORD : WORD NOISE SYLS
+WORD : SYLS
+SYLS : SYL N
+SYLS : SYL

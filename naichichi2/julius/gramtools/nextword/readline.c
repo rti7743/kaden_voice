@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -19,15 +19,15 @@ extern WORD_INFO *winfo;
 extern DFA_INFO *dfa;
 extern char **termname;
 
-/* $B%U%i%0C#(B */
+/* フラグ達 */
 extern boolean no_term_file;
 extern boolean verbose_flag;
 extern boolean term_mode;
 
-static char *line_read = (char *)NULL; /* $BFI$_9~$s$@J8;zNs(B */
+static char *line_read = (char *)NULL; /* 読み込んだ文字列 */
 
 #ifdef HAVE_READLINE
-/* readline$B4X78(B */
+/* readline関係 */
 /* Read a string, and return a pointer to it.  Returns NULL on EOF. */
 char *
 rl_gets (char *prompt)

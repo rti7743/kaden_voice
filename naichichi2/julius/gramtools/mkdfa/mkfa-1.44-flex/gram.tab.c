@@ -1,4 +1,4 @@
-/* A Bison parser, made from gram.y
+﻿/* A Bison parser, made from gram.y
    by GNU bison 1.35.  */
 
 #define YYBISON 1  /* Identify Bison output.  */

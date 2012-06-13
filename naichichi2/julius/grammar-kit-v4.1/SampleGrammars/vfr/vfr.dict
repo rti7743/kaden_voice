@@ -1,0 +1,99 @@
+0	[上着]	u w a g i
+0	[スーツ]	s u: ts u
+1	[シャツ]	sh a ts u
+1	[カッター]	k a q t a:
+2	[赤]	a k a
+2	[橙]	d a i d a i
+2	[黄]	k i
+2	[黄緑]	k i m i d o r i
+2	[緑]	m i d o r i
+2	[青緑]	a o m i d o r i
+2	[青]	a o
+2	[青紫]	a o m u r a s a k i
+2	[紫]	m u r a s a k i
+2	[赤紫]	a k a m u r a s a k i
+2	[白]	sh i r o
+2	[黒]	k u r o
+2	[灰]	h a i
+3	[色]	i r o
+4	[感じ]	k a N j i
+5	[柄]	g a r a
+6	[チェック]	ch e q k u
+6	[縦縞]	t a t e j i m a
+6	[横縞]	y o k o j i m a
+6	[無地]	m u j i
+7	[上]	u e
+7	[下]	sh i t a
+7	[右]	m i g i
+7	[左]	h i d a r i
+7	[右下]	m i g i sh i t a
+7	[右上]	m i g i u e
+7	[左下]	h i d a r i sh i t a
+7	[左上]	h i d a r i u e
+8	[同じ]	o n a j i
+9	[一つ前]	h i t o ts u m a e
+9	[前]	m a e
+10	[状態]	j o: t a i
+10	[状態]	j o u t a i
+11	[服]	h u k u
+11	[服装]	h u k u s o:
+11	[服装]	h u k u s o u
+12	[これ]	k o r e
+12	[今の]	i m a n o
+13	[１]	i ch i
+13	[２]	n i
+13	[３]	s a N
+13	[４]	y o N
+13	[４]	y o
+13	[５]	g o
+13	[６]	r o k u
+13	[７]	n a n a
+13	[７]	sh i ch i
+13	[８]	h a ch i
+13	[９]	ky u:
+13	[９]	k u
+14	[番]	b a N
+15	[明る]	a k a r u
+15	[暗]	k u r a
+15	[暖か]	a t a t a k a
+15	[冷た]	ts u m e t a
+16	[派手]	h a d e
+16	[地味]	j i m i
+17	[はっきり]	h a q k i r i
+17	[ぼんやり]	b o N y a r i
+18	[この]	k o n o
+18	[今の]	i m a n o
+19	[く]	k u
+20	[に]	n i
+21	[と]	t o
+22	[い]	i
+23	[な]	n a
+24	[とした]	t o sh i t a
+25	[もっと]	m o q t o
+25	[さらに]	s a r a n i
+26	[もう少し]	m o: s u k o sh i
+26	[もう少し]	m o u s u k o sh i
+26	[少し]	s u k o sh i
+27	[して]	sh i t e
+28	[下さい]	k u d a s a i
+29	[統一して]	t o: i ts u sh i t e
+29	[統一して]	t o u i ts u sh i t e
+29	[同じにして]	o n a j i n i sh i t e
+30	[交換して]	k o: k a N sh i t e
+30	[交換して]	k o u k a N sh i t e
+30	[入れ替えて]	i r e k a e t e
+31	[記憶して]	k i o k u sh i t e
+31	[覚えて]	o b o e t e
+31	[覚えておいて]	o b o e t e o i t e
+32	[戻って]	m o d o q t e
+32	[戻して]	m o d o sh i t e
+33	[やり直して]	y a r i n a o sh i t e
+34	[やめます]	y a m e m a s u
+34	[終了します]	sh u: ry o: sh i m a s u
+35	[を]	o
+36	[と]	t o
+37	[に]	n i
+38	[の]	n o
+39	[silB]	silB
+40	[silE]	silE
+41	[sp]	sp

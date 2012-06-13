@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-2022-JP">
+<link rel="stylesheet" type="text/css" href="default.css">
+<html> <head>
+<title>What's New in Rev.3.4.2</title>
+</head>
+<body>
+<h1>Rev.3.4.2 の変更点</h1>
+
+rev.3.4.2 はバグ修正と１つの新機能を含んでいます．このバージョンでは，3.4 および 3.4.1 に発見されたデコーディングに関するバグが修正されていますので，全てのユーザは 3.4.2 へバージョンアップすることをお薦めします．3.4.1 からの変更点は以下の通りです．
+<ul>
+<li>バグ修正
+  <ul>
+  <li><a href="#decoding">数単語の認識でN-best候補が正しく出ないことがある不具合を修正</a>
+  <li><a href="#adinmodule">クライアントからの音声入力制御の安定化(adinnet使用時)</a>
+  <li><a href="#generate">generate の無限ループを修正</a>
+  </ul>
+  <p>
+<li>追加機能
+  <ul>
+  <li><a href="#rejectshort">短い入力を棄却する機能 "<code>-rejectshort</code>"の追加</a>
+  </ul>
+  <p>
+<li>ファイルの整形
+  <ul>
+  <li><code>'gcc -Wall'</code> が通るようにソースを修正
+  <li><code>config.guess</code>, <code>config.sub</code> を更新
+  <li>copyright 表示を 2004 年へ更新
+  <li>ヘッダの一部を修正
+  </ul>
+</ul>
+
+以下，主要な変更点について解説します．
+
+<h2><a name="decoding">数単語の認識でN-best候補が正しく出ないことがある不具合を修正</a></h2>
+
+Julius/Julian の rev.3.4 および rev.3.4.1において，N-best候補が正しく計算されないことがあるバグを修正しました．
+<p>
+なお，このバグは数単語程度の小さな辞書を使用する場合に発生します．ディクテーションや音声対話システムなどでは，本バグの影響はほとんどありません．
+<p>
+このバグは rev. 3.4 でエンバグされました．この修正に関連するファイルは <code>julius/search_bestfirst_main.c</code>です．
+
+<h2><a name="adinmodule">クライアントからの音声入力制御の安定化(adinnet使用時)</a></h2>
+
+クライアントからJulius/Julianを制御するモジュールモード(<code>-module</code>)と音声入力クライアントから音声入力を受信するモード(<code>-input adinnet</code>)併用時に，音声入力の中断・再開機能(PAUSE/TERMINATEコマンド)の動作がおかしくなることがある不具合を改善しました．
+<p>
+以前のバージョンでは，モジュールクライアントから PAUSE コマンドを送信して音声入力をストップさせ，次に RESUME で再開させたときに，入力が止まったり，直前の発話の最後の部分だけが送信されるといった現象が見られました．このバージョンからは，音声入力クライアント（adintool等）と Julius/Julian との間でも PAUSE/RESUME の制御を行うことで，この動作を改善しました．
+
+<h2><a name="generate">generate の無限ループを修正</a></h2>
+
+文法に従って文を自動生成するツール "generate" が無限ループに入ることがあるバグを修正しました．これは，小さな文法を用い，かつ生成数 "-n" を大きく指定した場合に，その文法で許されうる全パターンを出力したあとに generate がフリーズするというものです．
+<p>
+この修正に関連するファイルは <code>gramtool/generate/generate.c</code> です．
+
+<h2><a name="rejectshort">短い入力を棄却する機能 <code>-rejectshort</code> の追加</a></h2>
+
+入力が指定した長さ以下のときに，それを認識しないで棄却する機能が追加されました．このオプションを適切に指定することで，周囲の物音などの（短時間の）雑音によって音声認識が誤動作するのを，ある程度抑えることができます．
+<p>
+この機能を使用するには，オプション<code>-rejectshort</code>で棄却する長さをミリ秒単位で指定します．以下は，800ミリ秒以下の入力を棄却する場合の例です．
+<pre>
+  -rejectshort 800
+</pre>
+入力がこれより短かった場合，Julius/Julian はその入力に対して認識処理を行わず
+に終了します．マイク入力の場合は入力と平行して第1パスが計算されますが，第1パスが終了した時点で入力長が指定長に満たなければ，第２パスを行わずに終了します．
+<p>
+入力が棄却されたとき，Julius/Julianは以下のようなメッセージを標準出力に出力します．
+<pre>
+  input rejected: too short input
+</pre>
+またモジュールモード時は以下のようなメッセージがクライアントへ送られます．
+<pre>
+  &lt;REJECTED REASON="too short input"/&gt;
+</pre>
+なお，このオプションを "<code>-record</code>" と併用する場合，この機能によって棄却された入力も，通常の入力と同様にファイルに記録されます．
+
+<h2><a name="optsummary">オプション変更一覧</a></h2>
+Julius-3.4.2 で変更された<code>configure</code>オプションおよび起動時オプションの一覧です。
+<br><br>
+<code>configure</code>オプション：<BR><BR>
+<ul>
+<li>変更なし
+</ul>
+起動時オプション：
+<ul>
+<li>新規追加：<code><a href="#iwcdbest">-rejectshort msec</a></code>
+</ul>
+
+<hr>
+<small><i>$Id: WhatsNew_3.4.2.html,v 1.4 2004/04/28 08:01:51 ri Exp $</i></small><br>
+</body> </html>

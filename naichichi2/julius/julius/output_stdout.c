@@ -1,8 +1,8 @@
-/**
+ï»¿/**
  * @file   output_stdout.c
  * 
  * <JA>
- * @brief  Ç§¼±·EÌ¤òÉ¸½à½ĞÎÏ¤Ø½ĞÎÏ¤¹¤E 
+ * @brief  èªè­˜çµæœã‚’æ¨™æº–å‡ºåŠ›ã¸å‡ºåŠ›ã™ã‚‹. 
  * </JA>
  * 
  * <EN>
@@ -12,7 +12,7 @@
  * @author Akinobu Lee
  * @date   Tue Sep 06 17:18:46 2005
  *
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  * 
  */
 /*
@@ -72,8 +72,8 @@ myprintf(char *fmt, ...)
 
 /** 
  * <JA>
- * µ¯Æ°¤¬½ª¤EÃ¤¿¤È¤­¡¤¤¢¤E¤¤ÏÃæÃÇ¾õÂÖ¤«¤éÉE¢¤·¤¿¤È¤­¤Ë
- * ¥á¥Ã¥»¡¼¥¸¤òÉ½¼¨¤¹¤E 
+ * èµ·å‹•ãŒçµ‚ã‚ã£ãŸã¨ãï¼Œã‚ã‚‹ã„ã¯ä¸­æ–­çŠ¶æ…‹ã‹ã‚‰å¾©å¸°ã—ãŸã¨ãã«
+ * ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹. 
  * 
  * </JA>
  * <EN>
@@ -88,8 +88,8 @@ status_process_online(Recog *recog, void *dummy)
 }
 /** 
  * <JA>
- * ¥×¥úÁ»¥¹¤¬ÃæÃÇ¾õÂÖ¤Ø°Ü¹Ô¤·¤¿¤È¤­¤Ë¥á¥Ã¥»¡¼¥¸¤òÉ½¼¨¤¹¤E ¥â¥¸¥å¡¼¥Eâ¡¼¥É
- * ¤Ç¸Æ¤Ğ¤EE 
+ * ãƒ—ãƒ­ã‚»ã‚¹ãŒä¸­æ–­çŠ¶æ…‹ã¸ç§»è¡Œã—ãŸã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹. ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ãƒ¢ãƒ¼ãƒ‰
+ * ã§å‘¼ã°ã‚Œã‚‹. 
  * 
  * </JA>
  * <EN>
@@ -108,7 +108,7 @@ status_process_offline(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ½àÈ÷¤¬½ªÎ»¤·¤Æ¡¢Ç§¼±²ÄÇ½¾õÂÖ¡ÊÆşÎÏÂÔ¤Á¾õÂÖ¡Ë¤ËÆş¤Ã¤¿¤È¤­¤Î½ĞÎÏ
+ * æº–å‚™ãŒçµ‚äº†ã—ã¦ã€èªè­˜å¯èƒ½çŠ¶æ…‹ï¼ˆå…¥åŠ›å¾…ã¡çŠ¶æ…‹ï¼‰ã«å…¥ã£ãŸã¨ãã®å‡ºåŠ›
  * 
  * </JA>
  * <EN>
@@ -127,7 +127,7 @@ status_recready(Recog *recog, void *dummy)
 }
 /** 
  * <JA>
- * ÆşÎÏ¤Î³«»Ï¤ò¸¡½Ğ¤·¤¿¤È¤­¤Î½ĞÎÏ
+ * å…¥åŠ›ã®é–‹å§‹ã‚’æ¤œå‡ºã—ãŸã¨ãã®å‡ºåŠ›
  * 
  * </JA>
  * <EN>
@@ -146,7 +146,7 @@ status_recstart(Recog *recog, void *dummy)
 }
 /** 
  * <JA>
- * ÆşÎÏ½ªÎ»¤ò¸¡½Ğ¤·¤¿¤È¤­¤Î½ĞÎÏ
+ * å…¥åŠ›çµ‚äº†ã‚’æ¤œå‡ºã—ãŸã¨ãã®å‡ºåŠ›
  * 
  * </JA>
  * <EN>
@@ -161,9 +161,9 @@ status_recend(Recog *recog, void *dummy)
 }
 /** 
  * <JA>
- * ÆşÎÏÄ¹¤Ê¤É¤ÎÆşÎÏ¥Ñ¥é¥á¡¼¥¿¾ğÊó¤ò½ĞÎÏ. 
+ * å…¥åŠ›é•·ãªã©ã®å…¥åŠ›ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æƒ…å ±ã‚’å‡ºåŠ›. 
  * 
- * @param param [in] ÆşÎÏ¥Ñ¥é¥á¡¼¥¿¹½Â¤ÂÎ
+ * @param param [in] å…¥åŠ›ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿æ§‹é€ ä½“
  * </JA>
  * <EN>
  * Output input parameter status such as length.
@@ -184,8 +184,8 @@ status_param(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ²»À¼ÆşÎÏ¤¬¸¡ÃÎ¤µ¤E§¼±½èÍı¤ò³«»Ï¤·¤¿»şÅÀ¤Ç¥á¥Ã¥»¡¼¥¸¤òÉ½¼¨¤¹¤E 
- * ¥·¥ç¡¼¥È¥İ¡¼¥º¥»¥°¥á¥ó¥Æ¡¼¥·¥ç¥ó»ş¤Ï¡¤ºÇ½é¤Î¥»¥°¥á¥ó¥È³«»Ï»şÅÀ¤Ç½ĞÎÏ¤µ¤EE 
+ * éŸ³å£°å…¥åŠ›ãŒæ¤œçŸ¥ã•ã‚Œèªè­˜å‡¦ç†ã‚’é–‹å§‹ã—ãŸæ™‚ç‚¹ã§ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹. 
+ * ã‚·ãƒ§ãƒ¼ãƒˆãƒãƒ¼ã‚ºã‚»ã‚°ãƒ¡ãƒ³ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ™‚ã¯ï¼Œæœ€åˆã®ã‚»ã‚°ãƒ¡ãƒ³ãƒˆé–‹å§‹æ™‚ç‚¹ã§å‡ºåŠ›ã•ã‚Œã‚‹. 
  * 
  * </JA>
  * <EN>
@@ -207,9 +207,9 @@ status_recognition_begin(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ÆşÎÏ½ªÎ»¤·Ç§¼±½èÍı¤¬½ªÎ»¤·¤¿»şÅÀ¤Ç¥á¥Ã¥»¡¼¥¸¤òÉ½¼¨¤¹¤E 
- * ¥·¥ç¡¼¥È¥İ¡¼¥º¥»¥°¥á¥ó¥Æ¡¼¥·¥ç¥ó»ş¤Ï¡¤£±ÆşÎÏ¤ÎºÇ¸å¤Î¥»¥°¥á¥ó¥È¤Î½ªÎ»»ş¤Ë
- * ¸Æ¤Ğ¤EE 
+ * å…¥åŠ›çµ‚äº†ã—èªè­˜å‡¦ç†ãŒçµ‚äº†ã—ãŸæ™‚ç‚¹ã§ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã™ã‚‹. 
+ * ã‚·ãƒ§ãƒ¼ãƒˆãƒãƒ¼ã‚ºã‚»ã‚°ãƒ¡ãƒ³ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ™‚ã¯ï¼Œï¼‘å…¥åŠ›ã®æœ€å¾Œã®ã‚»ã‚°ãƒ¡ãƒ³ãƒˆã®çµ‚äº†æ™‚ã«
+ * å‘¼ã°ã‚Œã‚‹. 
  * </JA>
  * <EN>
  * Output message when the whole recognition procedure was just finished for
@@ -238,8 +238,8 @@ status_recognition_end(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ¥·¥ç¡¼¥È¥İ¡¼¥º¥»¥°¥á¥ó¥Æ¡¼¥·¥ç¥ó»ş¤Ë¡¤¶èÀÚ¤é¤E¿¤¢¤EşÎÏÃÇÊÒ¤ËÂĞ¤·¤Æ
- * Ç§¼±¤ò³«»Ï¤·¤¿¤È¤­¤Ë¥á¥Ã¥»¡¼¥¸¤ò½ĞÎÏ¤¹¤E 
+ * ã‚·ãƒ§ãƒ¼ãƒˆãƒãƒ¼ã‚ºã‚»ã‚°ãƒ¡ãƒ³ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ™‚ã«ï¼ŒåŒºåˆ‡ã‚‰ã‚ŒãŸã‚ã‚‹å…¥åŠ›æ–­ç‰‡ã«å¯¾ã—ã¦
+ * èªè­˜ã‚’é–‹å§‹ã—ãŸã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºåŠ›ã™ã‚‹. 
  * </JA>
  * <EN>
  * Output a message when recognition was just started for a segment in a
@@ -254,8 +254,8 @@ status_segment_begin(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ¥·¥ç¡¼¥È¥İ¡¼¥º¥»¥°¥á¥ó¥Æ¡¼¥·¥ç¥ó»ş¤Ë¡¤¶èÀÚ¤é¤E¿¤¢¤EşÎÏÃÇÊÒ¤ËÂĞ¤·¤Æ
- * Ç§¼±¤ò½ªÎ»¤·¤¿¤È¤­¤Ë¥á¥Ã¥»¡¼¥¸¤ò½ĞÎÏ¤¹¤E 
+ * ã‚·ãƒ§ãƒ¼ãƒˆãƒãƒ¼ã‚ºã‚»ã‚°ãƒ¡ãƒ³ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ™‚ã«ï¼ŒåŒºåˆ‡ã‚‰ã‚ŒãŸã‚ã‚‹å…¥åŠ›æ–­ç‰‡ã«å¯¾ã—ã¦
+ * èªè­˜ã‚’çµ‚äº†ã—ãŸã¨ãã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡ºåŠ›ã™ã‚‹. 
  * </JA>
  * <EN>
  * Output a message when recognition was just finished for a segment in a
@@ -277,7 +277,7 @@ static int writelen;		///< written string length on this tty line
 
 /** 
  * <JA>
- * ÂE¥Ñ¥¹¡§²»À¼Ç§¼±¤ò³«»Ï¤¹¤Eİ¤Î½ĞÎÏ¡Ê²»À¼ÆşÎÏ³«»Ï»ş¤Ë¸Æ¤Ğ¤EEË. 
+ * ç¬¬1ãƒ‘ã‚¹ï¼šéŸ³å£°èªè­˜ã‚’é–‹å§‹ã™ã‚‹éš›ã®å‡ºåŠ›ï¼ˆéŸ³å£°å…¥åŠ›é–‹å§‹æ™‚ã«å‘¼ã°ã‚Œã‚‹ï¼‰. 
  * 
  * </JA>
  * <EN>
@@ -305,12 +305,15 @@ status_pass1_begin(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ÂE¥Ñ¥¹¡§ÅÓÃæ·EÌ¤ò½ĞÎÏ¤¹¤EÊÂE¥Ñ¥¹¤Î°EEş´Ö¤´¤È¤Ë¸Æ¤Ğ¤EEË
+ * ç¬¬1ãƒ‘ã‚¹ï¼šé€”ä¸­çµæœã‚’å‡ºåŠ›ã™ã‚‹ï¼ˆç¬¬1ãƒ‘ã‚¹ã®ä¸€å®šæ™‚é–“ã”ã¨ã«å‘¼ã°ã‚Œã‚‹ï¼‰
  * 
- * @param t [in] ¸½ºß¤Î»ş´Ö¥Õ¥E¼¥E * @param seq [in] ¸½ºß¤Î°EÌ¸õÊäÃ±¸EE * @param num [in] @a seq ¤ÎÄ¹¤µ
- * @param score [in] ¾åµ­¤Î¤³¤EŞ¤Ç¤ÎÎßÀÑ¥¹¥³¥¢
- * @param LMscore [in] ¾åµ­¤ÎºÇ¸å¤ÎÃ±¸EÎ¿®ÍEÙ
- * @param winfo [in] Ã±¸E­½E * </JA>
+ * @param t [in] ç¾åœ¨ã®æ™‚é–“ãƒ•ãƒ¬ãƒ¼ãƒ 
+ * @param seq [in] ç¾åœ¨ã®ä¸€ä½å€™è£œå˜èªåˆ—
+ * @param num [in] @a seq ã®é•·ã•
+ * @param score [in] ä¸Šè¨˜ã®ã“ã‚Œã¾ã§ã®ç´¯ç©ã‚¹ã‚³ã‚¢
+ * @param LMscore [in] ä¸Šè¨˜ã®æœ€å¾Œã®å˜èªã®ä¿¡é ¼åº¦
+ * @param winfo [in] å˜èªè¾æ›¸
+ * </JA>
  * <EN>
  * 1st pass: output current result while search (called periodically while 1st pass).
  * 
@@ -422,13 +425,15 @@ result_pass1_current(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ÂE¥Ñ¥¹¡§½ªÎ»»ş¤ËÂE¥Ñ¥¹¤Î·EÌ¤ò½ĞÎÏ¤¹¤EÊÂE¥Ñ¥¹½ªÎ»¸å¡¢ÂE¥Ñ¥¹¤¬
- * »Ï¤Ş¤E°¤Ë¸Æ¤Ğ¤EE Ç§¼±¤Ë¼ºÇÔ¤·¤¿¾Eç¤Ï¸Æ¤Ğ¤EÊ¤¤¡Ë. 
+ * ç¬¬1ãƒ‘ã‚¹ï¼šçµ‚äº†æ™‚ã«ç¬¬1ãƒ‘ã‚¹ã®çµæœã‚’å‡ºåŠ›ã™ã‚‹ï¼ˆç¬¬1ãƒ‘ã‚¹çµ‚äº†å¾Œã€ç¬¬2ãƒ‘ã‚¹ãŒ
+ * å§‹ã¾ã‚‹å‰ã«å‘¼ã°ã‚Œã‚‹. èªè­˜ã«å¤±æ•—ã—ãŸå ´åˆã¯å‘¼ã°ã‚Œãªã„ï¼‰. 
  * 
- * @param seq [in] ÂE¥Ñ¥¹¤Î1°Ì¸õÊä¤ÎÃ±¸EE * @param num [in] ¾åµ­¤ÎÄ¹¤µ
- * @param score [in] 1°Ì¤ÎÎßÀÑ²¾Àâ¥¹¥³¥¢
- * @param LMscore [in] @a score ¤Î¤¦¤Á¸À¸E¹¥³¥¢
- * @param winfo [in] Ã±¸E­½E * </JA>
+ * @param seq [in] ç¬¬1ãƒ‘ã‚¹ã®1ä½å€™è£œã®å˜èªåˆ—
+ * @param num [in] ä¸Šè¨˜ã®é•·ã•
+ * @param score [in] 1ä½ã®ç´¯ç©ä»®èª¬ã‚¹ã‚³ã‚¢
+ * @param LMscore [in] @a score ã®ã†ã¡è¨€èªã‚¹ã‚³ã‚¢
+ * @param winfo [in] å˜èªè¾æ›¸
+ * </JA>
  * <EN>
  * 1st pass: output final result of the 1st pass (will be called just after
  * the 1st pass ends and before the 2nd pass begins, and will not if search
@@ -550,8 +555,8 @@ result_pass1_graph(Recog *recog, void *dummy)
     /* debug: output all graph word info */
     wordgraph_dump(stdout, r->result.wg1, winfo);
     for(wg=r->result.wg1;wg;wg=wg->next) {
-      tw1 = (TEXTWIDTH * wg->lefttime) / recog->peseqlen;
-      tw2 = (TEXTWIDTH * wg->righttime) / recog->peseqlen;
+      tw1 = (TEXTWIDTH * wg->lefttime) / r->peseqlen;
+      tw2 = (TEXTWIDTH * wg->righttime) / r->peseqlen;
       printf("%4d:", wg->id);
       for(i=0;i<tw1;i++) printf(" ");
       myprintf(" %s\n", winfo->woutput[wg->wid]);
@@ -570,7 +575,7 @@ result_pass1_graph(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ÂE¥Ñ¥¹¡§½ªÎ»»ş¤Î½ĞÎÏ¡ÊÂE¥Ñ¥¹¤Î½ªÎ»»ş¤ËÉ¬¤º¸Æ¤Ğ¤EEË
+ * ç¬¬1ãƒ‘ã‚¹ï¼šçµ‚äº†æ™‚ã®å‡ºåŠ›ï¼ˆç¬¬1ãƒ‘ã‚¹ã®çµ‚äº†æ™‚ã«å¿…ãšå‘¼ã°ã‚Œã‚‹ï¼‰
  * 
  * </JA>
  * <EN>
@@ -593,8 +598,11 @@ status_pass1_end(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ²¾ÀâÃæ¤ÎÃ±¸EğÊó¤ò½ĞÎÏ¤¹¤E * 
- * @param hypo [in] ²¾ÀE * @param winfo [in] Ã±¸E­½E * </JA>
+ * ä»®èª¬ä¸­ã®å˜èªæƒ…å ±ã‚’å‡ºåŠ›ã™ã‚‹
+ * 
+ * @param hypo [in] ä»®èª¬
+ * @param winfo [in] å˜èªè¾æ›¸
+ * </JA>
  * <EN>
  * Output word sequence of a hypothesis.
  * 
@@ -617,9 +625,11 @@ put_hypo_woutput(WORD_ID *seq, int n, WORD_INFO *winfo)
 
 /** 
  * <JA>
- * ²¾Àâ¤ÎN-gram¾ğÊó¡ÊJulian¤Ç¤Ï¥«¥Æ¥´¥EÖ¹æÎó¡Ë¤ò½ĞÎÏ¤¹¤E 
+ * ä»®èª¬ã®N-gramæƒ…å ±ï¼ˆJulianã§ã¯ã‚«ãƒ†ã‚´ãƒªç•ªå·åˆ—ï¼‰ã‚’å‡ºåŠ›ã™ã‚‹. 
  * 
- * @param hypo [in] Ê¸²¾ÀE * @param winfo [in] Ã±¸E­½E * </JA>
+ * @param hypo [in] æ–‡ä»®èª¬
+ * @param winfo [in] å˜èªè¾æ›¸
+ * </JA>
  * <EN>
  * Output LM word sequence (N-gram entry/DFA category) of a hypothesis.
  * 
@@ -642,9 +652,11 @@ put_hypo_wname(WORD_ID *seq, int n, WORD_INFO *winfo)
 
 /** 
  * <JA>
- * ²¾Àâ¤Î²»ÁÇ·ÏÎó¤ò½ĞÎÏ¤¹¤E 
+ * ä»®èª¬ã®éŸ³ç´ ç³»åˆ—ã‚’å‡ºåŠ›ã™ã‚‹. 
  * 
- * @param hypo [in] Ê¸²¾ÀE * @param winfo [in] Ã±¸EğÊE * </JA>
+ * @param hypo [in] æ–‡ä»®èª¬
+ * @param winfo [in] å˜èªæƒ…å ±
+ * </JA>
  * <EN>
  * Output phoneme sequence of a hypothesis.
  * 
@@ -674,9 +686,10 @@ put_hypo_phoneme(WORD_ID *seq, int n, WORD_INFO *winfo)
 #ifdef CONFIDENCE_MEASURE
 /** 
  * <JA>
- * ²¾Àâ¤ÎÃ±¸E´¤È¤Î¿®ÍEÙ¤ò½ĞÎÏ¤¹¤E 
+ * ä»®èª¬ã®å˜èªã”ã¨ã®ä¿¡é ¼åº¦ã‚’å‡ºåŠ›ã™ã‚‹. 
  * 
- * @param hypo [in] Ê¸²¾ÀE * </JA>
+ * @param hypo [in] æ–‡ä»®èª¬
+ * </JA>
  * <EN>
  * Output confidence score of words in a sentence hypothesis.
  * 
@@ -715,10 +728,12 @@ put_hypo_cmscore(LOGPROB *cmscore, int n)
 
 /** 
  * <JA>
- * ÂE¥Ñ¥¹¡§ÆÀ¤é¤E¿Ê¸²¾Àâ¸õÊä¤E¤Ä½ĞÎÏ¤¹¤E 
+ * ç¬¬2ãƒ‘ã‚¹ï¼šå¾—ã‚‰ã‚ŒãŸæ–‡ä»®èª¬å€™è£œã‚’1ã¤å‡ºåŠ›ã™ã‚‹. 
  * 
- * @param hypo [in] ÆÀ¤é¤E¿Ê¸²¾ÀE * @param rank [in] @a hypo ¤Î½ç°Ì
- * @param winfo [in] Ã±¸E­½E * </JA>
+ * @param hypo [in] å¾—ã‚‰ã‚ŒãŸæ–‡ä»®èª¬
+ * @param rank [in] @a hypo ã®é †ä½
+ * @param winfo [in] å˜èªè¾æ›¸
+ * </JA>
  * <EN>
  * 2nd pass: output a sentence hypothesis found in the 2nd pass.
  * 
@@ -969,8 +984,8 @@ result_pass2(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ÂE¥Ñ¥¹¡§²»À¼Ç§¼±·EÌ¤Î½ĞÎÏ¤ò³«»Ï¤¹¤Eİ¤Î½ĞÎÏ. Ç§¼±·EÌ¤ò½ĞÎÏ¤¹¤Eİ¤Ë¡¢
- * °EÖºÇ½é¤Ë½ĞÎÏ¤µ¤EE 
+ * ç¬¬2ãƒ‘ã‚¹ï¼šéŸ³å£°èªè­˜çµæœã®å‡ºåŠ›ã‚’é–‹å§‹ã™ã‚‹éš›ã®å‡ºåŠ›. èªè­˜çµæœã‚’å‡ºåŠ›ã™ã‚‹éš›ã«ã€
+ * ä¸€ç•ªæœ€åˆã«å‡ºåŠ›ã•ã‚Œã‚‹. 
  * 
  * </JA>
  * <EN>
@@ -989,7 +1004,7 @@ status_pass2_begin(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ÂE¥Ñ¥¹¡§½ªÎ»»ş
+ * ç¬¬2ãƒ‘ã‚¹ï¼šçµ‚äº†æ™‚
  * 
  * </JA>
  * <EN>
@@ -1010,10 +1025,11 @@ status_pass2_end(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ÆÀ¤é¤E¿Ã±¸E°¥é¥ÕÁ´ÂÎ¤ò½ĞÎÏ¤¹¤E 
+ * å¾—ã‚‰ã‚ŒãŸå˜èªã‚°ãƒ©ãƒ•å…¨ä½“ã‚’å‡ºåŠ›ã™ã‚‹. 
  * 
- * @param root [in] ¥°¥é¥ÕÃ±¸E¸¹ç¤ÎÀèÆ¬Í×ÁÇ¤Ø¤Î¥İ¥¤¥ó¥¿
- * @param winfo [in] Ã±¸E­½E * </JA>
+ * @param root [in] ã‚°ãƒ©ãƒ•å˜èªé›†åˆã®å…ˆé ­è¦ç´ ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+ * @param winfo [in] å˜èªè¾æ›¸
+ * </JA>
  * <EN>
  * Output the whole word graph.
  * 
@@ -1062,7 +1078,7 @@ result_graph(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ÆÀ¤é¤E¿¥³¥ó¥Õ¥å¡¼¥¸¥ç¥ó¥Í¥Ã¥È¥E¼¥¯¤ò½ĞÎÏ¤¹¤E 
+ * å¾—ã‚‰ã‚ŒãŸã‚³ãƒ³ãƒ•ãƒ¥ãƒ¼ã‚¸ãƒ§ãƒ³ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã‚’å‡ºåŠ›ã™ã‚‹. 
  * 
  * </JA>
  * <EN>
@@ -1108,7 +1124,7 @@ result_confnet(Recog *recog, void *dummy)
 /********************* RESULT OUTPUT FOR GMM *************************/
 /** 
  * <JA>
- * GMM¤Î·×»»·EÌ¤òÉ¸½à½ĞÎÏ¤Ë½ĞÎÏ¤¹¤E ("-result tty" ÍÑ)
+ * GMMã®è¨ˆç®—çµæœã‚’æ¨™æº–å‡ºåŠ›ã«å‡ºåŠ›ã™ã‚‹. ("-result tty" ç”¨)
  * </JA>
  * <EN>
  * Output result of GMM computation to standard out.
@@ -1156,7 +1172,7 @@ result_gmm(Recog *recog, void *dummy)
 
 /** 
  * <JA>
- * ¸½ºßÊİ»ı¤·¤Æ¤¤¤E¸Ë¡¤Î¥E¹¥È¤òÉ¸½à½ĞÎÏ¤Ë½ĞÎÏ¤¹¤E 
+ * ç¾åœ¨ä¿æŒã—ã¦ã„ã‚‹æ–‡æ³•ã®ãƒªã‚¹ãƒˆã‚’æ¨™æº–å‡ºåŠ›ã«å‡ºåŠ›ã™ã‚‹. 
  * 
  * </JA>
  * <EN>

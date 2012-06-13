@@ -1,4 +1,4 @@
-/* charconv.c */
+﻿/* charconv.c */
 #include <stdarg.h>
 
 void charconv_add_option();

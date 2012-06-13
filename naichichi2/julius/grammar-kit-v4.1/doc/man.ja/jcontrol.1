@@ -1,0 +1,108 @@
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.TH JCONTROL 1 LOCAL
+.UC 6
+.SH NAME
+jcontrol - simple program to control Julius / Julian module via API
+.SH SYNOPSIS
+.B jcontrol hostname [portnum]
+.SH DESCRIPTION
+.I jcontrol
+は，他のホストで動作中の
+.I julius
+を，APIを介してコントロールする簡単なコンソールプログラムです．
+Julius へのコマンド送信，およびJuliusからのメッセージ受信を行うことが
+できます．
+.PP
+起動後，jcontrol は，指定ホスト上において「モジュールモード」で動作中の
+Julius または Julian に対し，接続を試みます．接続確立後，jcontrol はユー
+ザーからのコマンド入力待ち状態となります．
+.PP
+jcontrol はユーザーが入力したコマンドを解釈し，対応するAPIコマンドを
+Julius へ送信します．また，Julius から認識結果や入力トリガ情報などのメッ
+セージが送信されてきたときは，その内容を標準出力へ書き出します．
+.PP
+APIの詳細については関連文書をご覧下さい．
+.SH "OPTIONS"
+.Ip hostname
+接続先のホスト名（Julius / Julian がモジュールモードで動作中）
+.Ip portnum
+(optional) ポート番号 (default=10500)
+.SH "COMMANDS (COMMON)"
+起動後，jcontrol に対して以下のコマンド文字列を標準入力から入力できます．
+.Ip "pause"
+認識を中断する．認識途中の場合，そこで入力を中断して第2パスまで認識が
+終わってから中断する．
+.Ip "terminate"
+認識を中断する．認識途中の場合，入力を破棄して即時中断する．
+.Ip "resume"
+認識を再開．
+.Ip "inputparam arg"
+文法切り替え時に音声入力であった場合の入力中音声の扱いを指定．
+"TERMINATE", "PAUSE", "WAIT"のうちいずれかを指定．
+.Ip "version"
+バージョン文字列を返す
+.Ip "status"
+システムの状態(active/sleep)を返す．
+.SH "GRAMMAR COMMANDS (Julian)"
+Julian 用のコマンドです：
+.Ip "changegram prefix"
+認識文法を "prefix.dfa" と "prefix.dict" に切り替える．
+Julian 内の文法は全て消去され，指定された文法に置き換わる．
+.Ip "addgram prefix"
+認識文法として "prefix.dfa" と "prefix.dict" を追加する．
+.Ip "deletegram ID"
+指定されたIDの認識文法を削除する．
+指定文法は Julian から削除される．ID は Julian から送られる GRAMINFO
+内に記述されている．
+.Ip "deactivategram ID"
+指定されたIDの認識文法を，一時的にOFFにする．OFFにされた文法は認識処理
+から一時的に除外される．このOFFにされた文法は Julian 内に保持され，
+"activategram" コマンドで再び ON にできる．
+.Ip "activategram ID"
+一時的に OFF になっていた文法を再び ON にする．
+.SH "EXAMPLE"
+Julius および Julian からのメッセージは "> " を行の先頭につけて
+そのまま標準出力に出力されます．
+出力内容の詳細については，関連文書を参照してください．
+.PP
+(1) Julius / Julian をモジュールモードでホスト host で起動する．
+    % julian -C xxx.jconf ... -input mic -module
+.PP
+(2) (他の端末で) jcontrol を起動し，通信を開始する．
+    % jcontrol host
+    connecting to host:10500...done
+    > <GRAMINFO>
+    >  # 0: [active] 99words, 42categories, 135nodes (new)
+    > </GRAMINFO>
+    > <GRAMINFO>
+    >  # 0: [active] 99words, 42categories, 135 nodes
+    >   Grobal:      99words, 42categories, 135nodes
+    > </GRAMINFO>
+    > <INPUT STATUS="LISTEN" TIME="1031583083"/>
+ -> pause
+ -> resume
+    > <INPUT STATUS="LISTEN" TIME="1031583386"/>
+ -> addgram test
+    ....
+
+.SH "SEE ALSO"
+julius(1), julian(1)
+.SH BUGS
+バグ報告・問い合わせ・コメントなどは
+julius@kuis.kyoto-u.ac.jp までお願いします．
+.SH COPYRIGHT
+Copyright (c) 2002-2003 奈良先端科学技術大学院大学
+.SH AUTHORS
+李 晃伸 (奈良先端大) が実装しました．
+.SH LICENSE
+.I Julius
+の使用許諾に準じます．

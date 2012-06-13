@@ -1,0 +1,56 @@
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.TH ADINREC 1 LOCAL
+.UC 6
+.SH NAME
+adinrec - record one sentence utterance to a file
+.SH SYNOPSIS
+.B adinrec [options..] filename
+.SH DESCRIPTION
+.I adinrec
+はマイク入力の音声区間を切り出してファイルに記録するツールです．
+.PP
+サンプリング周波数は任意に設定可能です．形式は 16bit monoral です．書き出されるデータ形式は WAV です．
+既に同じ名前のファイルが存在する場合は上書きします．
+.PP
+また，ファイル名に "-" を指定すると標準出力へ出力します．この場合データ形式はRAWになります．
+.PP
+音声区間の切り出しは，一定時間内の零交差数とパワー（振幅レベル）の
+しきい値を用います．
+.SH OPTIONS
+.Ip "\-freq threshold"
+サンプリング周波数．単位は Hz (default: 16000)
+.Ip "\-lv threslevel"
+波形の振幅レベルのしきい値 (0 - 32767)．(default: 2000)．
+.Ip "\-zc zerocrossnum"
+１秒あたりの零交差数のしきい値 (default: 60)
+.Ip "\-margin msec"
+音声区間開始部および終了部の前後のマージン．単位はミリ秒
+(default: 300)
+.Ip "\-nostrip"
+無効な 0 サンプルの自動除去を行わないようにする．
+デフォルトは自動除去を行う．
+.Ip "\-zmean"
+DC成分除去を行う．
+.Ip "\-raw"
+RAWフォーマットでの出力を行う．形式は 16bit, big endian である．
+.SH "SEE ALSO"
+adintool(1), julius(1), sox(1), wavplay(1), wavrec(1), aplay(1), arecord(1)
+.SH BUGS
+バグ報告・問い合わせ・コメントなどは 
+julius@kuis.kyoto-u.ac.jp までお願いします．
+.SH COPYRIGHT
+Copyright (c) 2000-2003 奈良先端科学技術大学院大学
+.SH AUTHORS
+李 晃伸 (奈良先端大) が実装しました．
+.SH LICENSE
+.I Julius
+の使用許諾に準じます．

@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-2022-JP">
+<link rel="stylesheet" type="text/css" href="default.css">
+<html> <head>
+<title>What's New in Rev.3.4.1</title>
+</head>
+<body>
+<h1>Rev.3.4.1 の変更点</h1>
+
+Julius rev.3.4.1 はマイナーバージョンアップですが、認識アルゴリズムの改善やバイナリHMMのサポート、およびネットワーク入出力に関して多くの改善がなされています。rev.3.4 からの具体的な変更点は以下のとおりです。
+<ul>
+<li>性能改善
+  <ul>
+  <li><a href="#algo">認識アルゴリズムの改善</a>（重要）
+  <li><a href="#mfcc">MFCC計算の高速化</a>
+  </ul>
+<li>機能拡張
+  <ul>
+  <li><a href="#binhmm">バイナリHMMのサポート</a>（重要）
+  <li><a href="#visualize">探索空間の可視化機能の追加</a>
+  <li><a href="#zmean">直流成分除去</a>
+  <li><a href="#modparam">モジュールモードで入力長を出力</a>
+  </ul>
+<li><a href="#bugfix">バグの修正</a>
+  <ul>
+  <li>特にネットワーク音声入力、モジュールモードに関して
+  </ul>
+</ul>
+
+なお、個々のソースファイルの変更点についてはこちらをご覧ください。
+<ul>
+<li><a href="ChangedFiles_3.4.1.xls">ChangedFiles_3.4.1.xls</a>（MS Excel形式）
+</ul>
+
+以下に各変更点について詳しく解説します。なお、これらの変更に伴うオプション指定の変更について、<a href="#optsummary">本ドキュメントの末尾</a>にまとめておきます。
+
+<h2><a name="algo">認識アルゴリズムの改善</a></h2>
+
+Juliusの探索アルゴリズムを見直しました。特に、第２パスの探索の失敗事例について調査し、以下の２つの改善を行いました。これによって標準〜低ビーム幅での認識精度の向上が見込まれます。各手法と評価結果について以下に述べます（Julian については性能の変更はありません）。
+
+<h3><a name="lmfix">第2パスの言語スコアの多重計算を修正</a></h3>
+
+第２パスで、展開対象の単語の言語スコアを二重に計算していた問題を修正しました。
+<p>
+Juliusでは、第２パス探索における部分文仮説の評価値として、その時点までの3-gramを用いた前向き（right-to-left）スコアに、第1パスから得られる2-gramを用いたヒューリスティックスコア(left-to-right)を足したものを用いますが、従来のJuliusでは、ある仮説から次単語を展開する際に、接続部の単語において第1パスの2-gramの値と第２パスの3-gramの値の双方を加えて評価してしまっていました。探索中の評価値として展開単語のスコアが二重に加算されることから、若干の探索の不安定や最尤解のロストを招いていたと考えられます。
+<p>
+Rev.3.4.1ではこの問題を修正し、3-gramの値のみが正しく適用されるよう修正しました。この修正により、IPA'98テストセットでの認識率は以下のように改善が見られました（高速版Julius, PTM(GD)）。
+<p align=center>
+<table border="1">
+<tr bgcolor="#ffffbb"><th>バージョン</th><th>Word Correct</th><th>Word Accuracy</th></tr>
+<tr><td>3.4</td><td>92.1</td><td>90.6</td></tr>
+<tr bgcolor="#ffeecc"><td>3.4+LMfix</td><td>92.3</td><td>91.2</td></tr>
+</table>
+</p>
+この修正はデフォルトで有効になっています。以前と同じ動作に戻すには、<code>configure</code> で <code>--disable-lmfix</code> を指定してください。
+
+<h3><a name="iwcdbest">第1パスの単語間トライフォンの計算方法を変更</a></h3>
+
+Juliusでは、第1パスの単語末トライフォンの計算において、近似値として同じ左コンテキストを持つ全てのトライフォンの<u>最大値</u>を用いてきました。しかし、調べたところ、単語接続部分での音響スコアが真のトライフォンの値に比べて高くなりすぎてしまい、そのためヒューリスティックとしての性能が下がり第２パスの探索を停滞させるケースがみられました。特に、一音素や二音素からなる短い単語が辞書に多い場合に影響が大きいと思われます。
+<p>
+Rev.3.4.1では、この第1パスの単語末トライフォンの近似計算方法として、新たに<u>上位N個のトライフォンの平均値</u>を採用しました。従来の最大値、および平均値の手法も選択できますので、これで単語末トライフォンの計算方法は3通りから選択できるようになりました。
+<p>
+この修正による、IPA'98テストセットでの認識率の変化は以下のとおりです（高速版Julius, PTM(GD), N=3）
+<p align=center>
+<table border="1">
+<tr bgcolor="#ffffbb"><th>バージョン</th><th>Word Correct</th><th>Word Accuracy</th></tr>
+<tr><td>3.4</td><td>92.1</td><td>90.6</td></tr>
+<tr bgcolor="#ffeecc"><td>3.4+iwcdbest(N=3)</td><td>92.2</td><td>91.2</td></tr>
+</table>
+<p>
+Rev.3.4.1では、この新しい単語末トライフォン計算方法がデフォルトとなっています。従来と同じ方法に切り替えたい場合は、下記のように起動時オプション <code>-iwcd1 max</code> を指定してください。
+<ul>
+<li><code>-iwcd1 best N</code>: 上位N個の平均値（Julius-3.4.1デフォルト, N=3）
+<li><code>-iwcd1 max</code>: 最大値（Julius 3.4以前のデフォルト）
+<li><code>-iwcd1 avg</code>: 平均値（Julianのデフォルト:変更なし)
+</ul>
+なお、<code>N</code>は計算する上位トライフォンの個数です。デフォルトは 3 となっています(いくつかのテストセットでの最適値)。<code>N</code>=1の場合 <code>-iwcd1 max</code> と等価であり、<code>N=極大</code> の場合 <code>-iwcd1 avg</code> と等価となります。
+
+<h3>評価結果</h3>
+
+これら２つの改善を加えた Rev.3.4.1 の、IPA'98テストセットでの評価結果は以下のようになりました(クリックすると拡大）。
+<p align=center>
+<a href="3.4.1-jnas-full.gif"><img src="3.4.1-jnas.gif" width=429 height=186></a>
+</p>
+探索アルゴリズムの改善により、3.4.1は3.4に比べてPTM(fast.GD)で1.1％の単語認識精度の向上が見られました。また、高精度版(high)においても若干ながら改善が見られました。また、言語尤度重みと単語挿入ペナルティを 3.4.1 で最適化したところ（表中の3.4.1-LMtuned、<code>-lmp 7.0 -1.0 -lmp2 8.0 -1.0</code>）、さらに認識率が改善する傾向が見られました
+<p>
+なお、本修正はJuliusの探索アルゴリズムを調節して<b>探索の</b>誤りを改善するものです。第1パスの結果および第2パスの探索中の仮説のスコアは従来から変化しますが、<b>最終的な文仮説スコアは変化しません</b>。よって、第1パス（<code>-b</code>）、第2パス（<code>-b2</code>）とも十分に大きい（＝ほぼ全探索の）条件では、性能の変化は微少であると予測されます。
+
+<h2><a name="mfcc">MFCC計算の高速化</a></h2>
+
+MFCCパラメータの算出において、sin, cos計算をテーブル化することで計算を高速化しました。3.4以前の計算時間はPC上で入力長のおおよそ1/20〜1/10程度でしたが、このテーブル化によってほぼ一瞬で計算できるようになりました。
+<p>
+テーブルに必要なメモリ量はサンプリングレートやフレームシフトによって変動しますが、およそ8KB〜12KB程度です。
+<p>
+この改善はデフォルトで有効になっています。計算精度はテーブル化する前と全く変わりません（繰り返し演算をキャッシュしているだけなので）以前と同じ動作に戻すには：<code>configure</code> オプション <code>--disable-mfcc-table</code> を指定してください。
+
+<h2><a name="binhmm">バイナリHMMのサポート</a></h2>
+
+新たにバイナリ形式のHMM定義ファイルの読み込みをサポートしました。従来のHTKフォーマットの ascii（テキスト）形式の hmmdefs に比べて読み込みが早くなり、起動時の初期化が高速になります。
+<p>
+このバイナリHMMファイルは<u>Julius独自形式</u>であり、HTK の binary format とは非互換です。変換には付属のツール<code>mkbinhmm</code>を使ってください。この<code>mkbinhmm</code>は、トライフォンやPTMを含め、Juliusで読み込めるすべてのHMM定義ファイルをバイナリ形式に変換できます。変換は以下の要領で行います。
+<pre>
+ % mkbinhmm hmmdefs バイナリHMM
+</pre>
+<p>
+バイナリHMMを Julius/Julian で使うには、従来と同様に <code>-h</code> オプションで指定してください。テキスト／バイナリの判別は Julius/Julian 上で自動的に行われます。
+<pre>
+ % julius ... -h バイナリHMM
+</pre>
+<p>
+この追加機能はデフォルトで有効になっています。なお形式は自動判別されるため、ascii形式のhmmdefsについても従来と同様に読み込めます。
+
+<h2><a name="visualize">探索空間の可視化機能の追加</a></h2>
+
+Julius/Julian の<a href="visualize.html">認識処理の過程を可視化する機能</a>を追加しました。Julius/Julian の内部でどのように解探索が行われ解が展開されていったかをグラフィカルに表示する機能です。
+<p>
+単語グラフ使用時（<code>configure --enable-word-graph --enable-wpair</code>）はその第1パスの結果の単語グラフも図示されます。また、<code>sox</code>がインストールされていれば、認識対象の音声データをその場で再生することもできます。
+<p>
+この機能はデフォルトでは無効となっています。有効にするには、コンパイル時に <code>configure</code> オプション <code>--enable-visualize</code> を指定してください。なおコンパイル・実行には GTK のライブラリが必要です。
+<pre>
+ % ./configure --enable-visualize
+</pre>
+詳しくは、<a href="visualize.html">探索空間の可視化機能の使い方</a>をご覧ください。
+
+<h2><a name="zmean">直流成分除去</a></h2>
+
+音声入力の直流成分（DC offset）を除去するオプション <code>-zmean</code>を追加しました。ファイル入力の場合はファイル単位で直流成分の計算と除去を行います。マイクやネットワーク入力の場合は、Juliusが立ち上がり入力の検知が開始された時点から数えて最初の 3 秒分(16kHzサンプリング時)のサンプルから直流成分の算出を行い、以降はその算出値を用いて除去を行います。
+<p>
+この機能はデフォルトで無効となっています。用いる際には <code>-zmean</code>を指定してください。
+
+<h2><a name="modparam">モジュールモードで入力長を出力</a></h2>
+
+モジュールモード（<code>-module</code>）使用時に、入力音声の長さが認識結果とともにクライアントへ出力されるようになりました。出力形式は下記のとおりです。
+<pre>
+&lt;INPUTPARAM FRAMES="入力長（フレーム）" MSEC="入力長（ミリ秒）"&gt;
+</pre>
+
+<h2><a name="bugfix">バグの修正</a></h2>
+
+<h3>ネットワーク経由の音声送受信に関して</h3>
+
+ネットワーク経由の音声受信 (<code>-input adinnet</code>)に関して、以下のバグを修正しました。
+<ul>
+<li>音声を受信し始めると同時に認識がスタートしない
+<li>モジュールモード (<code>-module</code>)併用時に <code>PAUSE</code>, <code>TERMINATE</code> が効かないバグをFIX
+<li>接続のたびにプロセスを fork しないようにした (<code>configure --enable-fork</code>で元のforkする動作に戻せます）
+<li>adin-cut.c 内のメモリリークを修正
+</ul>
+また、<code>adintool</code>を用いたネットワーク経由の音声送信に関して以下のバグを修正しました。
+<ul>
+<li>ファイルを連続して送信することができない不具合を修正
+</ul>
+<h3>逐次デコーディング（ショートポーズセグメンテーション）の訂正</h3>
+
+逐次デコーディング（あるいはショートポーズセグメンテーション）に関する多くのバグ修正を行いました。修正点を以下に列挙します。
+<ul>
+<li>マイク入力時の以下の不具合を修正し、マイク入力での逐次デコーディングが可能になった。
+<ul>
+<li>認識再開後最初の無音部ですぐにセグメントしてしまうことがあるバグを修正
+<li>認識再開後の最初の数フレームについてゆう度計算が正しく行われないバグを修正
+</ul>
+<li>認識中断時に直前の認識結果の最終単語を仮説履歴として引き継ぐ機能について、最終単語が無音単語の場合に文頭に書き換えていたバグを修正
+<li>CMNをセグメント単位ではなく切り出し単位で行うよう変更
+<li>無音に対応する単語が辞書上で固定位置に記述しなければならなかったのを修正。ショートポーズモデル名を <code>-spmodel</code> で与え、そのショートポーズモデルのみからなる単語を無音単語として用いるようにした。
+<li>認識したファイル数がおかしくなるバグを修正
+<li>セグメントごとの入力フレーム数、および再開位置の出力を追加
+<li>-record が動かなかったバグを修正。（録音はセグメント単位ではなく、通常と同じ切り出し単位で行われる）
+</ul>
+
+<h3>アラインメント機能のメモリリーク解消</h3>
+
+単語／音素／状態単位のアラインメント機能（<code>-walign</code>, <code>-palign</code>, <code>-salign</code>）使用時のメモリリークを解消しました。
+
+<h3>CMN関連の修正</h3>
+
+音響モデルで Cepstral Mean Normalization (CMN) を使用する・しないに関わらず、入力音声に対して常にCMNを行っていたバグを修正しました。
+
+<h3>その他</h3>
+
+Windowsのサウンドレコーダーで録音した wav ファイルを読めないバグを修正しました。
+<p>
+辞書中にtriphoneの誤りがあったときのエラー出力を見やすくしました。
+<p>
+Sample.jconf, Sample-julian.jconf 等を Rev.3.4.1 の仕様に合わせて更新しました。
+<p>
+Julian用の<a href="../gramtools/00readme-ja.txt">文法作成ツールの使い方</a>の<a href="../gramtools/00readme.txt">英語版マニュアル</a>を用意しました。
+<p>
+
+<h2><a name="optsummary">オプション変更一覧</a></h2>
+Julius-3.4.1 で変更された<code>configure</code>オプションおよび起動時オプションの一覧です。
+<br><br>
+<code>configure</code>オプション：
+<ul>
+<li>新規追加：<code><a href="#visualize">--enable-visualize</a></code>
+<li>新規追加：<code><a href="#lmfix">--disable-lmfix</a></code>
+<li>新規追加：<code><a href="#mfcc">--disable-mfcc-table</a></code>
+<li>新規追加：<code><a href="#bugfix">--enable-fork</a></code>
+</ul>
+起動時オプション：
+<ul>
+<li>新規追加：<code><a href="#iwcdbest">-iwcd1 best N</a></code>
+<li>新規追加：<code><a href="#zmean">-zmean</a></code>
+</ul>
+
+<hr>
+<small><i>$Id: WhatsNew_3.4.1.html,v 1.4 2004/02/25 03:39:25 ri Exp $</i></small><br>
+</body> </html>

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -15,13 +15,13 @@ extern WORD_INFO *winfo;
 extern DFA_INFO *dfa;
 extern char **termname;
 
-/* $B%U%i%0C#(B */
+/* フラグ達 */
 extern boolean no_term_file;
 extern boolean verbose_flag;
 extern boolean term_mode;
 extern boolean reverse_mode;
 
-/* $BA4(Bwtoken$B$r=PNO(B */
+/* 全wtokenを出力 */
 void
 put_wtoken(WTOKEN **wseq, int nseq)
 {
@@ -59,7 +59,7 @@ put_wtoken(WTOKEN **wseq, int nseq)
   printf("]\n");
 }
 
-/* buf $B$+$i(B wseq $B$r@8@.(B */
+/* buf から wseq を生成 */
 boolean
 new_get_wtoken(char *buf, WTOKEN **wseq, int *nseq_ret)
 {
@@ -136,7 +136,7 @@ new_get_wtoken(char *buf, WTOKEN **wseq, int *nseq_ret)
   return(TRUE);
 }
 
-/* $B%a%b%j2rJ|(B */
+/* メモリ解放 */
 void
 free_wtoken(WTOKEN **wseq, int nseq)
 {

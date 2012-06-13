@@ -1,4 +1,4 @@
-/**
+ï»¿/**
  * @file   plugin_defs.h
  * 
  * <EN>
@@ -6,7 +6,7 @@
  * </EN>
  * 
  * <JA>
- * @brief  JPI ¥×¥é¥°¥¤¥óÍÑÄêµÁ
+ * @brief  JPI ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç”¨å®šç¾©
  * </JA>
  * 
  * @author Akinobu Lee

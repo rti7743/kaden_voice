@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -18,26 +18,26 @@
 #include "nextword.h"
 #include "common.h"
 
-WORD_INFO *winfo;		/* $BC18l>pJs(B */
+WORD_INFO *winfo;		/* 単語情報 */
 DFA_INFO *dfa;			/* DFA */
-char **termname;		/* $B%+%F%4%jL>(B from .term */
+char **termname;		/* カテゴリ名 from .term */
 
-/* $B%U%i%0C#(B */
+/* フラグ達 */
 boolean no_term_file;
 boolean verbose_flag = FALSE;
 boolean term_mode = FALSE;
 boolean reverse_mode = FALSE;
 
-/* $BF~NO(B */
-static WTOKEN *wseq[MAXSEQNUM];	/* $BF~NOC18l7ONs(B */
-static int nseq;		/* $BF~NOC18l?t(B */
+/* 入力 */
+static WTOKEN *wseq[MAXSEQNUM];	/* 入力単語系列 */
+static int nseq;		/* 入力単語数 */
 
-/* $B%Q!<%8%s%07k2L(B */
-static STATECHAIN *reach_state;	/* $B:GBgE~C#>uBV(B */
-static boolean can_accept;	/* $B<uM}2DG=$+$I$&$+(B */
-static int nseq_reached;	/* $B:GBgE~C#C18l?t(B */
+/* パージング結果 */
+static STATECHAIN *reach_state;	/* 最大到達状態 */
+static boolean can_accept;	/* 受理可能かどうか */
+static int nseq_reached;	/* 最大到達単語数 */
 
-/* $BE~C#$7$?>uBV$O%9%?%C%/$K$?$a$F$*$/(B */
+/* 到達した状態はスタックにためておく */
 static void
 push_state(int stateid)
 {
@@ -69,8 +69,8 @@ put_state(int s, int l)
   printf("[%d]\n",s);
 }
 
-/* $B>uBV(Bstateid$B$K$F(Biseq$BHVL\$NF~NO$,<u$1IU$1$i$l$k$+$I$&$+$rJV$9(B */
-/* $B?<$5M%@hC5:w(B */
+/* 状態stateidにてiseq番目の入力が受け付けられるかどうかを返す */
+/* 深さ優先探索 */
 static void
 can_accept_recursive(int stateid, int iseq)
 {
@@ -119,7 +119,7 @@ can_accept_recursive(int stateid, int iseq)
 }
 
 #if 0
-/* $BL52;%b%G%k(B silB, silE $B$,$J$1$l$PA^F~(B */
+/* 無音モデル silB, silE がなければ挿入 */
 static char *
 pad_sil(char *s)
 {
@@ -202,7 +202,7 @@ nextword_main()
   nseq_reached = nseq;
   can_accept = FALSE;
   for (i=0;i<dfa->state_num;i++) {
-    if ((dfa->st[i].status & INITIAL_S) != 0) { /* $B=i4|>uBV$+$i(B */
+    if ((dfa->st[i].status & INITIAL_S) != 0) { /* 初期状態から */
       can_accept_recursive(i, nseq-1);
     }
   }

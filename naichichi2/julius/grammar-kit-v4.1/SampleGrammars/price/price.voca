@@ -1,0 +1,116 @@
+%HMM	
+えー	e:
+えーと	e: t o
+えーっと	e: q t o
+えーっとー	e: q t o:
+あー	a:
+あーと	a: t o
+あーっと	a: q t o
+#あっあ	a q a
+んー	 N N
+んーと	 N N t o
+んーっと	 N N q t o
+あのー	a n o:
+そのー	s o n o:
+と	t o
+っと	q t o
+うーん	u: N
+うーんと	u: N t o
+です	d e s u
+になります	n i n a r i m a s u
+でございます	d e g o z a i m a s u
+でお願いします	d e o n e g a i sh i m a s u
+
+%NOISE	
+sp	sp
+	
+%NO_B	
+silB	silB
+	
+%NO_E	
+silE	silE
+
+%NUM1	
+一	i ch i
+#一	i q
+#一	h i t o
+二	n i
+二	n i:
+#二	f u t a
+三	s a N
+#三	m i q
+#四	sh i
+四	y o N
+五	g o
+五	g o:
+六	r o k u
+#六	r o q
+七	n a n a
+七	sh i ch i
+八	h a ch i
+#八	h a q
+九	ky u:
+#九	k u
+
+%NUM10	
+十	j u:
+#十	j u q
+二十	n i j u:
+#二十	n i j u q
+三十	s a N j u:
+#三十	s a N j u q
+四十	y o N j u:
+#四十	y o N j u q
+五十	g o j u:
+#五十	g o j u q
+六十	r o k u j u:
+#六十	r o k u j u q
+七十	n a n a j u:
+七十	sh i ch i j u:
+#七十	n a n a j u q
+八十	h a ch i j u:
+#八十	h a ch i j u q
+九十	ky u: j u:
+#九十	ky u: j u q
+	
+%NUM100	
+百	hy a k u
+#百	hy a q
+二百	n i hy a k u
+#二百	n i hy a q
+三百	s a N by a k u
+#三百	s a N by a q
+四百	y o N hy a k u
+#四百	y o N hy a q
+五百	g o hy a k u
+#五百	g o hy a q
+六百	r o q py a k u
+七百	n a n a hy a k u
+八百	h a q py a k u
+九百	ky u: hy a k u
+#九百	ky u: hy a q
+	
+%NUM1000	
+千	s e N
+一千	i q s e N
+二千	n i s e N
+三千	s a N z e N
+四千	y o N s e N
+五千	g o s e N
+六千	r o k u s e N
+七千	n a n a s e N
+八千	h a q s e N
+九千	ky u: s e N
+	
+%NUM10000S	
+万	m a N
+	
+%ZERO	
+零	r e:
+	
+%YEN	
+円	e N
+	
+%ABOUT	
+くらい	k u r a i
+ぐらい	g u r a i

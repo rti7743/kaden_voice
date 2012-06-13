@@ -1,0 +1,39 @@
+0	[えー]	e:
+0	[えーと]	e: t o
+0	[えーっと]	e: q t o
+0	[えーっとー]	e: q t o:
+0	[あー]	a:
+0	[あーと]	a: t o
+0	[あーっと]	a: q t o
+0	[んー]	N N
+0	[んーと]	N N t o
+0	[んーっと]	N N q t o
+0	[あのー]	a n o:
+0	[そのー]	s o n o:
+0	[と]	t o
+0	[っと]	q t o
+0	[うーん]	u: N
+0	[うーんと]	u: N t o
+1	[NS]	sp
+2	[silB]	silB
+3	[silE]	silE
+4	[０]	z e r o
+4	[０]	r e:
+4	[０]	m a r u
+4	[１]	i ch i
+4	[２]	n i q
+4	[２]	n i:
+4	[３]	s a N
+4	[４]	sh i q
+4	[４]	sh i:
+4	[４]	y o N
+4	[５]	g o
+4	[５]	g o:
+4	[６]	r o k u
+4	[７]	n a n a
+4	[７]	sh i ch i
+4	[７]	h i ch i
+4	[８]	h a ch i
+4	[９]	ky u:
+4	[の]	n o
+5	[です]	d e s u

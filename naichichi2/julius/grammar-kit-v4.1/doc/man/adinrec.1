@@ -1,0 +1,52 @@
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.TH ADINREC 1 LOCAL
+.UC 6
+.SH NAME
+adinrec - record one sentence utterance to a file
+.SH SYNOPSIS
+.B adinrec [options..] filename
+.SH DESCRIPTION
+.I adinrec
+records one spoken utterance from microphone to a file.
+.PP
+Output format is WAV, 16bit, monoral, no compression.
+If the file already exist, it will be overridden.  If
+filename of "-" is specified, recorded data will be output to stdout.
+.PP
+The sensitiveness of speech detection can be controlled by thresholds
+of zerocross number and power (level).
+.SH OPTIONS
+.Ip "\-freq threshold"
+Sampling frequency (Hz, default=16000)
+.Ip "\-lv threslevel"
+Level threshold (0-32767, default=2000)
+.Ip "\-zc zerocrossnum"
+Zero cross number threshold in a second (default=60)
+.Ip "\-margin msec"
+Record margin before/after the detected segment (milliseconds, default=300)
+.Ip "\-nostrip"
+Disable skipping of invalid zero samples (default: enabled)
+.Ip "\-zmean"
+Enable zero mean subtraction to remove DC offset.
+.Ip "\-raw"
+RAW format output (default: WAV)
+.SH "SEE ALSO"
+adintool(1), julius(1), sox(1), wavplay(1), wavrec(1), aplay(1), arecord(1)
+.SH COPYRIGHT
+Copyright (c) 2000-2003 Nara Institute of Science and Technology, Japan
+.SH AUTHORS
+LEE Akinobu (NAIST, Japan)
+.br
+contact: julius@kuis.kyoto-u.ac.jp
+.SH LICENSE
+Same as 
+.I Julius.

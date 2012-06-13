@@ -1,0 +1,51 @@
+%HMM	
+えー	e:
+えーと	e: t o
+えーっと	e: q t o
+えーっとー	e: q t o:
+あー	a:
+あーと	a: t o
+あーっと	a: q t o
+#あっあ	a q a
+んー	 N N
+んーと	 N N t o
+んーっと	 N N q t o
+あのー	a n o:
+そのー	s o n o:
+と	t o
+っと	q t o
+うーん	u: N
+うーんと	u: N t o
+
+%NOISE	
+NS	sp
+	
+%NO_B	
+silB	silB
+	
+%NO_E	
+silE	silE
+
+%DIGIT	
+０	z e r o
+０	r e:
+０	m a r u
+１	i ch i
+２	n i q
+２	n i:
+３	s a N
+４	sh i q
+４	sh i:
+４	y o N
+５	g o
+５	g o:
+６	r o k u
+７	n a n a
+７	sh i ch i
+７	h i ch i
+８	h a ch i
+９	ky u:
+の	n o
+	
+%DESU	
+です	d e s u

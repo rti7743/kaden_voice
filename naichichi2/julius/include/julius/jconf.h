@@ -2,7 +2,7 @@
  * @file   jconf.h
  * 
  * <JA>
- * @brief  Jconf ��¤�Τ�āE�
+ * @brief  Jconf ｹｽﾂ､ﾂﾎ､ﾎﾄ・ﾁ
  *
  * </JA>
  * 

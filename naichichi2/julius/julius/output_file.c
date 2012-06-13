@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file   output_file.c
  * 
  * <EN>
@@ -6,7 +6,7 @@
  * </EN>
  * 
  * <JA>
- * @brief  ǧ����E̤���̥ե�����Eؽ��Ϥ���E 
+ * @brief  認識結果を個別ファイルへ出力する. 
  * </JA>
  * 
  * @author Akinobu Lee

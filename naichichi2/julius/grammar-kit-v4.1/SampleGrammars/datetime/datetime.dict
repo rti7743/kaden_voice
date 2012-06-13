@@ -1,0 +1,213 @@
+0	[えー]	e:
+0	[えーと]	e: t o
+0	[えーっと]	e: q t o
+0	[えーっとー]	e: q t o:
+0	[あー]	a:
+0	[あーと]	a: t o
+0	[あーっと]	a: q t o
+0	[んー]	N N
+0	[んーと]	N N t o
+0	[んーっと]	N q t o
+0	[あのー]	a n o:
+0	[そのー]	s o n o:
+0	[と]	t o
+0	[っと]	q t o
+0	[うーん]	u: N
+0	[うーんと]	u: N t o
+1	[sp]	sp
+2	[silB]	silB
+3	[silE]	silE
+4	[今日は]	ky o: w a
+4	[今日]	ky o:
+5	[今は]	i m a w a
+5	[今]	i m a
+6	[です]	d e s u
+6	[になります]	n i n a r i m a s u
+6	[でお願いします]	d e o n e g a i sh i m a s u
+7	[平成]	h e: s e:
+7	[昭和]	sh o: w a
+7	[大正]	t a i sh o:
+7	[明治]	m e: j i
+7	[西暦]	s e: r e k i
+8	[一月]	i ch i g a ts u
+8	[二月]	n i g a ts u
+8	[三月]	s a N g a ts u
+8	[四月]	sh i g a ts u
+8	[五月]	g o g a ts u
+8	[六月]	r o k u g a ts u
+8	[七月]	sh i ch i g a ts u
+8	[七月]	h i ch i g a ts u
+8	[八月]	h a ch i g a ts u
+8	[九月]	k u g a ts u
+8	[十月]	j u: g a ts u
+8	[十一月]	j u: i ch i g a ts u
+8	[十二月]	j u: n i g a ts u
+9	[一日]	ts u i t a ch i
+9	[一日]	i ch i n i ch i
+9	[二日]	f u ts u k a
+9	[三日]	m i q k a
+9	[四日]	y o q k a
+9	[五日]	i ts u k a
+9	[五日]	g o n i ch i
+9	[六日]	m u i k a
+9	[六日]	r o k u n i ch i
+9	[七日]	n a n o k a
+9	[七日]	n a n a n i ch i
+9	[七日]	sh i ch i n i ch i
+9	[七日]	h i ch i n i ch i
+9	[八日]	y o: k a
+9	[九日]	k o k o n o k a
+9	[九日]	k u n i ch i
+9	[十日]	t o: k a
+9	[十一日]	j u: i ch i n i ch i
+9	[十二日]	j u: n i n i ch i
+9	[十三日]	j u: s a N n i ch i
+9	[十四日]	j u: y o N n i ch i
+9	[十四日]	j u: y o q k a
+9	[十五日]	j u: g o n i ch i
+9	[十六日]	j u: r o k u n i ch i
+9	[十七日]	j u: n a n a n i ch i
+9	[十七日]	j u: sh i ch i n i ch i
+9	[十八日]	j u: h a ch i n i ch i
+9	[十九日]	j u: k u n i ch i
+9	[二十日]	n i j u: n i ch i
+9	[二十日]	h a ts u k a
+9	[二十一日]	n i j u: i ch i n i ch i
+9	[二十二日]	n i j u: n i n i ch i
+9	[二十三日]	n i j u: s a N n i ch i
+9	[二十四日]	n i j u: y o N n i ch i
+9	[二十四日]	n i j u: y o q k a
+9	[二十五日]	n i j u: g o n i ch i
+9	[二十六日]	n i j u: r o k u n i ch i
+9	[二十七日]	n i j u: n a n a n i ch i
+9	[二十七日]	n i j u: sh i ch i n i ch i
+9	[二十八日]	n i j u: h a ch i n i ch i
+9	[二十九日]	n i j u: k u n i ch i
+9	[三十日]	s a N j u: n i ch i
+9	[三十一日]	s a N j u: i ch i n i ch i
+10	[月曜]	g e ts u y o:
+10	[火曜]	k a y o:
+10	[水曜]	s u i y o:
+10	[木曜]	m o k u y o:
+10	[金曜]	k i N y o:
+10	[土曜]	d o y o:
+10	[日曜]	n i ch i y o:
+10	[月曜日]	g e ts u y o: b i
+10	[火曜日]	k a y o: b i
+10	[水曜日]	s u i y o: b i
+10	[木曜日]	m o k u y o: b i
+10	[金曜日]	k i N y o: b i
+10	[土曜日]	d o y o: b i
+10	[日曜日]	n i ch i y o: b i
+11	[一]	i ch i
+11	[二]	n i
+11	[二]	n i i
+11	[三]	s a N
+11	[四]	sh i
+11	[四]	y o N
+11	[四]	y o
+11	[五]	g o
+11	[六]	r o k u
+11	[七]	n a n a
+11	[七]	sh i ch i
+11	[八]	h a ch i
+11	[九]	ky u:
+11	[九]	k u
+12	[十]	j u:
+12	[二十]	n i j u:
+12	[三十]	s a N j u:
+12	[四十]	y o N j u:
+12	[五十]	g o j u:
+12	[六十]	r o k u j u:
+12	[七十]	n a n a j u:
+12	[七十]	sh i ch i j u:
+12	[八十]	h a ch i j u:
+12	[九十]	ky u: j u:
+13	[百]	hy a k u
+13	[二百]	n i hy a k u
+13	[三百]	s a N by a k u
+13	[四百]	y o N hy a k u
+13	[五百]	g o hy a k u
+13	[六百]	r o q py a k u
+13	[七百]	n a n a hy a k u
+13	[八百]	h a q py a k u
+13	[九百]	ky u: hy a k u
+14	[千]	s e N
+14	[一千]	i q s e N
+14	[二千]	n i s e N
+15	[年]	n e N
+16	[零時]	r e: j i
+16	[一時]	i ch i j i
+16	[二時]	n i j i
+16	[三時]	s a N j i
+16	[四時]	y o j i
+16	[五時]	g o j i
+16	[六時]	r o k u j i
+16	[七時]	n a n a j i
+16	[七時]	sh i ch i j i
+16	[八時]	h a ch i j i
+16	[九時]	k u j i
+16	[十時]	j u: j i
+16	[十一時]	j u: i ch i j i
+16	[十二時]	j u: n i j i
+16	[十三時]	j u: s a N j i
+16	[十四時]	j u: y o j i
+16	[十五時]	j u: g o j i
+16	[十六時]	j u: r o k u j i
+16	[十七時]	j u: n a n a j i
+16	[十七時]	j u: sh i ch i j i
+16	[十八時]	j u: h a ch i j i
+16	[十九時]	j u: k u j i
+16	[二十時]	n i j u: j i
+16	[二十一時]	n i j u: i ch i j i
+16	[二十二時]	n i j u: n i j i
+16	[二十三時]	n i j u: s a N j i
+16	[二十四時]	n i j u: y o j i
+17	[零時]	r e: j i
+17	[一時]	i ch i j i
+17	[二時]	n i j i
+17	[三時]	s a N j i
+17	[四時]	y o j i
+17	[五時]	g o j i
+17	[六時]	r o k u j i
+17	[七時]	n a n a j i
+17	[七時]	sh i ch i j i
+17	[八時]	h a ch i j i
+17	[九時]	k u j i
+17	[十時]	j u: j i
+17	[十一時]	j u: i ch i j i
+17	[十二時]	j u: n i j i
+18	[朝]	a s a
+18	[午前]	g o z e N
+18	[夕方]	y u: g a t a
+18	[午後]	g o g o
+19	[の]	n o
+20	[正午]	sh o: g o
+21	[零分]	r e: f u N
+21	[一分]	i q p u N
+21	[二分]	n i f u N
+21	[三分]	s a N p u N
+21	[四分]	y o N f u N
+21	[五分]	g o f u N
+21	[六分]	r o q p u N
+21	[七分]	n a n a f u N
+21	[七分]	sh i ch i f u N
+21	[八分]	h a ch i f u N
+21	[八分]	h a q p u N
+21	[九分]	ky u: f u N
+22	[十分]	j u q p u N
+22	[十分]	j i q p u N
+22	[二十分]	n i j u q p u N
+22	[二十分]	n i j i q p u N
+22	[三十分]	s a N j u q p u N
+22	[三十分]	s a N j i q p u N
+22	[四十分]	y o N j u q p u N
+22	[四十分]	y o N j i q p u N
+22	[五十分]	g o j u q p u N
+22	[五十分]	g o j i q p u N
+22	[半]	h a N
+23	[ちょうど]	ch o: d o
+24	[前]	m a e
+24	[過ぎ]	s u g i
+24	[くらい]	k u r a i
+24	[ぐらい]	g u r a i

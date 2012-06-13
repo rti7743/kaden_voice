@@ -1,0 +1,12 @@
+-dfa datetime.dfa
+-v datetime.dict
+#
+-b 600
+-b2 100
+-penalty1 -7.0
+-penalty2 -7.0
+#
+#-input mic -demo
+#-input file
+#
+#-C ../../jconf/_AM_JNAS_ptm

@@ -1,0 +1,54 @@
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.TH MKSS 1 LOCAL
+.UC 6
+.SH NAME
+mkss - compute average spectrum from mic input for SS
+.SH SYNOPSIS
+.B mkss [options..] filename
+.SH DESCRIPTION
+.I mkss
+は指定時間分の音をマイク入力から録音し，その平均スペクトラムをファイルに
+出力するツールです．出力されたファイルは
+.I Julius
+でスペクトルサブトラクションのためのノイズスペクトルファイル
+（オプション "-ssload"）として利用できます．
+.PP
+音声の切り出しは行わず，起動と同時に録音を始めます．
+.PP
+サンプリング条件は16bit signed short (big endian), monoral で固定です．
+データ形式はRAW(ヘッダ無し)，big endian形式です．
+既に同じ名前のファイルが存在する場合は上書きします．
+.PP
+なおファイル名に "-" を指定することで標準出力へ出力することもできます．
+.SH OPTIONS
+.Ip "\-freq threshold"
+サンプリング周波数をHzで指定する．(default: 16000)
+.Ip "\-len msec"
+録音時間長をミリ秒単位で指定する (default: 3000)．
+.Ip "\-fsize samplenum"
+分析のフレームサイズをサンプル数で指定する (default: 400)．
+.Ip "\-fshift samplenum"
+分析のフレームシフトをサンプル数で指定する (default: 160)．
+.SH "SEE ALSO"
+julius(1)
+.SH BUGS
+バグ報告・問い合わせ・コメントなどは 
+julius@kuis.kyoto-u.ac.jp までお願いします．
+.SH COPYRIGHT
+Copyright (c) 1991-2003 京都大学
+.br
+Copyright (c) 2000-2003 奈良先端科学技術大学院大学
+.SH AUTHORS
+李 晃伸 (京都大学) が実装しました．
+.SH LICENSE
+.I Julius
+の使用許諾に準じます．

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -21,8 +21,8 @@ nw_malloc()
   int i;
   int maxnw;
 
-  maxnw = winfo->num * 2;	/* NOISE$B$rHt$P$9J,(B */
-  /* $BO"B3NN0h$rG[Ns$K3d$jEv$F$k(B */
+  maxnw = winfo->num * 2;	/* NOISEを飛ばす分 */
+  /* 連続領域を配列に割り当てる */
   nw = (NEXTWORD **)malloc(maxnw * sizeof(NEXTWORD *));
   nwtmp = (NEXTWORD *)malloc(maxnw * sizeof(NEXTWORD));
   nw[0] = nwtmp;
@@ -32,7 +32,7 @@ nw_malloc()
   return nw;
 }
 
-/* $BM=B,<!C18l3JG<NN0h$N2rJ|(B */
+/* 予測次単語格納領域の解放 */
 void
 nw_free(NEXTWORD **nw)
 {
@@ -42,9 +42,9 @@ nw_free(NEXTWORD **nw)
 
 
 
-/* $B=i4|>uBV$+$iA+0\$7$&$kC18l=89g$rJV$9(B */
-/* $BJV$jCM(B: $BC18l?t(B*/
-/* NOISE: $B$3$3$K$OMh$J$$;EMM(B */
+/* 初期状態から遷移しうる単語集合を返す */
+/* 返り値: 単語数*/
+/* NOISE: ここには来ない仕様 */
 int
 dfa_firstwords(NEXTWORD **nw)
 {
@@ -53,11 +53,11 @@ dfa_firstwords(NEXTWORD **nw)
   int num = 0;
 
   for (i=0;i<dfa->state_num;i++) {
-    if ((dfa->st[i].status & INITIAL_S) != 0) { /* $B=i4|>uBV$+$i(B */
-      for (arc = dfa->st[i].arc; arc; arc = arc->next) {	/* $BA4$F$NA+0\(B */
+    if ((dfa->st[i].status & INITIAL_S) != 0) { /* 初期状態から */
+      for (arc = dfa->st[i].arc; arc; arc = arc->next) {	/* 全ての遷移 */
 	cate = arc->label;
 	ns = arc->to_state;
-	/* $BA+0\$KBP1~$9$k%+%F%4%jFb$NA4C18l$rE83+(B */
+	/* 遷移に対応するカテゴリ内の全単語を展開 */
 	for (iw=0;iw<dfa->term.wnum[cate];iw++) {
 	  nw[num]->id = dfa->term.tw[cate][iw];
 	  nw[num]->next_state = ns;
@@ -78,11 +78,11 @@ dfa_firstterms(NEXTWORD **nw)
   int num = 0;
 
   for (i=0;i<dfa->state_num;i++) {
-    if ((dfa->st[i].status & INITIAL_S) != 0) { /* $B=i4|>uBV$+$i(B */
-      for (arc = dfa->st[i].arc; arc; arc = arc->next) {	/* $BA4$F$NA+0\(B */
+    if ((dfa->st[i].status & INITIAL_S) != 0) { /* 初期状態から */
+      for (arc = dfa->st[i].arc; arc; arc = arc->next) {	/* 全ての遷移 */
 	cate = arc->label;
 	ns = arc->to_state;
-	/* $BA+0\$KBP1~$9$k%+%F%4%jFb$N(B1$BC18l$rE83+(B */
+	/* 遷移に対応するカテゴリ内の1単語を展開 */
 	if (dfa->term.wnum[cate] == 0) continue;
 	nw[num]->id = dfa->term.tw[cate][0];
 	nw[num]->next_state = ns;
@@ -95,9 +95,9 @@ dfa_firstterms(NEXTWORD **nw)
   return num;
 }
 
-/* $B<!$K@\B3$7F@$kC18l72$rJV$9(B */
-/* $BJV$jCM(B:$BC18l?t(B */
-/* NOISE: $B@h$^$G8+$F!$(Bcan_insert_sp=TRUE$B$GJV$9(B */
+/* 次に接続し得る単語群を返す */
+/* 返り値:単語数 */
+/* NOISE: 先まで見て，can_insert_sp=TRUEで返す */
 int
 dfa_nextwords(NODE *hypo, NEXTWORD **nw)
 {
@@ -109,7 +109,7 @@ dfa_nextwords(NODE *hypo, NEXTWORD **nw)
     cate = arc->label;
     ns = arc->to_state;
     if (dfa->is_sp[cate]) {
-      /* $B@h$^$G8+$k!#<+J,$OE83+$7$J$$(B */
+      /* 先まで見る。自分は展開しない */
       for (arc2 = dfa->st[ns].arc; arc2; arc2 = arc2->next) {
 	cate2 = arc2->label;
 	ns2 = arc2->to_state;
@@ -121,7 +121,7 @@ dfa_nextwords(NODE *hypo, NEXTWORD **nw)
 	}
       }
     } else {
-      /* $BA+0\$KBP1~$9$k%+%F%4%jFb$NA4C18l$rE83+(B */
+      /* 遷移に対応するカテゴリ内の全単語を展開 */
       for (iw=0;iw<dfa->term.wnum[cate];iw++) {
 	nw[num]->id = dfa->term.tw[cate][iw];
 	nw[num]->next_state = ns;
@@ -143,7 +143,7 @@ dfa_nextterms(NODE *hypo, NEXTWORD **nw)
     cate = arc->label;
     ns = arc->to_state;
     if (dfa->is_sp[cate]) {
-      /* $B@h$^$G8+$k!#<+J,$OE83+$7$J$$(B */
+      /* 先まで見る。自分は展開しない */
       for (arc2 = dfa->st[ns].arc; arc2; arc2 = arc2->next) {
 	cate2 = arc2->label;
 	ns2 = arc2->to_state;
@@ -154,7 +154,7 @@ dfa_nextterms(NODE *hypo, NEXTWORD **nw)
 	num++;
       }
     } else {
-      /* $BA+0\$KBP1~$9$k%+%F%4%jFb$NA4C18l$rE83+(B */
+      /* 遷移に対応するカテゴリ内の全単語を展開 */
       if (dfa->term.wnum[cate] == 0) continue;
       nw[num]->id = dfa->term.tw[cate][0];
       nw[num]->next_state = ns;
@@ -165,12 +165,12 @@ dfa_nextterms(NODE *hypo, NEXTWORD **nw)
   return num;
 }
 
-/* $B2>@b$,J8$H$7$F<uM}2DG=$G$"$k$+$I$&$+$rJV$9(B */
-/* NOISE: $B$3$3$K$O$3$J$$;EMM(B */
+/* 仮説が文として受理可能であるかどうかを返す */
+/* NOISE: ここにはこない仕様 */
 boolean
 dfa_acceptable(NODE *hypo)
 {
-  /* $B<uM}>uBV$J$i(B */
+  /* 受理状態なら */
   if (dfa->st[hypo->state].status & ACCEPT_S) {
     return TRUE;
   } else {

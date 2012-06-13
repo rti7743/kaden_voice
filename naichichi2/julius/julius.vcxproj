@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>libjulius\include;libsent\include;msvc\config;msvc\portaudio;msvc\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4996;4995;4244;4018;4305;4101</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996;4995;4244;4018;4305;4101;4819</DisableSpecificWarnings>
       <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -62,7 +62,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>libjulius\include;libsent\include;msvc\config;msvc\portaudio;msvc\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4996;4995;4244;4018;4305;4101</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996;4995;4244;4018;4305;4101;4819</DisableSpecificWarnings>
       <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

@@ -1,0 +1,64 @@
+ADINREC(1)                                             ADINREC(1)
+
+
+
+NAME
+       adinrec - record one sentence utterance to a file
+
+SYNOPSIS
+       adinrec [options..] filename
+
+DESCRIPTION
+       adinrec  records one spoken utterance from microphone to a
+       file.
+
+       Output format is WAV, 16bit, monoral, no compression.   If
+       the  file  already exist, it will be overridden.  If file-
+       name of "-" is specified, recorded data will be output  to
+       stdout.
+
+       The sensitiveness of speech detection can be controlled by
+       thresholds of zerocross number and power (level).
+
+OPTIONS
+       -freq threshold
+              Sampling frequency (Hz, default=16000)
+
+       -lv threslevel
+              Level threshold (0-32767, default=2000)
+
+       -zc zerocrossnum
+              Zero   cross   number   threshold   in   a   second
+              (default=60)
+
+       -margin msec
+              Record  margin  before/after  the  detected segment
+              (milliseconds, default=300)
+
+       -nostrip
+              Disable skipping of invalid zero samples  (default:
+              enabled)
+
+       -zmean Enable zero mean subtraction to remove DC offset.
+
+       -raw   RAW format output (default: WAV)
+
+
+SEE ALSO
+       adintool(1),  julius(1),  sox(1),  wavplay(1),  wavrec(1),
+       aplay(1), arecord(1)
+
+COPYRIGHT
+       Copyright (c) 2000-2003  Nara  Institute  of  Science  and
+       Technology, Japan
+
+AUTHORS
+       LEE Akinobu (NAIST, Japan)
+       contact: julius@kuis.kyoto-u.ac.jp
+
+LICENSE
+       Same as Julius.
+
+
+
+                              LOCAL                    ADINREC(1)

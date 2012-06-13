@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GRAMMAR>
+<RULE name="MIN" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM10"/>
+      <RULEREF name="MIN1"/>
+      <RULEREF name="ABOUT"/>
+    </P>
+    <P>
+      <RULEREF name="NUM10"/>
+      <RULEREF name="MIN1"/>
+    </P>
+    <P>
+      <RULEREF name="MIN10"/>
+      <RULEREF name="ABOUT"/>
+    </P>
+    <P>
+      <RULEREF name="MIN10"/>
+    </P>
+    <P>
+      <RULEREF name="MIN1"/>
+      <RULEREF name="ABOUT"/>
+    </P>
+    <P>
+      <RULEREF name="MIN1"/>
+    </P>
+    <P>
+      <RULEREF name="JUST"/>
+      <RULEREF name="ABOUT"/>
+    </P>
+    <P>
+      <RULEREF name="JUST"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="MON" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="MONTH"/>
+      <RULEREF name="DA"/>
+    </P>
+    <P>
+      <RULEREF name="MONTH"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="S" toplevel="ACTIVE">
+  <L>
+    <P>
+      <RULEREF name="HMM"/>
+      <RULEREF name="TODAYNOW"/>
+      <RULEREF name="DESU"/>
+    </P>
+    <P>
+      <RULEREF name="HMM"/>
+      <RULEREF name="TODAYNOW"/>
+    </P>
+    <P>
+      <RULEREF name="TODAYNOW"/>
+      <RULEREF name="DESU"/>
+    </P>
+    <P>
+      <RULEREF name="TODAYNOW"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUM1000S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM1000"/>
+      <RULEREF name="NUM100S"/>
+    </P>
+    <P>
+      <RULEREF name="NUM1000"/>
+      <RULEREF name="NUM10S"/>
+    </P>
+    <P>
+      <RULEREF name="NUM1000"/>
+      <RULEREF name="NUM1"/>
+    </P>
+    <P>
+      <RULEREF name="NUM1000"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="YEAR" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM"/>
+      <RULEREF name="NEN"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="TIME" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="HOUR"/>
+      <RULEREF name="MIN"/>
+    </P>
+    <P>
+      <RULEREF name="HOUR"/>
+    </P>
+    <P>
+      <RULEREF name="MIN"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="TODAYNOW" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="TODAY"/>
+      <RULEREF name="DATE"/>
+    </P>
+    <P>
+      <RULEREF name="DATE"/>
+    </P>
+    <P>
+      <RULEREF name="NOW"/>
+      <RULEREF name="TIME"/>
+    </P>
+    <P>
+      <RULEREF name="TIME"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="DATE" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="JAPAERA"/>
+      <RULEREF name="YEAR"/>
+      <RULEREF name="MON"/>
+    </P>
+    <P>
+      <RULEREF name="JAPAERA"/>
+      <RULEREF name="YEAR"/>
+    </P>
+    <P>
+      <RULEREF name="YEAR"/>
+      <RULEREF name="MON"/>
+    </P>
+    <P>
+      <RULEREF name="YEAR"/>
+    </P>
+    <P>
+      <RULEREF name="MON"/>
+    </P>
+    <P>
+      <RULEREF name="DA"/>
+    </P>
+    <P>
+      <RULEREF name="WEEK"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUM" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM1000S"/>
+    </P>
+    <P>
+      <RULEREF name="NUM100S"/>
+    </P>
+    <P>
+      <RULEREF name="NUM10S"/>
+    </P>
+    <P>
+      <RULEREF name="NUM1"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="HOUR" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="24HOUR"/>
+    </P>
+    <P>
+      <RULEREF name="AMPM"/>
+      <RULEREF name="NO"/>
+      <RULEREF name="12HOUR"/>
+    </P>
+    <P>
+      <RULEREF name="AMPM"/>
+      <RULEREF name="12HOUR"/>
+    </P>
+    <P>
+      <RULEREF name="NOON"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUM100S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM100"/>
+      <RULEREF name="NUM10S"/>
+    </P>
+    <P>
+      <RULEREF name="NUM100"/>
+      <RULEREF name="NUM1"/>
+    </P>
+    <P>
+      <RULEREF name="NUM100"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NUM10S" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NUM10"/>
+      <RULEREF name="NUM1"/>
+    </P>
+    <P>
+      <RULEREF name="NUM10"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="DA" toplevel="INACTIVE">
+  <L>
+    <P>
+      <RULEREF name="DAY"/>
+      <RULEREF name="WEEK"/>
+    </P>
+    <P>
+      <RULEREF name="DAY"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="WEEK" toplevel="INACTIVE">
+  <L propname="WEEK">
+    <P valstr="月">/月曜/げつよー;</P>
+    <P valstr="火">/火曜/かよー;</P>
+    <P valstr="水">/水曜/すいよー;</P>
+    <P valstr="木">/木曜/もくよー;</P>
+    <P valstr="金">/金曜/きんよー;</P>
+    <P valstr="土">/土曜/どよー;</P>
+    <P valstr="日">/日曜/にちよー;</P>
+    <P valstr="月">/月曜日/げつよーび;</P>
+    <P valstr="火">/火曜日/かよーび;</P>
+    <P valstr="水">/水曜日/すいよーび;</P>
+    <P valstr="木">/木曜日/もくよーび;</P>
+    <P valstr="金">/金曜日/きんよーび;</P>
+    <P valstr="土">/土曜日/どよーび;</P>
+    <P valstr="日">/日曜日/にちよーび;</P>
+  </L>
+</RULE>
+<RULE name="24HOUR" toplevel="INACTIVE">
+  <L propname="24HOUR">
+    <P valstr="0">/零時/れーじ;</P>
+    <P valstr="1">/一時/いちじ;</P>
+    <P valstr="2">/二時/にじ;</P>
+    <P valstr="3">/三時/さんじ;</P>
+    <P valstr="4">/四時/よじ;</P>
+    <P valstr="5">/五時/ごじ;</P>
+    <P valstr="6">/六時/ろくじ;</P>
+    <P valstr="7">/七時/ななじ;</P>
+    <P valstr="7">/七時/しちじ;</P>
+    <P valstr="8">/八時/はちじ;</P>
+    <P valstr="9">/九時/くじ;</P>
+    <P valstr="10">/十時/じゅーじ;</P>
+    <P valstr="11">/十一時/じゅーいちじ;</P>
+    <P valstr="12">/十二時/じゅーにじ;</P>
+    <P valstr="13">/十三時/じゅーさんじ;</P>
+    <P valstr="14">/十四時/じゅーよじ;</P>
+    <P valstr="15">/十五時/じゅーごじ;</P>
+    <P valstr="16">/十六時/じゅーろくじ;</P>
+    <P valstr="17">/十七時/じゅーななじ;</P>
+    <P valstr="17">/十七時/じゅーしちじ;</P>
+    <P valstr="18">/十八時/じゅーはちじ;</P>
+    <P valstr="19">/十九時/じゅーくじ;</P>
+    <P valstr="20">/二十時/にじゅーじ;</P>
+    <P valstr="21">/二十一時/にじゅーいちじ;</P>
+    <P valstr="22">/二十二時/にじゅーにじ;</P>
+    <P valstr="23">/二十三時/にじゅーさんじ;</P>
+    <P valstr="0">/二十四時/にじゅーよじ;</P>
+  </L>
+</RULE>
+<RULE name="HMM" toplevel="INACTIVE">
+  <L>
+    <P>えー</P>
+    <P>えーと</P>
+    <P>えーっと</P>
+    <P>えーっとー</P>
+    <P>あー</P>
+    <P>あーと</P>
+    <P>あーっと</P>
+    <P>/んー/んん;</P>
+    <P>/んーと/んんと;</P>
+    <P>/んーっと/んっと;</P>
+    <P>あのー</P>
+    <P>そのー</P>
+    <P>と</P>
+    <P>っと</P>
+    <P>うーん</P>
+    <P>うーんと</P>
+  </L>
+</RULE>
+<RULE name="AMPM" toplevel="INACTIVE">
+  <L propname="AMPM">
+    <P valstr="am">/朝/あさ;</P>
+    <P valstr="am">/午前/ごぜん;</P>
+    <P valstr="pm">/夕方/ゆーがた;</P>
+    <P valstr="pm">/午後/ごご;</P>
+  </L>
+</RULE>
+<RULE name="NEN" toplevel="INACTIVE">
+  <L>
+    <P>/年/ねん;</P>
+  </L>
+</RULE>
+<RULE name="TODAY" toplevel="INACTIVE">
+  <L>
+    <P>/今日は/きょーわ;</P>
+    <P>/今日/きょー;</P>
+  </L>
+</RULE>
+<RULE name="NO" toplevel="INACTIVE">
+  <L>
+    <P>の</P>
+  </L>
+</RULE>
+<RULE name="DESU" toplevel="INACTIVE">
+  <L>
+    <P>です</P>
+    <P>になります</P>
+    <P>/でお願いします/でおねがいします;</P>
+  </L>
+</RULE>
+<RULE name="NOW" toplevel="INACTIVE">
+  <L>
+    <P>/今は/いまわ;</P>
+    <P>/今/いま;</P>
+  </L>
+</RULE>
+<RULE name="JAPAERA" toplevel="INACTIVE">
+  <L propname="JAPAERA">
+    <P valstr="平成">/平成/へーせー;</P>
+    <P valstr="昭和">/昭和/しょーわ;</P>
+    <P valstr="大正">/大正/たいしょー;</P>
+    <P valstr="明治">/明治/めーじ;</P>
+    <P valstr="西暦">/西暦/せーれき;</P>
+  </L>
+</RULE>
+<RULE name="JUST" toplevel="INACTIVE">
+  <L propname="JUST">
+    <P valstr="just">/ちょうど/ちょーど;</P>
+  </L>
+</RULE>
+<RULE name="DAY" toplevel="INACTIVE">
+  <L propname="DAY">
+    <P valstr="1">/一日/ついたち;</P>
+    <P valstr="1">/一日/いちにち;</P>
+    <P valstr="2">/二日/ふつか;</P>
+    <P valstr="3">/三日/みっか;</P>
+    <P valstr="4">/四日/よっか;</P>
+    <P valstr="5">/五日/いつか;</P>
+    <P valstr="5">/五日/ごにち;</P>
+    <P valstr="6">/六日/むいか;</P>
+    <P valstr="6">/六日/ろくにち;</P>
+    <P valstr="7">/七日/なのか;</P>
+    <P valstr="7">/七日/ななにち;</P>
+    <P valstr="7">/七日/しちにち;</P>
+    <P valstr="7">/七日/ひちにち;</P>
+    <P valstr="8">/八日/よーか;</P>
+    <P valstr="9">/九日/ここのか;</P>
+    <P valstr="9">/九日/くにち;</P>
+    <P valstr="10">/十日/とーか;</P>
+    <P valstr="11">/十一日/じゅーいちにち;</P>
+    <P valstr="12">/十二日/じゅーににち;</P>
+    <P valstr="13">/十三日/じゅーさんにち;</P>
+    <P valstr="14">/十四日/じゅーよんにち;</P>
+    <P valstr="14">/十四日/じゅーよっか;</P>
+    <P valstr="15">/十五日/じゅーごにち;</P>
+    <P valstr="16">/十六日/じゅーろくにち;</P>
+    <P valstr="17">/十七日/じゅーななにち;</P>
+    <P valstr="17">/十七日/じゅーしちにち;</P>
+    <P valstr="18">/十八日/じゅーはちにち;</P>
+    <P valstr="19">/十九日/じゅーくにち;</P>
+    <P valstr="20">/二十日/にじゅーにち;</P>
+    <P valstr="20">/二十日/はつか;</P>
+    <P valstr="21">/二十一日/にじゅーいちにち;</P>
+    <P valstr="22">/二十二日/にじゅーににち;</P>
+    <P valstr="23">/二十三日/にじゅーさんにち;</P>
+    <P valstr="24">/二十四日/にじゅーよんにち;</P>
+    <P valstr="24">/二十四日/にじゅーよっか;</P>
+    <P valstr="25">/二十五日/にじゅーごにち;</P>
+    <P valstr="26">/二十六日/にじゅーろくにち;</P>
+    <P valstr="27">/二十七日/にじゅーななにち;</P>
+    <P valstr="27">/二十七日/にじゅーしちにち;</P>
+    <P valstr="28">/二十八日/にじゅーはちにち;</P>
+    <P valstr="29">/二十九日/にじゅーくにち;</P>
+    <P valstr="30">/三十日/さんじゅーにち;</P>
+    <P valstr="31">/三十一日/さんじゅーいちにち;</P>
+  </L>
+</RULE>
+<RULE name="NUM100" toplevel="INACTIVE">
+  <L propname="NUM100">
+    <P valstr="100">/百/ひゃく;</P>
+    <P valstr="200">/二百/にひゃく;</P>
+    <P valstr="300">/三百/さんびゃく;</P>
+    <P valstr="400">/四百/よんひゃく;</P>
+    <P valstr="500">/五百/ごひゃく;</P>
+    <P valstr="600">/六百/ろっぴゃく;</P>
+    <P valstr="700">/七百/ななひゃく;</P>
+    <P valstr="800">/八百/はっぴゃく;</P>
+    <P valstr="900">/九百/きゅーひゃく;</P>
+  </L>
+</RULE>
+<RULE name="NUM10" toplevel="INACTIVE">
+  <L propname="NUM10">
+    <P valstr="10">/十/じゅー;</P>
+    <P valstr="20">/二十/にじゅー;</P>
+    <P valstr="30">/三十/さんじゅー;</P>
+    <P valstr="40">/四十/よんじゅー;</P>
+    <P valstr="50">/五十/ごじゅー;</P>
+    <P valstr="60">/六十/ろくじゅー;</P>
+    <P valstr="70">/七十/ななじゅー;</P>
+    <P valstr="70">/七十/しちじゅー;</P>
+    <P valstr="80">/八十/はちじゅー;</P>
+    <P valstr="90">/九十/きゅーじゅー;</P>
+  </L>
+</RULE>
+<RULE name="MIN1" toplevel="INACTIVE">
+  <L propname="MIN1">
+    <P valstr="0">/零分/れーふん;</P>
+    <P valstr="1">/一分/いっぷん;</P>
+    <P valstr="2">/二分/にふん;</P>
+    <P valstr="3">/三分/さんぷん;</P>
+    <P valstr="4">/四分/よんふん;</P>
+    <P valstr="5">/五分/ごふん;</P>
+    <P valstr="6">/六分/ろっぷん;</P>
+    <P valstr="7">/七分/ななふん;</P>
+    <P valstr="7">/七分/しちふん;</P>
+    <P valstr="8">/八分/はちふん;</P>
+    <P valstr="8">/八分/はっぷん;</P>
+    <P valstr="9">/九分/きゅーふん;</P>
+  </L>
+</RULE>
+<RULE name="MIN10" toplevel="INACTIVE">
+  <L propname="MIN10">
+    <P valstr="10">/十分/じゅっぷん;</P>
+    <P valstr="10">/十分/じっぷん;</P>
+    <P valstr="20">/二十分/にじゅっぷん;</P>
+    <P valstr="20">/二十分/にじっぷん;</P>
+    <P valstr="30">/三十分/さんじゅっぷん;</P>
+    <P valstr="30">/三十分/さんじっぷん;</P>
+    <P valstr="40">/四十分/よんじゅっぷん;</P>
+    <P valstr="40">/四十分/よんじっぷん;</P>
+    <P valstr="50">/五十分/ごじゅっぷん;</P>
+    <P valstr="50">/五十分/ごじっぷん;</P>
+    <P valstr="30">/半/はん;</P>
+  </L>
+</RULE>
+<RULE name="MONTH" toplevel="INACTIVE">
+  <L propname="MONTH">
+    <P valstr="1">/一月/いちがつ;</P>
+    <P valstr="2">/二月/にがつ;</P>
+    <P valstr="3">/三月/さんがつ;</P>
+    <P valstr="4">/四月/しがつ;</P>
+    <P valstr="5">/五月/ごがつ;</P>
+    <P valstr="6">/六月/ろくがつ;</P>
+    <P valstr="7">/七月/しちがつ;</P>
+    <P valstr="7">/七月/ひちがつ;</P>
+    <P valstr="8">/八月/はちがつ;</P>
+    <P valstr="9">/九月/くがつ;</P>
+    <P valstr="10">/十月/じゅーがつ;</P>
+    <P valstr="11">/十一月/じゅーいちがつ;</P>
+    <P valstr="12">/十二月/じゅーにがつ;</P>
+  </L>
+</RULE>
+<RULE name="NUM1" toplevel="INACTIVE">
+  <L propname="NUM1">
+    <P valstr="1">/一/いち;</P>
+    <P valstr="2">/二/に;</P>
+    <P valstr="2">/二/にい;</P>
+    <P valstr="3">/三/さん;</P>
+    <P valstr="4">/四/し;</P>
+    <P valstr="4">/四/よん;</P>
+    <P valstr="4">/四/よ;</P>
+    <P valstr="5">/五/ご;</P>
+    <P valstr="6">/六/ろく;</P>
+    <P valstr="7">/七/なな;</P>
+    <P valstr="7">/七/しち;</P>
+    <P valstr="8">/八/はち;</P>
+    <P valstr="9">/九/きゅー;</P>
+    <P valstr="9">/九/く;</P>
+  </L>
+</RULE>
+<RULE name="NUM1000" toplevel="INACTIVE">
+  <L propname="NUM1000">
+    <P valstr="1000">/千/せん;</P>
+    <P valstr="1000">/一千/いっせん;</P>
+    <P valstr="2000">/二千/にせん;</P>
+  </L>
+</RULE>
+<RULE name="NOON" toplevel="INACTIVE">
+  <L propname="NOON">
+    <P valstr="noon">/正午/しょーご;</P>
+  </L>
+</RULE>
+<RULE name="12HOUR" toplevel="INACTIVE">
+  <L propname="12HOUR">
+    <P valstr="0">/零時/れーじ;</P>
+    <P valstr="1">/一時/いちじ;</P>
+    <P valstr="2">/二時/にじ;</P>
+    <P valstr="3">/三時/さんじ;</P>
+    <P valstr="4">/四時/よじ;</P>
+    <P valstr="5">/五時/ごじ;</P>
+    <P valstr="6">/六時/ろくじ;</P>
+    <P valstr="7">/七時/ななじ;</P>
+    <P valstr="7">/七時/しちじ;</P>
+    <P valstr="8">/八時/はちじ;</P>
+    <P valstr="9">/九時/くじ;</P>
+    <P valstr="10">/十時/じゅーじ;</P>
+    <P valstr="11">/十一時/じゅーいちじ;</P>
+    <P valstr="12">/十二時/じゅーにじ;</P>
+  </L>
+</RULE>
+<RULE name="ABOUT" toplevel="INACTIVE">
+  <L propname="ABOUT">
+    <P valstr="before">/前/まえ;</P>
+    <P valstr="after">/過ぎ/すぎ;</P>
+    <P valstr="about">くらい</P>
+    <P valstr="about">ぐらい</P>
+  </L>
+</RULE>
+</GRAMMAR>

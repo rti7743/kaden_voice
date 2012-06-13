@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -14,18 +14,18 @@
 #include <sent/speech.h>
 
 /* ported from julian/dfa_decode.c */
-/* $B<!C18l8uJd(B */
+/* 次単語候補 */
 typedef struct __nextword__ {
-  WORD_ID id;			/* $BC18l(BID */
-  int next_state;		/* $BA+0\8e$N(BDFA$B>uBVHV9f(B */
-  boolean can_insert_sp;	/* $B2>@b$H$3$NC18l$N4V$K(Bsp$B$,F~$k2DG=@-$,$"$k>l9g(B TRUE */
+  WORD_ID id;			/* 単語ID */
+  int next_state;		/* 遷移後のDFA状態番号 */
+  boolean can_insert_sp;	/* 仮説とこの単語の間にspが入る可能性がある場合 TRUE */
 } NEXTWORD;
-/* $BItJ,J82>@b(B */
+/* 部分文仮説 */
 typedef struct __node__ {
-  boolean endflag;              /* $BC5:w=*N;%U%i%0(B */
-  WORD_ID seq[MAXSEQNUM];       /* $B2>@b$NC18l7ONs(B */
-  short seqnum;                 /* $B2>@b$NC18l$N?t(B */
-  int state;                    /* $B8=:_$N(BDFA$B>uBVHV9f(B */
+  boolean endflag;              /* 探索終了フラグ */
+  WORD_ID seq[MAXSEQNUM];       /* 仮説の単語系列 */
+  short seqnum;                 /* 仮説の単語の数 */
+  int state;                    /* 現在のDFA状態番号 */
 } NODE;
 
 NEXTWORD **nw_malloc();

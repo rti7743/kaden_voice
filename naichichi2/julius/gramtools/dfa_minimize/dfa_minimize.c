@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file   dfa_minimize.c
  * 
  * @brief  Minimize DFA for Julian grammar.

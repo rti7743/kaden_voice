@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file   julius-simple.c
  * 
  * <EN>
@@ -11,12 +11,12 @@
  * </EN>
  * 
  * <JA>
- * @brief  JuliusLib�ѥ���ץ륳����
+ * @brief  JuliusLib用サンプルコード
  *
- * ���Υ����ɤ� JuliusLib ���󥯤��ƴ�ñ��ǧ������ۤ��ޤ���
+ * このコードは JuliusLib をリンクして簡単な認識器を構築します．
  *
- * ���Υץ������ϲ������Ϥ��Ф���Ϳ����줿 jconf ����Τ�Ȥ�
- * ǧ����Ԥ�����̤�ɸ����Ϥ˽��Ϥ��ޤ���
+ * このプログラムは音声入力に対して与えられた jconf 設定のもとで
+ * 認識を行い，結果を標準出力に出力します．
  * 
  * </JA>
  * 

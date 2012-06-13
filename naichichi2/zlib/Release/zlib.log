@@ -1,0 +1,64 @@
+﻿2012/05/26 0:45:39 にビルドを開始しました。
+     1>ノード 3 上のプロジェクト "C:\Users\rti\Desktop\naichichi2\zlib\zlib.vcxproj" (rebuild ターゲット)。
+     1>_PrepareForClean:
+         ファイル "Release\zlib.lastbuildstate" を削除しています。
+       InitializeBuildStatus:
+         "AlwaysCreate" が指定されたため "Release\zlib.unsuccessfulbuild" を作成しています。
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.\ /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TC /wd4996 /analyze- /errorReport:prompt adler32.c compress.c contrib\minizip\ioapi.c contrib\minizip\iowin32.c contrib\minizip\mztools.c contrib\minizip\unzip.c contrib\minizip\zip.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inffast.c inflate.c inftrees.c trees.c uncompr.c zutil.c
+         adler32.c
+         compress.c
+         ioapi.c
+         iowin32.c
+         mztools.c
+         unzip.c
+         zip.c
+         crc32.c
+         deflate.c
+         gzclose.c
+         gzlib.c
+     1>gzlib.c(180): warning C4013: 関数 'open' は定義されていません。int 型の値を返す外部関数と見なします。
+     1>gzlib.c(204): warning C4013: 関数 '_lseeki64' は定義されていません。int 型の値を返す外部関数と見なします。
+         gzread.c
+     1>gzread.c(30): warning C4013: 関数 'read' は定義されていません。int 型の値を返す外部関数と見なします。
+     1>gzread.c(581): warning C4013: 関数 'close' は定義されていません。int 型の値を返す外部関数と見なします。
+         gzwrite.c
+     1>gzwrite.c(84): warning C4013: 関数 'write' は定義されていません。int 型の値を返す外部関数と見なします。
+     1>gzwrite.c(558): warning C4013: 関数 'close' は定義されていません。int 型の値を返す外部関数と見なします。
+         infback.c
+         inffast.c
+         inflate.c
+         inftrees.c
+         trees.c
+         uncompr.c
+         zutil.c
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"C:\Users\rti\Desktop\naichichi2\Release\zlib.lib" /NOLOGO /LTCG Release\adler32.obj
+         Release\compress.obj
+         Release\ioapi.obj
+         Release\iowin32.obj
+         Release\mztools.obj
+         Release\unzip.obj
+         Release\zip.obj
+         Release\crc32.obj
+         Release\deflate.obj
+         Release\gzclose.obj
+         Release\gzlib.obj
+         Release\gzread.obj
+         Release\gzwrite.obj
+         Release\infback.obj
+         Release\inffast.obj
+         Release\inflate.obj
+         Release\inftrees.obj
+         Release\trees.obj
+         Release\uncompr.obj
+         Release\zutil.obj
+         zlib.vcxproj -> C:\Users\rti\Desktop\naichichi2\Release\zlib.lib
+       FinalizeBuildStatus:
+         ファイル "Release\zlib.unsuccessfulbuild" を削除しています。
+         "Release\zlib.lastbuildstate" のタッチ タスクを実行しています。
+     1>プロジェクト "C:\Users\rti\Desktop\naichichi2\zlib\zlib.vcxproj" (rebuild ターゲット) のビルドが完了しました。
+
+ビルドに成功しました。
+
+経過時間 00:00:01.67

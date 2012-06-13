@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="JuliusLib">
+</Property><Property Name="ソリューション ファイル" Value="C:\Users\rti\Desktop\julius-4.2.1\msvc\JuliusLib.sln">
+</Property><Property Name="Date" Value="2012年2月24日">
+</Property><Property Name="Time" Value="15:52">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="JuliusLib.sln" Description="ファイルは正常に C:\Users\rti\Desktop\julius-4.2.1\msvc\JuliusLib.sln.old としてバックアップされました。">
+</Event><Event ErrorLevel="0" Project="libsent" Source="libsent\libsent.vcproj" Description="Converting project file 'C:\Users\rti\Desktop\julius-4.2.1\msvc\libsent\libsent.vcproj'.">
+</Event><Event ErrorLevel="1" Project="libsent" Source="libsent\libsent.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="libsent" Source="libsent\libsent.vcproj" Description="Done converting to new project file 'C:\Users\rti\Desktop\julius-4.2.1\msvc\libsent\libsent.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="libsent" Source="libsent\libsent.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="libjulius" Source="libjulius\libjulius.vcproj" Description="Converting project file 'C:\Users\rti\Desktop\julius-4.2.1\msvc\libjulius\libjulius.vcproj'.">
+</Event><Event ErrorLevel="1" Project="libjulius" Source="libjulius\libjulius.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="libjulius" Source="libjulius\libjulius.vcproj" Description="Done converting to new project file 'C:\Users\rti\Desktop\julius-4.2.1\msvc\libjulius\libjulius.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="libjulius" Source="libjulius\libjulius.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="julius" Source="julius\julius.vcproj" Description="Converting project file 'C:\Users\rti\Desktop\julius-4.2.1\msvc\julius\julius.vcproj'.">
+</Event><Event ErrorLevel="1" Project="julius" Source="julius\julius.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="julius" Source="julius\julius.vcproj" Description="Done converting to new project file 'C:\Users\rti\Desktop\julius-4.2.1\msvc\julius\julius.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="julius" Source="julius\julius.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="SampleApp" Source="SampleApp\SampleApp.vcproj" Description="Converting project file 'C:\Users\rti\Desktop\julius-4.2.1\msvc\SampleApp\SampleApp.vcproj'.">
+</Event><Event ErrorLevel="1" Project="SampleApp" Source="SampleApp\SampleApp.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="SampleApp" Source="SampleApp\SampleApp.vcproj" Description="Done converting to new project file 'C:\Users\rti\Desktop\julius-4.2.1\msvc\SampleApp\SampleApp.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="SampleApp" Source="SampleApp\SampleApp.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="JuliusLib.sln" Description="ソリューションは正常に変換されました">
+</Event><Event ErrorLevel="3" Project="" Source="JuliusLib.sln" Description="Converted">
+</Event></UpgradeLog>

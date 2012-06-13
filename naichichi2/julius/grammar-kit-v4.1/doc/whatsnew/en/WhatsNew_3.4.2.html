@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<link rel="stylesheet" type="text/css" href="default.css">
+<html> <head>
+<title>What's New in Rev.3.4.2</title>
+</head>
+<body>
+<h1>What's New in Rev.3.4.2</h1>
+
+Julius rev.3.4.2 has bug fixes and one new option.  This version fixes an important bug which was found in rev.3.4 and rev.3.4.1, so all users are recommended to update to 3.4.2.  The changes from rev.3.4.1 are:
+<ul>
+<li>Bug fixes
+  <ul>
+  <li><a href="#decoding">Fixed failure of N-best search on small dictionary</a>
+  <li><a href="#adinmodule">Improved stability in module mode and networked input</a>
+  <li><a href="#generate">Fixed infinite loop in "<code>generate</code>"</a>
+  </ul>
+  <p>
+<li>New features
+  <ul>
+  <li><a href="#rejectshort">Rejection of short input: "<code>-rejectshort</code>"</a>
+  </ul>
+  <p>
+<li>Cosmetic changes
+  <ul>
+  <li>Re-format code to conform <code>'gcc -Wall'</code>
+  <li>Update <code>config.guess</code>, <code>config.sub</code>
+  <li>Update copyright to 2004.
+  <li>Small fixes for headers.
+  </ul>
+</ul>
+
+Details are shown in the following.
+
+<h2><a name="decoding">Fixed Failure of N-Best Search on Small Dictionary</a></h2>
+
+There found a new bug in Julius/Julian of rev.3.4 and rev.3.4.1 that N-best candidate sometimes does not found.  This bug will takes much effect when using a small dictionary that consists of only several words.  
+<p>
+This bug exists Julius/Julian of rev.3.4 and rev.3.4.1, when compiled with confidence scoring (default).  So every users are recommended to update to this version.
+<p>
+The source file which concerns this bug is "<code>julius/search_bestfirst_main.c</code>".
+
+<h2><a name="adinmodule">Improved Stability in Module Mode and Networked Input</a></h2>
+
+Julius/Julian become much stable when using module mode "<code>-module</code>" (send recognition result and receive control command via TCP/IP from client application), and adinnet input mode "<code>-input adinnet</code>" (receive speech input via TCP/IP from adin process, i.e. <code>adintool</code>).
+<p>
+The previous version has trounble in input pause / resume when both the module mode and adinnet input mode is used.  Now the input controll command to Julius and Julian are passed to the adin process, to do synchronous, cooperative start and stop.
+
+<h2><a name="generate">Fixed infinite loop in "<code>generate</code>"</a></h2>
+
+A sentence generator "<code>generate</code>" sometimes enters infinite loop when using a small grammar.  This version fixed this bug.
+<p>
+The relating source file is "<code>gramtool/generate/generate.c</code>".
+
+<h2><a name="rejectshort">Rejection of short input: "<code>-rejectshort</code>"</a></h2>
+
+A new options to reject short inputs has been added.  If the input length was shorter than specified length, it will not be recognized.  This option may be effective to suppress invalid input triggering by impulsive noises.
+<p>
+A runtime option "<code>-rejectshoft</code>" specifies the length to be rejected in milliseconds.  For example, if you want to reject input shorter than 0.8 sec, you should specify
+<pre>
+  -rejectshort 800
+</pre>
+On file input, the input will be immediately rejected when the length is shorter than specified.  In microphone input, the 1st pass will be performed concurrently with the input, and if the length is shorter at the end of the 1st pass, the 2nd pass will be canceled.
+<p>
+When input is rejected, Julius/Julian output the following message to stdout.
+<pre>
+  input rejected: too short input
+</pre>
+In module mode, the following message will be sent to client.
+<pre>
+  &lt;REJECTED REASON="too short input"/&gt;
+</pre>
+When you use this function with "<code>-record</code>", the rejected inputs will also be recorded to a file.
+
+<h2><a name="optsummary">List of Modified Options</a></h2>
+<code>configure</code> options:
+<ul>
+<li>No change
+</ul>
+Runtime options:
+<ul>
+<li>New: <code><a href="#iwcdbest">-rejectshort msec</a></code>
+</ul>
+
+<hr>
+<small><i>$Id: WhatsNew_3.4.2.html,v 1.1 2004/04/28 08:02:13 ri Exp $</i></small><br>
+</body> </html>

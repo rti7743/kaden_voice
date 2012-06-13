@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GRAMMAR>
+<RULE name="S" toplevel="ACTIVE">
+  <L>
+    <P>
+      <RULEREF name="NAME"/>
+    </P>
+    <P>
+      <RULEREF name="NAME"/>
+      <RULEREF name="FILL_E"/>
+    </P>
+    <P>
+      <RULEREF name="FILL_B"/>
+      <RULEREF name="NAME"/>
+      <RULEREF name="FILL_E"/>
+    </P>
+    <P>
+      <RULEREF name="FILL_B"/>
+    </P>
+    <P>
+      <RULEREF name="ANSWER"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="NAME" toplevel="INACTIVE">
+  <L propname="NAME">
+    <P valstr="小泉">/小泉/こいずみ;</P>
+    <P valstr="片山">/片山/かたやま;</P>
+    <P valstr="森山">/森山/もりやま;</P>
+    <P valstr="田中">/田中/たなか;</P>
+    <P valstr="塩川">/塩川/しおかわ;</P>
+    <P valstr="遠山">/遠山/とーやま;</P>
+    <P valstr="坂口">/坂口/さかぐち;</P>
+    <P valstr="武部">/武部/たけべ;</P>
+    <P valstr="平沼">/平沼/ひらぬま;</P>
+    <P valstr="扇">/扇/おーぎ;</P>
+    <P valstr="川口">/川口/かわぐち;</P>
+    <P valstr="福田">/福田/ふくだ;</P>
+    <P valstr="村井">/村井/むらい;</P>
+    <P valstr="中谷">/中谷/なかたに;</P>
+    <P valstr="尾身">/尾身/おみ;</P>
+    <P valstr="柳澤">/柳澤/やなぎさわ;</P>
+    <P valstr="竹中">/竹中/たけなか;</P>
+    <P valstr="石原">/石原/いしはら;</P>
+    <P valstr="安倍">/安倍/あべ;</P>
+    <P valstr="上野">/上野/うえの;</P>
+    <P valstr="古川">/古川/ふるかわ;</P>
+    <P valstr="津野">/津野/つの;</P>
+  </L>
+</RULE>
+<RULE name="ANSWER" toplevel="INACTIVE">
+  <L propname="ANSWER">
+    <P valstr="yes">/ええ/えー;</P>
+    <P valstr="yes">はい</P>
+    <P valstr="no">いいえ</P>
+  </L>
+</RULE>
+<RULE name="FILL_E" toplevel="INACTIVE">
+  <L>
+    <P>/お願い/おねがい;</P>
+    <P>/お願いします/おねがいします;</P>
+    <P>さん</P>
+    <P>/さんお願い/さんおねがい;</P>
+    <P>/さんお願いします/さんおねがいします;</P>
+  </L>
+</RULE>
+<RULE name="FILL_B" toplevel="INACTIVE">
+  <L>
+    <P>えー</P>
+    <P>えーと</P>
+    <P>/えーと/えーっと;</P>
+    <P>あのー</P>
+  </L>
+</RULE>
+</GRAMMAR>

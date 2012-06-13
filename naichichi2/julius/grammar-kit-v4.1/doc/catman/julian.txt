@@ -1,0 +1,671 @@
+JULIAN(1)                                               JULIAN(1)
+
+
+
+NAME
+       Julian  -  grammar  based  continuous  speech  recognition
+       parser
+
+SYNOPSIS
+       julian [-C jconffile] [options ...]
+
+DESCRIPTION
+       Julian is a high-performance, multi-purpose,  free  speech
+       recognition  parser  based on finite state grammar.  It is
+       capable of performing real-time recognition of  continuous
+       speech with over thousands of vocabulary.
+
+       Julian is a derived version of Julius, and almost all com-
+       ponents are the same except language model related part.
+
+       To execute a recognition, it needs an acoustic model and a
+       finite  state  grammar that describes sentence patterns to
+       be recognized.  The grammar format is an original one, and
+       tools  to create a recognirion grammar are included in the
+       distribution.  For acoustic model, standard  format  (i.e.
+       HTK)  with  any  word/phone units and sizes are supported.
+       So users can build a  recognition  system  customized  for
+       specific tasks using own task grammar and acoustic models.
+       For details about models  and  how  to  write  a  grammar,
+       please see the documents contained in this package.
+
+       Julian can perform recognition on audio files, live micro-
+       phone input, network input and  feature  parameter  files.
+       The maximum size of vocabulary is 65,535 words.
+
+RECOGNITION MODELS
+       Julian supports the following models.
+
+       Acoustic Models
+                 Same  as  Julius:  Sub-word  HMM  (Hidden Markov
+                 Model) in HTK  format  are  supported.   Phoneme
+                 models  (monophone),  context  dependent phoneme
+                 models  (triphone),  tied-mixture  and  phonetic
+                 tied-mixture  models  of  any  unit can be used.
+                 When using context dependent  models,  interword
+                 context is also handled.
+
+       Language model
+                 The grammar format is an original one, and tools
+                 to create a recognirion grammar are included  in
+                 the  distribution.   A  grammar  consists of two
+                 files: one is a 'grammar'  file  that  describes
+                 sentence  structures  in a BNF style, using word
+                 'categories' as terminate symbols.  Another is a
+                 'voca' file that defines word with its pronunci-
+                 ations (i.e. phoneme sequences) for  each  cate-
+                 gory.   They  should be converted by mkdfa.pl(1)
+                 to a deterministic finite automaton file  (.dfa)
+                 and a dictionary file (.dict), respectively.
+
+SPEECH INPUT
+       Same as Julius: Both live speech input and recorded speech
+       file input are supported. Live input  stream  from  micro-
+       phone  device, DatLink (NetAudio) device and tcpip network
+       input using adintool is supported.  Speech waveform  files
+       (16bit  WAV  (no  compression), RAW format, and many other
+       format will be  acceptable  if  compiled  with  libsndfile
+       library).   Feature parameter files in HTK format are also
+       supported.
+
+       Note that Julian itself can only extract MFCC_E_D_N_Z fea-
+       tures  from  speech  data.   If  you  use  an acoustic HMM
+       trained by other feature type, only the HTK parameter file
+       of the same feature type can be used.
+
+SEARCH ALGORITHM OVERVIEW
+       Recognition  algorithm  of  Julian  is based on a two-pass
+       strategy.  In the first  pass,  a  high-speed  approximate
+       search  is  performed  using  weaker  constraints then the
+       given grammar.  Here a LR beam search  using  only  inter-
+       category  constraints  extracted  from the grammar is per-
+       formed. The second pass re-searches the input,  using  the
+       original  grammar  rules and intermediate results from the
+       first pass, to gain a high precision result  quickly.   In
+       the  second  pass  the  optimal  solution is theoretically
+       guaranteed using the A* search.
+
+       When using context dependent phones (triphones), interword
+       contexts  are  taken into consideration.  For tied-mixture
+       and  phonetic  tied-mixture  models,  high-speed  acoustic
+       likelihood calculation is possible using gaussian pruning.
+
+       For more details, see the related  document  or  web  page
+       below.
+
+OPTIONS
+       The options below specify the models, system behaviors and
+       various search parameters.  These option can be set all at
+       once  at  the command line, but it is recommended that you
+       write them in a text file as a "jconf file",  and  specify
+       the file with "-C" option.
+
+       Most are the same as Julius.
+       Options only in Julian: -dfa, -penalty1, -penalty2, -look-
+       trellis
+       Options only in  Julius:  -nlr,  -nrl,  -d,  -lmp,  -lmp2,
+       -transp,   -silhead,  -siltail,  -spdur,  -sepnum,  -sepa-
+       ratescore
+
+
+   Speech Input
+       -input {rawfile|mfcfile|mic|adinnet|netaudio|stdin}
+              Select speech  data  input  source.   'rawfile'  is
+              waveform  file,  and  specified  after startup from
+              stdin).  'mic' means microphone device, and  'adin-
+              net'  means  receiving waveform data via tcpip net-
+              work from an adinnet  client.  'netaudio'  is  from
+              DatLink/NetAudio  input,  and  'stdin'  means  data
+              input from standard input.
+
+              WAV (no  compression)  and  RAW  (noheader,  16bit,
+              BigEndian)  are  supported for waveform file input.
+              Other  format  can  be  supported  using   external
+              library.  To see what format is actually supported,
+              see the help message  using  option  "-help".   For
+              stdin input, only WAV and RAW is supported.
+              (default: mfcfile)
+
+       -filelist file
+              (With  -input  rawfile|mfcfile) perform recognition
+              on all files listed in the file.
+
+
+       -adport portnum
+              (with -input adinnet) adinnet port number (default:
+              5530)
+
+       -NA server:unit
+              (with -input netaudio) set the server name and unit
+              ID of the Datlink unit.
+
+       -zmean  -nozmean
+              With  speech  input,  this  options  enable/disable
+              whether to remove DC offset using zero mean source.
+              (default: disabled (-nozmean))
+
+       -nostrip
+              Julian by default removes  zero  samples  in  input
+              speech  data.  In some cases, such invalid data may
+              be recorded at the start or end of recording.  This
+              option inhibit this automatic removal.
+
+       -record directory
+              Auto-save  input speech data successively under the
+              directory.  Each segmented inputs are recorded to a
+              file  each  by  one.  The file name of the recorded
+              data is generated from system time when  the  input
+              starts, in a style of "YYYY.MMDD.HHMMSS.wav".  File
+              format is 16bit monoral WAV.  Invalid  for  mfcfile
+              input.  With input rejection by "-rejectshort", the
+              rejected input will also be recorded even  if  they
+              are rejected.
+
+       -rejectshort msec
+              Reject  input  shorter than specified milliseconds.
+              Search will be terminated and  no  result  will  be
+              output.  In module mode, '<REJECTED REASON="..."/>'
+              message will be sent to  client.   With  "-record",
+              the  rejected  input  will also be recorded even if
+              they are rejected.  (default: 0 = off)
+
+   Speech Detection
+       Options in this section is invalid for mfcfile input.
+
+       -cutsilence
+
+       -nocutsilence
+              Force silence cutting (=speech  segment  detection)
+              to  ON/OFF.  (default:  ON for mic/adinnet, OFF for
+              files)
+
+       -lv threslevel
+              Level threshold (0 - 32767) for speech  triggering.
+              If  audio  input amplitude goes over this threshold
+              for a period, Julius begin the  1st  pass  recogni-
+              tion.   If  the  level  goes below this level after
+              triggering, it is the end of  the  speech  segment.
+              (default: 2000)
+
+       -zc zerocrossnum
+              Zero crossing threshold per a second (default: 60)
+
+       -headmargin msec
+              Margin  at  the start of the speech segment in mil-
+              liseconds. (default: 300)
+
+       -tailmargin msec
+              Margin  at  the  end  of  the  speech  segment   in
+              milliseconds. (default: 400)
+
+   Acoustic Analysis
+       -smpFreq frequency
+              Set sampling frequency of input speech in Hz.  Sam-
+              pling rate can also  be  specified  using  "-smpPe-
+              riod".   Be  careful  that this frequency should be
+              the same as  the  trained  conditions  of  acoustic
+              model you use.  This should be specified for micro-
+              phone input and RAW file  input  when  using  other
+              than  default  rate.  Also see "-fsize", "-fshift",
+              "-delwin".
+              (default: 16000 (Hz = 625ns))
+
+       -smpPeriod period
+              Set sampling frequency of input speech by its  sam-
+              pling  period (nanoseconds).  The sampling rate can
+              also be specified  using  "-smpFreq".   Be  careful
+              that  the input frequency should be the same as the
+              trained conditions of acoustic model you use.  This
+              should  be  specified  for microphone input and RAW
+              file input when  using  other  than  default  rate.
+              Also see "-fsize", "-fshift", "-delwin".
+              (default: 625 (ns = 16000Hz))
+
+       -fsize sample
+              Analysis   window   size   in  number  of  samples.
+              (default: 400).
+
+       -fshift sample
+              Frame shift in number of samples (default: 160).
+
+       -delwin frame
+              Delta window size in number  of  samples  (default:
+              2).
+
+       -lofreq frequency
+              Enable  band-limiting  for MFCC filterbank computa-
+              tion: set lower frequency cut-off.
+              (default: -1 = disabled)
+
+       -hifreq frequency
+              Enable band-limiting for MFCC  filterbank  computa-
+              tion: set upper frequency cut-off.
+              (default: -1 = disabled)
+
+       -sscalc
+              Perform  spectral  subtraction  using  head part of
+              each file.  With this option, Julius  assume  there
+              are  certain  length of silence at each input file.
+              Valid  only  for  rawfile  input.   Conflict   with
+              "-ssload".
+
+       -sscalclen
+              With  "-sscalc",  specify  the  length of head part
+              silence in milliseconds (default: 300)
+
+       -ssload filename
+              Perform spectral subtraction for speech input using
+              pre-estimated  noise spectrum from file.  The noise
+              spectrum data  should  be  computed  beforehand  by
+              mkss.   Valid  for all speech input.  Conflict with
+              "-sscalc".
+
+       -ssalpha value
+              Alpha coefficient of spectral  subtraction.   Noise
+              will  be  subtracted  stronger  as  this value gets
+              larger, but distortion of the resulting signal also
+              becomes remarkable.  (default: 2.0)
+
+       -ssfloor value
+              Flooring  coefficient of spectral subtraction.  The
+              spectral parameters that go under zero  after  sub-
+              traction  will  be substituted by the source signal
+              with this coefficient multiplied. (default: 0.5)
+
+   Language Model (Finite State Grammar)
+       -dfa dfa_filename
+              Finite state automaton grammar file. (required)
+
+       -penalty1 float
+              Word  insertion  penalty  for   the   first   pass.
+              (default: 0.0)
+
+       -penalty2 float
+              Word   insertion   penalty  for  the  second  pass.
+              (default: 0.0)
+
+   Word Dictionary
+       -v dictionary_file
+              Word dictionary file (required)
+
+       -spmodel {WORD|WORD[OUTSYM]|#num}
+              Name  of  short  pause  model  as  defined  in  the
+              hmmdefs.   In  Julian,  a  word whose pronunciation
+              consists of only this short pause model  is  called
+              'short  pause  word',  and  handled  especially  in
+              recognition: even if its appearance in  a  sentence
+              is  explicitly  specified in the grammar, it can be
+              skipped while parsing.  This behavior is for  deal-
+              ing with insertion and deletion of short pause that
+              often appear unintensionally  in  user  utterances.
+              They  can  be  specified  in a style as shown below
+              (default: "sp").
+
+                                       Example
+           Word_name                     <s>
+           Word_name[output_symbol]   <s>[silB]
+           #Word_ID                      #14
+
+            (Word_ID is the word position in the dictionary
+             file starting from 0)
+
+       -forcedict
+              Ignore dictionary errors and force running.   Words
+              with  errors  will  be  dropped  from dictionary at
+              startup.
+
+   Acoustic Model (HMM)
+       -h hmmfilename
+              HMM definition file to use.  Format  (ascii/binary)
+              will be automatically detected. (required)
+
+       -hlist HMMlistfilename
+              HMMList  file to use.  Required when using triphone
+              based HMMs.  This file provides a  mapping  between
+              the  logical  triphones  names  genertated from the
+              phonetic representation in the dictionary  and  the
+              HMM definition names.
+
+       -iwcd1 {best N|max|avg}
+              When  using  a  triphone  model,  select  method to
+              handle inter-word triphone context on the first and
+              last phone of a word in the first pass.
+
+              best  N:  use  average  likelihood of N-best scores
+              from the same
+                      context triphones
+              max: use maximum likelihood of the same
+                   context triphones
+              avg: use average likelihood of the same
+                   context triphones (default)
+
+       -force_ccd / -no_ccd
+              Normally Julius determines  whether  the  specified
+              acoustic  model  is  a context-dependent model from
+              the model names, i.e., whether the model names con-
+              tain  character  '+'  and  '-'.  You can explicitly
+              specify by these options  to  avoid  mis-detection.
+              These will override the automatic detection result.
+
+       -notypecheck
+              Disable  checking  of  the  input  parameter  type.
+              (default: enabled)
+
+   Acoustic Computation
+       Gaussian  Pruning will be automatically enabled when using
+       tied-mixture based  acoutic  model.   It  is  disabled  by
+       default  for non tied-mixture models, but you can activate
+       pruning  to  those   models   by   explicitly   specifying
+       "-gprune".   Gaussian  Selection  needs  a monophone model
+       converted by mkgshmm.
+
+       -gprune {safe|heuristic|beam|none}
+              Set the Gaussian pruning technique to use.
+              (default:    'safe'    (setup=standard),     'beam'
+              (setup=fast) for tied mixture model, 'none' for non
+              tied-mixture model)
+
+       -tmix K
+              With Gaussian Pruning, specify the number of  Gaus-
+              sians  to compute per mixture codebook. Small value
+              will speed up  computation,  but  likelihood  error
+              will grow larger. (default: 2)
+
+       -gshmm hmmdefs
+              Specify  monophone hmmdefs to use for Gaussian Mix-
+              ture Selectio.  Monophone model for GMS  is  gener-
+              ated  from  an  ordinary  monophone HMM model using
+              mkgshmm.  This option is disabled by  default.  (no
+              GMS applied)
+
+       -gsnum N
+              When  using  GMS, specify number of monophone state
+              to select from whole  monophone  states.  (default:
+              24)
+
+   Inter-word Short Pause Handling
+       -iwsp  (Multi-path  version  only)  Enable inter-word con-
+              text-free  short  pause  handling.    This   option
+              appends  a  skippable  short  pause model for every
+              word end.  The  added  model  will  be  skipped  on
+              inter-word  context  handling.  The HMM model to be
+              appended can be specified by "-spmodel" option.
+
+   Search Parameters (First Pass)
+
+
+
+       -b beamwidth
+              Beam width (number of HMM nodes) on the first pass.
+              This  value  defines  search width on the 1st pass,
+              and has great effect on the total processing  time.
+              Smaller  width  will speed up the decoding, but too
+              small value will result in a  substantial  increase
+              of   recognition  errors  due  to  search  failure.
+              Larger value will make the search stable  and  will
+              lead  to  failure-free  search, but processing time
+              and memory usage will grow  in  proportion  to  the
+              width.
+
+              default value: acoustic model dependent
+                400 (monophone)
+                800 (triphone,PTM)
+               1000 (triphone,PTM, setup=v2.1)
+
+       -1pass Only perform the first pass search.
+
+       -realtime
+
+       -norealtime
+              Explicitly  specify  whether  real-time  (pipeline)
+              processing will be done in the first pass  or  not.
+              For  file  input, the default is OFF (-norealtime),
+              for microphone, adinnet  and  NetAudio  input,  the
+              default  is ON (-realtime).  This option relates to
+              the way CMN is performed: when OFF  CMN  is  calcu-
+              lated  for each input independently, when the real-
+              time option is ON the previous 5 second of input is
+              always used.  Also refer to -progout.
+
+       -cmnsave filename
+              Save last CMN parameters computed while recognition
+              to the specified  file.   The  parameters  will  be
+              saved  to  the  file in each time a input is recog-
+              nized, so the output file always keeps the last CMN
+              parameters.   If output file already exist, it will
+              be overridden.
+
+       -cmnload filename
+              Load initial CMN parameters previously saved  in  a
+              file  by "-cmnsave".  This option enables Julian to
+              recognize the first utterance of a live  microphone
+              input or adinnet input with CMN.
+
+   Search Parameters (Second Pass)
+       -b2 hyponum
+              Beam  width  (number of hypothesis) in second pass.
+              If the count of word expantion at a certain  length
+              of  hypothesis  reaches  this  limit  while search,
+              shorter hypotheses are not expanded further.   This
+              prevents  search to fall in breadth-first-like sta-
+              tus stacking on  the  same  position,  and  improve
+              search failure.  (default: 30)
+
+       -n candidatenum
+              The  search continues till 'candidate_num' sentence
+              hypotheses have been found.  The obtained  sentence
+              hypotheses are sorted by score, and final result is
+              displayed in the  order  (see  also  the  "-output"
+              option).
+
+              The possibility that the optimum hypothesis is cor-
+              rectly  found  increases   as   this   value   gets
+              increased,  but  the  processing  time also becomes
+              longer.
+
+              Default value depends on the  engine setup on  com-
+              pilation time:
+                10  (standard)
+                 1  (fast, v2.1)
+
+       -output N
+              The top N sentence hypothesis will be Output at the
+              end of search.  Use with "-n" option. (default: 1)
+
+       -cmalpha float
+              This parameter decides  smoothing  effect  of  word
+              confidence measure.  (default: 0.05)
+
+       -sb score
+              Score  envelope  width for enveloped scoring.  When
+              calculating hypothesis  score  for  each  generated
+              hypothesis, its trellis expansion and viterbi oper-
+              ation will be pruned in the middle of the speech if
+              score  on a frame goes under [current maximum score
+              of the frame- width].  Giving small value makes the
+              second  pass  faster,  but  computation  error  may
+              occur.  (default: 80.0)
+
+       -s stack_size
+              The maximum number of hypothesis that can be stored
+              on the stack during the search.  A larger value may
+              give more stable results, but increases the  amount
+              of memory required. (default: 500)
+
+       -m overflow_pop_times
+              Number  of  expanded hypotheses required to discon-
+              tinue  the  search.   If  the  number  of  expanded
+              hypotheses is greater then this threshold then, the
+              search is discontinued at that point.   The  larger
+              this  value  is,  The longer Julius gets to give up
+              search (default: 2000)
+
+       -lookuprange nframe
+              When performing word expansion on the second  pass,
+              this  option  sets  the number of frames before and
+              after to look up next word hypotheses in  the  word
+              trellis.   This  prevents  the  omission  of  short
+              words, but  with  a  large  value,  the  number  of
+              expanded  hypotheses  increases  and system becomes
+              slow. (default: 5)
+
+       -looktrellis
+              Expand only the words survived on  the  first  pass
+              instead  of  expanding  all  the words predicted by
+              grammar.  This option makes  second  pass  decoding
+              slightly  faster  especially  for  large vocabulary
+              condition, but may increase deletion error of short
+              words. (default: disabled)
+
+   Forced Alignment
+       -walign
+              Do viterbi alignment per word units from the recog-
+              nition result.  The word boundary  frames  and  the
+              average acoustic scores per frame are calculated.
+
+       -palign
+              Do viterbi alignment per phoneme (model) units from
+              the  recognition  result.   The  phoneme   boundary
+              frames  and  the  average acoustic scores per frame
+              are calculated.
+
+       -salign
+              Do viterbi alignment per HMM state from the  recog-
+              nition  result.   The state boundary frames and the
+              average acoustic scores per frame are calculated.
+
+   Server Module Mode
+       -module [port]
+              Run Julian on "Server Module Mode".  After startup,
+              Julian  waits  for  tcp/ip  connection from client.
+              Once connection is established, Julian start commu-
+              nication  with  the client to process incoming com-
+              mands from the client,  or  to  output  recognition
+              results, input trigger information and other system
+              status to the client.  The  multi-grammar  mode  is
+              only  supported  at  this  Server Module Mode.  The
+              default port number is 10500.  jcontrol  is  sample
+              client contained in this package.
+
+       -outcode [W][L][P][S][C][w][l][p][s]
+              (Only  for Server Module Mode) Switch which symbols
+              of recognized words to be sent to client.   Specify
+              'W'  for  output symbol, 'L' for grammar entry, 'P'
+              for phoneme sequence, 'S' for score,  and  'C'  for
+              confidence  score,  respectively.   Capital letters
+              are for the second pass (final result),  and  small
+              letters  are  for  results  of the first pass.  For
+              example, if you want to send only the  output  sym-
+              bols and phone sequences as a recognition result to
+              a client, specify "-outcode WP".
+
+   Message Output
+       -quiet Omit phoneme sequence and score,  only  output  the
+              best word sequence hypothesis.
+
+       -progout
+              Enable progressive output of the partial results on
+              the first pass.
+
+       -proginterval msec
+              set the output time interval of "-progout" in  mil-
+              liseconds.
+
+       -demo  Equivalent to "-progout -quiet"
+
+   OTHERS
+       -debug (For  debug)  output  enoumous  internal status and
+              debug information.
+
+       -C jconffile
+              Load the jconf file.  The options  written  in  the
+              file  are included and expanded at the point.  This
+              option can also be used within other jconf file.
+
+       -check wchmm
+              (For debug) turn on interactive check mode of  tree
+              lexicon structure at startup.
+
+       -check triphone
+              (For debug) turn on interactive check mode of model
+              mapping between Acoustic model, HMMList and dictio-
+              nary at startup.
+
+
+
+       -setting
+              Display compile-time engine configuration and exit.
+
+       -help  Display a brief description of all options.
+
+EXAMPLES
+       For examples of system usage, refer to the  tutorial  sec-
+       tion in the Julian documents.
+
+NOTICE
+       Note about jconf files: relative paths in a jconf file are
+       interpreted as relative to the jconf file itself,  not  to
+       the current directory.
+
+SEE ALSO
+       julius(1), jcontrol(1), adinrec(1), adintool(1), mkdfa(1),
+       mkgsmm(1), wav2mfcc(1), mkss(1)
+
+       http://julius.sourceforge.jp/
+
+DIAGNOSTICS
+       Julian normally will return the  exit  status  0.   If  an
+       error  occurs, Julian exits abnormally with exit status 1.
+       If an input file cannot be found or cannot be  loaded  for
+       some  reason  then  Julian  will  skip processing for that
+       file.
+
+BUGS
+       There are some restrictions to the type and  size  of  the
+       models  Julian  can use.  For a detailed explanation refer
+       to the Julius documentation.   For  bug-reports,  inquires
+       and  comments  please contact julius@kuis.kyoto-u.ac.jp or
+       julius@is.aist-nara.ac.jp.
+
+COPYRIGHT
+       Copyright (c) 1991-2004 Kyoto University, Japan
+       Copyright (c) 2000-2004  Nara  Institute  of  Science  and
+       Technology, Japan
+
+AUTHORS
+       Rev.1.0 (1998/07/20)
+              Designed by Tatsuya KAWAHARA and Akinobu LEE (Kyoto
+              University)
+
+       Rev.2.0 (1999/02/20)
+
+       Rev.2.1 (1999/04/20)
+
+       Rev.2.2 (1999/10/04)
+
+       Rev.3.1 (2000/05/11)
+              Development of above versions by Akinobu LEE (Kyoto
+              University)
+
+       Rev.3.2 (2001/08/15)
+
+       Rev.3.3 (2002/09/11)
+
+       Rev.3.4 (2003/10/01)
+
+       Rev.3.4.1 (2004/02/25)
+
+       Rev.3.4.2 (2004/04/30)
+              Development  of above versions by Akinobu LEE (Nara
+              Institute of Science and Technology)
+
+THANKS TO
+       From rev.3.2, Julian is released in the "Information  Pro-
+       cessing Society, Continuous Speech Consortium".
+
+       The  Windows  Microsoft  Speech API compatible version was
+       developed by Takashi SUMIYOSHI (Kyoto University).
+
+
+
+                              LOCAL                     JULIAN(1)

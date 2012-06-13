@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="Shift_JIS" standalone="yes" ?>
+<package>
+<job id="KConvert">
+<?job error="True" debug="True" ?>
+<object id="objBsp" progid="Basp21" />
+<object id="objFs"  progid="Scripting.FileSystemObject" />
+<script language="VBScript">
+<![CDATA[
+Sub FileConvert(strPath)
+  Set objFld = objFs.GetFolder(strPath)
+  For Each objFl In objFld.Files
+    strTmp=objFl.Path
+    If objFl.Size>0 Then objBsp.KconvFile strTmp,strTmp & ".tmp",2,1
+    objFl.Delete 
+    objFs.MoveFile strTmp & ".tmp",strTmp
+  Next
+  ' 現在のフォルダ配下に存在するファイル（objFld.Files）に対して、文字コード
+  ' の変換処理（Basp21#KconvFilesメソッド）を行う。ただし、対象のファイル
+  ' が空（0バイト）の場合には、KconvFileメソッドは失敗するので、あらかじめ
+  ' 取り除いておくものとする。
+  ' 変換後は元のファイルを削除し、KconvFileメソッドによって生成された「元の
+  ' ファイル名.tmp」を元のファイル名で保存し直す
+  For Each objSub In objFld.SubFolders
+    FileConvert objSub.Path
+  Next
+  ' 現在のフォルダ配下に存在するサブフォルダ（objFld.SubFolders）に対して
+  ' 再帰的にFileConvertプロシージャ（自分自身）を呼び出す。これによって、
+  ' 複数の階層フォルダに対しても、一度で変換処理が行える
+End Sub
+FileConvert WScript.Arguments.Item(0)
+  ' 上で定義されたFileConvertプロシージャに、ドラッグ＆ドロップで渡された
+  ' フォルダのパスを引数として渡し、実行する
+]]>
+</script>
+</job>
+</package>

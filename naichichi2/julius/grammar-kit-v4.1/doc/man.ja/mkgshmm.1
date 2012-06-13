@@ -1,0 +1,56 @@
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.TH MKGSHMM 1 LOCAL
+.UC 6
+.SH NAME
+mkgshmm - convert monophone HMM to GS HMM for Julius
+.SH SYNOPSIS
+.B mkgshmm monophone_hmmdefs > outputfile
+.SH DESCRIPTION
+.I mkgshmm
+はHTK形式のmonophone HMMを
+.I Julius
+の Gaussian Mixture Selection (GMS) 用に変換するperlスクリプトです．
+.PP
+GMSはJulius-3.2からサポートされている音響尤度計算の高速化手法です．
+フレームごとに monophone の状態尤度に基づいてtriphoneやPTMの状態を
+予備選択することで，音響尤度計算がおよそ30%高速化されます．
+.PP
+.SH EXAMPLE
+.PP
+まずターゲットとするtriphoneやPTMに対して，同じコーパスで学習した monophone モデルを用意します．
+.PP
+次にそのmonophoneモデルを
+.I mkgshmm
+を用いて GMS 用に変換します（実際には状態定義をマクロ化しているだけです）．
+.PP
+    % mkgshmm monophone > gshmmfile
+.PP
+これを Julius で "-gshmm" で指定します．
+.PP
+    % julius -C foo.jconf -gshmm gshmmfile
+.PP
+注意：GMS用モデルはtriphoneやPTMと同一のコーパスから作成する必要がある点に注意してください．gshmm がミスマッチだと選択誤りが生じ，性能が劣化します．
+.SH "SEE ALSO"
+julius(1)
+.SH BUGS
+.PP
+バグ報告・問い合わせ・コメントなどは 
+julius@kuis.kyoto-u.ac.jp までお願いします．
+.SH COPYRIGHT
+Copyright (c) 1991-2003 京都大学
+.br
+Copyright (c) 2000-2003 奈良先端科学技術大学院大学
+.SH AUTHORS
+李 晃伸 (奈良先端大) が実装しました．
+.SH LICENSE
+.I Julius
+の使用許諾に準じます．

@@ -1,3 +1,32 @@
+4.2.1 (2011.12.25)
+===================
+
+New features:
+- Add support for per-word insertion penalty setting at grammar
+  recognition. You can set different word insertion score for each word
+  entry at .dict file. For example, if you have an entry
+        15 [a] a
+  in .dict file and want to assign word insertion score of "-2.0" to
+  this word, you can write like this:
+        15 @-2.0 15 [a] a
+  The figure after "@" is the insertion penalty. The third
+  element should be the same as the first element.
+
+- New option "-chunk_size" can specify the audio fragment size in
+  number of samples. The default value is 1000.
+
+- At "adintool", enable input detection by default for standard input.
+
+Fixed bugs:
+- (IMPORTANT) CMN is not performed for C0 coef.  This bug exists in
+  the versions from 4.1.3 to 4.2.
+- "-forcedict" won't work for additional dictionaries given by "-adddict".
+- Corrupted header of recorded WAV file when interrupted by CTRL+C.
+- Occasional segfault when reading a wrongly formatted dictionary.
+- Won't compile with configure option "--enable-word-graph".
+- Segfault of "mkbingram" and "generate-ngram" at cygwin.
+
+
 4.2 (2011.05.01)
 =================
 

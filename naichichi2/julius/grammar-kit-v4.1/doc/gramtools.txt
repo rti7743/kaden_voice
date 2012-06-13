@@ -1,0 +1,172 @@
+These are tools for building recognition grammar for Julius.
+Julius uses original grammar format.
+
+  mkdfa (mkdfa.pl)  grammar compiler.
+  generate	    randam sentence generation tool.
+  accept_check	    tool to check acception/rejection of input sentence.
+  nextword	    display next predicted words of given partial sentence.
+  gram2sapixml	    perl script to convert Julius grammar to SAPI XML format.
+
+
+To know how to write a grammar for Julius and about the file formats,
+please see Grammar.txt for details.
+
+======================================================================
+How to compile
+
+These tools are distributed as part of Julius.  Compiling Julius from
+the parent directory also compile these tools.
+
+The below tools and libraries are needed to compile and run these tools.
+
+	- perl (ver.5 and later)
+	- GNU bison
+	- GNU flex
+	- GNU readline library
+	- iconv
+	- Jcode.pm (only for gram2sapixml)
+
+======================================================================
+======================================================================
+   Manuals
+======================================================================
+======================================================================
+
+======================================================================
+mkdfa.pl --- Grammar compiler
+
+  mkdfa.pl compiles the Julius format grammar (.grammar and
+  .voca) to Julius native formats (.dfa and .dict).
+
+  Assume the .grammar file and .voca file has the same prefix
+  (i.e. "foo.grammar" and "foo.voca"), mkdfa.pl compiles them to the
+  Julius native format in the way below:
+
+  ----------------------------------------------------
+  % mkdfa.pl foo
+  ----------------------------------------------------
+  Then it generates files "foo.dfa" and "foo.dict" in the same
+  directory.  It also generates terminal symbol information in
+  "foo.term" that can be used other grammar tools.
+
+  The mkdfa.pl is a script to spawn the core compile "mkfa", so you
+  need "mkfa" at the same directory of "mkdfa.pl".
+
+
+======================================================================
+generate --- Randam sentence generator
+
+  This small program randomly generates sentences that are acceptable
+  by the given grammar.  It can be used to check coverage of a
+  grammar in a human basis, by looking up if it may generate
+  non-acceptable sentences.
+
+  .dfa, .dict and .term files are needed to execute.  They can be
+  generated from .grammar and .voca file by mkdfa.pl.
+
+  Options: 
+	"-n num" specifies the number of sentence to be generated
+		 (default: 10)
+	"-t"	 output in terminal name rather than word name (needs
+		.term file)
+
+  ----- Example ------------------------------------------------
+
+    % generate ../sample_grammars/vfr/vfr
+    Reading in dictionary...done
+    Reading in DFA grammar...done
+    Mapping dict item <-> DFA terminal (category)...done
+    Reading in term file (optional)...done
+    42 categories, 99 words
+    DFA has 135 nodes and 198 arcs
+    ----- 
+    (sentences will be generated here...)
+
+  --------------------------------------------------------------
+
+======================================================================
+accept_check  --- Check acception or rejection of sentences
+
+  "accept_check" is a tool to check whether a sentence (word sequence) is
+  acceptable on the given grammar.  Given a grammar, each input from
+  the standard input is parsed line by line and output whether they
+  are acceptable or not.
+
+  .dfa, .dict and .term files are needed to execute.  They will be
+  generated from .grammar and .voca file by mkdfa.pl.
+
+  Usage: the grammar should be specified as the same style as
+  mkdfa.pl, i.e., the prefix of .dfa, .dict and .term should be
+  specified.  See the examples below.
+
+---- Example ---------------------------------------------
+    % bin/accept_check ../sample_grammars/vfr/vfr
+    Reading in dictionary...done
+    Reading in DFA grammar...done
+    Mapping dict item <-> DFA terminal (category)...done
+    Reading in term file (optional)...done
+    42 categories, 99 words
+    DFA has 135 nodes and 198 arcs
+    ----- 
+    please input word sequence>silB hello silE              <-- input
+    wseq: silB hello silE
+    cate: NS_B GREETING NS_E
+    accepted
+    please input word sequence>
+---------------------------------------------------------
+
+  Input sentence should be a sequence of space-saprated words.  The
+  short pause model (pronunciation given as "sp") in grammar will be
+  treated specially to allow skip. 
+
+  If there are several words in dictionary that matches the given
+  word, all the possible combination will be tried to check acceptability.
+
+  Specifying "-t" option at startup time will enable category label as
+  an input.
+
+
+======================================================================
+nextword --- display next predicted words
+
+  Given a partial (part of) sentence from the end, it outputs
+  the next words allowed in the specified grammar.
+
+  .dfa, .dict and .term files are needed to execute.  They will be
+  generated from .grammar and .voca file by mkdfa.pl.
+
+  !NOTE! The sentence should be specified from the END OF SENTENCE,
+	 because Julius does right-to-left parsing.
+
+---- Example ---------------------------------------------
+    % bin/nextword ../sample_grammars/vfr/vfr
+    Reading in dictionary...done
+    Reading in DFA grammar...done
+    Mapping dict item <-> DFA terminal (category)...done
+    Reading in term file (optional)...done
+    42 categories, 99 words
+    DFA has 135 nodes and 198 arcs
+    ----- 
+    wseq > afternoon silE				<-- input
+    [wseq: afternoon silE]
+    [cate: AFTERNOON NS_E]
+    PREDICTED CATEGORIES/WORDS:
+                NS_B (silB)
+                GOOD (good)
+    wseq >
+--------------------------------------------------------
+
+  You can use completion and history for wseq input, which is a
+  function of GNU readline library.  The important keys are:
+
+	TAB		completion of dictionary word.  When invoking
+			with "-t" option, completion will be category name.
+	Ctrl-P, Ctrl-N	history up/down.
+
+======================================================================
+gram2sapixml	--- perl script to convert Julius grammar to SAPI XML format
+
+See gram2sapixml/gram2sapixml.txt for detail.
+
+
+*** END OF DOCUMENT

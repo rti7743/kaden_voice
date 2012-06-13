@@ -1,0 +1,50 @@
+.de Sp
+.if t .sp .5v
+.if n .sp
+..
+.de Ip
+.br
+.ie \\n.$>=3 .ne \\$3
+.el .ne 3
+.IP "\\$1" \\$2
+..
+.TH MKBINGRAM 1 LOCAL
+.UC 6
+.SH NAME
+mkbingram - make binary N-gram from two arpa LMs
+.SH SYNOPSIS
+.B mkbingram 2gram.arpa rev3gram.arpa bingram
+.SH DESCRIPTION
+.I mkbingram
+は，Julius で使用する言語モデルであるARPA形式の 2-gram と 逆向き3-gram を １つのバイナリファイル に結合・変換するツールです．これを使用することで，
+Juliusの起動を大幅に高速化することができます．
+.PP
+なお2gramと逆無き 3-gram は，同一のコーパスから同一の条件（カットオフ値，バックオフ計算方法等）で学習されてあり，同一の語彙を持っている必要があります．
+.PP
+.I mkbingram
+は gzip 圧縮された ARPA ファイルをそのまま読み込めます．
+.SH OPTIONS
+.Ip "2gram.arpa"
+ARPA標準形式の単語 2-gram ファイル．
+.Ip "rev3gram.arpa"
+ARPA標準形式の逆向き単語 3-gram ファイル．
+.Ip "bingram"
+出力ファイル（Julius用バイナリ形式）
+.SH USAGE
+Julius で言語モデル指定時に，元の ARPA 形式ファイルを "-nlr 2gramfile
+-nrl rev3gramfile" とする代わりに mkbingram で変換したバイナリ形式ファ
+イルを "-d bingramfile" と指定します．
+.SH "SEE ALSO"
+julius(1)
+.SH BUGS
+バグ報告・問い合わせ・コメントなどは 
+julius@kuis.kyoto-u.ac.jp までお願いします．
+.SH COPYRIGHT
+Copyright (c) 1991-2003 京都大学
+.br
+Copyright (c) 2000-2003 奈良先端科学技術大学院大学
+.SH AUTHORS
+李 晃伸 (京都大学／奈良先端大) が実装しました．
+.SH LICENSE
+.I Julius
+の使用許諾に準じます．

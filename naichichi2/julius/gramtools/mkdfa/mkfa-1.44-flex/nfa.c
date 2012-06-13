@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 1991-2011 Kawahara Lab., Kyoto University
  * Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
  * Copyright (c) 2005-2011 Julius project team, Nagoya Institute of Technology
@@ -8,16 +8,16 @@
 #include "nfa.h"
 
 typedef struct _HIS{
-    CLASS *class;                    /* $B%/%i%9$X$N%]%$%s%?(B */
-    FA *fa;                          /* $B@8@.F0:n;~$N(BFA($B:F5"$KMQ$$$k(B) */
-    struct _HIS *prev;               /* $B?F$N7PNr$X$N%]%$%s%?(B */
-    ARC *nsList;                     /* $B%/%i%93+;O%N!<%I$+$i$NA+0\2DG=%"!<%/(B */
-    FA *cloneFA;                     /* $B:F5";~$NLa$j@h$N(BFA */
+    CLASS *class;                    /* クラスへのポインタ */
+    FA *fa;                          /* 生成動作時のFA(再帰に用いる) */
+    struct _HIS *prev;               /* 親の経歴へのポインタ */
+    ARC *nsList;                     /* クラス開始ノードからの遷移可能アーク */
+    FA *cloneFA;                     /* 再帰時の戻り先のFA */
 } HIS;
 
-typedef struct _TOKEN{               /* naming$B$,$A$H6l$7$$$,(B */
-    CLASS *class;                    /* $B%/%i%9$X$N(Bpointer */
-    FLAG abort;                      /* $BESCfC&=P2DG=%U%i%0(B */
+typedef struct _TOKEN{               /* namingがちと苦しいが */
+    CLASS *class;                    /* クラスへのpointer */
+    FLAG abort;                      /* 途中脱出可能フラグ */
 } TOKEN;
 
 FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his );
@@ -32,16 +32,16 @@ FA *getRecursion( CLASS *class, HIS *his );
 void chkLeftRecursion( CLASS *class, FA *fa, HIS *his );
 char *strAncestors( HIS *me, HIS *ancestor );
 
-extern CLASS *ClassList;       /* $B%/%i%9$N@~7A%j%9%H(B */
-extern CLASS *ClassListTail;   /* $B%/%i%9$N@~7A%j%9%H$N:G8eHx$N%N!<%I(B */
-extern CLASS *StartSymbol;     /* $B3+;O5-9f$N%/%i%9(B */
-extern FA *FAlist;             /* FA$B%M%C%H%o!<%/$K$*$1$k3+;O(BFA$B$N%]%$%s%?(B */
-static int FAprocessed = 0;    /* $B8=:_$N%9%F%C%W$K$*$$$F=hM}$5$l$?(BFA$B$N?t(B */
-int FAtotal = 0;               /* FA$B$NAm?t(B */
+extern CLASS *ClassList;       /* クラスの線形リスト */
+extern CLASS *ClassListTail;   /* クラスの線形リストの最後尾のノード */
+extern CLASS *StartSymbol;     /* 開始記号のクラス */
+extern FA *FAlist;             /* FAネットワークにおける開始FAのポインタ */
+static int FAprocessed = 0;    /* 現在のステップにおいて処理されたFAの数 */
+int FAtotal = 0;               /* FAの総数 */
 
 extern int SW_Quiet;
 extern int SW_SemiQuiet;
-extern int NoNewLine;          /* $BJ#?t$NI=<(%b!<%I$G2~9TLdBj$r2r7h$9$k(B */
+extern int NoNewLine;          /* 複数の表示モードで改行問題を解決する */
 
 void makeNFA( void )
 {
@@ -50,7 +50,7 @@ void makeNFA( void )
     }
     FAprocessed = 0;
     FAlist = makeNewFA();
-    FAlist->psNum++; /* $B3+;O%N!<%I$N:o=|$rKI$0$?$a(B */
+    FAlist->psNum++; /* 開始ノードの削除を防ぐため */
     if( !SW_Quiet ){
 	fprintf( stderr, "\rNow making nondeterministic finite automaton" );
 	NoNewLine = 1;
@@ -65,12 +65,12 @@ void makeNFA( void )
 
 FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his )
 {
-    FA *baseFA = fa;             /* $BEv3:%/%i%9$NF~8}%N!<%I(B */
-    FA *loopFA = NULL;           /* $B:F5"%k!<%W$N%N!<%I(B */
-    HIS curhis;                  /* $B2r@OLZ$N7PNr$K$*$1$k8=:_$N%N!<%I(B */
-    TOKEN curToken;              /* $B8=:_CmL\$N%H!<%/%s(B */
-    TOKEN nextToken;             /* $B@hFI$_%H!<%/%s(B */
-    FLAG exitFlag = 0;           /* $BC&=P$G$-$k%H%]%m%8!<$+(B */
+    FA *baseFA = fa;             /* 当該クラスの入口ノード */
+    FA *loopFA = NULL;           /* 再帰ループのノード */
+    HIS curhis;                  /* 解析木の経歴における現在のノード */
+    TOKEN curToken;              /* 現在注目のトークン */
+    TOKEN nextToken;             /* 先読みトークン */
+    FLAG exitFlag = 0;           /* 脱出できるトポロジーか */
     BODYLIST *bodyList = class->bodyList;
     BODY *body = NULL;
     FALIST *extraFAs = NULL;
@@ -96,23 +96,23 @@ FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his )
     curhis.nsList = NULL;
     curhis.cloneFA = NULL;
 
-    while( 1 ){ /* $BDj5ANs4V$N%k!<%W(B */
+    while( 1 ){ /* 定義列間のループ */
 	getNextToken( &nextToken, &bodyList, &body );
-	extraFAs = cpyFAlist( extraFAs, orgExtraFAs ); /*C++$B$J$iBeF~0lH/!D(B*/
-	while( 1 ){ /* $BDj5ANsFb$N%k!<%W(B */
+	extraFAs = cpyFAlist( extraFAs, orgExtraFAs ); /*C++なら代入一発…*/
+	while( 1 ){ /* 定義列内のループ */
 	    curToken = nextToken;
-	    if( getNextToken( &nextToken, &bodyList, &body ) /*$B8eB3$,$"$k$+(B?*/ ){
-		if( curToken.class->branch > 0 /* $B8eB3$,$"$jHs=*C<(B */ ){
+	    if( getNextToken( &nextToken, &bodyList, &body ) /*後続があるか?*/ ){
+		if( curToken.class->branch > 0 /* 後続があり非終端 */ ){
 		    if( (loopFA = getRecursion( nextToken.class, &curhis )) != NULL ){
 			if( curToken.abort ){
-			    /* $B$3$NDj5ANs$O=*N;$J$N$G?F$+$i0z$-7Q$$$@I{=P8}$bEO$9(B*/
-			    /* !curToken.abort$B$J$i=*N;$G$J$$$N$G(BNULL$B$N$^$^(B */
+			    /* この定義列は終了なので親から引き継いだ副出口も渡す*/
+			    /* !curToken.abortなら終了でないのでNULLのまま */
 			    extraFAs = appendFAlist( extraFAs, exitFA );
 			    exitFlag = 1;
 			}
-			/* nextToken$B$,(Bloop$B$J$N$G$=$3$X$D$J$0(B */
+			/* nextTokenがloopなのでそこへつなぐ */
 			fa = r_makeNFA( curToken.class, fa, loopFA, extraFAs, &curhis );
-			/* $B$?$@$7$=$N<!$K8eB3$,$"$k$J$i%(%i!<(B */
+			/* ただしその次に後続があるならエラー */
 			if( getNextToken( &curToken, &bodyList, &body ) ){
 			    errMes( "Symbols following recursion exist in class \"%s\"", class->name );
 			}
@@ -120,7 +120,7 @@ FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his )
 		    } else {
 			FALIST *anExtraFAs = NULL;
 			if( curToken.abort ){
-			    /* $B$3$NDj5ANs$O$3$N>l=j$GC&=P$9$k(B */
+			    /* この定義列はこの場所で脱出する */
 			    anExtraFAs = cpyFAlist( anExtraFAs, extraFAs );
 			    anExtraFAs = appendFAlist( anExtraFAs, exitFA );
 			    exitFlag = 1;
@@ -129,7 +129,7 @@ FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his )
 			freeFAlist( anExtraFAs );
 			continue;
 		    }
-		} else { /* $B8eB3$,$"$j=*C<(B */
+		} else { /* 後続があり終端 */
 		    if( curToken.abort ){
 			FA *extraFA;
 			FALIST *pExtraFAs = extraFAs;
@@ -152,7 +152,7 @@ FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his )
 			continue;
 		    }
 		}
-	    } else { /* $B8eB3$,$J$$(B */
+	    } else { /* 後続がない */
 		exitFlag = 1;
 		if( curToken.class->branch > 0 ){
 		    exitFA = r_makeNFA( curToken.class, fa, exitFA, extraFAs, &curhis );
@@ -168,7 +168,7 @@ FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his )
 		}
 		break;
 	    }
-	} /* $BDj5ANsFb$N%k!<%W$N=*N;(B */
+	} /* 定義列内のループの終了 */
 
 	if( class->no >= 0 ){
 	    FALIST *extraFA = extraFAs;
@@ -180,7 +180,7 @@ FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his )
 	if( bodyList == NULL ) break;
 	fa = baseFA;
 	fa->aStart = initStartFlag;
-    } /* $BDj5ANs4V$N%k!<%W$N=*N;(B */
+    } /* 定義列間のループの終了 */
 
     if( !exitFlag ){
 	errMes( "Infinite definition is formed %s", strAncestors( curhis.prev, NULL ) );
@@ -191,14 +191,14 @@ FA *r_makeNFA( CLASS *class, FA *fa, FA *exitFA, FALIST *orgExtraFAs, HIS *his )
 	    curhis.cloneFA->accpt |= (1 << class->no);
 	}
     }
-    extraFAs = freeFAlist( extraFAs ); /*C++$B$J$i(Bdestructor$B$,$d$k$N$K!D(B*/
+    extraFAs = freeFAlist( extraFAs ); /*C++ならdestructorがやるのに…*/
 
     if( curhis.cloneFA == NULL ){
 	ARC *curArc, *tmpArc;
 	for( curArc = curhis.nsList; curArc != NULL; ){
 	    curArc->fa->psNum--;
-	    /* cloneFA$B$,;X$9(B($BM=Dj$@$C$?(B)FA$B$O$b$H$NA+0\$N%3%T!<$J$N$G(B
-	       psNum$B$,(B0$B$NH=Dj(B($B$=$7$F(BFA$B$N>C5n(B)$B$O>JN,$G$-$k(B(0$B$K$O$J$i$J$$(B)*/
+	    /* cloneFAが指す(予定だった)FAはもとの遷移のコピーなので
+	       psNumが0の判定(そしてFAの消去)は省略できる(0にはならない)*/
 	    tmpArc = curArc->next;
 	    free( curArc );
 	    curArc = tmpArc;
@@ -271,7 +271,7 @@ FA *makeNewFA( void )
     if( (newFA = calloc( 1, sizeof(FA) )) == NULL ){
 	errMes( "Can't alloc Finite Automaton buffer" );
     }
-    newFA->stat = -1; /* $B$^$@HV9f$,?6$i$l$F$$$J$$$N0UL#(B */
+    newFA->stat = -1; /* まだ番号が振られていないの意味 */
     FAtotal++;
     return( newFA );
 }
@@ -296,7 +296,7 @@ void connectFAforNFA( FA *fa, int inp, FA *nextFA, HIS *his )
 
 void connectFA( FA *fa, int inp, FA *nextFA, CLASSFLAGS accpt, CLASSFLAGS start )
 {
-    /* $BCm(B: nextFA$B$N(BpsNum$B$r(Bincrement$B$9$k(B */
+    /* 注: nextFAのpsNumをincrementする */
 
     fa->nsList = appendArc( fa->nsList, nextFA, inp, accpt, start );
     nextFA->psNum++;
@@ -304,8 +304,8 @@ void connectFA( FA *fa, int inp, FA *nextFA, CLASSFLAGS accpt, CLASSFLAGS start 
 
 ARC *appendArc( ARC *top, FA *dst, int inp, CLASSFLAGS accpt, CLASSFLAGS start )
 {
-    /* $B%j%9%H$KF~NO$N<-=q=g$GE,@Z0LCV$KA^F~(B
-       $B$^$?F1$8$b$N$,$"$k>l9g%"!<%/>e$N%U%i%0$r(Bor$B$9$k(B */
+    /* リストに入力の辞書順で適切位置に挿入
+       また同じものがある場合アーク上のフラグをorする */
     ARC *newArc;
     ARC *curArc = NULL;
     ARC *nextArc;
@@ -342,9 +342,9 @@ ARC *appendArc( ARC *top, FA *dst, int inp, CLASSFLAGS accpt, CLASSFLAGS start )
     
 void appendHisArc( HIS *his, FA *fa, int inp, FA *nextFA, CLASSFLAGS accpt, CLASSFLAGS start )
 {
-    /* $BCeL\%/%i%9$N3+;O(BFA$B$GA+0\2DG=$J$iMzNr%P%C%U%!$XEPO?(B
-       $B$5$i$K?F$?$A$bA+0\2DG=$+D4$Y$k(B */
-    while( his != NULL && his->fa == fa /* $B%/%i%9$N3+;O(BFA$B$G$J$$(B */ ){
+    /* 着目クラスの開始FAで遷移可能なら履歴バッファへ登録
+       さらに親たちも遷移可能か調べる */
+    while( his != NULL && his->fa == fa /* クラスの開始FAでない */ ){
 	his->nsList = appendArc( his->nsList, nextFA, inp, accpt, start );
 	if( his->cloneFA != NULL ) his->cloneFA->nsList = his->nsList;
 	his = his->prev;
@@ -405,7 +405,7 @@ void chkLeftRecursion( CLASS *class, FA *fa, HIS *his )
 char *strAncestors( HIS *me, HIS *ancestor )
 {
     static char ancestorsList[ 1024 ];
-    if( me == NULL /* infinite err$B$NH/8+$NET9g>e(BNULL$B$,Mh$k>l9g$,$"$k(B */ ){
+    if( me == NULL /* infinite errの発見の都合上NULLが来る場合がある */ ){
 	sprintf( ancestorsList, "in class,\"%s\"", StartSymbol->name );
     } else if( me == ancestor ){
 	sprintf( ancestorsList, "in class,\"%s\"", me->class->name );

@@ -12,7 +12,7 @@
  * @author Akinobu LEE
  * @date   Wed Mar 23 20:33:01 2005
  *
- * $Revision: 1.6 $
+ * $Revision: 1.9 $
  * 
  */
 /*
@@ -51,6 +51,7 @@ opt_help(Jconf *jconf, char *arg[], int argnum)
   fprintf(stderr, "    [-zc zerocrossnum]    silence cut zerocross num   (%d)\n", jconf->detect.zero_cross_num);
   fprintf(stderr, "    [-headmargin msec]    head margin length          (%d)\n", jconf->detect.head_margin_msec);
   fprintf(stderr, "    [-tailmargin msec]    tail margin length          (%d)\n", jconf->detect.tail_margin_msec);
+  fprintf(stderr, "    [-chunksize sample]   chunk size for processing   (%d)\n", jconf->detect.chunk_size);
   fprintf(stderr, "    [-nostrip]            not strip off zero samples\n");
   fprintf(stderr, "    [-zmean]              remove DC by zero mean\n");
   fprintf(stderr, "    [-nocutsilence]       disable VAD, record all stream\n");
@@ -280,10 +281,23 @@ main(int argc, char *argv[])
       }
     }
   }
-  /* set interrupt signal handler to properly close output file */
+  /* set signal handlers to properly close output file */
   if (signal(SIGINT, interrupt_record) == SIG_ERR) {
     fprintf(stderr, "Warning: signal intterupt may collapse output\n");
   }
+  if (signal(SIGTERM, interrupt_record) == SIG_ERR) {
+    fprintf(stderr, "Warning: signal intterupt may collapse output\n");
+  }
+#ifdef SIGPIPE
+  if (signal(SIGPIPE, interrupt_record) == SIG_ERR) {
+    fprintf(stderr, "Warning: signal intterupt may collapse output\n");
+  }
+#endif
+#ifdef SIGQUIT
+  if (signal(SIGQUIT, interrupt_record) == SIG_ERR) {
+    fprintf(stderr, "Warning: signal intterupt may collapse output\n");
+  }
+#endif
 
   recog = j_recog_new();
   recog->jconf = jconf;

@@ -4,6 +4,7 @@
 
                                 Julius
 
+                                                (Rev 4.2.1 2011/12/25)
                                                 (Rev 4.2   2011/05/01)
                                                 (Rev 4.1.5 2010/06/04)
                                                 (Rev 4.1   2008/10/03)
@@ -46,22 +47,17 @@ on Windows (SAPI/console). Julius is distributed with open license
 together with source codes.
 
 
-What's new in Julius-4.2
+What's new in Julius-4.2.1
 ===========================
 
-Version 4.2 includes new features, improvements and bug fixes.  Score
-pruning (-bs) is implemented at the 1st pass search for faster
-decoding.  It can be used in conjunction with the conventional rank
-pruning (-b).  For audio interface, PulseAudio API is newly supported,
-and PortAudio library are updated to V19.  At pulseaudio (i.e. Windows
-OS), you can choose the capture device by environment variable etc.
-The part of codes are refined for stability, by eliminating memory
-leaks and efficiency.  Some other bugs are fixed.
+Version 4.2.1 is a bug fix release.  Many bugs has been fixed,
+especially the C0 handling with CMN.  Additionary, per-word insertion
+penalty at grammar is newly supported.
 
 See the "Release.txt" file for the full list of updates.
 
 
-Contents of Julius-4.2
+Contents of Julius-4.2.1
 =========================
 
 	(Documents with suffix "ja" are written in Japanese)

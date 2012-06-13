@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GRAMMAR>
+<RULE name="S" toplevel="ACTIVE">
+  <L>
+    <P>
+      <RULEREF name="FILLER"/>
+      <RULEREF name="PERSONS"/>
+      <RULEREF name="CARRIER"/>
+    </P>
+    <P>
+      <RULEREF name="PERSONS"/>
+      <RULEREF name="CARRIER"/>
+    </P>
+    <P>
+      <RULEREF name="FILLER"/>
+      <RULEREF name="PERSONS"/>
+    </P>
+    <P>
+      <RULEREF name="PERSONS"/>
+    </P>
+  </L>
+</RULE>
+<RULE name="FILLER" toplevel="INACTIVE">
+  <L>
+    <P>えー</P>
+    <P>えーと</P>
+    <P>えーっと</P>
+    <P>えーっとー</P>
+    <P>あー</P>
+    <P>あーと</P>
+    <P>あーっと</P>
+    <P>/んー/んん;</P>
+    <P>/んーと/んんと;</P>
+    <P>/んーっと/んっと;</P>
+    <P>あのー</P>
+    <P>そのー</P>
+    <P>と</P>
+    <P>っと</P>
+    <P>うーん</P>
+    <P>うーんと</P>
+  </L>
+</RULE>
+<RULE name="PERSONS" toplevel="INACTIVE">
+  <L propname="PERSONS">
+    <P valstr="1">/1人/ひとり;</P>
+    <P valstr="2">/2人/ふたり;</P>
+    <P valstr="3">/3人/さんにん;</P>
+    <P valstr="4">/4人/よにん;</P>
+    <P valstr="5">/5人/ごにん;</P>
+    <P valstr="6">/6人/ろくにん;</P>
+    <P valstr="7">/7人/しちにん;</P>
+    <P valstr="7">/7人/ひちにん;</P>
+    <P valstr="7">/7人/ななにん;</P>
+    <P valstr="8">/8人/はちにん;</P>
+    <P valstr="9">/9人/きゅーにん;</P>
+    <P valstr="9">/9人/くにん;</P>
+    <P valstr="10">/10人/じゅーにん;</P>
+    <P valstr="1">/1名/いちめー;</P>
+    <P valstr="2">/2名/にめー;</P>
+    <P valstr="3">/3名/さんめー;</P>
+    <P valstr="4">/4名/よんめー;</P>
+    <P valstr="4">/4名/よめー;</P>
+    <P valstr="5">/5名/ごめー;</P>
+    <P valstr="6">/6名/ろくめー;</P>
+    <P valstr="7">/7名/しちめー;</P>
+    <P valstr="7">/7名/ひちめー;</P>
+    <P valstr="7">/7名/ななめー;</P>
+    <P valstr="8">/8名/はちめー;</P>
+    <P valstr="9">/9名/きゅーめー;</P>
+    <P valstr="10">/10名/じゅーめー;</P>
+  </L>
+</RULE>
+<RULE name="CARRIER" toplevel="INACTIVE">
+  <L>
+    <P>です</P>
+    <P>になります</P>
+    <P>/でお願いします/でおねがいします;</P>
+  </L>
+</RULE>
+</GRAMMAR>
