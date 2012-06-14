@@ -186,7 +186,7 @@ void MainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 	}
 	else if (wParam == ID_MENU_WEB)
 	{//web画面を開く
-		std::string weburl = this->Httpd.getWebURL("/media_start");
+		std::string weburl = this->Httpd.getWebURL("/electronics");
 		ShellExecute(NULL,NULL,weburl.c_str() , NULL,NULL,0);
 	}
 #endif
