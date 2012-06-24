@@ -1,1 +1,0 @@
-<?lua for key,value in out["args"] do -- hogehoge ?>hello<?= "world" ?>!!<?lua end ?>

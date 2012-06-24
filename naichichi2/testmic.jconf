@@ -1,6 +1,0 @@
--gram __temp__regexp_test
--C hmm_ptm.jconf
--input mic -demo
--n 1 -output 1
--rejectshort 1000
--walign

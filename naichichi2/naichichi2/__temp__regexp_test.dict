@@ -1,50 +1,145 @@
 0	[</s>]	 silE
 1	[<s>]	 silB
 2	[gomi]	a
+2	[gomi]	k o a
 2	[gomi]	i
+2	[gomi]	k o i
 2	[gomi]	u
+2	[gomi]	k o:
 2	[gomi]	e
+2	[gomi]	k o e
 2	[gomi]	o
+2	[gomi]	k o:
 2	[gomi]	k a
+2	[gomi]	k o k a
 2	[gomi]	k i
+2	[gomi]	k o k i
 2	[gomi]	k u
+2	[gomi]	k o k u
 2	[gomi]	k e
+2	[gomi]	k o k e
 2	[gomi]	k o
+2	[gomi]	k o k o
 2	[gomi]	s a
+2	[gomi]	k o s a
 2	[gomi]	sh i
+2	[gomi]	k o sh i
 2	[gomi]	s u
+2	[gomi]	k o s u
 2	[gomi]	s e
+2	[gomi]	k o s e
 2	[gomi]	s o
+2	[gomi]	k o s o
 2	[gomi]	t a
+2	[gomi]	k o t a
 2	[gomi]	ch i
+2	[gomi]	k o ch i
 2	[gomi]	ts u
+2	[gomi]	k o ts u
 2	[gomi]	t e
+2	[gomi]	k o t e
 2	[gomi]	t o
+2	[gomi]	k o t o
 2	[gomi]	n a
+2	[gomi]	k o n a
 2	[gomi]	n i
+2	[gomi]	k o n i
 2	[gomi]	n u
+2	[gomi]	k o n u
 2	[gomi]	n e
+2	[gomi]	k o n e
 2	[gomi]	n o
+2	[gomi]	k o n o
 2	[gomi]	h a
+2	[gomi]	k o h a
 2	[gomi]	h i
+2	[gomi]	k o h i
 2	[gomi]	f u
+2	[gomi]	k o f u
 2	[gomi]	h e
+2	[gomi]	k o h e
 2	[gomi]	h o
+2	[gomi]	k o h o
 2	[gomi]	m a
+2	[gomi]	k o m a
 2	[gomi]	m i
+2	[gomi]	k o m i
 2	[gomi]	m u
+2	[gomi]	k o m u
 2	[gomi]	m e
+2	[gomi]	k o m e
 2	[gomi]	m o
+2	[gomi]	k o m o
 2	[gomi]	y a
+2	[gomi]	k o y a
 2	[gomi]	y u
+2	[gomi]	k o y u
 2	[gomi]	y o
+2	[gomi]	k o y o
 2	[gomi]	r a
+2	[gomi]	k o r a
 2	[gomi]	r i
+2	[gomi]	k o r i
 2	[gomi]	r u
+2	[gomi]	k o r u
 2	[gomi]	r e
+2	[gomi]	k o r e
 2	[gomi]	r o
+2	[gomi]	k o r o
 2	[gomi]	w a
+2	[gomi]	k o w a
 2	[gomi]	N
+2	[gomi]	k o N
+2	[gomi]	g a
+2	[gomi]	k o g a
+2	[gomi]	g i
+2	[gomi]	k o g i
+2	[gomi]	g u
+2	[gomi]	k o g u
+2	[gomi]	g e
+2	[gomi]	k o g e
+2	[gomi]	g o
+2	[gomi]	k o g o
+2	[gomi]	z a
+2	[gomi]	k o z a
+2	[gomi]	j i
+2	[gomi]	k o j i
+2	[gomi]	z u
+2	[gomi]	k o z u
+2	[gomi]	z e
+2	[gomi]	k o z e
+2	[gomi]	z o
+2	[gomi]	k o z o
+2	[gomi]	d a
+2	[gomi]	k o d a
+2	[gomi]	j i
+2	[gomi]	k o j i
+2	[gomi]	z u
+2	[gomi]	k o z u
+2	[gomi]	d e
+2	[gomi]	k o d e
+2	[gomi]	d o
+2	[gomi]	k o d o
+2	[gomi]	b a
+2	[gomi]	k o b a
+2	[gomi]	b i
+2	[gomi]	k o b i
+2	[gomi]	b u
+2	[gomi]	k o b u
+2	[gomi]	b e
+2	[gomi]	k o b e
+2	[gomi]	b o
+2	[gomi]	k o b o
+2	[gomi]	p a
+2	[gomi]	k o p a
+2	[gomi]	p i
+2	[gomi]	k o p i
+2	[gomi]	p u
+2	[gomi]	k o p u
+2	[gomi]	p e
+2	[gomi]	k o p e
+2	[gomi]	p o
+2	[gomi]	k o p o
 3	[_k o N py u: t a_]	 k o N py u: t a
 3	[_k o N py u: t a:_]	 k o N py u: t a:
 4	[_e a k o N_]	 e a k o N
