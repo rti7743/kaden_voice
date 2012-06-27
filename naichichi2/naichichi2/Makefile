@@ -1,18 +1,19 @@
 CC=gcc
 CXX=g++
-FPUHINT=-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -mabi=aapcs-linux -fforce-addr -fomit-frame-pointer -fstrength-reduce
+# FPUHINT=-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -mabi=aapcs-linux -fforce-addr -fomit-frame-pointer -fstrength-reduce
+FPUHINT=
 CFLAGS=-g -Os $(FPUHINT)
 
 CPPFLAGS= \
 $(CFLAGS) \
 -std=gnu++0x \
 -Wwrite-strings \
--lboost_thread -lboost_system -lpthread \
 -I../julius/libsent/include \
 -I../julius/libjulius/include \
-`../julius/libsent/libsent-config --cflags` `../julius/libjulius/libjulius-config --cflags` 
+`../julius/libsent/libsent-config --cflags` `../julius/libjulius/libjulius-config --cflags`
 
 LDFLAGS= \
+-lboost_thread -lboost_system -lpthread \
 ../lua/liblua.a \
 ../liblinear/liblinear.a \
 ../liblinear/blas/blas.a \
@@ -43,7 +44,7 @@ XLHttpHeader.o \
 XLHttpRequerst.o \
 XLStringUtil.o \
 XLSoundPlay.o \
-XLUrlParser.o 
+XLUrlParser.o
 
 all: $(TARGET)
 

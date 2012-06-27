@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if "$1" == "clean"; then
+if [ "$1" = "clean" ] ; then
         (cd julius ; make clean ; cd .. );
         (cd liblinear ; make clean ; cd ..);
 #        (cd mecab ; make clean; cd ..  );
@@ -10,7 +10,7 @@ else
         (cd julius ; ./configure --with-alsa ; make ; cd .. );
         (cd liblinear ; ./configure ; make ; cd .. );
 #        (cd mecab ; ./configure ; make ; cd .. );
-        (cd lua ; ./configure ; make ; cd ..  );
+        (cd lua ; ./configure ; make linux ; cd ..  );
         (cd naichichi2 ; ./configure ; make ; cd .. );
 
 fi
