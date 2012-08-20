@@ -1,4 +1,4 @@
-﻿/*
+/*
  * PortAudio Portable Real-Time Audio Library
  * Windows WAVEFORMAT* data structure utilities
  * portaudio.h should be included before this file.

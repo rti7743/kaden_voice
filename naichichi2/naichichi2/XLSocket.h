@@ -9,9 +9,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
-#include "XLResourceException.h"
-#include "XLParamException.h"
+#if _MSC_VER
+	#include <Winsock2.h>
+	#include <mswsock.h>
+#endif
 
 
 class XLSocket  
@@ -40,8 +41,10 @@ public:
 	 *								SOCK_DGRAM : UDP
 	 * @return void 
 	 */
-	void Create( int type , int protocol ) throw (XLResourceException);
-
+	void CreateLow( int type , int protocol );
+	void CreateTCP( );
+	void CreateUDP( );
+	
 	/**
 	 * Close:	ソケットを閉じる
 	 *
@@ -56,12 +59,36 @@ public:
 	 * @param ioArgp 
 	 * @return  int	
 	 */
-	int IoctlSocket(long inCmd , unsigned long * ioArgp) throw(XLParamException);
+	int IoctlSocket(long inCmd , unsigned long * ioArgp);
 
 	int SetSockopt( int level, int optname,  const char * optval,  int optlen );
 
 	int GetSockopt( int level, int optname,  char * optval,  int * optlen );
 
+	void Connect(const std::string &inHost , int inPort);
+
+	void Connect(const SOCKADDR_IN * inSai);
+
+	void Bind(unsigned long inBindIP , int inPort);
+
+	void Bind(const SOCKADDR_IN * inSai);
+
+	void Listen(int inBacklog = SOMAXCONN);
+
+	XLSocket* Accept();
+
+	void Shutdown();
+
+	int Send( const char* inBuffer ,int inBufferLen , int inFlags = 0 , int inTimeOutS = 60);
+
+	int Recv( char* outBuffer ,int inBufferLen , int inFlags = 0 , int inTimeOutS = 60);
+
+	enum SELECT_TYPE
+	{
+		 SELECT_TYPE_READ
+		,SELECT_TYPE_WRITE
+	};
+	void Select(SELECT_TYPE inType , long inTimeOutS);
 protected:
 
 	/**
@@ -70,12 +97,18 @@ protected:
 	 * @param inErrorCode	
 	 * @return string 
 	 */
-	string ErrorToMesage(DWORD inErrorCode);
+	std::string ErrorToMesage(DWORD inErrorCode);
 
 	/**
 	 * Socket:	ソケットハンドル
 	 */
 	SOCKET	Socket;
+	
+	
+	/**
+	 * Connected:	接続しているかどうか？
+	 */
+	bool Connected;
 };
 
 #endif // !defined(AFX_XLSOCKET_H__137F6EB5_32A1_46CD_9CA7_EC6E9C6A6E6A__INCLUDED_)

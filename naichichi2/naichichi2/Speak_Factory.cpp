@@ -1,7 +1,9 @@
 ﻿#include "common.h"
 #include "ScriptRunner.h"
 #include "Speak_Factory.h"
-//#include "Speak_SpeechPlatform.h"
+#if _MSC_VER
+	#include "Speak_SpeechPlatform.h"
+#endif
 #include "Speak_GoogleTranslate.h"
 //#include "Speak_AquesTalk.h"
 #include "MainWindow.h"
@@ -24,14 +26,16 @@ xreturn::r<bool> Speak_Factory::Create(const std::string & name , MainWindow* po
 
 	puts("speack");
 	puts(name.c_str());
-	if (name == "mssp")
-	{
-//		this->Engine = new Speak_SpeechPlatform();
-	}
-	else if (name == "google")
+	if (name == "google")
 	{
 		this->Engine = new Speak_GoogleTranslate();
 	}
+#if _MSC_VER
+	else if (name == "mssp")
+	{
+		this->Engine = new Speak_SpeechPlatform();
+	}
+#endif
 	else if (name == "aquestalk")
 	{
 //		this->Engine = new Speak_AquesTalk();

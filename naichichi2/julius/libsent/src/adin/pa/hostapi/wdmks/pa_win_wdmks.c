@@ -1,4 +1,4 @@
-﻿/*
+/*
  * $Id: pa_win_wdmks.c,v 1.1 2011/02/05 09:00:03 sumomo Exp $
  * PortAudio Windows WDM-KS interface
  *

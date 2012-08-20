@@ -4,9 +4,10 @@
 -- 戻り値は特にありません。
 function call()
 	onvoice("エアコン(?:つけて|オン)"	, function(){
-		speak("エアコンつけるよっ" , function(){
 			action("action__aircon_cooler_on");
-		})
+//		speak("エアコンつけるよっ" , function(){
+//			action("action__aircon_cooler_on");
+//		})
 	});
 	onvoice("エアコン(?:つけて|オン)"	, function() action("action__aircon_cooler_on") end);
 	onvoice("エアコン(?:けして|オフ)"	, function() action("action__aircon_cooler_off") end);

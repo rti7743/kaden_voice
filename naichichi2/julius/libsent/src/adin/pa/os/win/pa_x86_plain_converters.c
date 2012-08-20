@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Plain Intel IA32 assembly implementations of PortAudio sample converter functions.
  * Copyright (c) 1999-2002 Ross Bencina, Phil Burk
  *

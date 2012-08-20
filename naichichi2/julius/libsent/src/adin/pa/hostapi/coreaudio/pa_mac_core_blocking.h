@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Internal blocking interfaces for PortAudio Apple AUHAL implementation
  *
  * PortAudio Portable Real-Time Audio Library

@@ -402,7 +402,6 @@ void MainWindow::PopupMessage(const std::string & title,const std::string & mess
 #endif
 }
 
-
 //初期化を行う所
 bool MainWindow::OnInit()
 {
@@ -462,7 +461,7 @@ bool MainWindow::OnInit()
 		int port = this->Config.GetInt("httpd__port",15550);
 		int threadcount = this->Config.GetInt("httpd__workerthread",2);
 		std::string webroot = this->Config.Get("httpd__webroot", this->Config.GetBaseDirectory() + "\\webroot");
-		std::map<std::string,std::string> allowext = this->Config.FindGetsToMap("httpd__allowext_"); 
+		std::map<std::string,std::string> allowext = this->Config.FindGetsToMap("httpd__allowext_",true); 
 
 		char myhostname[256] ;
 		gethostname(myhostname, sizeof(myhostname));

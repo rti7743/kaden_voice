@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   m_adin.c
  * 
  * <JA>
- * @brief  音声入力デバイスの初期化
+ * @brief  �������ϥǥХ����ν����
  * </JA>
  * 
  * <EN>
@@ -176,11 +176,11 @@ adin_select(ADIn *a, int source, int dev)
 
 /** 
  * <JA>
- * 音声入力デバイスを初期化し，音入力切出用パラメータをセットアップする. 
+ * �������ϥǥХ��������������������ڽ��ѥѥ�᡼���򥻥åȥ��åפ���. 
  *
- * @param adin [in] AD-in ワークエリア
- * @param jconf [in] 全体設定パラメータ
- * @param arg [in] デバイス依存引数
+ * @param adin [in] AD-in ������ꥢ
+ * @param jconf [in] ��������ѥ�᡼��
+ * @param arg [in] �ǥХ�����¸����
  * </JA>
  * <EN>
  * Initialize audio device and set up parameters for sound detection.
@@ -229,9 +229,9 @@ adin_setup_all(ADIn *adin, Jconf *jconf, void *arg)
 
 /** 
  * <JA>
- * 設定パラメータに従い音声入力デバイスをセットアップする. 
+ * ����ѥ�᡼���˽����������ϥǥХ����򥻥åȥ��åפ���. 
  *
- * @param recog [i/o] エンジンインスタンス
+ * @param recog [i/o] ���󥸥󥤥󥹥���
  * 
  * </JA>
  * <EN>

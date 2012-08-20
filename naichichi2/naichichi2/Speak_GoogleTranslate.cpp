@@ -7,7 +7,8 @@
 #include "Speak_Factory.h"
 #include "Speak_GoogleTranslate.h"
 #include "MainWindow.h"
-#include "XLHttpRequerst.h"
+#include "XLHttpSocket.h"
+#include "XLFileUtil.h"
 #include "XLStringUtil.h"
 #include "XLSoundPlay.h"
 
@@ -86,20 +87,30 @@ void Speak_GoogleTranslate::Run()
 		std::string lang = "ja";
 		std::string encoding = "utf_8";	
 
-		XLHttpRequerst downloader;
 		std::map<std::string , std::string> param;
-		param["q"]		= _A2U(task.text.c_str());
-		param["hl"]		= lang;
-		param["lr"]		= std::string("") + "lang_" + lang;
-		param["ie"]		= encoding;
-		param["oe"]		= encoding;
+//		param["q"]		= _A2U(task.text.c_str());
+		param["q"]      = XLStringUtil::urlencode(_A2U(task.text.c_str()));
+		param["ie"]		= "UTF-8";
+		param["tl"]		= "ja";
+		param["total"]	= "1";
+		param["idx"]	= "0";
+//		param["textlen"]	= "5";
 
 		std::map<std::string,std::string> header;
-		std::map<std::string,std::string> option;
+		std::vector<char> retBinary;
 
-		header["user-agent"] = "Mozilla/5.0 (Windows; U; Windows NT 5.1; ja-ｊｐ) AppleWebKit/533.4 (KHTML, like Gecko) Chrome/5.0.375.70 Safari/533.4";
-		downloader.Download("http://translate.google.com/translate_tts?" + XLStringUtil::crossjoin("=","&",param) ,header,option);
+		header["host"] = "translate.google.co.jp";
+		header["connection"] = "close";
+		header["accept-encoding"] = "identity;q=1, *;q=0";
+		header["user-agent"] = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11";
+		header["accept"] = "*/*";
+//		header["x-chrome-variations"] = "CL21yQEIiLbJAQibtskBCKO2yQEIqLbJAQi5g8oBCMaDygE=";
+		header["referer"] = "http://translate.google.co.jp/";
+		header["accept-language"] = "ja,en-US;q=0.8,en;q=0.6";
+		header["accept-charset"] = "Shift_JIS,utf-8;q=0.7,*;q=0.3";
+		header["range"] = "bytes=0-";
 
+		XLHttpSocket::GetBinary("http://translate.google.com/translate_tts?" + XLStringUtil::crossjoin("=","&",param),header,60,&retBinary);
 		if (this->StopFlag)
 		{
 			return;
@@ -112,7 +123,7 @@ void Speak_GoogleTranslate::Run()
 			continue;
 		}
 		std::string filename = std::string(tempfilename) + ".mp3";
-		downloader.saveFile(filename);
+		XLFileUtil::write(filename,retBinary);
 
 		free((void*)tempfilename);
 		tempfilename = NULL;

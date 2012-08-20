@@ -1,4 +1,4 @@
-﻿/*
+/*
  * $Id: pa_unix_util.c,v 1.1 2011/02/05 09:00:03 sumomo Exp $
  * Portable Audio I/O Library
  * UNIX platform-specific support functions

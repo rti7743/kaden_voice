@@ -103,6 +103,10 @@ xreturn::r<bool> XLHttpRequerst::Download(const std::string & url , const std::m
 	//まとめて読み出す.
 	const char* data = boost::asio::buffer_cast<const char*>(response_body.data());
 	int size = response_body.size();
+    if (size <= 0)
+	{
+		return xreturn::error("bodyサイズが0です URL:" + url);
+	}
 
 	this->OutData.insert(this->OutData.end() ,data , data + size );
 

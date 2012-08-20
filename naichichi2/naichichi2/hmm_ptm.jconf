@@ -45,12 +45,18 @@
 ##
 # asciiフォーマット，もしくは "mkbinhmmで" 作成したバイナリ形式
 # （自動判別される）
--h ./config/julius/phone_m/hmmdefs_ptm_gid.binhmm   # PTM triphone
+#-h ./config/julius/phone_m/hmmdefs_ptm_gid.binhmm   # PTM triphone
+-h ./config/julius/phone_m/_hmmdefs_ptm_gid.binhmm   # PTM triphone
+#-h ./config/julius/phone_m/clustered.mmf.16mix.all.julius.binhmm
+#-h ./config/julius/phone_m/clustered.mmf.16mix.all.julius.gz
 
 ## triphoneモデルの場合，さらに
 ##     論理的に出現しうる triphone -> 定義されている triphone
 ## の対応を指定した「HMMListファイル」が必要です．
--hlist ./config/julius/phone_m/logicalTri
+#-hlist ./config/julius/phone_m/logicalTri
+-hlist ./config/julius/phone_m/_logicalTri
+#-hlist ./config/julius/phone_m/tri_tied.list.bin
+#-hlist ./config/julius/phone_m/tri_tied.list
 
 ######################################################################
 #### 言語モデル詳細設定

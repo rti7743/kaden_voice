@@ -17,11 +17,12 @@ public:
 	XLHttpHeader();
 	virtual ~XLHttpHeader();
 
-	bool Parse(const char * inHeader );
+	bool Parse(const char * inHeader , int size);
 	bool Parse(const std::string& inHeader )
 	{
-		return this->Parse(inHeader.c_str()  );
+		return this->Parse(inHeader.c_str()  ,inHeader.size() );
 	}
+	bool PostParse( const char * inBody , int size );
 
 	std::string getRequestMethod() const
 	{
@@ -81,6 +82,18 @@ public:
 	const std::map<std::string,std::string>	getPost()const
 	{
 		return this->Post;
+	}
+	const std::map<std::string,std::string>*	getHeaderPointer() const
+	{
+		return &this->Header;
+	}
+	const std::map<std::string,std::string>*	getGetPointer() const
+	{
+		return &this->Get;
+	}
+	const std::map<std::string,std::string>*	getPostPointer()const
+	{
+		return &this->Post;
 	}
 	const std::map<std::string,std::string>	getRequest() const
 	{

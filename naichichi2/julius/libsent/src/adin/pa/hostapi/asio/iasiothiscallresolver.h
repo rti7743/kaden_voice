@@ -1,4 +1,4 @@
-﻿// ****************************************************************************
+// ****************************************************************************
 // File:			IASIOThiscallResolver.h
 // Description:     The IASIOThiscallResolver class implements the IASIO
 //					interface and acts as a proxy to the real IASIO interface by

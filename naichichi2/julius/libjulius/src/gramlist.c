@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file   gramlist.c
  * 
  * <EN>
@@ -14,14 +14,14 @@
  * </EN>
  * 
  * <JA>
- * @brief  起動時に読み込む文法ファイルのリスト管理. 
+ * @brief  ��ư�����ɤ߹���ʸˡ�ե�����Υꥹ�ȴ���. 
  *
- * これらの関数はエンジン起動時に読み込まれる文法ファイルのリストを管理する
- * 関数です. これらの関数を起動前に呼ぶことで，認識用の文法をアプリケーション
- * 上で明示的に追加することができます. エンジン起動後に動的に文法の
- * 追加や削除，変更を行いたい場合は，文法データを自前で用意して，multi-gram.c
- * 内の関数を直接呼び出す必要があります. その場合は julius/module.c が
- * 実装の参考になるでしょう. (@sa julius/module.c)
+ * �����δؿ��ϥ��󥸥�ư�����ɤ߹��ޤ��ʸˡ�ե�����Υꥹ�Ȥ��������
+ * �ؿ��Ǥ�. �����δؿ���ư���˸Ƥ֤��Ȥǡ�ǧ���Ѥ�ʸˡ�򥢥ץꥱ�������
+ * �������Ū���ɲä��뤳�Ȥ��Ǥ��ޤ�. ���󥸥�ư���ưŪ��ʸˡ��
+ * �ɲä������ѹ���Ԥ��������ϡ�ʸˡ�ǡ����������Ѱդ��ơ�multi-gram.c
+ * ��δؿ���ľ�ܸƤӽФ�ɬ�פ�����ޤ�. ���ξ��� julius/module.c ��
+ * �����λ��ͤˤʤ�Ǥ��礦. (@sa julius/module.c)
  * 
  * </JA>
  * 
@@ -42,12 +42,12 @@
 
 /** 
  * <JA>
- * 起動時読み込みリストに文法を追加する. 
+ * ��ư���ɤ߹��ߥꥹ�Ȥ�ʸˡ���ɲä���. 
  * 
- * @param dfafile [in] DFAファイル
- * @param dictfile [in] 単語辞書
- * @param j [in] LM 設定パラメータ
- * @param lmvar [in] LM 詳細型 id
+ * @param dfafile [in] DFA�ե�����
+ * @param dictfile [in] ñ�켭��
+ * @param j [in] LM ����ѥ�᡼��
+ * @param lmvar [in] LM �ܺٷ� id
  * </JA>
  * <EN>
  * Add a grammar to the grammar list to be read at startup.
@@ -85,9 +85,9 @@ multigram_add_gramlist(char *dfafile, char *dictfile, JCONF_LM *j, int lmvar)
 
 /** 
  * <JA>
- * 起動時読み込みリストを消す. 
+ * ��ư���ɤ߹��ߥꥹ�Ȥ�ä�. 
  * 
- * @param j [in] LM 設定パラメータ
+ * @param j [in] LM ����ѥ�᡼��
  * </JA>
  * <EN>
  * Remove the grammar list to be read at startup.
@@ -128,17 +128,17 @@ multigram_remove_gramlist(JCONF_LM *j)
 
 /** 
  * <JA>
- * @brief  プレフィックスから複数の文法を起動時読み込みリストに追加する. 
+ * @brief  �ץ�ե��å�������ʣ����ʸˡ��ư���ɤ߹��ߥꥹ�Ȥ��ɲä���. 
  *
- * プレフィックスは "foo", あるいは "foo,bar" のようにコンマ区切りで
- * 複数与えることができます. 各文字列の後ろに ".dfa", ".dict" をつけた
- * ファイルを，それぞれ文法ファイル・辞書ファイルとして順次読み込みます. 
- * 読み込まれた文法は順次，文法リストに追加されます. 
+ * �ץ�ե��å����� "foo", ���뤤�� "foo,bar" �Τ褦�˥���޶��ڤ��
+ * ʣ��Ϳ���뤳�Ȥ��Ǥ��ޤ�. ��ʸ����θ���� ".dfa", ".dict" ��Ĥ���
+ * �ե�����򡤤��줾��ʸˡ�ե����롦����ե�����Ȥ��ƽ缡�ɤ߹��ߤޤ�. 
+ * �ɤ߹��ޤ줿ʸˡ�Ͻ缡��ʸˡ�ꥹ�Ȥ��ɲä���ޤ�. 
  * 
- * @param prefix_list [in]  プレフィックスのリスト
- * @param cwd [in] カレントディレクトリの文字列
- * @param j [in] LM 設定パラメータ
- * @param lmvar [in] LM 詳細型 id
+ * @param prefix_list [in]  �ץ�ե��å����Υꥹ��
+ * @param cwd [in] �����ȥǥ��쥯�ȥ��ʸ����
+ * @param j [in] LM ����ѥ�᡼��
+ * @param lmvar [in] LM �ܺٷ� id
  * </JA>
  * <EN>
  * @brief  Add multiple grammars given by their prefixs to the grammar list.
@@ -229,18 +229,18 @@ multigram_add_prefix_list(char *prefix_list, char *cwd, JCONF_LM *j, int lmvar)
 
 /** 
  * <JA>
- * @brief リストファイルを読み込み複数文法を起動時読み込みリストに追加する. 
+ * @brief �ꥹ�ȥե�������ɤ߹���ʣ��ʸˡ��ư���ɤ߹��ߥꥹ�Ȥ��ɲä���. 
  *
- * ファイル内に1行に１つずつ記述された文法のプレフィックスから,
- * 対応する文法ファイルを順次読み込みます. 
+ * �ե��������1�Ԥˣ��Ĥ��ĵ��Ҥ��줿ʸˡ�Υץ�ե��å�������,
+ * �б�����ʸˡ�ե������缡�ɤ߹��ߤޤ�. 
  * 
- * 各行の文字列の後ろに ".dfa", ".dict" をつけたファイルを，
- * それぞれ文法ファイル・辞書ファイルとして順次読み込みます. 
- * 読み込まれた文法は順次，文法リストに追加されます. 
+ * �ƹԤ�ʸ����θ���� ".dfa", ".dict" ��Ĥ����ե������
+ * ���줾��ʸˡ�ե����롦����ե�����Ȥ��ƽ缡�ɤ߹��ߤޤ�. 
+ * �ɤ߹��ޤ줿ʸˡ�Ͻ缡��ʸˡ�ꥹ�Ȥ��ɲä���ޤ�. 
  * 
- * @param listfile [in] プレフィックスリストのファイル名
- * @param j [in] LM 設定パラメータ
- * @param lmvar [in] LM 詳細型 id
+ * @param listfile [in] �ץ�ե��å����ꥹ�ȤΥե�����̾
+ * @param j [in] LM ����ѥ�᡼��
+ * @param lmvar [in] LM �ܺٷ� id
  * </JA>
  * <EN>
  * @brief  Add multiple grammars from prefix list file to the grammar list.

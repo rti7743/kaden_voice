@@ -1,6 +1,7 @@
 ﻿#include "common.h"
 #include "MainWindow.h"
 
+
 #if _MSC_VER
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst,
                    LPSTR lpszCmdLine, int nCmdShow)

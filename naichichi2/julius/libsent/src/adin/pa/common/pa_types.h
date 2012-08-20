@@ -1,4 +1,4 @@
-﻿#ifndef PA_TYPES_H
+#ifndef PA_TYPES_H
 #define PA_TYPES_H
 
 /* 

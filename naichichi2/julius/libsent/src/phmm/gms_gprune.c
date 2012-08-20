@@ -1,8 +1,8 @@
-ï»¿/**
+/**
  * @file   gms_gprune.c
  * 
  * <JA>
- * @brief  Gaussian Mixture Selection ã®ãŸã‚ã® Gaussian pruning ã‚’ç”¨ã„ãŸãƒ¢ãƒãƒ•ã‚©ãƒ³HMMã®è¨ˆç®—
+ * @brief  Gaussian Mixture Selection ¤Î¤¿¤á¤Î Gaussian pruning ¤òÍÑ¤¤¤¿¥â¥Î¥Õ¥©¥óHMM¤Î·×»»
  * </JA>
  * 
  * <EN>

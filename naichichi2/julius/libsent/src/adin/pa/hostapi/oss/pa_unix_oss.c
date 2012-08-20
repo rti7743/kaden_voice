@@ -1,4 +1,4 @@
-﻿#include <sent/config.h>
+#include <sent/config.h>
 
 /*
  * $Id: pa_unix_oss.c,v 1.1 2011/02/05 09:00:03 sumomo Exp $

@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "zlib\zlib.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "portaudio", "portaudio\portaudio.vcxproj", "{C7C9F2E1-315F-439E-A79F-96E97E0BA77C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsvm", "libsvm\libsvm.vcxproj", "{AD94DA6A-8977-4769-A931-B1F1E452DE5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -43,6 +45,10 @@ Global
 		{C7C9F2E1-315F-439E-A79F-96E97E0BA77C}.Debug|Win32.Build.0 = Debug|Win32
 		{C7C9F2E1-315F-439E-A79F-96E97E0BA77C}.Release|Win32.ActiveCfg = Release|Win32
 		{C7C9F2E1-315F-439E-A79F-96E97E0BA77C}.Release|Win32.Build.0 = Release|Win32
+		{AD94DA6A-8977-4769-A931-B1F1E452DE5F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AD94DA6A-8977-4769-A931-B1F1E452DE5F}.Debug|Win32.Build.0 = Debug|Win32
+		{AD94DA6A-8977-4769-A931-B1F1E452DE5F}.Release|Win32.ActiveCfg = Release|Win32
+		{AD94DA6A-8977-4769-A931-B1F1E452DE5F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

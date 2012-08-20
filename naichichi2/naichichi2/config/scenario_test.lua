@@ -1,130 +1,73 @@
 // 実行されるごとに呼ばせれます
 function call()
 {
+	onvoice("こんにちわ" //は
+		,function(e){
+			speak("はい、こんにちは");
+		}
+	)
 	onvoice("きょうのてんきわ" //は
 		,function(e){
 			execute("http://www3.nhk.or.jp/weather/","");
 			speak("これが、今日の天気です");
 		}
 	)
-
-	onvoice("(ただいまー|ただまー)"
+	onvoice("ただいま|ただまー"
 		,function(e){
-			speak("おかえりなさい。",function(){
-				action("action__light_on");     // 電気をつける
-				action("action__display_on");   // ディスプレイをつける
-
-				speak("きょうも、おつかれさまです");
-			});
+			speak("おかえりなさい。きょうもごくろうさまです。");
+			action("action__light_on");
+			msleep(1000);
+			action("action__display_on");
 		}
 	)
-
 	onvoice("おやすみ"
 		,function(e){
-			speak("しょうとうモードに、はいります。" , function(){
-				action("action__display_off");
-				action("action__light_off");
-
-				speak("ぐっない。おやすみなさい。");
-			});
-		}
-	)
-	onvoice("イオナズン"
-		,function(e){
-		}
-	)
-	onvoice("メガフレア"
-		,function(e){
-		}
-	)
-	onvoice("マホートン"
-		,function(e){
-		}
-	)
-	onvoice("ホイミ"
-		,function(e){
-		}
-	)
-	onvoice("プラネタリウムモード"
-		,function(e){
-		}
-	)
-	onvoice("さくらたんのエロがぞうきぼんぬ"
-		,function(e){
-		}
-	)
-	onvoice("なのはたんのエロがぞうきぼんぬ"
-		,function(e){
-		}
-	)
-	onvoice("フェイトたんのエロがぞうきぼんぬ"
-		,function(e){
-		}
-	)
-	onvoice("バイキルト"
-		,function(e){
-		}
-	)
-	onvoice("おはよう"
-		,function(e){
-		}
-	)
-	onvoice("おはよーおはよー"
-		,function(e){
-		}
-	)
-	onvoice("ロマンチックモード"
-		,function(e){
-		}
-	)
-	onvoice("ねこみみもーど"
-		,function(e){
-		}
-	)
-	onvoice("おっぱいおっぱい"
-		,function(e){
-		}
-	)
-	onvoice("これがよのめらじゃ"
-		,function(e){
+			speak("しょうとうモードに入ります");
+			action("action__light_off");
+			msleep(1000);
+			action("action__display_off");
 		}
 	)
 	onvoice("バルス"
 		,function(e){
-		}
-	)
-	onvoice("ほむほむりせっと"
-		,function(e){
-		}
-	)
-	onvoice("こんなのぜったいおかしいよ"
-		,function(e){
-		}
-	)
-	onvoice("エターナルフォースブリザード"
-		,function(e){
-		}
-	)
-	onvoice("ライティング"
-		,function(e){
-		}
-	)
-	onvoice("ファイエル"
-		,function(e){
-		}
-	)
-	onvoice("きほんしせい"
-		,function(e){
+			speak("どかーん");
+			action("action__light_off");
+			msleep(1000);
+			action("action__display_off");
+
+			speak("めがーめがー");
 		}
 	)
 
+
 	onvoice("(おんがくかけて|おんがくをかけて)"
 		,function(e){
+			execute("C:\\Users\\rti\\Desktop\\Dropbox\\library\\music\\Playlists\\いつもの.wpl","");
 			speak("おんがくかけるよっ");
 
 		 }
 	)
 	
+	onvoice("てすと" 
+		,function(e){
+		}
+	)
+	onvoice("には" 
+		,function(e){
+		}
+	)
+//	onvoice("か|さ|た|な|ま|や|ら|わ|ん|です|ですね|ね|す|と|こ|い|う|え|お" 
+//		,function(e){
+//		}
+//	)
+
+	onvoice("たそがれよりもくらきものちのながれよりもあかきものわれらがまえにたちふさがりしすべてのおろかなるものにひとしくほろびをあたえんことをどらぐすれいぶ"
+		,function(e){
+			var_dump(e);
+			speak("ばーい")
+		}
+	)
+
 	onvoice("さようなら"
 		,function(e){
 			var_dump(e);

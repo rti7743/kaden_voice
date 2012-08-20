@@ -1,4 +1,4 @@
-﻿/*
+/*
  * PortAudio Portable Real-Time Audio Library
  * Windows WDM KS utilities
  *

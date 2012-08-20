@@ -1,13 +1,13 @@
-ï»¿/**
+/**
  * @file   adin_esd.c
  *
  * <JA>
- * @brief  ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯å…¥åŠ›ï¼šEnlightened Sound Daemon (EsounD) ã‹ã‚‰ã®éŸ³å£°å…¥åŠ›
+ * @brief  ¥Í¥Ã¥È¥ï¡¼¥¯ÆşÎÏ¡§Enlightened Sound Daemon (EsounD) ¤«¤é¤Î²»À¼ÆşÎÏ
  *
- * å…¥åŠ›ã‚½ãƒ¼ã‚¹ã¨ã—ã¦ Enlightened Sound Daemon (EsounD, ä»¥ä¸‹ esd) ã‚’
- * ä½¿ç”¨ã™ã‚‹ä½ãƒ¬ãƒ™ãƒ«é–¢æ•°ã§ã™ï¼
- * ä½¿ç”¨ã«ã¯ esd ãŒå‹•ä½œã—ã¦ã„ã‚‹ã“ã¨ãŒå¿…è¦ã§ã™ï¼
- * ä½¿ç”¨ã™ã‚‹ã«ã¯ configure æ™‚ã« "--with-mictype=esd" ã‚’æŒ‡å®šã—ã¦ä¸‹ã•ã„ï¼
+ * ÆşÎÏ¥½¡¼¥¹¤È¤·¤Æ Enlightened Sound Daemon (EsounD, °Ê²¼ esd) ¤ò
+ * »ÈÍÑ¤¹¤ëÄã¥ì¥Ù¥ë´Ø¿ô¤Ç¤¹¡¥
+ * »ÈÍÑ¤Ë¤Ï esd ¤¬Æ°ºî¤·¤Æ¤¤¤ë¤³¤È¤¬É¬Í×¤Ç¤¹¡¥
+ * »ÈÍÑ¤¹¤ë¤Ë¤Ï configure »ş¤Ë "--with-mictype=esd" ¤ò»ØÄê¤·¤Æ²¼¤µ¤¤¡¥
  * </JA>
  * <EN>
  * @brief  Audio input from Englightened Sound Daemon (EsounD)

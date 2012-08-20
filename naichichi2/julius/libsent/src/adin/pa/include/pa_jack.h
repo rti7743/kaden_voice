@@ -1,4 +1,4 @@
-﻿#ifndef PA_JACK_H
+#ifndef PA_JACK_H
 #define PA_JACK_H
 
 /*

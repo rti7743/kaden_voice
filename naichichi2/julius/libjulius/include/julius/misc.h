@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   misc.h
  * 
  * <JA>
- * @brief  その他の雑多な定義
+ * @brief  ����¾�λ�¿�����
  * </JA>
  * 
  * <EN>

@@ -1,4 +1,4 @@
-﻿#ifndef PA_RINGBUFFER_H
+#ifndef PA_RINGBUFFER_H
 #define PA_RINGBUFFER_H
 /*
  * $Id: pa_ringbuffer.h,v 1.1 2011/02/05 09:00:02 sumomo Exp $

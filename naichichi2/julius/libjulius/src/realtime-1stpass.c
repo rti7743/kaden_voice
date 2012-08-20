@@ -1,52 +1,52 @@
-﻿/**
+/**
  * @file   realtime-1stpass.c
  * 
  * <JA>
- * @brief  第1パス：フレーム同期ビーム探索（実時間処理版）
+ * @brief  ��1�ѥ����ե졼��Ʊ���ӡ���õ���ʼ»��ֽ����ǡ�
  *
- * 第1パスを入力開始と同時にスタートし，入力と平行して認識処理を行うための
- * 関数が定義されている. 
+ * ��1�ѥ������ϳ��Ϥ�Ʊ���˥������Ȥ������Ϥ�ʿ�Ԥ���ǧ��������Ԥ������
+ * �ؿ����������Ƥ���. 
  * 
- * バッチ処理の場合，Julius の音声認識処理は以下の手順で
- * main_recognition_loop() 内で実行される. 
+ * �Хå������ξ�硤Julius �β���ǧ�������ϰʲ��μ���
+ * main_recognition_loop() ��Ǽ¹Ԥ����. 
  *
- *  -# 音声入力 adin_go()  → 入力音声が speech[] に格納される
- *  -# 特徴量抽出 new_wav2mfcc() →speechから特徴パラメータを param に格納
- *  -# 第1パス実行 get_back_trellis() →param とモデルから単語トレリスの生成
- *  -# 第2パス実行 wchmm_fbs()
- *  -# 認識結果出力
+ *  -# �������� adin_go()  �� ���ϲ����� speech[] �˳�Ǽ�����
+ *  -# ��ħ����� new_wav2mfcc() ��speech������ħ�ѥ�᡼���� param �˳�Ǽ
+ *  -# ��1�ѥ��¹� get_back_trellis() ��param �ȥ�ǥ뤫��ñ��ȥ�ꥹ������
+ *  -# ��2�ѥ��¹� wchmm_fbs()
+ *  -# ǧ����̽���
  *
- * 第1パスを平行処理する場合，上記の 1 ～ 3 が平行して行われる. 
- * Julius では，この並行処理を，音声入力の断片が得られるたびに
- * 認識処理をその分だけ漸次的に進めることで実装している. 
+ * ��1�ѥ���ʿ�Խ��������硤�嵭�� 1 �� 3 ��ʿ�Ԥ��ƹԤ���. 
+ * Julius �Ǥϡ������¹Խ����򡤲������Ϥ����Ҥ������뤿�Ӥ�
+ * ǧ�������򤽤�ʬ��������Ū�˿ʤ�뤳�ȤǼ������Ƥ���. 
  * 
- *  - 特徴量抽出と第1パス実行を，一つにまとめてコールバック関数として定義. 
- *  - 音声入力関数 adin_go() のコールバックとして上記の関数を与える
+ *  - ��ħ����Ф���1�ѥ��¹Ԥ򡤰�ĤˤޤȤ�ƥ�����Хå��ؿ��Ȥ������. 
+ *  - �������ϴؿ� adin_go() �Υ�����Хå��Ȥ��ƾ嵭�δؿ���Ϳ����
  *
- * 具体的には，ここで定義されている RealTimePipeLine() がコールバックとして
- * adin_go() に与えられる. adin_go() は音声入力がトリガするとその得られた入力
- * 断片ごとに RealTimePipeLine() を呼び出す. RealTimePipeLine() は得られた
- * 断片分について特徴量抽出と第1パスの計算を進める. 
+ * ����Ū�ˤϡ��������������Ƥ��� RealTimePipeLine() ��������Хå��Ȥ���
+ * adin_go() ��Ϳ������. adin_go() �ϲ������Ϥ��ȥꥬ����Ȥ�������줿����
+ * ���Ҥ��Ȥ� RealTimePipeLine() ��ƤӽФ�. RealTimePipeLine() ������줿
+ * ����ʬ�ˤĤ�����ħ����Ф���1�ѥ��η׻���ʤ��. 
  *
- * CMN について注意が必要である. CMN は通常発話単位で行われるが，
- * マイク入力やネットワーク入力のように，第1パスと平行に認識を行う
- * 処理時は発話全体のケプストラム平均を得ることができない. バージョン 3.5
- * 以前では直前の発話5秒分(棄却された入力を除く)の CMN がそのまま次発話に
- * 流用されていたが，3.5.1 からは，上記の直前発話 CMN を初期値として
- * 発話内 CMN を MAP-CMN を持ちいて計算するようになった. なお，
- * 最初の発話用の初期CMNを "-cmnload" で与えることもでき，また
- * "-cmnnoupdate" で入力ごとの CMN 更新を行わないようにできる. 
- * "-cmnnoupdate" と "-cmnload" と組み合わせることで, 最初にグローバルな
- * ケプストラム平均を与え，それを常に初期値として MAP-CMN することができる. 
+ * CMN �ˤĤ������դ�ɬ�פǤ���. CMN ���̾�ȯ��ñ�̤ǹԤ��뤬��
+ * �ޥ������Ϥ�ͥåȥ�����ϤΤ褦�ˡ���1�ѥ���ʿ�Ԥ�ǧ����Ԥ�
+ * ��������ȯ�����ΤΥ��ץ��ȥ��ʿ�Ѥ����뤳�Ȥ��Ǥ��ʤ�. �С������ 3.5
+ * �����Ǥ�ľ����ȯ��5��ʬ(���Ѥ��줿���Ϥ����)�� CMN �����Τޤ޼�ȯ�ä�
+ * ή�Ѥ���Ƥ�������3.5.1 ����ϡ��嵭��ľ��ȯ�� CMN �����ͤȤ���
+ * ȯ���� CMN �� MAP-CMN ��������Ʒ׻�����褦�ˤʤä�. �ʤ���
+ * �ǽ��ȯ���Ѥν��CMN�� "-cmnload" ��Ϳ���뤳�Ȥ�Ǥ����ޤ�
+ * "-cmnnoupdate" �����Ϥ��Ȥ� CMN ������Ԥ�ʤ��褦�ˤǤ���. 
+ * "-cmnnoupdate" �� "-cmnload" ���Ȥ߹�碌�뤳�Ȥ�, �ǽ�˥������Х��
+ * ���ץ��ȥ��ʿ�Ѥ�Ϳ����������˽���ͤȤ��� MAP-CMN ���뤳�Ȥ��Ǥ���. 
  *
- * 主要な関数は以下の通りである. 
+ * ���פʴؿ��ϰʲ����̤�Ǥ���. 
  *
- *  - RealTimeInit() - 起動時の初期化
- *  - RealTimePipeLinePrepare() - 入力ごとの初期化
- *  - RealTimePipeLine() - 第1パス平行処理用コールバック（上述）
- *  - RealTimeResume() - ショートポーズセグメンテーション時の認識復帰
- *  - RealTimeParam() - 入力ごとの第1パス終了処理
- *  - RealTimeCMNUpdate() - CMN の更新
+ *  - RealTimeInit() - ��ư���ν����
+ *  - RealTimePipeLinePrepare() - ���Ϥ��Ȥν����
+ *  - RealTimePipeLine() - ��1�ѥ�ʿ�Խ����ѥ�����Хå��ʾ�ҡ�
+ *  - RealTimeResume() - ���硼�ȥݡ����������ơ���������ǧ������
+ *  - RealTimeParam() - ���Ϥ��Ȥ���1�ѥ���λ����
+ *  - RealTimeCMNUpdate() - CMN �ι���
  *  
  * </JA>
  * 
@@ -127,13 +127,13 @@
 
 /** 
  * <JA>
- * MFCC計算インスタンス内に特徴パラメータベクトル格納エリアを準備する.
+ * MFCC�׻����󥹥��������ħ�ѥ�᡼���٥��ȥ��Ǽ���ꥢ���������.
  * 
- * mfcc->para の情報に基づいてヘッダ情報を格納し，初期格納領域を確保する. 
- * 格納領域は，入力時に必要に応じて自動的に伸長されるので，ここでは
- * その準備だけ行う. すでに格納領域が確保されているときはそれをキープする. 
+ * mfcc->para �ξ���˴�Ť��ƥإå�������Ǽ���������Ǽ�ΰ����ݤ���. 
+ * ��Ǽ�ΰ�ϡ����ϻ���ɬ�פ˱����Ƽ�ưŪ�˿�Ĺ�����Τǡ������Ǥ�
+ * ���ν��������Ԥ�. ���Ǥ˳�Ǽ�ΰ褬���ݤ���Ƥ���Ȥ��Ϥ���򥭡��פ���. 
  * 
- * これは入力/認識1回ごとに繰り返し呼ばれる.
+ * ���������/ǧ��1�󤴤Ȥ˷����֤��ƤФ��.
  * 
  * </JA>
  * <EN>
@@ -162,7 +162,7 @@ init_param(MFCCCalc *mfcc)
 
   para = mfcc->para;
 
-  /* これから計算されるパラメータの型をヘッダに設定 */
+  /* ���줫��׻������ѥ�᡼���η���إå������� */
   /* set header types */
   mfcc->param->header.samptype = F_MFCC;
   if (para->delta) mfcc->param->header.samptype |= F_DELTA;
@@ -176,28 +176,28 @@ init_param(MFCCCalc *mfcc)
   mfcc->param->header.sampsize = para->veclen * sizeof(VECT); /* not compressed */
   mfcc->param->veclen = para->veclen;
   
-  /* 認識処理中/終了後にセットされる変数:
-     param->parvec (パラメータベクトル系列)
-     param->header.samplenum, param->samplenum (全フレーム数)
+  /* ǧ��������/��λ��˥��åȤ�����ѿ�:
+     param->parvec (�ѥ�᡼���٥��ȥ����)
+     param->header.samplenum, param->samplenum (���ե졼���)
   */
   /* variables that will be set while/after computation has been done:
      param->parvec (parameter vector sequence)
      param->header.samplenum, param->samplenum (total number of frames)
   */
-  /* MAP-CMN の初期化 */
+  /* MAP-CMN �ν���� */
   /* Prepare for MAP-CMN */
   if (mfcc->para->cmn || mfcc->para->cvn) CMN_realtime_prepare(mfcc->cmn.wrk);
 }
 
 /** 
  * <JA>
- * @brief  第1パス平行認識処理の初期化.
+ * @brief  ��1�ѥ�ʿ��ǧ�������ν����.
  *
- * MFCC計算のワークエリア確保を行う. また必要な場合は，スペクトル減算用の
- * ワークエリア準備，ノイズスペクトルのロード，CMN用の初期ケプストラム
- * 平均データのロードなども行われる. 
+ * MFCC�׻��Υ�����ꥢ���ݤ�Ԥ�. �ޤ�ɬ�פʾ��ϡ����ڥ��ȥ븺���Ѥ�
+ * ������ꥢ�������Υ������ڥ��ȥ�Υ����ɡ�CMN�Ѥν�����ץ��ȥ��
+ * ʿ�ѥǡ����Υ����ɤʤɤ�Ԥ���. 
  *
- * この関数は，システム起動後1回だけ呼ばれる.
+ * ���δؿ��ϡ������ƥ൯ư��1������ƤФ��.
  * </JA>
  * <EN>
  * @brief  Initializations for the on-the-fly 1st pass decoding.
@@ -228,11 +228,11 @@ RealTimeInit(Recog *recog)
   jconf = recog->jconf;
   r = &(recog->real);
 
-  /* 最大フレーム長を最大入力時間数から計算 */
+  /* ����ե졼��Ĺ��������ϻ��ֿ�����׻� */
   /* set maximum allowed frame length */
   r->maxframelen = MAXSPEECHLEN / recog->jconf->input.frameshift;
 
-  /* -ssload 指定時, SS用のノイズスペクトルをファイルから読み込む */
+  /* -ssload �����, SS�ѤΥΥ������ڥ��ȥ��ե����뤫���ɤ߹��� */
   /* if "-ssload", load noise spectrum for spectral subtraction from file */
   for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
     if (mfcc->frontend.ssload_filename && mfcc->frontend.ssbuf == NULL) {
@@ -256,20 +256,20 @@ RealTimeInit(Recog *recog)
   
     para = mfcc->para;
 
-    /* 対数エネルギー正規化のための初期値 */
+    /* �п����ͥ륮���������Τ���ν���� */
     /* set initial value for log energy normalization */
     if (para->energy && para->enormal) energy_max_init(&(mfcc->ewrk));
-    /* デルタ計算のためのサイクルバッファを用意 */
+    /* �ǥ륿�׻��Τ���Υ�������Хåե����Ѱ� */
     /* initialize cycle buffers for delta and accel coef. computation */
     if (para->delta) mfcc->db = WMP_deltabuf_new(para->baselen, para->delWin);
     if (para->acc) mfcc->ab = WMP_deltabuf_new(para->baselen * 2, para->accWin);
-    /* デルタ計算のためのワークエリアを確保 */
+    /* �ǥ륿�׻��Τ���Υ�����ꥢ����� */
     /* allocate work area for the delta computation */
     mfcc->tmpmfcc = (VECT *)mymalloc(sizeof(VECT) * para->vecbuflen);
-    /* MAP-CMN 用の初期ケプストラム平均を読み込んで初期化する */
+    /* MAP-CMN �Ѥν�����ץ��ȥ��ʿ�Ѥ��ɤ߹���ǽ�������� */
     /* Initialize the initial cepstral mean data from file for MAP-CMN */
     if (para->cmn || para->cvn) mfcc->cmn.wrk = CMN_realtime_new(para, mfcc->cmn.map_weight);
-    /* -cmnload 指定時, CMN用のケプストラム平均の初期値をファイルから読み込む */
+    /* -cmnload �����, CMN�ѤΥ��ץ��ȥ��ʿ�Ѥν���ͤ�ե����뤫���ɤ߹��� */
     /* if "-cmnload", load initial cepstral mean data from file for CMN */
     if (mfcc->cmn.load_filename) {
       if (para->cmn) {
@@ -282,10 +282,10 @@ RealTimeInit(Recog *recog)
     }
 
   }
-  /* 窓長をセット */
+  /* ��Ĺ�򥻥å� */
   /* set window length */
   r->windowlen = recog->jconf->input.framesize + 1;
-  /* 窓かけ用バッファを確保 */
+  /* �뤫���ѥХåե������ */
   /* set window buffer */
   r->window = mymalloc(sizeof(SP16) * r->windowlen);
 
@@ -302,12 +302,12 @@ RealTimeInit(Recog *recog)
  * This function will be called before starting each input (segment).
  * </EN>
  * <JA>
- * MFCC計算を準備する. 
- * いくつかのワークエリアをリセットして認識に備える. 
- * また，音響モデルごとの出力確率計算キャッシュを準備する. 
+ * MFCC�׻����������. 
+ * �����Ĥ��Υ�����ꥢ��ꥻ�åȤ���ǧ����������. 
+ * �ޤ���������ǥ뤴�Ȥν��ϳ�Ψ�׻�����å�����������. 
  *
- * この関数は，ある入力（あるいはセグメント）の認識が
- * 始まる前に必ず呼ばれる. 
+ * ���δؿ��ϡ��������ϡʤ��뤤�ϥ������ȡˤ�ǧ����
+ * �Ϥޤ�����ɬ���ƤФ��. 
  * 
  * </JA>
  * 
@@ -325,16 +325,16 @@ reset_mfcc(Recog *recog)
 
   r = &(recog->real);
 
-  /* 特徴抽出モジュールを初期化 */
+  /* ��ħ��Х⥸�塼������� */
   /* initialize parameter extraction module */
   for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
 
     para = mfcc->para;
 
-    /* 対数エネルギー正規化のための初期値をセット */
+    /* �п����ͥ륮���������Τ���ν���ͤ򥻥å� */
     /* set initial value for log energy normalization */
     if (para->energy && para->enormal) energy_max_prepare(&(mfcc->ewrk), para);
-    /* デルタ計算用バッファを準備 */
+    /* �ǥ륿�׻��ѥХåե������ */
     /* set the delta cycle buffer */
     if (para->delta) WMP_deltabuf_prepare(mfcc->db);
     if (para->acc) WMP_deltabuf_prepare(mfcc->ab);
@@ -344,11 +344,11 @@ reset_mfcc(Recog *recog)
 
 /** 
  * <JA>
- * @brief  第1パス平行認識処理の準備
+ * @brief  ��1�ѥ�ʿ��ǧ�������ν���
  *
- * 計算用変数をリセットし，各種データを準備する. 
- * この関数は，ある入力（あるいはセグメント）の認識が
- * 始まる前に呼ばれる. 
+ * �׻����ѿ���ꥻ�åȤ����Ƽ�ǡ������������. 
+ * ���δؿ��ϡ��������ϡʤ��뤤�ϥ������ȡˤ�ǧ����
+ * �Ϥޤ����˸ƤФ��. 
  * 
  * </JA>
  * <EN>
@@ -380,28 +380,28 @@ RealTimePipeLinePrepare(Recog *recog)
 
   r = &(recog->real);
 
-  /* 計算用の変数を初期化 */
+  /* �׻��Ѥ��ѿ������� */
   /* initialize variables for computation */
   r->windownum = 0;
   /* parameter check */
   for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
-    /* パラメータ初期化 */
+    /* �ѥ�᡼������� */
     /* parameter initialization */
     if (recog->jconf->input.speech_input == SP_MFCMODULE) {
       if (mfc_module_set_header(mfcc, recog) == FALSE) return FALSE;
     } else {
       init_param(mfcc);
     }
-    /* フレームごとのパラメータベクトル保存の領域を確保 */
-    /* あとで必要に応じて伸長される */
+    /* �ե졼�ऴ�ȤΥѥ�᡼���٥��ȥ���¸���ΰ����� */
+    /* ���Ȥ�ɬ�פ˱����ƿ�Ĺ����� */
     if (param_alloc(mfcc->param, 1, mfcc->param->veclen) == FALSE) {
       j_internal_error("ERROR: segmented: failed to allocate memory for rest param\n");
     }
-    /* フレーム数をリセット */
+    /* �ե졼�����ꥻ�å� */
     /* reset frame count */
     mfcc->f = 0;
   }
-  /* 準備した param 構造体のデータのパラメータ型を音響モデルとチェックする */
+  /* �������� param ��¤�ΤΥǡ����Υѥ�᡼�����򲻶���ǥ�ȥ����å����� */
   /* check type coherence between param and hmminfo here */
   if (recog->jconf->input.paramtype_check_flag) {
     for(am=recog->amlist;am;am=am->next) {
@@ -412,12 +412,12 @@ RealTimePipeLinePrepare(Recog *recog)
     }
   }
 
-  /* 計算用のワークエリアを準備 */
+  /* �׻��ѤΥ�����ꥢ����� */
   /* prepare work area for calculation */
   if (recog->jconf->input.type == INPUT_WAVEFORM) {
     reset_mfcc(recog);
   }
-  /* 音響尤度計算用キャッシュを準備 */
+  /* �������ٷ׻��ѥ���å������� */
   /* prepare cache area for acoustic computation of HMM states and mixtures */
   for(am=recog->amlist;am;am=am->next) {
     outprob_prepare(&(am->hmmwrk), r->maxframelen);
@@ -442,17 +442,17 @@ RealTimePipeLinePrepare(Recog *recog)
 
 /** 
  * <JA>
- * @brief  音声波形からパラメータベクトルを計算する.
+ * @brief  �����ȷ�����ѥ�᡼���٥��ȥ��׻�����.
  * 
- * 窓単位で取り出された音声波形からMFCCベクトルを計算する.
- * 計算結果は mfcc->tmpmfcc に保存される. 
+ * ��ñ�̤Ǽ��Ф��줿�����ȷ�����MFCC�٥��ȥ��׻�����.
+ * �׻���̤� mfcc->tmpmfcc ����¸�����. 
  * 
- * @param mfcc [i/o] MFCC計算インスタンス
- * @param window [in] 窓単位で取り出された音声波形データ
- * @param windowlen [in] @a window の長さ
+ * @param mfcc [i/o] MFCC�׻����󥹥���
+ * @param window [in] ��ñ�̤Ǽ��Ф��줿�����ȷ��ǡ���
+ * @param windowlen [in] @a window ��Ĺ��
  * 
- * @return 計算成功時，TRUE を返す. デルタ計算において入力フレームが
- * 少ないなど，まだ得られていない場合は FALSE を返す. 
+ * @return �׻���������TRUE ���֤�. �ǥ륿�׻��ˤ��������ϥե졼�ब
+ * ���ʤ��ʤɡ��ޤ������Ƥ��ʤ����� FALSE ���֤�. 
  * </JA>
  * <EN>
  * @brief  Compute a parameter vector from a speech window.
@@ -483,7 +483,7 @@ RealTimeMFCC(MFCCCalc *mfcc, SP16 *window, int windowlen)
   tmpmfcc = mfcc->tmpmfcc;
   para = mfcc->para;
 
-  /* 音声波形から base MFCC を計算 (recog->mfccwrk を利用) */
+  /* �����ȷ����� base MFCC ��׻� (recog->mfccwrk ������) */
   /* calculate base MFCC from waveform (use recog->mfccwrk) */
   for (i=0; i < windowlen; i++) {
     mfcc->wrk->bf[i+1] = (float) window[i];
@@ -491,10 +491,10 @@ RealTimeMFCC(MFCCCalc *mfcc, SP16 *window, int windowlen)
   WMP_calc(mfcc->wrk, tmpmfcc, para);
 
   if (para->energy && para->enormal) {
-    /* 対数エネルギー項を正規化する */
+    /* �п����ͥ륮��������������� */
     /* normalize log energy */
-    /* リアルタイム入力では発話ごとの最大エネルギーが得られないので
-       直前の発話のパワーで代用する */
+    /* �ꥢ�륿�������ϤǤ�ȯ�ä��Ȥκ��票�ͥ륮���������ʤ��Τ�
+       ľ����ȯ�äΥѥ�����Ѥ��� */
     /* Since the maximum power of the whole input utterance cannot be
        obtained at real-time input, the maximum of last input will be
        used to normalize.
@@ -503,7 +503,7 @@ RealTimeMFCC(MFCCCalc *mfcc, SP16 *window, int windowlen)
   }
 
   if (para->delta) {
-    /* デルタを計算する */
+    /* �ǥ륿��׻����� */
     /* calc delta coefficients */
     ret = WMP_deltabuf_proceed(mfcc->db, tmpmfcc);
 #ifdef RDEBUG
@@ -513,22 +513,22 @@ RealTimeMFCC(MFCCCalc *mfcc, SP16 *window, int windowlen)
     }
     printf(", nextstore=%d\n", mfcc->db->store);
 #endif
-    /* ret == FALSE のときはまだディレイ中なので認識処理せず次入力へ */
+    /* ret == FALSE �ΤȤ��Ϥޤ��ǥ��쥤��ʤΤ�ǧ���������������Ϥ� */
     /* if ret == FALSE, there is no available frame.  So just wait for
        next input */
     if (! ret) {
       return FALSE;
     }
 
-    /* db->vec に現在の元データとデルタ係数が入っているので tmpmfcc にコピー */
+    /* db->vec �˸��ߤθ��ǡ����ȥǥ륿���������äƤ���Τ� tmpmfcc �˥��ԡ� */
     /* now db->vec holds the current base and full delta, so copy them to tmpmfcc */
     memcpy(tmpmfcc, mfcc->db->vec, sizeof(VECT) * para->baselen * 2);
   }
 
   if (para->acc) {
-    /* Accelerationを計算する */
+    /* Acceleration��׻����� */
     /* calc acceleration coefficients */
-    /* base+delta をそのまま入れる */
+    /* base+delta �򤽤Τޤ������ */
     /* send the whole base+delta to the cycle buffer */
     ret = WMP_deltabuf_proceed(mfcc->ab, tmpmfcc);
 #ifdef RDEBUG
@@ -538,15 +538,15 @@ RealTimeMFCC(MFCCCalc *mfcc, SP16 *window, int windowlen)
     }
     printf(", nextstore=%d\n", mfcc->ab->store);
 #endif
-    /* ret == FALSE のときはまだディレイ中なので認識処理せず次入力へ */
+    /* ret == FALSE �ΤȤ��Ϥޤ��ǥ��쥤��ʤΤ�ǧ���������������Ϥ� */
     /* if ret == FALSE, there is no available frame.  So just wait for
        next input */
     if (! ret) {
       return FALSE;
     }
-    /* ab->vec には，(base+delta) とその差分係数が入っている. 
-       [base] [delta] [delta] [acc] の順で入っているので,
-       [base] [delta] [acc] を tmpmfcc にコピーする. */
+    /* ab->vec �ˤϡ�(base+delta) �Ȥ��κ�ʬ���������äƤ���. 
+       [base] [delta] [delta] [acc] �ν�����äƤ���Τ�,
+       [base] [delta] [acc] �� tmpmfcc �˥��ԡ�����. */
     /* now ab->vec holds the current (base+delta) and their delta coef. 
        it holds a vector in the order of [base] [delta] [delta] [acc], 
        so copy the [base], [delta] and [acc] to tmpmfcc.  */
@@ -561,15 +561,15 @@ RealTimeMFCC(MFCCCalc *mfcc, SP16 *window, int windowlen)
 #endif
 
   if (para->delta && (para->energy || para->c0) && para->absesup) {
-    /* 絶対値パワーを除去 */
+    /* �����ͥѥ����� */
     /* suppress absolute power */
     memmove(&(tmpmfcc[para->baselen-1]), &(tmpmfcc[para->baselen]), sizeof(VECT) * (para->vecbuflen - para->baselen));
   }
 
-  /* この時点で tmpmfcc に現時点での最新の特徴ベクトルが格納されている */
+  /* ���λ����� tmpmfcc �˸������Ǥκǿ�����ħ�٥��ȥ뤬��Ǽ����Ƥ��� */
   /* tmpmfcc[] now holds the latest parameter vector */
 
-  /* CMN を計算 */
+  /* CMN ��׻� */
   /* perform CMN */
   if (para->cmn || para->cvn) CMN_realtime(mfcc->cmn.wrk, tmpmfcc);
 
@@ -618,7 +618,7 @@ proceed_one_frame(Recog *recog)
       recog->triggered = TRUE;
     }
   }
-  /* 各インスタンスについて mfcc->f の認識処理を1フレーム進める */
+  /* �ƥ��󥹥��󥹤ˤĤ��� mfcc->f ��ǧ��������1�ե졼��ʤ�� */
   switch (decode_proceed(recog)) {
   case -1: /* error */
     return -1;
@@ -626,11 +626,11 @@ proceed_one_frame(Recog *recog)
   case 0:			/* success */
     break;
   case 1:			/* segmented */
-    /* 認識処理のセグメント要求で終わったことをフラグにセット */
+    /* ǧ�������Υ��������׵�ǽ���ä����Ȥ�ե饰�˥��å� */
     /* set flag which indicates that the input has ended with segmentation request */
     r->last_is_segmented = TRUE;
     /* tell the caller to be segmented by this function */
-    /* 呼び出し元に，ここで入力を切るよう伝える */
+    /* �ƤӽФ����ˡ����������Ϥ��ڤ�褦������ */
     return 1;
   }
 #ifdef BACKEND_VAD
@@ -679,7 +679,7 @@ proceed_one_frame(Recog *recog)
 	  }
 	}
 	if (ok_p) {
-	  /* すべての MFCC が終わりに達したのでループ終了 */
+	  /* ���٤Ƥ� MFCC ��������ã�����Τǥ롼�׽�λ */
 	  /* all MFCC has been processed, end of loop  */
 	  for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
 	    if (! mfcc->valid) continue;
@@ -687,7 +687,7 @@ proceed_one_frame(Recog *recog)
 	  }
 	  break;
 	}
-	/* 各インスタンスについて mfcc->f の認識処理を1フレーム進める */
+	/* �ƥ��󥹥��󥹤ˤĤ��� mfcc->f ��ǧ��������1�ե졼��ʤ�� */
 	switch (decode_proceed(recog)) {
 	case -1: /* error */
 	  return -1;
@@ -717,33 +717,33 @@ proceed_one_frame(Recog *recog)
 
 /** 
  * <JA>
- * @brief  第1パス平行音声認識処理のメイン
+ * @brief  ��1�ѥ�ʿ�Բ���ǧ�������Υᥤ��
  *
- * この関数内では，漸次的な特徴量抽出および第1パスの認識が行われる. 
- * 入力データに対して窓掛け・シフトを行いMFCC計算を行いながら，
- * 音声認識を1フレームずつ並列実行する. 
+ * ���δؿ���Ǥϡ�����Ū����ħ����Ф������1�ѥ���ǧ�����Ԥ���. 
+ * ���ϥǡ������Ф�����ݤ������եȤ�Ԥ�MFCC�׻���Ԥ��ʤ��顤
+ * ����ǧ����1�ե졼�ऺ������¹Ԥ���. 
  *
- * 認識処理（decode_proceed()）において，音声区間終了が要求される
- * ことがある. この場合，未処理の音声を保存して第1パスを終了する
- * よう呼出元に要求する. 
+ * ǧ��������decode_proceed()�ˤˤ����ơ�������ֽ�λ���׵ᤵ���
+ * ���Ȥ�����. ���ξ�硤̤�����β�������¸������1�ѥ���λ����
+ * �褦�ƽи����׵᤹��. 
  *
- * SPSEGMENT_NAIST あるいは GMM_VAD などのバックエンドVAD定義時は，デコーダベースの
- * VAD （音声区間開始検出）に伴うデコーディング制御が行われる. 
- * トリガ前は，認識処理が呼ばれるが，実際には各関数内で認識処理は
- * 行われていない. 開始を検出した時，この関数はそこまでに得られた
- * MFCC列を一定フレーム長分巻戻し，その巻戻し先から通常の認識処理を
- * 再開する. なお，複数処理インスタンス間がある場合，開始トリガは
- * どれかのインスタンスが検出した時点で全ての開始が同期される. 
+ * SPSEGMENT_NAIST ���뤤�� GMM_VAD �ʤɤΥХå������VAD������ϡ��ǥ������١�����
+ * VAD �ʲ�����ֳ��ϸ��Сˤ�ȼ���ǥ����ǥ������椬�Ԥ���. 
+ * �ȥꥬ���ϡ�ǧ���������ƤФ�뤬���ºݤˤϳƴؿ����ǧ��������
+ * �Ԥ��Ƥ��ʤ�. ���Ϥ򸡽Ф����������δؿ��Ϥ����ޤǤ�����줿
+ * MFCC������ե졼��Ĺʬ���ᤷ�����δ��ᤷ�褫���̾��ǧ��������
+ * �Ƴ�����. �ʤ���ʣ���������󥹥��󥹴֤������硤���ϥȥꥬ��
+ * �ɤ줫�Υ��󥹥��󥹤����Ф������������Ƥγ��Ϥ�Ʊ�������. 
  * 
- * この関数は，音声入力ルーチンのコールバックとして呼ばれる.
- * 音声データの数千サンプル録音ごとにこの関数が呼び出される. 
+ * ���δؿ��ϡ��������ϥ롼����Υ�����Хå��Ȥ��ƸƤФ��.
+ * �����ǡ����ο��饵��ץ�Ͽ�����Ȥˤ��δؿ����ƤӽФ����. 
  * 
- * @param Speech [in] 音声データへのバッファへのポインタ
- * @param nowlen [in] 音声データの長さ
+ * @param Speech [in] �����ǡ����ؤΥХåե��ؤΥݥ���
+ * @param nowlen [in] �����ǡ�����Ĺ��
  * @param recog [i/o] engine instance
  * 
- * @return エラー時に -1 を，正常時に 0 を返す. また，第1パスを
- * 終了するよう呼出元に要求するときは 1 を返す. 
+ * @return ���顼���� -1 ��������� 0 ���֤�. �ޤ�����1�ѥ���
+ * ��λ����褦�ƽи����׵᤹��Ȥ��� 1 ���֤�. 
  * </JA>
  * <EN>
  * @brief  Main function of the on-the-fly 1st pass decoding
@@ -798,14 +798,14 @@ RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] =
   adin_cut_callback_store_buffer(Speech, nowlen, recog);
 #endif
 
-  /* window[0..windownum-1] は前回の呼び出しで残った音声データが格納されている */
+  /* window[0..windownum-1] ������θƤӽФ��ǻĤä������ǡ�������Ǽ����Ƥ��� */
   /* window[0..windownum-1] are speech data left from previous call */
 
-  /* 処理用ポインタを初期化 */
+  /* �����ѥݥ��󥿤����� */
   /* initialize pointer for local processing */
   now = 0;
   
-  /* 認識処理がセグメント要求で終わったのかどうかのフラグをリセット */
+  /* ǧ�����������������׵�ǽ���ä��Τ��ɤ����Υե饰��ꥻ�å� */
   /* reset flag which indicates whether the input has ended with segmentation request */
   r->last_is_segmented = FALSE;
 
@@ -814,17 +814,17 @@ RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] =
 #endif
 
   while (now < nowlen) {	/* till whole input is processed */
-    /* 入力長が maxframelen に達したらここで強制終了 */
+    /* ����Ĺ�� maxframelen ��ã�����餳���Ƕ�����λ */
     /* if input length reaches maximum buffer size, terminate 1st pass here */
     for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
       if (mfcc->f >= r->maxframelen) return(1);
     }
-    /* 窓バッファを埋められるだけ埋める */
+    /* ��Хåե���������������� */
     /* fill window buffer as many as possible */
     for(i = min(r->windowlen - r->windownum, nowlen - now); i > 0 ; i--)
       r->window[r->windownum++] = (float) Speech[now++];
-    /* もし窓バッファが埋まらなければ, このセグメントの処理はここで終わる. 
-       処理されなかったサンプル (window[0..windownum-1]) は次回に持ち越し. */
+    /* �⤷��Хåե�����ޤ�ʤ����, ���Υ������Ȥν����Ϥ����ǽ����. 
+       ��������ʤ��ä�����ץ� (window[0..windownum-1]) �ϼ���˻����ۤ�. */
     /* if window buffer was not filled, end processing here, keeping the
        rest samples (window[0..windownum-1]) in the window buffer. */
     if (r->windownum < r->windowlen) break;
@@ -836,7 +836,7 @@ RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] =
 
     for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
       mfcc->valid = FALSE;
-      /* 窓内の音声波形から特徴量を計算して r->tmpmfcc に格納  */
+      /* ����β����ȷ�������ħ�̤�׻����� r->tmpmfcc �˳�Ǽ  */
       /* calculate a parameter vector from current waveform windows
 	 and store to r->tmpmfcc */
       if ((*(recog->calc_vector))(mfcc, r->window, r->windowlen)) {
@@ -844,7 +844,7 @@ RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] =
 	/* call post-process plugin if exist */
 	plugin_exec_vector_postprocess(mfcc->tmpmfcc, mfcc->param->veclen, mfcc->f);
 #endif
-	/* MFCC完成，登録 */
+	/* MFCC��������Ͽ */
   	mfcc->valid = TRUE;
 	/* now get the MFCC vector of current frame, now store it to param */
 	if (param_alloc(mfcc->param, mfcc->f + 1, mfcc->param->veclen) == FALSE) {
@@ -858,13 +858,13 @@ RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] =
       }
     }
 
-    /* 処理を1フレーム進める */
+    /* ������1�ե졼��ʤ�� */
     /* proceed one frame */
     ret = proceed_one_frame(recog);
 
     if (ret == 1 && recog->jconf->decodeopt.segment) {
-      /* ショートポーズセグメンテーション: バッファに残っているデータを
-	 別に保持して，次回の最初に処理する */
+      /* ���硼�ȥݡ����������ơ������: �Хåե��˻ĤäƤ���ǡ�����
+	 �̤��ݻ����ơ�����κǽ�˽������� */
       /* short pause segmentation: there is some data left in buffer, so
 	 we should keep them for next processing */
       r->rest_len = nowlen - now;
@@ -882,21 +882,21 @@ RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] =
     }
     if (ret != 0) return ret;
 
-    /* 1フレーム処理が進んだのでポインタを進める */
+    /* 1�ե졼��������ʤ���Τǥݥ��󥿤�ʤ�� */
     /* proceed frame pointer */
     for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
       if (!mfcc->valid) continue;
       mfcc->f++;
     }
 
-    /* 窓バッファを処理が終わった分シフト */
+    /* ��Хåե������������ä�ʬ���ե� */
     /* shift window */
     memmove(r->window, &(r->window[recog->jconf->input.frameshift]), sizeof(SP16) * (r->windowlen - recog->jconf->input.frameshift));
     r->windownum -= recog->jconf->input.frameshift;
   }
 
-  /* 与えられた音声セグメントに対する認識処理が全て終了
-     呼び出し元に, 入力を続けるよう伝える */
+  /* Ϳ����줿�����������Ȥ��Ф���ǧ�����������ƽ�λ
+     �ƤӽФ�����, ���Ϥ�³����褦������ */
   /* input segment is fully processed
      tell the caller to continue input */
   return(0);			
@@ -904,18 +904,18 @@ RealTimePipeLine(SP16 *Speech, int nowlen, Recog *recog) /* Speech[0...nowlen] =
 
 /** 
  * <JA>
- * @brief  セグメントの認識再開処理
+ * @brief  �������Ȥ�ǧ���Ƴ�����
  *
- * この関数はデコーダベースVADやショートポーズセグメンテーションによって
- * 入力がセグメントに切られた場合に，その後の認識の再開に関する処理を行う. 
- * 具体的には，入力の認識を開始する前に，前回の入力セグメントにおける
- * 巻戻し分のMFCC列から認識を開始する. さらに，前回のセグメンテーション時に
- * 未処理だった残りの音声サンプルがあればそれも処理する.
+ * ���δؿ��ϥǥ������١���VAD�䥷�硼�ȥݡ����������ơ������ˤ�ä�
+ * ���Ϥ��������Ȥ��ڤ�줿���ˡ����θ��ǧ���κƳ��˴ؤ��������Ԥ�. 
+ * ����Ū�ˤϡ����Ϥ�ǧ���򳫻Ϥ������ˡ���������ϥ������Ȥˤ�����
+ * ���ᤷʬ��MFCC�󤫤�ǧ���򳫻Ϥ���. ����ˡ�����Υ������ơ���������
+ * ̤�������ä��Ĥ�β�������ץ뤬����Ф�����������.
  *
- * @param recog [i/o] エンジンインスタンス
+ * @param recog [i/o] ���󥸥󥤥󥹥���
  * 
- * @return エラー時 -1，正常時 0 を返す. また，この入力断片の処理中に
- * 文章の区切りが見つかったときは第1パスをここで中断するために 1 を返す. 
+ * @return ���顼�� -1������� 0 ���֤�. �ޤ��������������Ҥν������
+ * ʸ�Ϥζ��ڤ꤬���Ĥ��ä��Ȥ�����1�ѥ��򤳤������Ǥ��뤿��� 1 ���֤�. 
  * </JA>
  * </JA>
  * <EN>
@@ -948,18 +948,18 @@ RealTimeResume(Recog *recog)
 
   r = &(recog->real);
 
-  /* 計算用のワークエリアを準備 */
+  /* �׻��ѤΥ�����ꥢ����� */
   /* prepare work area for calculation */
   if (recog->jconf->input.type == INPUT_WAVEFORM) {
     reset_mfcc(recog);
   }
-  /* 音響尤度計算用キャッシュを準備 */
+  /* �������ٷ׻��ѥ���å������� */
   /* prepare cache area for acoustic computation of HMM states and mixtures */
   for(am=recog->amlist;am;am=am->next) {
     outprob_prepare(&(am->hmmwrk), r->maxframelen);
   }
 
-  /* param にある全パラメータを処理する準備 */
+  /* param �ˤ������ѥ�᡼�������������� */
   /* prepare to process all data in param */
   for(mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
     if (mfcc->param->samplenum == 0) mfcc->valid = FALSE;
@@ -967,10 +967,10 @@ RealTimeResume(Recog *recog)
 #ifdef RDEBUG
     printf("Resume: %02d: f=%d\n", mfcc->id, mfcc->mfcc->param->samplenum-1);
 #endif
-    /* フレーム数をリセット */
+    /* �ե졼�����ꥻ�å� */
     /* reset frame count */
     mfcc->f = 0;
-    /* MAP-CMN の初期化 */
+    /* MAP-CMN �ν���� */
     /* Prepare for MAP-CMN */
     if (mfcc->para->cmn || mfcc->para->cvn) CMN_realtime_prepare(mfcc->cmn.wrk);
   }
@@ -991,7 +991,7 @@ RealTimeResume(Recog *recog)
   }
 #endif
 
-  /* param 内の全フレームについて認識処理を進める */
+  /* param ������ե졼��ˤĤ���ǧ��������ʤ�� */
   /* proceed recognition for all frames in param */
 
   while(1) {
@@ -1006,12 +1006,12 @@ RealTimeResume(Recog *recog)
       }
     }
     if (ok_p) {
-      /* すべての MFCC が終わりに達したのでループ終了 */
+      /* ���٤Ƥ� MFCC ��������ã�����Τǥ롼�׽�λ */
       /* all MFCC has been processed, end of loop  */
       break;
     }
 
-    /* 各インスタンスについて mfcc->f の認識処理を1フレーム進める */
+    /* �ƥ��󥹥��󥹤ˤĤ��� mfcc->f ��ǧ��������1�ե졼��ʤ�� */
     switch (decode_proceed(recog)) {
     case -1: /* error */
       return -1;
@@ -1040,7 +1040,7 @@ RealTimeResume(Recog *recog)
     /* call frame-wise callback */
     callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
 
-    /* 1フレーム処理が進んだのでポインタを進める */
+    /* 1�ե졼��������ʤ���Τǥݥ��󥿤�ʤ�� */
     /* proceed frame pointer */
     for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
       if (!mfcc->valid) continue;
@@ -1048,13 +1048,13 @@ RealTimeResume(Recog *recog)
     }
 
   }
-  /* 前回のセグメント時に入力をシフトしていない分をシフトする */
+  /* ����Υ������Ȼ������Ϥ򥷥եȤ��Ƥ��ʤ�ʬ�򥷥եȤ��� */
   /* do the last shift here */
   if (recog->jconf->input.type == INPUT_WAVEFORM) {
     memmove(r->window, &(r->window[recog->jconf->input.frameshift]), sizeof(SP16) * (r->windowlen - recog->jconf->input.frameshift));
     r->windownum -= recog->jconf->input.frameshift;
-    /* これで再開の準備が整ったので,まずは前回の処理で残っていた音声データから
-       処理する */
+    /* ����ǺƳ��ν��������ä��Τ�,�ޤ�������ν����ǻĤäƤ��������ǡ�������
+       �������� */
     /* now that the search status has been prepared for the next input, we
        first process the rest unprocessed samples at the last session */
     if (r->rest_len > 0) {
@@ -1062,7 +1062,7 @@ RealTimeResume(Recog *recog)
     }
   }
 
-  /* 新規の入力に対して認識処理は続く… */
+  /* ���������Ϥ��Ф���ǧ��������³���� */
   /* the recognition process will continue for the newly incoming samples... */
   return 0;
 
@@ -1071,19 +1071,19 @@ RealTimeResume(Recog *recog)
 
 /** 
  * <JA>
- * @brief  第1パス平行認識処理の終了処理を行う.
+ * @brief  ��1�ѥ�ʿ��ǧ�������ν�λ������Ԥ�.
  *
- * この関数は第1パス終了時に呼ばれ，入力長を確定したあと，
- * decode_end() （セグメントで終了したときは decode_end_segmented()）を
- * 呼び出して第1パス終了処理を行う. 
+ * ���δؿ�����1�ѥ���λ���˸ƤФ졤����Ĺ����ꤷ�����ȡ�
+ * decode_end() �ʥ������Ȥǽ�λ�����Ȥ��� decode_end_segmented()�ˤ�
+ * �ƤӽФ�����1�ѥ���λ������Ԥ�. 
  *
- * もし音声入力ストリームの終了によって認識が終わった場合（ファイル入力で
- * 終端に達した場合など）は，デルタバッファに未処理の入力が残っているので，
- * それをここで処理する. 
+ * �⤷�������ϥ��ȥ꡼��ν�λ�ˤ�ä�ǧ��������ä����ʥե��������Ϥ�
+ * ��ü��ã�������ʤɡˤϡ��ǥ륿�Хåե���̤���������Ϥ��ĤäƤ���Τǡ�
+ * ����򤳤��ǽ�������. 
  *
- * @param recog [i/o] エンジンインスタンス
+ * @param recog [i/o] ���󥸥󥤥󥹥���
  * 
- * @return 処理成功時 TRUE, エラー時 FALSE を返す. 
+ * @return ���������� TRUE, ���顼�� FALSE ���֤�. 
  * </JA>
  * <EN>
  * @brief  Finalize the 1st pass on-the-fly decoding.
@@ -1120,9 +1120,9 @@ RealTimeParam(Recog *recog)
 
   if (r->last_is_segmented) {
 
-    /* RealTimePipeLine で認識処理側の理由により認識が中断した場合,
-       現状態のMFCC計算データをそのまま次回へ保持する必要があるので,
-       MFCC計算終了処理を行わずに第１パスの結果のみ出力して終わる. */
+    /* RealTimePipeLine ��ǧ������¦����ͳ�ˤ��ǧ�������Ǥ������,
+       �����֤�MFCC�׻��ǡ����򤽤Τޤ޼�����ݻ�����ɬ�פ�����Τ�,
+       MFCC�׻���λ������Ԥ鷺���裱�ѥ��η�̤Τ߽��Ϥ��ƽ����. */
     /* When input segmented by recognition process in RealTimePipeLine(),
        we have to keep the whole current status of MFCC computation to the
        next call.  So here we only output the 1st pass result. */
@@ -1132,7 +1132,7 @@ RealTimeParam(Recog *recog)
     }
     decode_end_segmented(recog);
 
-    /* この区間の param データを第２パスのために返す */
+    /* ���ζ�֤� param �ǡ������裲�ѥ��Τ�����֤� */
     /* return obtained parameter for 2nd pass */
     return(TRUE);
   }
@@ -1143,12 +1143,12 @@ RealTimeParam(Recog *recog)
       mfcc->param->header.samplenum = mfcc->f;
       mfcc->param->samplenum = mfcc->f;
     }
-    /* 最終フレーム処理を行い，認識の結果出力と終了処理を行う */
+    /* �ǽ��ե졼�������Ԥ���ǧ���η�̽��ϤȽ�λ������Ԥ� */
     decode_end(recog);
     return TRUE;
   }
 
-  /* MFCC計算の終了処理を行う: 最後の遅延フレーム分を処理 */
+  /* MFCC�׻��ν�λ������Ԥ�: �Ǹ���ٱ�ե졼��ʬ����� */
   /* finish MFCC computation for the last delayed frames */
   for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
     if (mfcc->para->delta || mfcc->para->acc) {
@@ -1330,7 +1330,7 @@ RealTimeParam(Recog *recog)
     mfcc->param->header.samplenum = mfcc->f;
     mfcc->param->samplenum = mfcc->f;
   }
-  /* 最終フレーム処理を行い，認識の結果出力と終了処理を行う */
+  /* �ǽ��ե졼�������Ԥ���ǧ���η�̽��ϤȽ�λ������Ԥ� */
   decode_end(recog);
 
   return(TRUE);
@@ -1338,11 +1338,11 @@ RealTimeParam(Recog *recog)
 
 /** 
  * <JA>
- * ケプストラム平均の更新. 
- * 次回の認識に備えて，入力データからCMN用のケプストラム平均を更新する. 
+ * ���ץ��ȥ��ʿ�Ѥι���. 
+ * �����ǧ���������ơ����ϥǡ�������CMN�ѤΥ��ץ��ȥ��ʿ�Ѥ򹹿�����. 
  * 
- * @param mfcc [i/o] 計算対象の MFCC計算インスタンス
- * @param recog [i/o] エンジンインスタンス
+ * @param mfcc [i/o] �׻��оݤ� MFCC�׻����󥹥���
+ * @param recog [i/o] ���󥸥󥤥󥹥���
  *
  * </JA>
  * <EN>
@@ -1404,9 +1404,9 @@ RealTimeCMNUpdate(MFCCCalc *mfcc, Recog *recog)
 
 /** 
  * <JA>
- * 第1パス平行認識処理を中断する. 
+ * ��1�ѥ�ʿ��ǧ�����������Ǥ���. 
  *
- * @param recog [i/o] エンジンインスタンス
+ * @param recog [i/o] ���󥸥󥤥󥹥���
  * </JA>
  * <EN>
  * Terminate the 1st pass on-the-fly decoding.
@@ -1424,7 +1424,7 @@ RealTimeTerminate(Recog *recog)
     mfcc->param->samplenum = mfcc->f;
   }
 
-  /* 最終フレーム処理を行い，認識の結果出力と終了処理を行う */
+  /* �ǽ��ե졼�������Ԥ���ǧ���η�̽��ϤȽ�λ������Ԥ� */
   decode_end(recog);
 }
 
@@ -1433,7 +1433,7 @@ RealTimeTerminate(Recog *recog)
  * Free the whole work area for 1st pass on-the-fly decoding
  * </EN>
  * <JA>
- * 第1パス並行処理のためのワークエリアを開放する
+ * ��1�ѥ��¹Խ����Τ���Υ�����ꥢ��������
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -1521,7 +1521,7 @@ mfcc_go(Recog *recog, int (*ad_check)(Recog *))
       plugin_exec_vector_postprocess(recog->mfcclist->param->parvec[recog->mfcclist->f], recog->mfcclist->param->veclen, recog->mfcclist->f);
 #endif
 
-      /* 処理を1フレーム進める */
+      /* ������1�ե졼��ʤ�� */
       /* proceed one frame */
       
       switch(proceed_one_frame(recog)) {
@@ -1533,7 +1533,7 @@ mfcc_go(Recog *recog, int (*ad_check)(Recog *))
 	return 2;
       }
 
-      /* 1フレーム処理が進んだのでポインタを進める */
+      /* 1�ե졼��������ʤ���Τǥݥ��󥿤�ʤ�� */
       /* proceed frame pointer */
       for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
 	if (!mfcc->valid) continue;
@@ -1551,8 +1551,8 @@ mfcc_go(Recog *recog, int (*ad_check)(Recog *))
       return 1;
     }
   }
-  /* 与えられた音声セグメントに対する認識処理が全て終了
-     呼び出し元に, 入力を続けるよう伝える */
+  /* Ϳ����줿�����������Ȥ��Ф���ǧ�����������ƽ�λ
+     �ƤӽФ�����, ���Ϥ�³����褦������ */
   /* input segment is fully processed
      tell the caller to continue input */
   return(1);

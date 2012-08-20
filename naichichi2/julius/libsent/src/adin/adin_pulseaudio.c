@@ -1,13 +1,13 @@
-ï»¿/**
+/**
  * @file   adin_pulseaudio.c
  *
  * <JA>
- * @brief  PulseAudioå…¥åŠ›
+ * @brief  PulseAudioÆşÎÏ
  *
- * å…¥åŠ›ã‚½ãƒ¼ã‚¹ã¨ã—ã¦ PulseAudio API ã‚’ä½¿ç”¨ã—ã¾ã™ã€‚
- * PulseAudio ã¯ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ™‚ã«ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒå­˜åœ¨ã™ã‚‹å ´åˆã€
- * ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ãƒã‚¤ã‚¯å…¥åŠ›APIã¨ã—ã¦ "-input mic" ã‚ã‚‹ã„ã¯ "-input pulseaudio"
- * ã§ä½¿ç”¨ã§ãã¾ã™ã€‚
+ * ÆşÎÏ¥½¡¼¥¹¤È¤·¤Æ PulseAudio API ¤ò»ÈÍÑ¤·¤Ş¤¹¡£
+ * PulseAudio ¤Ï¥³¥ó¥Ñ¥¤¥ë»ş¤Ë¥é¥¤¥Ö¥é¥ê¤¬Â¸ºß¤¹¤ë¾ì¹ç¡¢
+ * ¥Ç¥Õ¥©¥ë¥È¤Î¥Ş¥¤¥¯ÆşÎÏAPI¤È¤·¤Æ "-input mic" ¤¢¤ë¤¤¤Ï "-input pulseaudio"
+ * ¤Ç»ÈÍÑ¤Ç¤­¤Ş¤¹¡£
  * </JA>
  * <EN>
  * @brief  Audio input via PulseAudio API

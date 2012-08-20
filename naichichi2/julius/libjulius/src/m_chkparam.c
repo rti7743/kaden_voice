@@ -1,11 +1,11 @@
-﻿/**
+/**
  * @file   m_chkparam.c
  * 
  * <JA>
- * @brief  パラメータ設定の後処理.
+ * @brief  �ѥ�᡼������θ����.
  *
- * jconf ファイルおよびコマンドオプションによって与えられた
- * パラメータについて後処理を行い，最終的に認識処理で使用する値を確定する. 
+ * jconf �ե�����E���ӥ��ޥ�ɥ��ץ����ˤ�ä�Ϳ���餁E�
+ * �ѥ�᡼���ˤĤ��Ƹ������Ԥ����ǽ�Ū��ǧ�������ǻ��Ѥ���Eͤ���ꤹ��E 
  * </JA>
  * 
  * <EN>
@@ -34,9 +34,9 @@
 
 /** 
  * <JA>
- * ファイルが存在して読み込み可能かチェックする. 
+ * �ե�����E�¸�ߤ����ɤ߹��߲�ǽ�������å�����E 
  * 
- * @param filename [in] ファイルパス名
+ * @param filename [in] �ե�����Eѥ�̾
  * </JA>
  * <EN>
  * Check if a file actually exist and is readable.
@@ -57,16 +57,14 @@ checkpath(char *filename)
 
 /** 
  * <JA>
- * @brief  jconf設定パラメータを最終的に決定する
+ * @brief  jconf��āEѥ�᡼����ǽ�Ū�˷��ꤹ��E *
+ * ���δؿ��ϡ�jconf �ե�����E䥳�ޥ�ɥ��ץ����ˤ�ä�Ϳ���餁E�
+ * jconf ��Υѥ�᡼���ˤĤ���������Ԥ�. ����Ū�ˤϡ��ͤ��ϰϤΥ�����
+ * ���䡤����Υ����å������꤫�黻�Ф���E�EƼ�Eѥ�᡼���η׻�������
+ * ����E�ǥ�E��Ф���E����ͭ�����ʤɤ�����å�����E 
  *
- * この関数は，jconf ファイルやコマンドオプションによって与えられた
- * jconf 内のパラメータについて精査を行う. 具体的には，値の範囲のチェッ
- * クや，競合のチェック，設定から算出される各種パラメータの計算，使用
- * するモデルに対する指定の有効性などをチェックする. 
- *
- * この関数は，アプリケーションによって jconf の各値の指定が終了した直後，
- * エンジンインスタンスの作成やモデルのロードが行われる前に呼び出される
- * べきである. 
+ * ���δؿ��ϡ����ץ�E��������ˤ�ä� jconf �γ��ͤλ��꤬��λ����ľ�塤
+ * ���󥸥󥤥󥹥��󥹤κ�ܮ���ǥ�EΥ����ɤ��Ԥ�E�E�E��˸ƤӽФ���E�E * �٤��Ǥ���E 
  * 
  * </JA>
  * <EN>
@@ -343,14 +341,13 @@ j_jconf_finalize(Jconf *jconf)
 
 /** 
  * <JA>
- * @brief  あらかじめ定められた第1パスのデフォルトビーム幅を返す. 
+ * @brief  ���餫�������餁E�E�ѥ��Υǥե���Eȥӡ��������֤�. 
  *
- * デフォルトのビーム幅は，認識エンジンのコンパイル時設定や
- * 使用する音響モデルに従って選択される. これらの値は，20k の
- * IPA 評価セットで得られた最適値（精度を保ちつつ最大速度が得られる値）
- * である. 
+ * �ǥե���EȤΥӡ������ϡ�ǧ�����󥸥�Υ���ѥ���E����꤁E * ���Ѥ���E�����ǥ�E˽��ä����򤵤�E�E ����E���ͤϡ�20k ��
+ * IPA ɾ�����åȤ����餁E���Ŭ�͡����٤��ݤ��Ĥĺ���®�٤����餁E�E͡�
+ * �Ǥ���E 
  * 
- * @return 実行時の条件によって選択されたビーム幅
+ * @return �¹Ի��ξ�Eˤ�ä����򤵤�E��ӡ�����
  * </JA>
  * <EN>
  * @brief  Returns the pre-defined default beam width on 1st pass of
@@ -408,17 +405,16 @@ default_width(HTK_HMM_INFO *hmminfo)
 
 /** 
  * <JA>
- * @brief  第1パスのビーム幅を決定する. 
+ * @brief  E�ѥ��Υӡ���������ꤹ��E 
  *
- * ユーザが "-b" オプションでビーム幅を指定しなかった場合は，
- * 下記のうち小さい方がビーム幅として採用される. 
- *   - default_width() の値
- *   - sqrt(語彙数) * 15
+ * �桼���� "-b" ���ץ����ǥӡ���������ꤷ�ʤ��ä���E�ϡ�
+ * �����Τ��������������ӡ������Ȥ��ƺ��Ѥ���E�E 
+ *   - default_width() ����
+ *   - sqrt(��Eÿ�E * 15
  * 
- * @param wchmm [in] 木構造化辞書
- * @param specified [in] ユーザ指定ビーム幅(0: 全探索 -1: 未指定)
+ * @param wchmm [in] �ڹ�¤������E * @param specified [in] �桼����āEӡ�����(0: ��õ��E-1: ̤��āE
  * 
- * @return 採用されたビーム幅. 
+ * @return ���Ѥ���E��ӡ�����. 
  * </JA>
  * <EN>
  * @brief  Determine beam width on the 1st pass.

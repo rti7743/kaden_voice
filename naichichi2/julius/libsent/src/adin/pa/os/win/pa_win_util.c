@@ -1,4 +1,4 @@
-﻿/*
+/*
  * $Id: pa_win_util.c,v 1.1 2011/02/05 09:00:04 sumomo Exp $
  * Portable Audio I/O Library
  * Win32 platform-specific support functions

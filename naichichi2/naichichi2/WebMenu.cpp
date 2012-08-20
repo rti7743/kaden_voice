@@ -22,7 +22,7 @@ void WebMenu::Create(MainWindow* poolMainWindow , const std::string&	thisroom)
 {
 	this->PoolMainWindow = poolMainWindow;
 	this->thisroom = thisroom;
-	auto webmenu = this->PoolMainWindow->Config.FindGetsToMap("webmenu__");
+	auto webmenu = this->PoolMainWindow->Config.FindGetsToMap("webmenu__",true);
 	std::map<std::string,Menu*> alreadykey;
 
 	for(auto it = webmenu.begin() ; it != webmenu.end() ; ++it)

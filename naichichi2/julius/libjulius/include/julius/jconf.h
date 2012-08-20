@@ -1,8 +1,8 @@
-О╩©/**
+/**
  * @file   jconf.h
  * 
  * <JA>
- * @brief  Jconf Ф╖▀И─═Д╫⌠Ц│╝Е╝ Г╬╘
+ * @brief  Jconf ╧╫б╓бн╓ндЙ╣а
  *
  * </JA>
  * 

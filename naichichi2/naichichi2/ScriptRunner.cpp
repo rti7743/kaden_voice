@@ -12,8 +12,6 @@ ScriptRunner::~ScriptRunner()
 		lua_close(this->LuaInstance);
 		this->LuaInstance = NULL;
 	}
-	//メモリ解放
-	CDeleteAll(this->callbackHistoryList);
 }
 
 //インスタンスの再読み込み
@@ -137,11 +135,6 @@ xreturn::r<bool> ScriptRunner::CreateLuaInstance()
 	lua_register(this->LuaInstance, "print", (lua_CFunction)ScriptRunner::l_dump);
 	lua_register(this->LuaInstance, "echo", (lua_CFunction)ScriptRunner::l_dump);
 	lua_register(this->LuaInstance, "callstack", (lua_CFunction)ScriptRunner::l_callstack);
-	lua_register(this->LuaInstance, "webload", (lua_CFunction)ScriptRunner::l_webload);
-	lua_register(this->LuaInstance, "weblocation", (lua_CFunction)ScriptRunner::l_weblocation);
-	lua_register(this->LuaInstance, "weberror", (lua_CFunction)ScriptRunner::l_weberror);
-	lua_register(this->LuaInstance, "webecho", (lua_CFunction)ScriptRunner::l_webecho);
-	lua_register(this->LuaInstance, "webecho_table", (lua_CFunction)ScriptRunner::l_webecho_table);
 	lua_register(this->LuaInstance, "json_encode", (lua_CFunction)ScriptRunner::l_json_encode);
 	lua_register(this->LuaInstance, "json_decode", (lua_CFunction)ScriptRunner::l_json_decode);
 	lua_register(this->LuaInstance, "xml_encode", (lua_CFunction)ScriptRunner::l_xml_encode);
@@ -149,12 +142,9 @@ xreturn::r<bool> ScriptRunner::CreateLuaInstance()
 	lua_register(this->LuaInstance, "gotoweb", (lua_CFunction)ScriptRunner::l_gotoweb);
 	lua_register(this->LuaInstance, "tips", (lua_CFunction)ScriptRunner::l_tips);
 	lua_register(this->LuaInstance, "findmedia", (lua_CFunction)ScriptRunner::l_findmedia);
-	lua_register(this->LuaInstance, "getwebmenu", (lua_CFunction)ScriptRunner::l_getwebmenu);
 	lua_register(this->LuaInstance, "callwebmenu", (lua_CFunction)ScriptRunner::l_callwebmenu);
 
 	//thisの保存
-//	lua_pushlightuserdata(this->LuaInstance ,(void*) this);
-//	lua_setfield(this->LuaInstance,LUA_REGISTRYINDEX,"_this");
 	lua_setusertag(this->LuaInstance,this);
 
 	return true;
@@ -299,16 +289,7 @@ void ScriptRunner::unrefCallback(const CallbackDataStruct* callback)
 		luaL_unref(this->LuaInstance,LUA_REGISTRYINDEX, callback->getFunc() );
 	}
 
-	
-	for ( auto it = this->callbackHistoryList.begin(); it != this->callbackHistoryList.end() ; ++it)
-	{
-		if (*it == callback)
-		{
-			delete *it;
-			this->callbackHistoryList.erase(it);
-			break;
-		}
-	}
+	Callbackable::unrefCallback(callback);
 }
 
 int ScriptRunner::l_onvoice(lua_State* L)
@@ -661,192 +642,6 @@ int ScriptRunner::l_speak(lua_State* L)
 	return 0;             //戻り値の数を指定
 }
 
-//web専用 テンプレートを読み込む
-int ScriptRunner::l_webload(lua_State* L)
-{
-	ScriptRunner* _this = __this(L);
-//	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"webload") ,LOG_LEVEL_DEBUG);
-
-	//テンプレート名
-	if (! lua_isstring(L,-2) )
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"webload") + "の第1引数が文字列ではありません");
-	}
-	//table
-	if (! lua_istable(L,-1) )
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"webload") + "の第2引数がテーブルではありません");
-	}
-	//tableをすべてエスケープする。
-	//動的にテーブルを構築するのはスタックが汚れてしまって無理があるので、
-	//一度配列に構築した後、それをテーブルとして複写する.
-	//一次元のリストだが、配列の操作を取得時と、再構築時に同じことを行うわけだから、次元は無視してもよい。
-	struct _temp
-	{
-		std::string key;
-		std::string value;
-		enum type
-		{
-			 _temp_type_value
-			,_temp_type_nest
-			,_temp_type_up
-		}
-		type;
-	};
-	struct _nest_lamba
-	{
-		lua_State* L;
-		int index;
-
-		_nest_lamba(lua_State* L,int index) : L(L) , index(index) { func(); };
-		//再起するのでクラス内クラスで。
-		void func()
-		{
-			_USE_WINDOWS_ENCODING;
-			lua_pushnil(L);
-			while (lua_next(L, index - 1) != 0) 
-			{
-				_temp* p = new _temp;
-#ifdef _WINDOWS
-				p->key = _U2A(lua_tostring(L, -2));
-#else
-				p->key = lua_tostring(L, -2);
-#endif
-				if (lua_istable(L, -1))
-				{
-					p->type = _temp::_temp_type_nest;
-					safeArray.push_back(p);
-
-					func();
-
-					_temp* p2 = new _temp;
-					p2->type = _temp::_temp_type_up;
-					safeArray.push_back(p2);
-				}
-				else
-				{
-					p->type = _temp::_temp_type_value;
-					if (p->key.size() >= 2 && p->key[0] == '_' && p->key[1] == '_')
-					{//キーが __hogehoge のように、 __ で始まる場合のみ自動エスケープをしない.
-						p->value = lua_dump(L,-1 , false,0);
-					}
-					else
-					{
-						p->value = XLStringUtil::htmlspecialchars(lua_dump(L,-1 ,false, 0));
-					}
-					safeArray.push_back(p);
-				}
-
-				lua_pop(L, 1);
-			}
-		}
-		std::list< _temp* > safeArray;
-	} 
-	//テーブルの読み込み処理
-	nest(L,-1);
-
-	//テンプレートの読み込み
-	std::string functionanme = "webtemplate";
-	std::string filename = lua_tostringHelper(L,-2);
-	filename = _this->PoolMainWindow->Httpd.WebPathToRealPath(filename);
-	std::string tplcode = convertTemplate(filename,functionanme);
-
-	//ここからスタックを破壊するので、関数名を避難させる。
-	std::string func = lua_funcdump(L,"webload");
-
-	//テンプレートコードの読み込み
-	if ( luaL_loadstring(L, tplcode.c_str()) )
-	{
-		return luaL_errorHelper(L,func + "のテンプレート" + filename + " の解析中にエラー。 Lua:" + lua_tostringHelper(L, -1));
-	}
-	//まずそのスクリプトを実行させて、 functionanme を登録します。
-	if ( lua_pcall( L, 0, 0, 0 ) )
-	{
-		return luaL_errorHelper(L,func + "のテンプレート" + filename + " の実行中にエラー。 Lua:" + lua_tostringHelper(L, -1));
-	}
-	//functionanme を呼び出す準備に入ります。
-	lua_getglobal(L, functionanme.c_str() );
-	if(!lua_isfunction(L,-1) )
-	{
-		return luaL_errorHelper(L,func + "のテンプレート" + filename + " を実行しましたが、内部用関数" + functionanme + "が登録されていません。 Lua:" + lua_tostringHelper(L, -1));
-	}
-	//テンプレート引数としてのテーブルを具現化
-	//thank http://logsoku.com/thread/pc2.2ch.net/tech/1063711237/824
-	lua_newtable(L); 
-	for(auto it = nest.safeArray.begin() ; it != nest.safeArray.end() ; ++it)
-	{
-		if ((*it)->type == _temp::_temp_type_value)
-		{
-			lua_pushstringHelper(L, (*it)->key);
-			lua_pushstringHelper(L, (*it)->value);
-			lua_settable(L, -3);
-		}
-		else if ((*it)->type == _temp::_temp_type_nest)
-		{
-			lua_pushstringHelper(L, (*it)->key);
-			lua_newtable(L);
-		}
-		else //if ((*it)->type == _temp::_temp_type_up)
-		{
-			lua_settable(L, -3);
-		}
-		delete *it;
-	}
-
-	//関数呼び出し
-	if ( lua_pcall( L, 1, 0, 0 ) )
-	{
-		std::string a = lua_tostringHelper(L, -1);
-		return luaL_errorHelper(L,func + "のテンプレート" + filename + " の実行中にエラー。 Lua:" + lua_tostringHelper(L, -1));
-	}
-
-	return 0;             //戻り値の数を指定
-}
-
-
-//web専用 ロケーションさせる
-int ScriptRunner::l_weblocation(lua_State* L)
-{
-	ScriptRunner* _this = __this(L);
-	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"weblocation") ,LOG_LEVEL_DEBUG);
-
-	//URL
-	if (! lua_isstring(L,-1) )
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"weblocation") + "の第1引数が文字列ではありません");
-	}
-	_this->WebechoStdout = lua_tostring(L,-1); //URL UTF8のままほしい
-	_this->WebResultType = WEBSERVER_RESULT_TYPE_LOCATION;
-
-	return 0;             //戻り値の数を指定
-}
-
-//web専用 エラーを発生させる.
-int ScriptRunner::l_weberror(lua_State* L)
-{
-	ScriptRunner* _this = __this(L);
-	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"weberror") ,LOG_LEVEL_DEBUG);
-
-	int argc = lua_gettop(L);
-	if (argc >= 1)
-	{
-		//code
-		auto code = ScriptRunner::lua_crossdataToString(L ,-1);
-		if (!code)
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"weberror") + "の第1引数が文字列または数字ではありません");
-		}
-		_this->WebResultType = WEBSERVER_RESULT_TYPE_ERROR;
-		_this->WebechoStdout = code;
-	}
-	else
-	{
-		_this->WebResultType = WEBSERVER_RESULT_TYPE_ERROR;
-		_this->WebechoStdout = "500";
-	}
-
-	return 0;             //戻り値の数を指定
-}
 
 int ScriptRunner::l_set_config(lua_State* L)
 {
@@ -1194,91 +989,7 @@ int ScriptRunner::l_dump(lua_State* L)
 
 	return 0;
 }
-int ScriptRunner::l_webecho(lua_State* L)
-{
-	ScriptRunner* _this = __this(L);
 
-	int argc = lua_gettop(L) * -1;
-	for(;argc < 0;argc++)
-	{
-		_this->WebechoStdout += lua_dump(L , argc,true,0);
-	}
-
-	return 0;
-}
-
-int ScriptRunner::l_webecho_table(lua_State* L)
-{
-	ScriptRunner* _this = __this(L);
-	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"webecho_table") ,LOG_LEVEL_DEBUG);
-
-	int p1index = 0;
-	const char * p2 = NULL;
-	const char * p3 = NULL;
-	int argc = lua_gettop(L) * -1;
-	if (argc == 3)
-	{
-		//第1引数 出力するテーブル
-		if (! lua_istable(L,-3) )
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"webecho_table") + "の第1引数がテーブルではありません");
-		}
-		//第2引数 種類
-		if (! lua_isstring(L,-2) )
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"webecho_table") + "の第2引数が文字列ではありません");
-		}
-		//第3引数 戻り値関数
-		if (! lua_isstring(L,-1) )
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"webecho_table") + "の第3引数が文字列ではありません");
-		}
-		p1index = -3;
-		p2 = lua_tostring(L,-2);
-		p3 = lua_tostring(L,-1);
-	}
-	else
-	{
-		//第1引数 出力するテーブル
-		if (! lua_istable(L,-2) )
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"webecho_table") + "の第1引数がテーブルではありません");
-		}
-		//第2引数 種類
-		if (! lua_isstring(L,-1) )
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"webecho_table") + "の第1引数が文字列ではありません");
-		}
-		p1index = -2;
-		p2 = lua_tostring(L,-1);
-		assert(p3 == NULL);
-
-	}
-
-	//ヘッダーをつける.
-	if (strcmp(p2 , "json") == 0)
-	{
-		_this->WebHeaders += "Content-Type: text/javascript; charset=utf-8\r\n";
-		_this->WebechoStdout += lua_tojson(L,p1index);
-	}
-	else if (strcmp(p2 , "jsonp") == 0)
-	{
-		if (p3 == NULL)
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"webechoex") + " jsonpが指定されたときは関数名を第3引数に渡す必要があります");
-		}
-		_this->WebHeaders += "Content-Type: text/javascript; charset=utf-8\r\n";
-		_this->WebechoStdout += "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /><script type=\"text/javascript\">";
-		_this->WebechoStdout += p3;
-		_this->WebechoStdout += "(";
-		_this->WebechoStdout += lua_tojson(L,p1index);
-		_this->WebechoStdout += ");</script></head><body></body></html>";
-	}
-	else if (strcmp(p2 , "xml") == 0)
-	{
-	}
-	return 0;
-}
 
 
 //続きはwebで
@@ -1366,7 +1077,7 @@ int ScriptRunner::l_find_config(lua_State* L)
 		return luaL_errorHelper(L,lua_funcdump(L,"findconfig") + "の第1引数が文字列ではありません");
 	}
 
-	auto configmap = _this->PoolMainWindow->Config.FindGetsToMap(key);
+	auto configmap = _this->PoolMainWindow->Config.FindGetsToMap(key,true);
 
 	//lua配列として積み直す
 	lua_newtable(L);
@@ -1527,29 +1238,9 @@ std::string ScriptRunner::convertTemplate(const std::string & filename,const std
 	return sourceCode;
 }
 
-
-
-
-xreturn::r<std::string> ScriptRunner::callbackWebFunction(int callbackIndex,const std::map<std::string , std::string> & match,WEBSERVER_RESULT_TYPE* type,std::string* headers)
+xreturn::r<std::string> ScriptRunner::callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match)
 {
-	this->WebechoStdout = "";
-	this->WebHeaders = "";
-	this->WebResultType = WEBSERVER_RESULT_TYPE_OK;
-
-	auto r = callbackFunction(callbackIndex,match);
-	if (!r)
-	{
-		return xreturn::error(r.getError());
-	}
-	
-	*type = this->WebResultType;
-	*headers = this->WebHeaders;
-	return this->WebechoStdout;
-}
-
-
-xreturn::r<std::string> ScriptRunner::callbackFunction(int callbackIndex,const std::map<std::string , std::string> & match)
-{
+	const int callbackIndex = callback->getFunc();
 	this->PoolMainWindow->SyncInvokeLog(std::string() + "callbackFunction:" + num2str(callbackIndex) ,LOG_LEVEL_DEBUG);
 
 	//LUA_REGISTRYINDEX に預けておいたコールバックポイントの復元
@@ -1722,68 +1413,6 @@ int ScriptRunner::l_xml_decode(lua_State* L)
 
 
 
-int ScriptRunner::l_getwebmenu(lua_State* L)
-{
-	ScriptRunner* _this = __this(L);
-	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"getwebmenu") ,LOG_LEVEL_DEBUG);
-
-	lua_newtable(L);
-	auto rooms = _this->PoolMainWindow->WebMenu.getRooms();
-	for(auto roomIT = rooms->begin() ; roomIT != rooms->end() ; ++ roomIT )
-	{
-		lua_pushstringHelper(L, (*roomIT)->name );
-		lua_newtable(L);
-		{
-			lua_pushstringHelper(L, "name" );
-			lua_pushstringHelper(L, (*roomIT)->name );
-			lua_settable(L, -3);
-
-			lua_pushstringHelper(L, "ip" );
-			lua_pushstringHelper(L, (*roomIT)->ip );
-			lua_settable(L, -3);
-
-			lua_pushstringHelper(L, "menus" );
-			lua_newtable(L);
-			for(auto menuIT = (*roomIT)->menus.begin() ; menuIT != (*roomIT)->menus.end() ; ++ menuIT )
-			{
-				lua_pushstringHelper(L, (*menuIT)->name );
-				lua_newtable(L);
-				{
-					lua_pushstringHelper(L, "name" );
-					lua_pushstringHelper(L, (*menuIT)->name );
-					lua_settable(L, -3);
-
-					lua_pushstringHelper(L, "image" );
-					lua_pushstringHelper(L, (*menuIT)->image );
-					lua_settable(L, -3);
-
-					lua_pushstringHelper(L, "status" );
-					lua_pushstringHelper(L, (*menuIT)->status );
-					lua_settable(L, -3);
-
-					lua_pushstringHelper(L, "actions" );
-					lua_newtable(L);
-					for(auto actionIT = (*menuIT)->actions.begin() ; actionIT != (*menuIT)->actions.end() ; ++ actionIT )
-					{
-						lua_pushstringHelper(L, (*actionIT)->name );
-						lua_newtable(L);
-						{
-							lua_pushstringHelper(L, "name" );
-							lua_pushstringHelper(L, (*actionIT)->name );
-							lua_settable(L, -3);
-						}
-						lua_settable(L, -3);
-					}
-					lua_settable(L, -3);
-				}
-				lua_settable(L, -3);
-			}
-			lua_settable(L, -3);
-		}
-		lua_settable(L, -3);
-	}
-	return 1;             //戻り値の数を指定
-}
 
 int ScriptRunner::l_callwebmenu(lua_State* L)
 {
@@ -1907,13 +1536,6 @@ std::string ScriptRunner::lua_tojson(lua_State* L,int index)
 
 	jsonloop.loop(index);
 	return jsonloop.out.str();
-}
-CallbackDataStruct* ScriptRunner::CreateCallback(int _func)
-{
-	CallbackDataStruct* callback = new CallbackDataStruct(this,_func );
-	this->callbackHistoryList.push_back(callback);
-
-	return callback;
 }
 
 

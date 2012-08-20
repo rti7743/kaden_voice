@@ -1,14 +1,14 @@
-﻿/**
+/**
  * @file   wchmm_check.c
  * 
  * <JA>
- * @brief  木構造化辞書のマニュアルチェック
+ * @brief  �ڹ�¤������Υޥ˥奢������å�
  *
- * ここでは，与えられた単語辞書と言語モデルから生成された木構造化辞書の構造を
- * 対話的にチェックするための関数が定義されています. 起動時に "-check wchmm"
- * とすることで，木構造化辞書の構築後にプロンプトが表示され，ある単語が
- * 木構造化辞書のどこに位置するか，あるいはあるノードにどのような情報が
- * 付与されているかなどを調べることができます. 
+ * �����Ǥϡ�Ϳ����줿ñ�켭��ȸ����ǥ뤫���������줿�ڹ�¤������ι�¤��
+ * ����Ū�˥����å����뤿��δؿ����������Ƥ��ޤ�. ��ư���� "-check wchmm"
+ * �Ȥ��뤳�Ȥǡ��ڹ�¤������ι��۸�˥ץ���ץȤ�ɽ�����졤����ñ�줬
+ * �ڹ�¤������Τɤ��˰��֤��뤫�����뤤�Ϥ���Ρ��ɤˤɤΤ褦�ʾ���
+ * ��Ϳ����Ƥ��뤫�ʤɤ�Ĵ�٤뤳�Ȥ��Ǥ��ޤ�. 
  * </JA>
  * 
  * <EN>
@@ -38,11 +38,11 @@
 
 /** 
  * <JA>
- * 単語の辞書情報を出力する
+ * ñ��μ���������Ϥ���
  * 
- * @param winfo [in] 単語辞書
- * @param word [in] 出力する単語のID
- * @param ngram_exist [in] 同時に使用する言語制約が存在する場合TRUE
+ * @param winfo [in] ñ�켭��
+ * @param word [in] ���Ϥ���ñ���ID
+ * @param ngram_exist [in] Ʊ���˻��Ѥ����������¸�ߤ�����TRUE
  * </JA>
  * <EN>
  * Display informations of a word in the dictionary.
@@ -85,10 +85,10 @@ print_winfo_w(WORD_INFO *winfo, WORD_ID word, boolean ngram_exist)
 
 /** 
  * <JA>
- * 木構造化辞書上の単語の位置情報を出力する. 
+ * �ڹ�¤��������ñ��ΰ��־������Ϥ���. 
  * 
- * @param wchmm [in] 木構造化辞書
- * @param word [in] 単語ID
+ * @param wchmm [in] �ڹ�¤������
+ * @param word [in] ñ��ID
  * </JA>
  * <EN>
  * Display the location of a word in the tree lexicon.
@@ -116,10 +116,10 @@ print_wchmm_w(WCHMM_INFO *wchmm, WORD_ID word)
 
 /** 
  * <JA>
- * 木構造化辞書上のあるノードの情報を出力する. 
+ * �ڹ�¤�������Τ���Ρ��ɤξ������Ϥ���. 
  * 
- * @param wchmm [in] 木構造化辞書
- * @param node [in] ノード番号
+ * @param wchmm [in] �ڹ�¤������
+ * @param node [in] �Ρ����ֹ�
  * </JA>
  * <EN>
  * Display informations assigned to a node in the tree lexicon.
@@ -182,10 +182,10 @@ print_wchmm_s(WCHMM_INFO *wchmm, int node)
 
 /** 
  * <JA>
- * 木構造化辞書上のあるノードについて，遷移先のリストを出力する. 
+ * �ڹ�¤�������Τ���Ρ��ɤˤĤ��ơ�������Υꥹ�Ȥ���Ϥ���. 
  * 
- * @param wchmm [in] 木構造化辞書
- * @param node [in] ノード番号
+ * @param wchmm [in] �ڹ�¤������
+ * @param node [in] �Ρ����ֹ�
  * </JA>
  * <EN>
  * Display list of transition arcs from a node in the tree lexicon.
@@ -220,10 +220,10 @@ print_wchmm_s_arc(WCHMM_INFO *wchmm, int node)
 
 /** 
  * <JA>
- * 木構造化辞書上のあるノードの持つ factoring 情報を出力する. 
+ * �ڹ�¤�������Τ���Ρ��ɤλ��� factoring �������Ϥ���. 
  * 
- * @param wchmm [in] 木構造化辞書
- * @param node [in] ノード番号
+ * @param wchmm [in] �ڹ�¤������
+ * @param node [in] �Ρ����ֹ�
  * </JA>
  * <EN>
  * Display factoring values on a node in the tree lexicon.
@@ -265,10 +265,10 @@ print_wchmm_s_successor(WCHMM_INFO *wchmm, int node)
 
 /** 
  * <JA>
- * 指定された論理名のHMMを検索し，その情報を出力する. 
+ * ���ꤵ�줿����̾��HMM�򸡺��������ξ������Ϥ���. 
  * 
- * @param name [in] 論理HMMの名前
- * @param hmminfo [in] HMM定義
+ * @param name [in] ����HMM��̾��
+ * @param hmminfo [in] HMM���
  * </JA>
  * <EN>
  * Lookup an HMM of given name, and display specs of it.
@@ -292,10 +292,10 @@ print_hmminfo(char *name, HTK_HMM_INFO *hmminfo)
 
 /** 
  * <JA>
- * 単語N-gramのある単語の情報を出力する. 
+ * ñ��N-gram�Τ���ñ��ξ������Ϥ���. 
  * 
- * @param ngram [in] 単語N-gram
- * @param nid [in] N-gram単語のID
+ * @param ngram [in] ñ��N-gram
+ * @param nid [in] N-gramñ���ID
  * </JA>
  * <EN>
  * Display specs of a word in the word N-gram
@@ -315,9 +315,9 @@ print_ngraminfo(NGRAM_INFO *ngram, int nid)
 
 /** 
  * <JA>
- * 木構造化辞書の構造を起動時に対話的にチェックする際のコマンドループ
+ * �ڹ�¤������ι�¤��ư��������Ū�˥����å�����ݤΥ��ޥ�ɥ롼��
  * 
- * @param wchmm [in] 木構造化辞書
+ * @param wchmm [in] �ڹ�¤������
  * </JA>
  * <EN>
  * Command loop to browse and check the structure of the constructed tree
@@ -431,9 +431,9 @@ wchmm_check_interactive(WCHMM_INFO *wchmm) /* interactive check */
 
 /** 
  * <JA>
- * 木構造化辞書内のリンク情報の一貫性をチェックする（内部デバッグ用）
+ * �ڹ�¤��������Υ�󥯾���ΰ����������å�����������ǥХå��ѡ�
  * 
- * @param wchmm [in] 木構造化辞書
+ * @param wchmm [in] �ڹ�¤������
  * </JA>
  * <EN>
  * Check coherence of tree lexicon (for internal debug only!)

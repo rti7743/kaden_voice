@@ -1,4 +1,4 @@
-﻿/*
+/*
 	IASIOThiscallResolver.cpp see the comments in iasiothiscallresolver.h for
     the top level description - this comment describes the technical details of
     the implementation.

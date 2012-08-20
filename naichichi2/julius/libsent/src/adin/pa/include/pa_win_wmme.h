@@ -1,4 +1,4 @@
-﻿#ifndef PA_WIN_WMME_H
+#ifndef PA_WIN_WMME_H
 #define PA_WIN_WMME_H
 /*
  * $Id: pa_win_wmme.h,v 1.1 2011/02/05 09:00:03 sumomo Exp $

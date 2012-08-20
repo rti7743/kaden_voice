@@ -1,4 +1,4 @@
-﻿#ifndef PA_UTIL_H
+#ifndef PA_UTIL_H
 #define PA_UTIL_H
 /*
  * $Id: pa_util.h,v 1.1 2011/02/05 09:00:02 sumomo Exp $

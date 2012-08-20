@@ -1,4 +1,4 @@
-﻿#ifndef PA_CONVERTERS_H
+#ifndef PA_CONVERTERS_H
 #define PA_CONVERTERS_H
 /*
  * $Id: pa_converters.h,v 1.1 2011/02/05 09:00:02 sumomo Exp $

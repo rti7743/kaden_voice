@@ -12,6 +12,10 @@ xreturn::r<bool> ScriptManager::Create(MainWindow * poolMainWindow)
 
 	this->loadLua(this->PoolMainWindow->Config.GetBaseDirectory() );
 	this->RunAllLua();
+
+	this->WebScript.Create(this->PoolMainWindow);
+	this->WebScript.Load();
+
 	this->PoolMainWindow->Recognition.CommitRule();
 
 	this->PoolMainWindow->SyncInvokeLog("ScriptManager初期化完了",LOG_LEVEL_DEBUG);
@@ -133,7 +137,7 @@ xreturn::r<std::string> ScriptManager::fireCallback(const CallbackDataStruct* ca
 	{
 		return ret;
 	}
-	return callback->getRunner()->callbackFunction(func,args);
+	return callback->getRunner()->callbackFunction(callback,args);
 }
 
 
@@ -167,22 +171,6 @@ void ScriptManager::WebMenuCall(const CallbackDataStruct* callback)
 	//ウェブメニューは何度も打てるので、 UnrefCallback はしません。
 }
 
-//HTTPで所定のパスにアクセスがあった時
-void ScriptManager::HttpRequest(const CallbackDataStruct* callback,const std::string & path ,const std::map< std::string , std::string > & request,std::string * respons,WEBSERVER_RESULT_TYPE* type,std::string* headers)
-{
-	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-
-	//webの打ち返しは少々複雑.
-	int func = callback->getFunc();
-	if (func == NO_CALLBACK)
-	{
-		*type = WEBSERVER_RESULT_TYPE_NOT_FOUND;
-		*respons = "";
-		return ;
-	}
-	*respons = callback->getRunner()->callbackWebFunction(func,request,type,headers);
-}
-
 //コールバックを消す通知をします。
 void ScriptManager::UnrefCallback(const CallbackDataStruct* callback)
 {
@@ -191,3 +179,8 @@ void ScriptManager::UnrefCallback(const CallbackDataStruct* callback)
 	callback->getRunner()->unrefCallback(callback);
 }
 
+//webからアクセスがあった時
+bool ScriptManager::WebAccess(const std::string& path,const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result,std::string* responsString)
+{
+	return this->WebScript.WebAccess(path,httpHeaders,result,responsString);
+}

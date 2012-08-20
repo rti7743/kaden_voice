@@ -8,12 +8,15 @@ public:
 	xreturn::r<std::string> Create();
 
 	void Set(const std::string& key,const std::string& value ) ;
+	void Remove(const std::string& key ) ;
 	std::string Get(const std::string & key , const std::string & defaultValue) const;
 	double GetDouble(const std::string & key , double defaultValue) const;
 	int GetInt(const std::string & key , int defaultValue) const;
 	bool GetBool(const std::string & key , bool defaultValue) const;
 	std::list<std::string> FindGets(const std::string & prefix) const;
-	const std::map<std::string,std::string>FindGetsToMap(const std::string & prefix) const;
+	const std::map<std::string,std::string>FindGetsToMap(const std::string & prefix,bool prefixtrim) const;
+	bool ReplaceMap(const std::string& prefix,const std::map<std::string,std::string>& postData);
+
 	std::string GetBaseDirectory() const;
 
 	xreturn::r<bool> loadConfig(const std::string & configFilename);

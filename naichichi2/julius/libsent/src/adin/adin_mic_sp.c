@@ -1,17 +1,17 @@
-﻿/**
+/**
  * @file   adin_mic_sp.c
  * 
  * <JA>
- * @brief  マイク入力 (spAudioライブラリ)
+ * @brief  �ޥ������� (spAudio�饤�֥��)
  *
- * spAudioライブラリを使用したマイク入力のための低レベル関数です．
- * 使用するには configure 時に "--with-mictype=sp" を指定して下さい．
+ * spAudio�饤�֥�����Ѥ����ޥ������ϤΤ�������٥�ؿ��Ǥ���
+ * ���Ѥ���ˤ� configure ���� "--with-mictype=sp" ����ꤷ�Ʋ�������
  *
- * JuliusはLinuxではミキサーデバイスの設定を一切行いません．録音デバイスの
- * 選択（マイク/ライン）や録音ボリュームの調節は xmixer など他のツールで
- * 行なって下さい．
+ * Julius��Linux�Ǥϥߥ������ǥХ������������ڹԤ��ޤ���Ͽ���ǥХ�����
+ * ����ʥޥ���/�饤��ˤ�Ͽ���ܥ�塼���Ĵ��� xmixer �ʤ�¾�Υġ����
+ * �ԤʤäƲ�������
  *
- * このコードは坂野秀樹さんの作です．spAudio については以下もご覧下さい．
+ * ���Υ����ɤϺ��������κ�Ǥ���spAudio �ˤĤ��Ƥϰʲ��⤴����������
  *
  * @sa http://www.sp.m.is.nagoya-u.ac.jp/people/banno/spLibs/index-j.html
  * 

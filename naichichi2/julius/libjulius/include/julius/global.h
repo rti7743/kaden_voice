@@ -1,8 +1,8 @@
-ï»¿/**
+/**
  * @file   global.h
  * 
  * <JA>
- * @brief  å¤§åŸŸå¤‰æ•°ã®å®šç¾©
+ * @brief  Âç°èÊÑ¿ô¤ÎÄêµÁ
  *
  * </JA>
  * 

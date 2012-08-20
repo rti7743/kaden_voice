@@ -1,18 +1,18 @@
-﻿/**
+/**
  * @file   hmm_lookup.c
  * 
  * <JA>
- * @brief  %HMM の名前から実体を検索する
+ * @brief  %HMM ��̾��������Τ򸡺�����
  *
- * "g-u+i" などの %HMM 論理名から，対応する %HMM の定義を検索します．
+ * "g-u+i" �ʤɤ� %HMM ����̾���顤�б����� %HMM ������򸡺����ޤ���
  * 
- * 検索結果は論理%HMM HMM_Logical へのポインタで返されます．HMM_Logical は，
- * 実際に定義されている %HMM へのポインタか，あるいはバイフォン・モノフォン
- * の論理%HMM名でかつそれらが%HMM定義ファイルやHMMListで定義されていない場合，
- * 対応する pseudo %HMM set へのポインタのどちらかを保持しています．
+ * ������̤�����%HMM HMM_Logical �ؤΥݥ��󥿤��֤���ޤ���HMM_Logical �ϡ�
+ * �ºݤ��������Ƥ��� %HMM �ؤΥݥ��󥿤������뤤�ϥХ��ե��󡦥�Υե���
+ * ������%HMM̾�Ǥ��Ĥ���餬%HMM����ե������HMMList���������Ƥ��ʤ���硤
+ * �б����� pseudo %HMM set �ؤΥݥ��󥿤Τɤ��餫���ݻ����Ƥ��ޤ���
  * 
- * また，論理名から定義名へのマッピング関数への実%HMM名と pseudo %HMM名の
- * 追加登録もここで行ないます．
+ * �ޤ�������̾�������̾�ؤΥޥåԥ󥰴ؿ��ؤμ�%HMM̾�� pseudo %HMM̾��
+ * �ɲ���Ͽ�⤳���ǹԤʤ��ޤ���
  * </JA>
  * 
  * <EN>

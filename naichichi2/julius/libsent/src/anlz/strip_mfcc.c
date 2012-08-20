@@ -1,10 +1,10 @@
-﻿/**
+/**
  * @file   strip_mfcc.c
  *
  * <JA>
- * @brief  MFCC列からゼロサンプル列を取り除く
+ * @brief  MFCC�󤫤饼������ץ���������
  *
- * エネルギー項の値からゼロサンプルのフレームを検出します．
+ * ���ͥ륮������ͤ��饼������ץ�Υե졼��򸡽Ф��ޤ���
  * </JA>
  * <EN>
  * @brief  Strip zero frames from MFCC data

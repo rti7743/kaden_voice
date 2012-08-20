@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   ngram_malloc.c
  * 
  * <JA>
- * @brief  N-gram構造体の初期メモリ確保と解放
+ * @brief  N-gram��¤�Τν��������ݤȲ���
  * </JA>
  * 
  * <EN>

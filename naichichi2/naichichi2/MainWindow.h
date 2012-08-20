@@ -97,9 +97,9 @@ private:
 
 public:
 	class Config					Config;
-	class ScriptManager			ScriptManager;
+	class ScriptManager				ScriptManager;
 	class Recognition_Factory		Recognition;
-	class Speak_Factory			Speak;
+	class Speak_Factory				Speak;
 	class HttpServer				Httpd;
 	class ActionScriptManager		ActionScriptManager;
 	class TriggerManager			TriggerManager;

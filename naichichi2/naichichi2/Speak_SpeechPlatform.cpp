@@ -115,7 +115,7 @@ xreturn::r<bool> Speak_SpeechPlatform::Run()
 
 xreturn::r<bool> Speak_SpeechPlatform::Setting(int rate,int pitch,unsigned int volume,const std::string& botname)
 {
-	HRESULT hr;
+//	HRESULT hr;
 
 //	hr = this->Engine->SetRate(rate);
 //	if(FAILED(hr))	 return xreturn::windowsError(hr);

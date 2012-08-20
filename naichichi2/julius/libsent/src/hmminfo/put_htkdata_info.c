@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   put_htkdata_info.c
  * 
  * <JA>
- * @brief  %HMM 定義や特徴パラメータの情報をテキスト出力する
+ * @brief  %HMM �������ħ�ѥ�᡼���ξ����ƥ����Ƚ��Ϥ���
  * </JA>
  * 
  * <EN>

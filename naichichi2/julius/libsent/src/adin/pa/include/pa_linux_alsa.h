@@ -1,4 +1,4 @@
-﻿#ifndef PA_LINUX_ALSA_H
+#ifndef PA_LINUX_ALSA_H
 #define PA_LINUX_ALSA_H
 
 /*

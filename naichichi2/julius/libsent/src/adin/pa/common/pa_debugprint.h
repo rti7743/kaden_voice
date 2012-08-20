@@ -1,4 +1,4 @@
-﻿#ifndef PA_LOG_H
+#ifndef PA_LOG_H
 #define PA_LOG_H
 /*
  * Log file redirector function

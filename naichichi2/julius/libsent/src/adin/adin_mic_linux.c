@@ -1,14 +1,14 @@
-﻿/**
+/**
  * @file   adin_mic_linux.c
  *
  * <JA>
- * @brief  マイク入力 (Linux) - デフォルトデバイス
+ * @brief  �ޥ������� (Linux) - �ǥե���ȥǥХ���
  *
- * マイク入力のための低レベル関数です．
- * インタフェースを明示指定しない (-input mic) 場合に呼ばれます．
- * ALSA, PulesAudio, OSS, ESD の順で最初に見つかったものが使用されます．
- * それぞれの API を明示的に指定したい場合は "-input" にそれぞれ
- * "alsa", "oss", "pulseaudio", "esd" を指定してください。
+ * �ޥ������ϤΤ�������٥�ؿ��Ǥ���
+ * ���󥿥ե��������������ꤷ�ʤ� (-input mic) ���˸ƤФ�ޤ���
+ * ALSA, PulesAudio, OSS, ESD �ν�Ǻǽ�˸��Ĥ��ä���Τ����Ѥ���ޤ���
+ * ���줾��� API ������Ū�˻��ꤷ�������� "-input" �ˤ��줾��
+ * "alsa", "oss", "pulseaudio", "esd" ����ꤷ�Ƥ���������
  * </JA>
  * <EN>
  * @brief  Microphone input on Linux - default device

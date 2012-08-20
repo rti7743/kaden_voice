@@ -1,9 +1,8 @@
-ï»¿/**
+/**
  * @file   check_hmmtype.c
  * 
  * <JA>
- * @brief  %HMM ã¨ç‰¹å¾´ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å‹é‡æ•´åˆæ€§ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
- * </JA>
+ * @brief  %HMM ¤ÈÆÃÄ§¥Õ¥¡¥¤¥EÎ¥Ñ¥é¥á¡¼¥¿·¿ÌûÜ°¹çÀ­¤ò¥Á¥§¥Ã¥¯¤¹¤E * </JA>
  * 
  * <EN>
  * @brief  Check the parameter types between %HMM and input

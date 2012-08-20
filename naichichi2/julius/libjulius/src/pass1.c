@@ -1,18 +1,18 @@
-﻿/**
+/**
  * @file   pass1.c
  * 
  * <JA>
- * @brief  第1パス：フレーム同期ビーム探索
+ * @brief  ��1�ѥ����ե졼��Ʊ���ӡ���õ��
  *
- * 静的木構造辞書を用いて，入力特徴量ベクトル列に対して，Juliusの第１パス
- * であるフレーム同期ビーム探索を行います. 
+ * ��Ū�ڹ�¤������Ѥ��ơ�������ħ�̥٥��ȥ�����Ф��ơ�Julius���裱�ѥ�
+ * �Ǥ���ե졼��Ʊ���ӡ���õ����Ԥ��ޤ�. 
  *
- * 入力データ全体があらかじめ得られている場合は，一括で計算を
- * 行う関数 get_back_trellis() がメインから呼ばれます. オンライン認識
- * の場合は realtime_1stpass.c から，初期化，フレームごとの計算，
- * 終了処理のそれぞれが入力の進行にあわせて個別に呼ばれます. 
+ * ���ϥǡ������Τ����餫���������Ƥ�����ϡ����Ƿ׻���
+ * �Ԥ��ؿ� get_back_trellis() ���ᥤ�󤫤�ƤФ�ޤ�. ����饤��ǧ��
+ * �ξ��� realtime_1stpass.c ���顤��������ե졼�ऴ�Ȥη׻���
+ * ��λ�����Τ��줾�줬���ϤοʹԤˤ��碌�Ƹ��̤˸ƤФ�ޤ�. 
  *
- * 実際の個々の認識処理インスタンスごとの処理は beam.c に記述されています. 
+ * �ºݤθġ���ǧ���������󥹥��󥹤��Ȥν����� beam.c �˵��Ҥ���Ƥ��ޤ�. 
  *
  * </JA>
  * 
@@ -49,8 +49,8 @@
 #include <julius/julius.h>
 
 /********************************************************************/
-/* 第１パスを実行するメイン関数                                     */
-/* 入力をパイプライン処理する場合は realtime_1stpass.c を参照のこと */
+/* �裱�ѥ���¹Ԥ���ᥤ��ؿ�                                     */
+/* ���Ϥ�ѥ��ץ饤������������ realtime_1stpass.c �򻲾ȤΤ��� */
 /* main function to execute 1st pass                                */
 /* the pipeline processing is not here: see realtime_1stpass.c      */
 /********************************************************************/
@@ -82,21 +82,21 @@
  * 
  * </EN>
  * <JA>
- * @brief  全ての認識処理インスタンス処理を1フレーム分進める.
+ * @brief  ���Ƥ�ǧ���������󥹥��󥹽�����1�ե졼��ʬ�ʤ��.
  *
- * 全ての認識処理インスタンスについて，割り付けられているMFCC計算インスタンス
- * の mfcc->f をカレントフレームとして処理を1フレーム進める. 
+ * ���Ƥ�ǧ���������󥹥��󥹤ˤĤ��ơ�����դ����Ƥ���MFCC�׻����󥹥���
+ * �� mfcc->f �򥫥��ȥե졼��Ȥ��ƽ�����1�ե졼��ʤ��. 
  *
- * なお，mfcc->invalid が TRUE となっている処理インスタンスの処理はスキップ
- * される. 
+ * �ʤ���mfcc->invalid �� TRUE �ȤʤäƤ���������󥹥��󥹤ν����ϥ����å�
+ * �����. 
  *
- * GMMの計算もここで呼び出される. GMM_VAD 定義時は，GMM による
- * 発話区間開始・終了の検出がここで行われる. また，GMMの計算結果，
- * あるいは認識処理内のショートポーズセグメンテーション判定やデバイス・外部
- * からの要求によりセグメンテーションが要求されたかどうかの判定も行う. 
+ * GMM�η׻��⤳���ǸƤӽФ����. GMM_VAD ������ϡ�GMM �ˤ��
+ * ȯ�ö�ֳ��ϡ���λ�θ��Ф������ǹԤ���. �ޤ���GMM�η׻���̡�
+ * ���뤤��ǧ��������Υ��硼�ȥݡ����������ơ������Ƚ���ǥХ���������
+ * ������׵�ˤ�ꥻ�����ơ�������׵ᤵ�줿���ɤ�����Ƚ���Ԥ�. 
  *
- * フレーム単位で呼び出されるコールバックが登録されている場合は，それらの
- * 呼出しも行う. 
+ * �ե졼��ñ�̤ǸƤӽФ���륳����Хå�����Ͽ����Ƥ�����ϡ�������
+ * �ƽФ���Ԥ�. 
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -152,12 +152,12 @@ decode_proceed(Recog *recog)
   }
 #endif
   if (recog->gmm != NULL && recog->gmmmfcc->valid) {
-    /* GMM 計算を行う */
+    /* GMM �׻���Ԥ� */
     if (recog->gmmmfcc->f == 0) {
-      /* GMM 計算の初期化 */
+      /* GMM �׻��ν���� */
       gmm_prepare(recog);
     }
-    /* このフレームに対するGMMの尤度を計算 */
+    /* ���Υե졼����Ф���GMM�����٤�׻� */
     gmm_proceed(recog);
 #ifdef GMM_VAD
     /* Check for GMM-based VAD */
@@ -221,15 +221,15 @@ decode_proceed(Recog *recog)
     if (!p->live) continue;
     mfcc = p->am->mfcc;
     if (!mfcc->valid) {
-      /* このフレームの処理をスキップ */
+      /* ���Υե졼��ν����򥹥��å� */
       /* skip processing the frame */
       continue;
     }
 
-    /* mfcc-f のフレームについて認識処理(フレーム同期ビーム探索)を進める */
+    /* mfcc-f �Υե졼��ˤĤ���ǧ������(�ե졼��Ʊ���ӡ���õ��)��ʤ�� */
     /* proceed beam search for mfcc->f */
     if (mfcc->f == 0) {
-      /* 最初のフレーム: 探索処理を初期化 */
+      /* �ǽ�Υե졼��: õ������������ */
       /* initial frame: initialize search process */
       if (get_back_trellis_init(mfcc->param, p) == FALSE) {
 	jlog("ERROR: %02d %s: failed to initialize the 1st pass\n", p->config->id, p->config->name);
@@ -237,7 +237,7 @@ decode_proceed(Recog *recog)
       }
     }
     if (mfcc->f > 0 || p->am->hmminfo->multipath) {
-      /* 1フレーム探索を進める */
+      /* 1�ե졼��õ����ʤ�� */
       /* proceed search for 1 frame */
       if (get_back_trellis_proceed(mfcc->f, mfcc->param, p, FALSE) == FALSE) {
 	mfcc->segmented = TRUE;
@@ -245,7 +245,7 @@ decode_proceed(Recog *recog)
       }
       if (p->config->successive.enabled) {
 	if (detect_end_of_segment(p, mfcc->f - 1)) {
-	  /* セグメント終了検知: 第１パスここで中断 */
+	  /* �������Ƚ�λ����: �裱�ѥ����������� */
 	  mfcc->segmented = TRUE;
 	  break_decode = TRUE;
 	}
@@ -253,9 +253,9 @@ decode_proceed(Recog *recog)
     }
   }
 
-  /* セグメントすべきかどうか最終的な判定を行う．
-     デコーダベースVADあるいは spsegment の場合，複数インスタンス間で OR
-     を取る．また，GMMなど複数基準がある場合は基準間で AND を取る．*/
+  /* �������Ȥ��٤����ɤ����ǽ�Ū��Ƚ���Ԥ���
+     �ǥ������١���VAD���뤤�� spsegment �ξ�硤ʣ�����󥹥��󥹴֤� OR
+     ���롥�ޤ���GMM�ʤ�ʣ����ब������ϴ��֤� AND ���롥*/
   /* determine whether to segment at here
      If multiple segmenter exists, take their AND */
   break_flag = FALSE;
@@ -268,21 +268,21 @@ decode_proceed(Recog *recog)
   }
 
   if (break_flag) {
-    /* 探索処理の終了が発生したのでここで認識を終える. 
-       最初のフレームから [f-1] 番目までが認識されたことになる
+    /* õ�������ν�λ��ȯ�������ΤǤ�����ǧ���򽪤���. 
+       �ǽ�Υե졼�फ�� [f-1] ���ܤޤǤ�ǧ�����줿���Ȥˤʤ�
     */
     /* the recognition process tells us to stop recognition, so
        recognition should be terminated here.
        the recognized data are [0..f-1] */
 
-    /* 最終フレームを last_time にセット */
+    /* �ǽ��ե졼��� last_time �˥��å� */
     /* set the last frame to last_time */
     for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
       mfcc->last_time = mfcc->f - 1;
     }
 
     if (! recog->jconf->decodeopt.segment) {
-      /* ショートポーズ以外で切れた場合，残りのサンプルは認識せずに捨てる */
+      /* ���硼�ȥݡ����ʳ����ڤ줿��硤�Ĥ�Υ���ץ��ǧ�������˼ΤƤ� */
       /* drop rest inputs if segmented by error */
       for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
 	mfcc->param->header.samplenum = mfcc->f;
@@ -349,17 +349,17 @@ power_reject(Recog *recog)
  * 
  * </EN>
  * <JA>
- * @brief  第1パスの終了処理（セグメント時）
+ * @brief  ��1�ѥ��ν�λ�����ʥ������Ȼ���
  * 
- * 入力が何らかの事由によって途中でセグメントされた時に，第1パスの認識処理を
- * 終了して次回再開するための処理を行う. 
+ * ���Ϥ����餫�λ�ͳ�ˤ�ä�����ǥ������Ȥ��줿���ˡ���1�ѥ���ǧ��������
+ * ��λ���Ƽ���Ƴ����뤿��ν�����Ԥ�. 
  *
- * まず，各認識処理インスタンスに対して，最尤単語系列を見付け，第1パスの
- * 認識結果として格納する. また，認識失敗・入力棄却の時はエラーステータスをそ
- * れぞれセットする.
+ * �ޤ�����ǧ���������󥹥��󥹤��Ф��ơ�����ñ�������դ�����1�ѥ���
+ * ǧ����̤Ȥ��Ƴ�Ǽ����. �ޤ���ǧ�����ԡ����ϴ��Ѥλ��ϥ��顼���ơ�������
+ * �줾�쥻�åȤ���.
  * 
- * そして，次回の認識で，次のセグメントの認識を，検出された末尾雑音
- * 区間から再開するために，その末尾雑音区間を切り出しておく処理を呼ぶ. 
+ * �����ơ������ǧ���ǡ����Υ������Ȥ�ǧ���򡤸��Ф��줿��������
+ * ��֤���Ƴ����뤿��ˡ���������������֤��ڤ�Ф��Ƥ���������Ƥ�. 
  * 
  * </JA>
  * 
@@ -376,7 +376,7 @@ decode_end_segmented(Recog *recog)
   RecogProcess *p;
   int last_status;
 
-  /* rejectshort 指定時, 入力が短ければここで第1パス結果を出力しない */
+  /* rejectshort �����, ���Ϥ�û����Ф�������1�ѥ���̤���Ϥ��ʤ� */
   /* suppress 1st pass output if -rejectshort and input shorter than specified */
   ok_p = TRUE;
   if (recog->jconf->reject.rejectshortlen > 0) {
@@ -412,7 +412,7 @@ decode_end_segmented(Recog *recog)
   }
 
   if (recog->gmm != NULL) {
-    /* GMM 計算の終了 */
+    /* GMM �׻��ν�λ */
     gmm_end(recog);
   }
 }
@@ -430,14 +430,14 @@ decode_end_segmented(Recog *recog)
  *
  * </EN>
  * <JA>
- * @brief  第1パスの終了処理
+ * @brief  ��1�ѥ��ν�λ����
  * 
- * 入力が最後まで処理されて終了したときに，第1パスの認識処理を
- * 終了させる. 
+ * ���Ϥ��Ǹ�ޤǽ�������ƽ�λ�����Ȥ��ˡ���1�ѥ���ǧ��������
+ * ��λ������. 
  *
- * 各認識処理インスタンスに対して，その時点での第1パスの最尤単語
- * 系列を格納する. また，認識失敗・入力棄却の時はエラーステータスをそ
- * れぞれセットする.
+ * ��ǧ���������󥹥��󥹤��Ф��ơ����λ����Ǥ���1�ѥ��κ���ñ��
+ * ������Ǽ����. �ޤ���ǧ�����ԡ����ϴ��Ѥλ��ϥ��顼���ơ�������
+ * �줾�쥻�åȤ���.
  * 
  * </JA>
  * 
@@ -460,20 +460,20 @@ decode_end(Recog *recog)
   }
 
   if (recog->gmm != NULL) {
-    /* GMM 計算の終了 */
+    /* GMM �׻��ν�λ */
     gmm_end(recog);
   }
 
 #ifdef GMM_VAD
-  /* もしトリガがかからないまま入力終了に達したのなら，そのままエラー終了 */
+  /* �⤷�ȥꥬ��������ʤ��ޤ����Ͻ�λ��ã�����Τʤ顤���Τޤޥ��顼��λ */
   if (recog->jconf->decodeopt.segment) {
     if (recog->gmm) {
       if (recog->gc->after_trigger == FALSE) {
 	for(p=recog->process_list;p;p=p->next) {
 	  p->result.status = J_RESULT_STATUS_ONLY_SILENCE;	/* reject by decoding */
 	}
-	/* ショートポーズセグメンテーションの場合,
-	   入力パラメータ分割などの最終処理も行なう */
+	/* ���硼�ȥݡ����������ơ������ξ��,
+	   ���ϥѥ�᡼��ʬ��ʤɤκǽ�������Ԥʤ� */
 	/* When short-pause segmentation enabled */
 	finalize_segment(recog);
 	return;
@@ -482,7 +482,7 @@ decode_end(Recog *recog)
   }
 #endif
 
-  /* 第１パスの最後のフレームの認識処理を行う */
+  /* �裱�ѥ��κǸ�Υե졼���ǧ��������Ԥ� */
   /* finalize 1st pass */
   for(p=recog->process_list;p;p=p->next) {
     if (!p->live) continue;
@@ -497,7 +497,7 @@ decode_end(Recog *recog)
     }
   }
 
-  /* 終了処理 */
+  /* ��λ���� */
   for(p=recog->process_list;p;p=p->next) {
     if (!p->live) continue;
 
@@ -506,7 +506,7 @@ decode_end(Recog *recog)
     /* check rejection by no input */
     if (ok_p) {
       mfcc = p->am->mfcc;
-      /* 入力長がデルタの計算に十分でない場合，入力無しとする． */
+      /* ����Ĺ���ǥ륿�η׻��˽�ʬ�Ǥʤ���硤����̵���Ȥ��롥 */
       /* if input is short for compute all the delta coeff., terminate here */
       if (mfcc->f == 0) {
 	jlog("STAT: no input frame\n");
@@ -557,8 +557,8 @@ decode_end(Recog *recog)
     }
   }
   if (recog->jconf->decodeopt.segment) {
-    /* ショートポーズセグメンテーションの場合,
-       入力パラメータ分割などの最終処理も行なう */
+    /* ���硼�ȥݡ����������ơ������ξ��,
+       ���ϥѥ�᡼��ʬ��ʤɤκǽ�������Ԥʤ� */
     /* When short-pause segmentation enabled */
     finalize_segment(recog);
   }
@@ -567,18 +567,18 @@ decode_end(Recog *recog)
 
 /** 
  * <JA>
- * @brief  フレーム同期ビーム探索メイン関数（バッチ処理用）
+ * @brief  �ե졼��Ʊ���ӡ���õ���ᥤ��ؿ��ʥХå������ѡ�
  *
- * 与えられた入力ベクトル列に対して第１パス(フレーム同期ビーム探索)を
- * 行い，その結果を出力する. また全フレームに渡る単語終端を，第２パス
- * のために単語トレリス構造体に格納する. 
+ * Ϳ����줿���ϥ٥��ȥ�����Ф����裱�ѥ�(�ե졼��Ʊ���ӡ���õ��)��
+ * �Ԥ������η�̤���Ϥ���. �ޤ����ե졼����Ϥ�ñ�콪ü���裲�ѥ�
+ * �Τ����ñ��ȥ�ꥹ��¤�Τ˳�Ǽ����. 
  * 
- * この関数は入力ベクトル列があらかじめ得られている場合に用いられる. 
- * 第１パスが入力と並列して実行されるオンライン認識の場合，
- * この関数は用いられず，代わりにこのファイルで定義されている各サブ関数が
- * 直接 realtime-1stpass.c 内から呼ばれる. 
+ * ���δؿ������ϥ٥��ȥ��󤬤��餫���������Ƥ�������Ѥ�����. 
+ * �裱�ѥ������Ϥ����󤷤Ƽ¹Ԥ���륪��饤��ǧ���ξ�硤
+ * ���δؿ����Ѥ���줺������ˤ��Υե�������������Ƥ���ƥ��ִؿ���
+ * ľ�� realtime-1stpass.c �⤫��ƤФ��. 
  * 
- * @param recog [in] エンジンインスタンス
+ * @param recog [in] ���󥸥󥤥󥹥���
  * </JA>
  * <EN>
  * @brief  Frame synchronous beam search: the main (for batch mode)
@@ -653,7 +653,7 @@ get_back_trellis(Recog *recog)
       }
     }
     if (ok_p) {
-      /* すべての MFCC が終わりに達したのでループ終了 */
+      /* ���٤Ƥ� MFCC ��������ã�����Τǥ롼�׽�λ */
       /* all MFCC has been processed, end of loop  */
       break;
     }
@@ -665,9 +665,9 @@ get_back_trellis(Recog *recog)
     case 0:			/* success */
       break;
     case 1:			/* segmented */
-      /* 探索中断: 処理された入力は 0 から t-2 まで */
+      /* õ������: �������줿���Ϥ� 0 ���� t-2 �ޤ� */
       /* search terminated: processed input = [0..t-2] */
-      /* この時点で第1パスを終了する */
+      /* ���λ�������1�ѥ���λ���� */
       /* end the 1st pass at this point */
       decode_end_segmented(recog);
       /* terminate 1st pass here */
@@ -701,7 +701,7 @@ get_back_trellis(Recog *recog)
     /* call frame-wise callback */
     callback_exec(CALLBACK_EVENT_PASS1_FRAME, recog);
 
-    /* 1フレーム処理が進んだのでポインタを進める */
+    /* 1�ե졼��������ʤ���Τǥݥ��󥿤�ʤ�� */
     /* proceed frame pointer */
     for (mfcc = recog->mfcclist; mfcc; mfcc = mfcc->next) {
       if (!mfcc->valid) continue;
@@ -715,7 +715,7 @@ get_back_trellis(Recog *recog)
     }
   }
 
-  /* 最終フレーム処理を行い，認識の結果出力と終了処理を行う */
+  /* �ǽ��ե졼�������Ԥ���ǧ���η�̽��ϤȽ�λ������Ԥ� */
   decode_end(recog);
 
   return TRUE;

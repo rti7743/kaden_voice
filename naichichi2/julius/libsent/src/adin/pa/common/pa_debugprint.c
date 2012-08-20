@@ -1,4 +1,4 @@
-﻿/*
+/*
  * $Id: pa_debugprint.c,v 1.1 2011/02/05 09:00:02 sumomo Exp $
  * Portable Audio I/O Library Multi-Host API front end
  * Validate function parameters and manage multiple host APIs.
@@ -70,7 +70,7 @@ void PaUtil_SetDebugPrintFunction(PaUtilLogCallback cb)
 }
 
 /*
- If your platform doesn稚 have vsnprintf, you are stuck with a
+ If your platform doesn�t have vsnprintf, you are stuck with a
  VERY dangerous alternative, vsprintf (with no n)
  */
 

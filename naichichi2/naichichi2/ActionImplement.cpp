@@ -1,6 +1,6 @@
 ﻿#include "common.h"
 #include "ActionImplement.h"
-#include "XLHttpRequerst.h"
+#include "XLHttpSocket.h"
 #include "XLStringUtil.h"
 
 ActionImplement::ActionImplement(void)
@@ -62,21 +62,12 @@ xreturn::r<std::string> ActionImplement::Telnet(const std::string& host,int port
 
 xreturn::r<std::string> ActionImplement::HttpGet(const std::string& url)
 {
-	XLHttpRequerst s;
-	std::map<std::string,std::string> header;
-	std::map<std::string,std::string> option;
-	return s.GetContents(url ,header,option );
+	return XLHttpSocket::Get(url);
 }
 
 xreturn::r<std::string> ActionImplement::HttpPost(const std::string& url,const std::string& postdata)
 {
-	XLHttpRequerst s;
-	std::map<std::string,std::string> header;
-	std::map<std::string,std::string> option;
-	option["method"] = "POST";
-	option["data"] = postdata;
-
-	return s.GetContents(url ,header,option );
+	return XLHttpSocket::Post(url,postdata.c_str() , postdata.size() );
 }
 
 xreturn::r<bool> ActionImplement::Execute(const std::string& targetpc,const std::string& command,const std::string& args)

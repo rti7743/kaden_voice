@@ -1,16 +1,16 @@
-﻿/**
+/**
  * @file   adin_mic_o2.c
  * 
  * <JA>
- * @brief  マイク入力 (SGI IRIX)
+ * @brief  �ޥ������� (SGI IRIX)
  *
- * SGI IRIX のマイク入力を使用する低レベル音声入力関数です．
- * IRIXマシンではデフォルトでこれが使用されます．
+ * SGI IRIX �Υޥ������Ϥ���Ѥ������٥벻�����ϴؿ��Ǥ���
+ * IRIX�ޥ���Ǥϥǥե���ȤǤ��줬���Ѥ���ޤ���
  *
- * SGI O2 Workstation (IRIX6.3) で動作確認をしています．
+ * SGI O2 Workstation (IRIX6.3) ��ư���ǧ�򤷤Ƥ��ޤ���
  *
- * 起動後オーディオ入力はマイクに自動的に切り替わりますが，
- * ボリュームは自動調節されません．apanelコマンドで別途調節してください． 
+ * ��ư�奪���ǥ������Ϥϥޥ����˼�ưŪ���ڤ��ؤ��ޤ�����
+ * �ܥ�塼��ϼ�ưĴ�ᤵ��ޤ���apanel���ޥ�ɤ�����Ĵ�ᤷ�Ƥ��������� 
  * </JA>
  * <EN>
  * @brief  Microphone input on SGI IRIX machine

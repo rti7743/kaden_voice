@@ -1,8 +1,8 @@
-ï»¿/**
+/**
  * @file   wrsamp.c
  *
  * <JA>
- * @brief  éŸ³å£°æ³¢å½¢åˆ—ã‚’ big endian ã®ãƒã‚¤ãƒˆã‚ªãƒ¼ãƒ€ãƒ¼ã§æ›¸ãè¾¼ã‚€
+ * @brief  ²»À¼ÇÈ·ÁÎó¤ò big endian ¤Î¥Ğ¥¤¥È¥ª¡¼¥À¡¼¤Ç½ñ¤­¹ş¤à
  * </JA>
  * <EN>
  * @brief  Write waveform data in big endian

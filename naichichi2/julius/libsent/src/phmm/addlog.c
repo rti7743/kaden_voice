@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   addlog.c
  * 
  * <JA>
- * @brief  対数値の高速和算関数
+ * @brief  �п��ͤι�®�»��ؿ�
  * </JA>
  * 
  * <EN>

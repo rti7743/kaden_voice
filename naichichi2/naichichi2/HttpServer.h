@@ -9,14 +9,21 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-class HttpServer;
-
+enum WEBSERVER_RESULT_TYPE
+{
+	 WEBSERVER_RESULT_TYPE_OK
+	,WEBSERVER_RESULT_TYPE_TRASMITFILE
+	,WEBSERVER_RESULT_TYPE_ERROR
+	,WEBSERVER_RESULT_TYPE_NOT_FOUND
+	,WEBSERVER_RESULT_TYPE_LOCATION
+	,WEBSERVER_RESULT_TYPE_FORBIDDEN
+};
 class HttpWorker
 {
-	HttpServer * PoolServer;
+	MainWindow* PoolMainWindow;
 	boost::asio::ip::tcp::socket* ConnectSocket;
 public:
-	HttpWorker(HttpServer * poolServer, boost::asio::ip::tcp::socket* socket);
+	HttpWorker(MainWindow* poolMainWindow, boost::asio::ip::tcp::socket* socket);
 	virtual ~HttpWorker();
 
 	void operator()();
@@ -25,7 +32,7 @@ private:
 	void HTTP404();
 	void HTTP403();
 	void HTTP302(const std::string& url);
-	void HTTP200(const std::string& contents,const std::string& headers);
+	void HTTP200(const std::string& contents,const std::string& headers,bool texthtml);
 	void HTTP200SendFileContent(const std::string& urlpath);
 	bool ProcToken(const std::map<std::string,std::string>& header,const std::map<std::string,std::string>& request) const;
 };
@@ -42,7 +49,6 @@ public:
 	xreturn::r<bool> Regist(const CallbackDataStruct * callback ,const std::string & path);
 	xreturn::r<bool> RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
 
-	bool FireCallback(const std::string & path,const std::map<std::string,std::string> & request,std::string * respons,WEBSERVER_RESULT_TYPE* type,std::string* headers) const;
 	std::string getAllowExtAndMime(const std::string& ext) const;
 	std::string getWebURL(const std::string& path) const;
 	bool checkAccessToken(const std::string& token) const;

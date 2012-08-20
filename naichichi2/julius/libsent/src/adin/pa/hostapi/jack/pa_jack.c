@@ -1,4 +1,4 @@
-﻿/*
+/*
  * $Id: pa_jack.c,v 1.1 2011/02/05 09:00:03 sumomo Exp $
  * PortAudio Portable Real-Time Audio Library
  * Latest Version at: http://www.portaudio.com

@@ -1,8 +1,8 @@
-О╩©/**
+/**
  * @file   m_info.c
  * 
  * <JA>
- * @brief  Ц┌╥Ц┌╧Ц┐├Ц┐═Ф┐┘Е═╠Ц│╝Е┤╨Е┼⌡
+ * @brief  ╔╥╔╧╔ф╔Ю╬ПйС╓н╫пно
  * </JA>
  * 
  * <EN>
@@ -29,7 +29,7 @@
  * Output module overview in a global configuration variables to log.
  * </EN>
  * <JA>
- * Е┘╗Д╫⌠Х╗╜Е╝ Ц┐▒Ц┐╘Ц┐║Ц┐╪Ц┌©Е├┘Ц│╝Ц┐╒Ц┌╦Ц┐╔Ц┐╪Ц┐╚Ф╖▀Ф┬░Ц│╝Ф╕┌Х╕│Ц┌▓Ц┐╜Ц┌╟Ц│╚Е┤╨Е┼⌡Ц│≥Ц┌▀. 
+ * а╢бнюъдЙ╔я╔И╔А║╪╔©фБ╓н╔Б╔╦╔Е║╪╔К╧╫ю╝╓нЁ╣мв╓Р╔М╔╟╓к╫пно╓╧╓К. 
  * </JA>
  * 
  * @param jconf [in] global configuration variables
@@ -134,7 +134,7 @@ print_jconf_overview(Jconf *jconf)
 
 /** 
  * <JA>
- * Ц┌╗Ц┐ЁЦ┌╦Ц┐ЁЦ┌╓Ц┐ЁЦ┌╧Ц┌©Ц┐ЁЦ┌╧Ц│╝Е┘╗Ф┐┘Е═╠Ц┌▓Ц┐╜Ц┌╟Ц│╚Е┤╨Е┼⌡Ц│≥Ц┌▀. 
+ * ╔╗╔С╔╦╔С╔╓╔С╔╧╔©╔С╔╧╓на╢╬ПйС╓Р╔М╔╟╓к╫пно╓╧╓К. 
  * </JA>
  * <EN>
  * Output all informations of an engine instance to log.

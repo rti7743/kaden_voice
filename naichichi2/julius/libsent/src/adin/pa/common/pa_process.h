@@ -1,4 +1,4 @@
-﻿#ifndef PA_PROCESS_H
+#ifndef PA_PROCESS_H
 #define PA_PROCESS_H
 /*
  * $Id: pa_process.h,v 1.1 2011/02/05 09:00:02 sumomo Exp $

@@ -1,16 +1,16 @@
-﻿/**
+/**
  * @file   adin_netaudio.c
  *
  * <JA>
- * @brief  ネットワーク入力：NetAudio/DatLink サーバからの音声入力
+ * @brief  �ͥåȥ�����ϡ�NetAudio/DatLink �����Ф���β�������
  *
- * 入力ソースとして，DatLink に附属の NetAudio サーバを使用する
- * 低レベル関数です．これを用いることで DatLink の入力を
- * 直接認識することができます．
- * NetAudio がインストールしてあるホストで configure することで
- * コンパイルされます．
+ * ���ϥ������Ȥ��ơ�DatLink ����°�� NetAudio �����Ф���Ѥ���
+ * ���٥�ؿ��Ǥ���������Ѥ��뤳�Ȥ� DatLink �����Ϥ�
+ * ľ��ǧ�����뤳�Ȥ��Ǥ��ޤ���
+ * NetAudio �����󥹥ȡ��뤷�Ƥ���ۥ��Ȥ� configure ���뤳�Ȥ�
+ * ����ѥ��뤵��ޤ���
  *
- * 関数の実体は adin_na.c で定義されています．
+ * �ؿ��μ��Τ� adin_na.c ���������Ƥ��ޤ���
  * </JA>
  * <EN>
  * @brief  Audio input from NetAudio/DatLink server

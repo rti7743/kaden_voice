@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Helper and utility functions for pa_mac_core.c (Apple AUHAL implementation)
  *
  * PortAudio Portable Real-Time Audio Library

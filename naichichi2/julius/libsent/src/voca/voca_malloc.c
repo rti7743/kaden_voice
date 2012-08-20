@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   voca_malloc.c
  * 
  * <JA>
- * @brief  単語辞書構造体のメモリ割り付けと解放
+ * @brief  ñ�켭��¤�ΤΥ������դ��Ȳ���
  * </JA>
  * 
  * <EN>

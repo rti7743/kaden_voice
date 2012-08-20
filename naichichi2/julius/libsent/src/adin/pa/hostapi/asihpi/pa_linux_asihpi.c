@@ -1,4 +1,4 @@
-﻿/*
+/*
  * PortAudio Portable Real-Time Audio Library
  * Latest Version at: http://www.portaudio.com
  *

@@ -1,20 +1,20 @@
-﻿/**
+/**
  * @file   adin_mic_sun4.c
  * 
  * <JA>
- * @brief  マイク入力 (Sun4)
+ * @brief  �ޥ������� (Sun4)
  *
- * SunOS 4.x でマイク入力を使用するための低レベル音声入力関数です．
- * SunOS 4.x のマシンではデフォルトでこのファイルが使用されます．
+ * SunOS 4.x �ǥޥ������Ϥ���Ѥ��뤿������٥벻�����ϴؿ��Ǥ���
+ * SunOS 4.x �Υޥ���Ǥϥǥե���ȤǤ��Υե����뤬���Ѥ���ޤ���
  *
- * Sun SunOS 4.1.3 で動作確認をしています．Solaris2.x については
- * adin_mic_sol2.c を御覧下さい．
+ * Sun SunOS 4.1.3 ��ư���ǧ�򤷤Ƥ��ޤ���Solaris2.x �ˤĤ��Ƥ�
+ * adin_mic_sol2.c �������������
  *
- * 起動後オーディオ入力はマイクに自動的に切り替わり，ボリュームは
- * J_DEF_VOLUME の値に設定されます．
+ * ��ư�奪���ǥ������Ϥϥޥ����˼�ưŪ���ڤ��ؤ�ꡤ�ܥ�塼���
+ * J_DEF_VOLUME ���ͤ����ꤵ��ޤ���
  *
- * デフォルトのデバイス名は "/dev/audio" です．環境変数 AUDIODEV に
- * デバイス名を指定することで，他のデバイス名を使用できます．
+ * �ǥե���ȤΥǥХ���̾�� "/dev/audio" �Ǥ����Ķ��ѿ� AUDIODEV ��
+ * �ǥХ���̾����ꤹ�뤳�Ȥǡ�¾�ΥǥХ���̾����ѤǤ��ޤ���
  * </JA>
  * <EN>
  * @brief  Microphone input on Sun4

@@ -547,7 +547,7 @@
 
 					_create: function() {
 						this.tooltip = $("<div></div>");
-						if ( this.options.content.jquery )
+						if ( this.options.content && this.options.content.jquery)
 						{
 							//ユーザが作ったjqueryオブジェクトがツールチップになる.
 							this.tooltip.html(this.options.content);
@@ -678,6 +678,7 @@
 					disable: function() {
 						this.options.disabled = true;
 						this.trigger('hide');
+						alert("diable");
 					},
 
 					//今すぐ閉じる.

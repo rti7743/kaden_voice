@@ -10,7 +10,7 @@
 #include "XLStringUtil.h"
 #include "XLFileUtil.h"
 
-HttpWorker::HttpWorker(HttpServer * poolServer, boost::asio::ip::tcp::socket* socket) : PoolServer(poolServer),ConnectSocket(socket)
+HttpWorker::HttpWorker(MainWindow* poolMainWindow,boost::asio::ip::tcp::socket* socket) : PoolMainWindow(poolMainWindow) ,ConnectSocket(socket)
 {
 }
 HttpWorker::~HttpWorker()
@@ -74,15 +74,19 @@ void HttpWorker::HTTP302(const std::string& url)
 	boost::system::error_code ec;
 	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
-void HttpWorker::HTTP200(const std::string& contents,const std::string& headers)
+void HttpWorker::HTTP200(const std::string& contents,const std::string& headers,bool texthtml)
 {
     boost::asio::streambuf respons;
     std::ostream respons_stream(&respons);
 	respons_stream <<	"HTTP/1.0 200 OK\r\n"
 						"Pragma:no-cache\r\n"
 						"Server:naichichi2\r\n"
-						"Content-Length: " << contents.size() << "\r\n"
-						<< headers << "\r\n"
+						"Content-Length: " << contents.size() << "\r\n";
+	if (texthtml)
+	{
+		respons_stream << "Content-type: text/html; charset=UTF-8\r\n";
+	}
+	respons_stream		<< headers << "\r\n"
 						<< contents 
 						<< std::flush;
 
@@ -90,10 +94,11 @@ void HttpWorker::HTTP200(const std::string& contents,const std::string& headers)
 	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
 
+
 void HttpWorker::HTTP200SendFileContent(const std::string& urlpath)
 {
 	//アクセスが許可されている拡張子か？
-	std::string mime = this->PoolServer->getAllowExtAndMime( XLStringUtil::strtolower(XLStringUtil::baseext_nodot(urlpath)) );
+	std::string mime = this->PoolMainWindow->Httpd.getAllowExtAndMime( XLStringUtil::strtolower(XLStringUtil::baseext_nodot(urlpath)) );
 	if (mime.empty())
 	{
 		HTTP403();
@@ -101,7 +106,7 @@ void HttpWorker::HTTP200SendFileContent(const std::string& urlpath)
 	}
 
 	//ファイルがあるか？
-	std::string realpath = this->PoolServer->WebPathToRealPath(urlpath);
+	std::string realpath = this->PoolMainWindow->Httpd.WebPathToRealPath(urlpath);
 	if (realpath.empty())
 	{
 		HTTP404();
@@ -146,93 +151,79 @@ void HttpWorker::operator()()
 
 	//ヘッダーパース
 	const char* requestdata = boost::asio::buffer_cast<const char*>(response_body.data());
+	int size = response_body.size();
 	std::string sendstring;
 	XLHttpHeader httpHeaders;
-	if ( ! httpHeaders.Parse( requestdata ) )
+	if ( ! httpHeaders.Parse( requestdata ,size) )
 	{
 		HTTP500();
 		return ;
 	}
 
-	std::string path = httpHeaders.getRequestPath();
-	std::map<std::string,std::string> header = httpHeaders.getHeader();
-	std::map<std::string,std::string> request = httpHeaders.getRequest();
+	//コンテンツを受け取る.
+	if (httpHeaders.getRequestMethod() == "POST")
+	{
+		std::map<std::string,std::string>::const_iterator it;
+		const auto header = httpHeaders.getHeaderPointer();
+		if ( (it = header->find("content-length")) != header->end() )
+		{
+			unsigned int contentSize = atoi(it->second.c_str());
+			while(response_body.size() < httpHeaders.getHeaderSize() + contentSize )
+			{
+				boost::asio::read(*this->ConnectSocket, response_body
+					,boost::asio::transfer_at_least(1) ,error );
+				if (error)
+				{
+					break ;
+				}
+			}
 
-	//イタヅラ防止のトークンキーを取得する.
-	if ( ! ProcToken(header,request) )
-	{//トークンが合わない
-		HTTP500();
-		return ;
+			if (response_body.size() < httpHeaders.getHeaderSize() + contentSize)
+			{
+				HTTP403();
+				return ;
+			}
+			requestdata = boost::asio::buffer_cast<const char*>(response_body.data());
+			httpHeaders.PostParse(requestdata+httpHeaders.getHeaderSize() ,contentSize );
+		}
 	}
 
-	//lua処理系に投げる
+	//パスはよく使うので変数に入れるよ
+	const std::string path = httpHeaders.getRequestPath();
+
+	//処理系に投げる
 	std::string responsString;
-	WEBSERVER_RESULT_TYPE type;
 	std::string headers;
-	bool r = this->PoolServer->FireCallback(path,request,&responsString, &type,&headers);
-	if (!r)
-	{//luaにないらしい、画像などのリアルコンテンツ？
+	WEBSERVER_RESULT_TYPE result = WEBSERVER_RESULT_TYPE_NOT_FOUND;
+	if (!  this->PoolMainWindow->ScriptManager.WebAccess(path,httpHeaders,&result,&responsString) )
+	{
 		HTTP200SendFileContent(path);
+		this->ConnectSocket->close();
 		return ;
 	}
 
-	switch(type)
+	switch(result)
 	{
 	case WEBSERVER_RESULT_TYPE_OK:
-		HTTP200(responsString,headers);
-		return ;
+		HTTP200(responsString,headers,true);
+		break;
 	case WEBSERVER_RESULT_TYPE_TRASMITFILE:
 		HTTP200SendFileContent(responsString);
-		return ;
+		break;
 	case WEBSERVER_RESULT_TYPE_ERROR:
 		HTTP500();
-		return ;
-	case WEBSERVER_RESULT_TYPE_NOT_FOUND:
-		HTTP404();
-		return ;
+		break;
 	case WEBSERVER_RESULT_TYPE_LOCATION:
 		HTTP302(responsString);
-		return ;
+		break;
+	case WEBSERVER_RESULT_TYPE_NOT_FOUND:
+		HTTP404();
+		break;
 	};
 
 	this->ConnectSocket->close();
 }
 
-bool HttpWorker::ProcToken(const std::map<std::string,std::string>& header,const std::map<std::string,std::string>& request) const
-{
-	//内部からのリファラーを持つアクセスだったら許可する。
-	//理由:ブラウザからのXSSを防止するのが目的なのでこれで大丈夫だと思われる
-	{
-		auto it = header.find("Referer");
-		if (it == header.end())
-		{
-			it = header.find("referer");
-		}
-		if (it != header.end())
-		{
-			if ( it->second.find( this->PoolServer->getServerTop() ) == 0 )
-			{
-				//OK 内部からのアクセスだ。
-				return true;
-			}
-		}
-	}
-
-	//それ以外はアクセストークンを確認する.
-	{
-		auto it = request.find("accesstoken");
-		if (it != request.end())
-		{
-			if (this->PoolServer->checkAccessToken(it->second) )
-			{//OK 正しいトークンだ
-				return true;
-			}
-		}
-	}
-
-	//アクセス拒否
-	return false;
-}
 //////////////////////////////////////////////////////////////////////
 // 構築/消滅
 //////////////////////////////////////////////////////////////////////
@@ -317,7 +308,7 @@ void HttpServer::acceptThread(int threadcount)
 		}
 
 		//ワーカースレッドになげる.
-		ioWorker.post([=](){ HttpWorker w(this,socket); w(); delete socket; });
+		ioWorker.post([=](){ HttpWorker w(this->PoolMainWindow,socket); w(); delete socket; });
 	}
 	ioWorker.stop();
 	tg.join_all();
@@ -339,43 +330,6 @@ std::string HttpServer::getAllowExtAndMime(const std::string& ext) const
 		return "";
 	}
 	return it->second;
-}
-
-
-
-bool HttpServer::FireCallback(const std::string & path,const std::map<std::string,std::string> & request,std::string * respons,WEBSERVER_RESULT_TYPE* type,std::string* headers) const
-{
-	const CallbackDataStruct* callback;
-	//対応するコールバックルーチンを取得する.
-	{
-		//ロックを最短にしたい。
-		boost::unique_lock<boost::mutex> al(this->lock);
-
-		auto it = this->CallbackDictionary.find(path);
-		if (it == this->CallbackDictionary.end() )
-		{
-			*type = WEBSERVER_RESULT_TYPE_NOT_FOUND;
-			*respons = "";
-			return false;
-		}
-		callback = it->second;
-	}
-
-	this->PoolMainWindow->SyncInvokeLog(std::string() + "webから実行 " + path ,LOG_LEVEL_DEBUG);
-
-	//メインスレッドで動いている シナリオを呼び出す.
-	this->PoolMainWindow->SyncInvoke( [&](){
-		try
-		{
-			ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-			this->PoolMainWindow->ScriptManager.HttpRequest( callback ,path,request, respons ,  type,headers);
-		}
-		catch(xreturn::error &e)
-		{
-			this->PoolMainWindow->SyncInvokeError(e.getFullErrorMessage());
-		}
-	} );
-	return true;
 }
 
 //続きはwebで
@@ -436,13 +390,5 @@ SEXYTEST(HttpServer__WebPathToRealPath,"HttpServer::WebPathToRealPath")
 xreturn::r<bool> HttpServer::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
 {
 	boost::unique_lock<boost::mutex> al(this->lock);
-/*
-	CRemoveIF(this->CallbackDictionary , {
-		if (_.second == callback)
-		{
-			return false; //消す.
-		}
-	});
-*/
 	return true;
 }

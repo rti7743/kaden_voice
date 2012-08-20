@@ -1,4 +1,4 @@
-﻿/*
+/*
  * $Id: pa_front.c,v 1.1 2011/02/05 09:00:02 sumomo Exp $
  * Portable Audio I/O Library Multi-Host API front end
  * Validate function parameters and manage multiple host APIs.

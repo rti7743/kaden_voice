@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file   ptree.h
  *
  * <EN>
@@ -8,10 +8,10 @@
  * various data or IDs from its name string.
  * </EN>
  * <JA>
- * @brief データ検索用汎用パトリシア検索木の定義
+ * @brief �ǡ������������ѥѥȥꥷ�������ڤ����
  *
- * 文字列からその名前を持つ構造体や対応するIDを検索するための
- * パトリシア木の構造体です．
+ * ʸ���󤫤餽��̾������Ĺ�¤�Τ��б�����ID�򸡺����뤿���
+ * �ѥȥꥷ���ڤι�¤�ΤǤ���
  * </JA>
  *
  * @author Akinobu LEE

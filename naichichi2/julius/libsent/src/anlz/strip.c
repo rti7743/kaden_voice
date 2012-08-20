@@ -1,8 +1,8 @@
-ï»¿/**
+/**
  * @file   strip.c
  *
  * <JA>
- * @brief  éŸ³å£°ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰ã‚¼ãƒ­ã‚µãƒ³ãƒ—ãƒ«åˆ—ã‚’å–ã‚Šé™¤ã
+ * @brief  ²»À¼¥Ç¡¼¥¿¤«¤é¥¼¥í¥µ¥ó¥×¥ëÎó¤ò¼è¤ê½ü¤¯
  * </JA>
  * <EN>
  * @brief  Strip zero samples from speech data

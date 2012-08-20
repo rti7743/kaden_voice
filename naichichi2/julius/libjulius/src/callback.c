@@ -1,4 +1,4 @@
-О╩©/**
+/**
  * @file   callback.c
  * 
  * <EN>
@@ -15,16 +15,15 @@
  * </EN>
  * 
  * <JA>
- * @brief  Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞И√╒Ф∙╟Ц│╝Г≥╩И▄╡Ц│╗Е╝÷Х║▄
+ * @brief  ╔Ё║╪╔│Eп╔ц╔╞╢ь©Т╓непо©╓х╪б╧т
  *
- * Ц│⌠Ц│╝Ц┐∙Ц┌║Ц┌╓Ц┐╚Ц│╚Ц│╞Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц┌▓Ф┴╠Ц│├И√╒Ф∙╟Ц│▄Е░╚Ц│╬Ц┌▄Ц│╕Ц│└Ц│╬Ц│≥. 
- * Ц┐╕Ц┐╪Ц┌╤Ц│╞ callback_add() (A/D-in И√╒И─ёЦ│╝Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц│╖Ц│╞ allback_add_adin())
- * Ц┌▓Д╫©Ц│ёЦ│╕О╪▄Ц┐╕Ц┐╪Ц┌╤Ц│▄Д╫°Ф┬░Ц│≈Ц│÷И√╒Ф∙╟Ц┌▓О╪▄Ф▄┤Е╝ Ц│╝Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц┐╛Ц┐²Ц┌╦Ц┐┬Ц┐╙Ц│╚Г≥╩И▄╡Ц│≈Ц│╬Ц│≥. 
- * Х╙█Х╜≤Ф≥┌Ц│╞Julius Ц│╞Г≥╩И▄╡Ц│∙Ц┌▄Ц│÷И√╒Ф∙╟Ц┌▓Х╙█Х╜≤Е┤╕Г░├Ц│╝Е░└Е═╢И²╒Ц│╖Е▒╪Ц│ЁЕ┤╨Ц│≈Ц│╬Ц│≥. 
+ * ╓Ё╓н╔у╔║╔╓╔│Eк╓о╔Ё║╪╔│Eп╔ц╔╞╓Р╟╥╓╕╢ь©Т╓╛╢ч╓ч╓│Eф╓╓╓ч╓╧. 
+ * ╔Ф║╪╔╤╓о callback_add() (A/D-in ╢ьо╒╓н╔Ё║╪╔│Eп╔ц╔╞╓г╓о allback_add_adin())
+ * ╓Р╩х╓ц╓ф║╓╔Ф║╪╔╤╓╛╨Шэ╝╓╥╓©╢ь©Т╓Р║╓╩ьдЙ╓н╔Ё║╪╔│Eп╔ц╔╞╔│Eщ╔╦╔х╔Й╓кепо©╓╥╓ч╓╧. 
+ * г╖╪╠╩Ч╓оJulius ╓оепо©╓╣╓│E©╢ь©Т╓Рг╖╪╠╫ХмЩ╓нЁф╬│Eл╓г╦ф╓с╫п╓╥╓ч╓╧. 
  *
- * Ц│┌Ц┌▀Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц│╚Ц│╓Ц│└Ц│╕Х╓┤Ф∙╟Ц│╝И√╒Ф∙╟Ц┌▓Г≥╩И▄╡Ц│≥Ц┌▀Ц│⌠Ц│╗Ц│▄Ц│╖Ц│█Ц│╬Ц│≥. Ц│⌠Ц│╝Е═╢
- * Е░┬О╪▄Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Е▒╪Е┤╨Ц│≈Ц│╞О╪▄Е░▄Ц│≤Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц│╚Г≥╩И▄╡Ц│∙Ц┌▄Ц│÷Х╓┤Ф∙╟Ц│╝И√╒Ф∙╟Ц│▄
- * Е┘╗Ц│╕Е▒╪Ц│╟Ц┌▄Ц│╬Ц│≥. 
+ * ╓╒╓│EЁ║╪╔│Eп╔ц╔╞╓к╓д╓╓╓фйё©Т╓н╢ь©Т╓Репо©╓╧╓│EЁ╓х╓╛╓г╓╜╓ч╓╧. ╓Ё╓н╬│E * ╧Г║╓╔Ё║╪╔│Eп╔ц╔╞╦ф╫п╓╥╓о║╓ф╠╓╦╔Ё║╪╔│Eп╔ц╔╞╓кепо©╓╣╓│E©йё©Т╓н╢ь©Т╓╛
+ * а╢╓ф╦ф╓п╓│Eч╓╧. 
  * </JA>
  * 
  * @author Akinobu Lee
@@ -40,7 +39,7 @@
  * Initialize callback management area.
  * </EN>
  * <JA>
- * Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Г╝║Г░├Ц┌╗Ц┐╙Ц┌╒Ц│╝Е┬²Ф°÷Е▄√
+ * ╔Ё║╪╔│Eп╔ц╔╞╢имЩ╔╗╔│E╒╓н╫И╢│E╫
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -62,8 +61,7 @@ callback_init(Recog *recog)
  * Core function to register a function to a callback registory.
  * </EN>
  * <JA>
- * И√╒Ф∙╟Ц┌▓Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц┐╛Ц┌╦Ц┌╧Ц┐┬Ц┐╙Ц│╚Г≥╩И▄╡Ц│≥Ц┌▀Ц┌ЁЦ┌╒И√╒Ф∙╟
- * </JA>
+ * ╢ь©Т╓Р╔Ё║╪╔│Eп╔ц╔╞╔│E╦╔╧╔х╔Й╓кепо©╓╧╓│EЁ╔╒╢ь©│E * </JA>
  * 
  * @param recog [i/o] engine instance
  * @param code [in] code in which the function will be registered
@@ -116,7 +114,7 @@ callback_add_core(Recog *recog, int code, void (*func)(), void *data)
  * Register a function to a callback registory.
  * </EN>
  * <JA>
- * И√╒Ф∙╟Ц┌▓Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц┐╛Ц┌╦Ц┌╧Ц┐┬Ц┐╙Ц│╚Г≥╩И▄╡Ц│≥Ц┌▀. 
+ * ╢ь©Т╓Р╔Ё║╪╔│Eп╔ц╔╞╔│E╦╔╧╔х╔Й╓кепо©╓╧╓│E 
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -142,7 +140,7 @@ callback_add(Recog *recog, int code, void (*func)(Recog *recog, void *data), voi
  * Register a function to the A/D-in type callback registory.
  * </EN>
  * <JA>
- * И√╒Ф∙╟Ц┌▓A/D-inЦ┌©Ц┌╓Ц┐≈Ц│╝Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц┐╛Ц┌╦Ц┌╧Ц┐┬Ц┐╙Ц│╚Г≥╩И▄╡Ц│≥Ц┌▀. 
+ * ╢ь©Т╓РA/D-in╔©╔╓╔в╓н╔Ё║╪╔│Eп╔ц╔╞╔│E╦╔╧╔х╔Й╓кепо©╓╧╓│E 
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -219,7 +217,7 @@ callback_debug_stdout(int code, Recog *recog)
  * Execute all functions assigned to a callback registory.
  * </EN>
  * <JA>
- * Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц┐╛Ц┌╦Ц┌╧Ц┐┬Ц┐╙Ц│╚Г≥╩И▄╡Ц│∙Ц┌▄Ц│╕Ц│└Ц┌▀И√╒Ф∙╟Ц┌▓Е┘╗Ц│╕Е╝÷Х║▄Ц│≥Ц┌▀. 
+ * ╔Ё║╪╔│Eп╔ц╔╞╔│E╦╔╧╔х╔Й╓кепо©╓╣╓│Eф╓╓╓│Eь©Т╓Ра╢╓ф╪б╧т╓╧╓│E 
  * </JA>
  * 
  * @param code [in] callback code
@@ -249,7 +247,7 @@ callback_exec(int code, Recog *recog)
  * Execute all functions assigned to a A/D-in callback.
  * </EN>
  * <JA>
- * A/D-in Ц┌©Ц┌╓Ц┐≈Ц│╝Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц│╚Г≥╩И▄╡Ц│∙Ц┌▄Ц│÷И√╒Ф∙╟Ц┌▓Е┘╗Ц│╕Е╝÷Х║▄Ц│≥Ц┌▀. 
+ * A/D-in ╔©╔╓╔в╓н╔Ё║╪╔│Eп╔ц╔╞╓кепо©╓╣╓│E©╢ь©Т╓Ра╢╓ф╪б╧т╓╧╓│E 
  * </JA>
  * 
  * @param code [in] callbcak code
@@ -281,7 +279,7 @@ callback_exec_adin(int code, Recog *recog, SP16 *buf, int len)
  * Check if at least one function has been registered to a callback repository.
  * </EN>
  * <JA>
- * Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц┐╛Ц┌╦Ц┌╧Ц┐┬Ц┐╙Ц│╚О╪▒Ц│╓Ц│╖Ц┌┌И√╒Ф∙╟Ц│▄Г≥╩И▄╡Ц│∙Ц┌▄Ц│÷Ц│▀Ц│╘Ц│├Ц│▀Ц┌▓Х©■Ц│≥. 
+ * ╔Ё║╪╔│Eп╔ц╔╞╔│E╦╔╧╔х╔Й╓кё╠╓д╓г╓Б╢ь©Т╓╛епо©╓╣╓│E©╓╚╓и╓╕╓╚╓Рйж╓╧. 
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -306,7 +304,7 @@ callback_exist(Recog *recog, int code)
  * Delete an already registered function from callback.
  * </EN>
  * <JA>
- * Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞Ц│▀Ц┌┴И√╒Ф∙╟Ц┌▓Е┴┼И≥╓Ц│≥Ц┌▀. 
+ * ╔Ё║╪╔│Eп╔ц╔╞╓╚╓И╢ь©Т╓Р╨│E│E╧╓│E 
  * </JA>
  * 
  * @param recog [i/o] engine instance

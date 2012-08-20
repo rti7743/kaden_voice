@@ -1,10 +1,10 @@
-﻿/**
+/**
  * @file   gms.c
  * 
  * <JA>
- * @brief  Gaussian Mixture Selection による状態尤度計算
+ * @brief  Gaussian Mixture Selection �ˤ��������ٷ׻�
  *
- * 実装方法についてはソース内のコメントをご覧ください．
+ * ������ˡ�ˤĤ��Ƥϥ�������Υ����Ȥ�������������
  * </JA>
  * 
  * <EN>

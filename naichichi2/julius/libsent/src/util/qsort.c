@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   qsort.c
  * 
  * <JA>
- * @brief  クイックソート（再入可能）
+ * @brief  $B%/%$%C%/%=!<%H!J:FF~2DG=!K(B
  * </JA>
  * 
  * <EN>

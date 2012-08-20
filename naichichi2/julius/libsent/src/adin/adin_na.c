@@ -1,14 +1,14 @@
-ï»¿/**
+/**
  * @file   adin_na.c
  *
  * <JA>
- * @brief  NetAudioå…¥åŠ›ç”¨ã®ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³
+ * @brief  NetAudioÆşÎÏÍÑ¤Î¥µ¥Ö¥ë¡¼¥Á¥ó
  *
- * adin_netaudio.c ç”¨ã®ã‚µãƒ–é–¢æ•°ãŒå®šç¾©ã•ã‚Œã¦ã„ã¾ã™ï¼
+ * adin_netaudio.c ÍÑ¤Î¥µ¥Ö´Ø¿ô¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ş¤¹¡¥
  *
- * NetAudio ã®ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã® dat_types.h ãŒ
- * libsent/include/sent/stddefs.h ã§ã®å®šç¾©ã¨ä¸€éƒ¨è¡çªã™ã‚‹ãŸã‚ï¼Œ
- * ã“ã®ã‚ˆã†ã«ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³éƒ¨åˆ†ã‚’åˆ†é›¢ã—ã¦ã„ã¾ã™ï¼
+ * NetAudio ¤Î¥é¥¤¥Ö¥é¥ê¤Î dat_types.h ¤¬
+ * libsent/include/sent/stddefs.h ¤Ç¤ÎÄêµÁ¤È°ìÉô¾×ÆÍ¤¹¤ë¤¿¤á¡¤
+ * ¤³¤Î¤è¤¦¤Ë¥µ¥Ö¥ë¡¼¥Á¥óÉôÊ¬¤òÊ¬Î¥¤·¤Æ¤¤¤Ş¤¹¡¥
  * </JA>
  * <EN>
  * @brief  Sub routines for NetAudio input

@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   ngram_lookup.c
  * 
  * <JA>
- * @brief  N-gram上の語彙エントリの検索
+ * @brief  N-gram��θ��å���ȥ�θ���
  * </JA>
  * 
  * <EN>

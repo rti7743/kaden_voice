@@ -1,4 +1,4 @@
-﻿#ifndef PA_WIN_WDMKS_UTILS_H
+#ifndef PA_WIN_WDMKS_UTILS_H
 #define PA_WIN_WDMKS_UTILS_H
 
 /*

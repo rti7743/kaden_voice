@@ -1,11 +1,11 @@
-﻿/**
+/**
  * @file   graph.h
  * 
  * <JA>
- * @brief  単語グラフの構造体定義
+ * @brief  ñ�쥰��դι�¤�����
  *
- * 単語グラフ中の単語を表す構造体，および confusion network 中の
- * 単語を表す構造体が定義されています. 
+ * ñ�쥰������ñ���ɽ����¤�Ρ������ confusion network ���
+ * ñ���ɽ����¤�Τ��������Ƥ��ޤ�. 
  * </JA>
  * 
  * <EN>
@@ -34,7 +34,7 @@
 
 /**
  * <JA>
- * 単語グラフ上の単語候補. 
+ * ñ�쥰��վ��ñ�����. 
  * </JA>
  * <EN>
  * Word arc on the word graph.

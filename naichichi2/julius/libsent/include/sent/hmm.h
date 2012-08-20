@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file   hmm.h
  *
  * <EN>
@@ -10,12 +10,12 @@
  * Model (defined in htk_hmm.h), and actual likelihood computation.
  * </EN>
  * <JA>
- * @brief  認識計算用の Hidden Marcov Model
+ * @brief  ǧ���׻��Ѥ� Hidden Marcov Model
  *
- * このファイルでは, 認識における%HMMの構造体を定義しています．
- * 認識時には, 辞書および音響モデル構造体 (htk_hmm.h) を元に
- * 必要な単語%HMMや木構造化辞書がこの構造体を用いて構築され,
- * 音響尤度計算はこの上で行われます．
+ * ���Υե�����Ǥ�, ǧ���ˤ�����%HMM�ι�¤�Τ�������Ƥ��ޤ���
+ * ǧ�����ˤ�, ���񤪤�Ӳ�����ǥ빽¤�� (htk_hmm.h) �򸵤�
+ * ɬ�פ�ñ��%HMM���ڹ�¤�����񤬤��ι�¤�Τ��Ѥ��ƹ��ۤ���,
+ * �������ٷ׻��Ϥ��ξ�ǹԤ��ޤ���
  * </JA>
  *
  * @author Akinobu LEE

@@ -43,9 +43,6 @@
     <ClCompile Include="Speak_Factory.cpp">
       <Filter>mainlogic</Filter>
     </ClCompile>
-    <ClCompile Include="XLHttpRequerst.cpp">
-      <Filter>mainlogic</Filter>
-    </ClCompile>
     <ClCompile Include="XLStringUtil.cpp">
       <Filter>mainlogic</Filter>
     </ClCompile>
@@ -82,7 +79,28 @@
     <ClCompile Include="Recognition_JuliusPlusRule.cpp">
       <Filter>speak</Filter>
     </ClCompile>
+    <ClCompile Include="XLMachineLearningLibliear.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="XLMachineLearningLibSVM.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="Recognition_Cloud.cpp">
+      <Filter>speak</Filter>
+    </ClCompile>
+    <ClCompile Include="XLHttpSocket.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="XLSocket.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="Callbackable.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
     <ClCompile Include="WebMenu.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptWebRunner.cpp">
       <Filter>mainlogic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -117,9 +135,6 @@
     <ClInclude Include="resource.h">
       <Filter>mainlogic</Filter>
     </ClInclude>
-    <ClInclude Include="RSimpleComPtr.h">
-      <Filter>mainlogic</Filter>
-    </ClInclude>
     <ClInclude Include="ScriptManager.h">
       <Filter>mainlogic</Filter>
     </ClInclude>
@@ -127,9 +142,6 @@
       <Filter>mainlogic</Filter>
     </ClInclude>
     <ClInclude Include="Speak_Factory.h">
-      <Filter>mainlogic</Filter>
-    </ClInclude>
-    <ClInclude Include="XLHttpRequerst.h">
       <Filter>mainlogic</Filter>
     </ClInclude>
     <ClInclude Include="XLStringUtil.h">
@@ -177,7 +189,28 @@
     <ClInclude Include="XLMachineLearningLibliear.h">
       <Filter>mainlogic</Filter>
     </ClInclude>
+    <ClInclude Include="XLMachineLearningLibSVM.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="Recognition_Cloud.h">
+      <Filter>speak</Filter>
+    </ClInclude>
+    <ClInclude Include="XLException.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="XLHttpSocket.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="XLSocket.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="Callbackable.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
     <ClInclude Include="WebMenu.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptWebRunner.h">
       <Filter>mainlogic</Filter>
     </ClInclude>
   </ItemGroup>

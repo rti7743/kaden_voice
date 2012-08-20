@@ -1,4 +1,4 @@
-﻿#ifndef PA_STREAM_H
+#ifndef PA_STREAM_H
 #define PA_STREAM_H
 /*
  * $Id: pa_stream.h,v 1.1 2011/02/05 09:00:02 sumomo Exp $

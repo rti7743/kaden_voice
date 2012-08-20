@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   ngram_util.c
  * 
  * <JA>
- * @brief  N-gramの情報をテキスト出力する
+ * @brief  N-gram�ξ����ƥ����Ƚ��Ϥ���
  * </JA>
  * 
  * <EN>

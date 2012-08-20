@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Portable Audio I/O Library WASAPI implementation
  * Copyright (c) 2006-2007 David Viens
  *

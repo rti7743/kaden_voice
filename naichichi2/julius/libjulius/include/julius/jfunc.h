@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file   jfunc.h
  * 
  * <EN>
@@ -6,7 +6,7 @@
  * </EN>
  * 
  * <JA>
- * @brief  API関連関数（全てではない）
+ * @brief  API��Ϣ�ؿ������ƤǤϤʤ���
  * </JA>
  * 
  * @author Akinobu Lee

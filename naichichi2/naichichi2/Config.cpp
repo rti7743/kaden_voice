@@ -152,22 +152,20 @@ std::string Config::GetBaseDirectoryImpl() const
 void Config::Set(const std::string& key,const std::string& value ) 
 {
 	boost::unique_lock<boost::mutex> al(this->lock);
+	this->ConfigData[key] = value;
+}
+
+void Config::Remove(const std::string& key ) 
+{
+	boost::unique_lock<boost::mutex> al(this->lock);
 
 	auto it = this->ConfigData.find(key);
 
-	if (value.empty())
+	if (it != this->ConfigData.end())
 	{
-		if (it != this->ConfigData.end())
-		{
-			this->ConfigData.erase(it);
-		}
-	}
-	else
-	{
-		this->ConfigData[key] = value;
+		this->ConfigData.erase(it);
 	}
 }
-
 
 std::string Config::Get(const std::string & key , const std::string & defaultValue) const
 {
@@ -232,7 +230,7 @@ std::list<std::string> Config::FindGets(const std::string & prefix) const
 	return r;
 }
 
-const std::map<std::string,std::string>Config::FindGetsToMap(const std::string & prefix) const
+const std::map<std::string,std::string>Config::FindGetsToMap(const std::string & prefix,bool prefixtrim) const
 {
 	boost::unique_lock<boost::mutex> al(this->lock);
 	
@@ -241,12 +239,44 @@ const std::map<std::string,std::string>Config::FindGetsToMap(const std::string &
 	{
 		if ( it->first.find(prefix) == 0 )
 		{
-			const std::string key = it->first.substr( prefix.size() );
-			r.insert( std::pair<std::string,std::string>(key, it->second) );
+			if (prefixtrim)
+			{
+				const std::string key = it->first.substr( prefix.size() );
+				r.insert( std::pair<std::string,std::string>(key, it->second) );
+			}
+			else
+			{
+				r.insert( *it );
+			}
 		}
 	}
 	return r;
 }
+
+bool Config::ReplaceMap(const std::string& prefix,const std::map<std::string,std::string>& postData)
+{
+	boost::unique_lock<boost::mutex> al(this->lock);
+	
+	//まず該当するデータを消す
+	for(auto it = this->ConfigData.begin()  , end = this->ConfigData.end();	it != end ; )
+	{
+		if ( it->first.find(prefix) == 0)
+		{
+			this->ConfigData.erase(it++);
+		}
+		else
+		{
+			++it;
+		}
+	}
+
+	//もう一度データを突っ込む
+	this->ConfigData.insert(postData.begin() , postData.end() );
+
+	return true;
+}
+
+
 
 std::string Config::GetBaseDirectory() const
 {

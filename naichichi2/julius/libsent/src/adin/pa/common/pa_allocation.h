@@ -1,4 +1,4 @@
-﻿#ifndef PA_ALLOCATION_H
+#ifndef PA_ALLOCATION_H
 #define PA_ALLOCATION_H
 /*
  * $Id: pa_allocation.h,v 1.1 2011/02/05 09:00:02 sumomo Exp $

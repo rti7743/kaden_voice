@@ -3,36 +3,14 @@
 extern "C" {
 	#include "../lua/lua.hpp"
 };
+#include "Callbackable.h"
 
-enum WEBSERVER_RESULT_TYPE
-{
-	 WEBSERVER_RESULT_TYPE_OK
-	,WEBSERVER_RESULT_TYPE_TRASMITFILE
-	,WEBSERVER_RESULT_TYPE_ERROR
-	,WEBSERVER_RESULT_TYPE_NOT_FOUND
-	,WEBSERVER_RESULT_TYPE_LOCATION
-	,WEBSERVER_RESULT_TYPE_FORBIDDEN
-};
-class CallbackDataStruct;
-
-
-class ScriptRunner
+class ScriptRunner : public Callbackable
 {
 	lua_State* LuaInstance;
 	MainWindow * PoolMainWindow;
 	bool IsScenario;
 	std::string filename;
-
-	//httpd サーバコンテンツを生成する場合の変数.
-	std::string WebechoStdout;
-	//httpd 追加ヘッダ
-	std::string WebHeaders;
-	//httpd 結果
-	WEBSERVER_RESULT_TYPE WebResultType;
-
-	//コールバック一覧
-	std::list<CallbackDataStruct*> callbackHistoryList;
-
 public:
 	ScriptRunner( MainWindow * poolMainWindow , bool isScenario)
 	{
@@ -50,8 +28,7 @@ public:
 	xreturn::r<std::string> callFunction(const std::string& name,const std::map<std::string , std::string> & match);
 	xreturn::r<std::string> callFunction(const std::string& name,const std::list<std::string> & list,bool stripFirst);
 
-	xreturn::r<std::string> callbackFunction(int callbackIndex,const std::map<std::string , std::string> & match);
-	xreturn::r<std::string> callbackWebFunction(int callbackIndex,const std::map<std::string , std::string> & match,WEBSERVER_RESULT_TYPE* type,std::string* headers);
+	xreturn::r<std::string> callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match);
 	//コールバックが不要になった時に呼ばれる 自分から this-> で読んではいけない。
 	void unrefCallback(const CallbackDataStruct* callback);
 	//インスタンスの再読み込み
@@ -62,8 +39,6 @@ private:
 
 	//新しい luaインスタンスを作成する
 	xreturn::r<bool> CreateLuaInstance();
-	//新しいコールバックを定義する
-	CallbackDataStruct* CreateCallback(int _func);
 	//メモリからluaのプログラムを構築(テスト用)
 	xreturn::r<bool> EvalScript(const std::string & script);
 
@@ -90,11 +65,6 @@ private:
 	static int l_msleep(lua_State* L);
 	static int l_dump(lua_State* L);
 	static int l_callstack(lua_State* L);
-	static int l_webecho(lua_State* L);
-	static int l_webecho_table(lua_State* L);
-	static int l_webload(lua_State* L);
-	static int l_weblocation(lua_State* L);
-	static int l_weberror(lua_State* L);
 	static int l_gotoweb(lua_State* L);
 	static int l_tips(lua_State* L);
 	static int l_findmedia(lua_State* L);
@@ -105,6 +75,9 @@ private:
 	static int l_xml_decode(lua_State* L);
 	static int l_getwebmenu(lua_State* L);
 	static int l_callwebmenu(lua_State* L);
+	static int l_getelectronics(lua_State* L);
+	static int l_setelectronics(lua_State* L);
+
 
 
 	static ScriptRunner* __this(lua_State* L);
@@ -122,40 +95,3 @@ private:
 	SEXYTEST_TEST_FRIEND;
 };
 
-const int NO_CALLBACK = INT_MAX;
-
-//コールバックするデータを保持する
-//コピーされまくるので軽量の構造にするべし.
-class CallbackDataStruct
-{
-public:
-	CallbackDataStruct(ScriptRunner* _runner,int _func) : runner(_runner) , func(_func)
-	{
-#if _DEBUG
-		threadid = ::boost::this_thread::get_id();
-#endif //_DEBUG
-	}
-	int getFunc() const
-	{
-#if _DEBUG
-		//違うスレッドで実行してはいけない!!
-		assert(this->threadid == ::boost::this_thread::get_id());
-#endif //_DEBUG
-		return this->func;
-	}
-	ScriptRunner* getRunner() const
-	{
-#if _DEBUG
-		//違うスレッドで実行してはいけない!!
-		assert(this->threadid == ::boost::this_thread::get_id());
-#endif //_DEBUG
-		return this->runner;
-	}
-
-private:
-	ScriptRunner* runner;
-	int func;
-#if _DEBUG
-	::boost::thread::id threadid;
-#endif //_DEBUG
-};

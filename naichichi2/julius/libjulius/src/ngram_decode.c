@@ -1,19 +1,19 @@
-﻿/**
+/**
  * @file   ngram_decode.c
  * 
  * <JA>
- * @brief  N-gram確率に基づく次単語予測（第2パス） 
+ * @brief  N-gram��Ψ�˴�Ť���ñ��ͽ¬����2�ѥ��� 
  *
- * Julius のN-gramを用いたスタックデコーディング(第2パス)において，
- * 次に接続しうる単語の集合を決定する. 
+ * Julius ��N-gram���Ѥ��������å��ǥ����ǥ���(��2�ѥ�)�ˤ����ơ�
+ * ������³������ñ��ν������ꤹ��. 
  * 
- * 与えられた展開元仮説の始端フレームを予測し，単語トレリス上で
- * その予測フレーム周辺に終端が存在する単語の集合を，
- * そのN-gram出現確率とともに返す. 
+ * Ϳ����줿Ÿ��������λ�ü�ե졼���ͽ¬����ñ��ȥ�ꥹ���
+ * ����ͽ¬�ե졼����դ˽�ü��¸�ߤ���ñ��ν����
+ * ����N-gram�и���Ψ�ȤȤ���֤�. 
  *
- * Julius では ngram_firstwords(), ngram_nextwords(), ngram_acceptable() が
- * それぞれ第2パスのメイン関数 wchmm_fbs() から呼び出される. なお，
- * Julian ではこれらの関数の代わりに dfa_decode.c の関数が用いられる. 
+ * Julius �Ǥ� ngram_firstwords(), ngram_nextwords(), ngram_acceptable() ��
+ * ���줾����2�ѥ��Υᥤ��ؿ� wchmm_fbs() ����ƤӽФ����. �ʤ���
+ * Julian �ǤϤ����δؿ�������� dfa_decode.c �δؿ����Ѥ�����. 
  * </JA>
  * 
  * <EN>
@@ -49,12 +49,12 @@
 
 /** 
  * <JA>
- * 次単語候補ソート用 qsort コールバック関数. 
+ * ��ñ����䥽������ qsort ������Хå��ؿ�. 
  * 
- * @param a [in] 要素1
- * @param b [in] 要素2
+ * @param a [in] ����1
+ * @param b [in] ����2
  * 
- * @return aの単語ID > bの単語ID なら1, 逆なら -1, 同じなら 0 を返す. 
+ * @return a��ñ��ID > b��ñ��ID �ʤ�1, �դʤ� -1, Ʊ���ʤ� 0 ���֤�. 
  * </JA>
  * <EN>
  * qsort callback function to sort next word candidates by their word ID.
@@ -75,14 +75,14 @@ compare_nw(NEXTWORD **a, NEXTWORD **b)
 
 /** 
  * <JA>
- * 次単語候補リスト内から単語を検索する. 
+ * ��ñ�����ꥹ���⤫��ñ��򸡺�����. 
  * 
- * @param nw [in] 次単語候補リスト
- * @param w [in] 検索する単語のID
- * @param num [in] 次単語候補リストの長さ
+ * @param nw [in] ��ñ�����ꥹ��
+ * @param w [in] ��������ñ���ID
+ * @param num [in] ��ñ�����ꥹ�Ȥ�Ĺ��
  * 
- * @return 見つかった場合その次単語候補構造体へのポインタ，見つからなければ
- * NULL を返す. 
+ * @return ���Ĥ��ä���礽�μ�ñ����乽¤�ΤؤΥݥ��󥿡����Ĥ���ʤ����
+ * NULL ���֤�. 
  * </JA>
  * <EN>
  * Find a word from list of next word candidates.
@@ -125,7 +125,7 @@ search_nw(NEXTWORD **nw, WORD_ID w, int num)
  * Compute backward N-gram score from forward N-gram.
  * </EN>
  * <JA>
- * 後向きの N-gram スコアを前向き N-gram から算出する. 
+ * ������� N-gram �������������� N-gram ���黻�Ф���. 
  * </JA>
  * 
  * @param ngram [in] N-gram data structure
@@ -157,19 +157,19 @@ ngram_forw2back(NGRAM_INFO *ngram, WORD_ID *w, int wlen)
 
 /** 
  * <JA>
- * @brief  単語トレリスから次単語候補を抽出する. 
+ * @brief  ñ��ȥ�ꥹ���鼡ñ��������Ф���. 
  *
- * 単語トレリス上の指定したフレーム上に終端が存在するトレリス単語
- * のリストを抽出し，それらの次単語としての N-gram 接続確率を計算する. 
- * そのリストを次単語情報構造体に追加して返す. 
+ * ñ��ȥ�ꥹ��λ��ꤷ���ե졼���˽�ü��¸�ߤ���ȥ�ꥹñ��
+ * �Υꥹ�Ȥ���Ф��������μ�ñ��Ȥ��Ƥ� N-gram ��³��Ψ��׻�����. 
+ * ���Υꥹ�Ȥ�ñ�����¤�Τ��ɲä����֤�. 
  * 
- * @param r [in] 認識処理インスタンス
- * @param nw [i/o] 次単語候補リスト（抽出結果は @a oldnum 以降に追加される）
- * @param oldnum [in] @a nw にすでに格納されている次単語の数
- * @param hypo [in] 展開元の文仮説
- * @param t [in] 指定フレーム
+ * @param r [in] ǧ���������󥹥���
+ * @param nw [i/o] ��ñ�����ꥹ�ȡ���з�̤� @a oldnum �ʹߤ��ɲä�����
+ * @param oldnum [in] @a nw �ˤ��Ǥ˳�Ǽ����Ƥ��뼡ñ��ο�
+ * @param hypo [in] Ÿ������ʸ����
+ * @param t [in] ����ե졼��
  * 
- * @return 抽出リストを追加したあとの @a nw に含まれる次単語の総数. 
+ * @return ��Хꥹ�Ȥ��ɲä������Ȥ� @a nw �˴ޤޤ�뼡ñ�������. 
  * </JA>
  * <EN>
  * @brief  Extract next word candidates from word trellis.
@@ -299,19 +299,19 @@ pick_backtrellis_words(RecogProcess *r, NEXTWORD **nw, int oldnum, NODE *hypo, s
 
 /** 
  * <JA>
- * @brief  単語トレリスから次単語集合を決定する. 
+ * @brief  ñ��ȥ�ꥹ���鼡ñ�콸�����ꤹ��. 
  *
- * 指定フレームの前後 lookup_range 分に終端があるトレリス上の単語を集め，
- * 次単語構造体を構築する. 同じ単語が上記の範囲内に複数ある場合，
- * 指定フレームにもっとも近いトレリス上の単語が選択される. 
+ * ����ե졼������� lookup_range ʬ�˽�ü������ȥ�ꥹ���ñ��򽸤ᡤ
+ * ��ñ�칽¤�Τ��ۤ���. Ʊ��ñ�줬�嵭���ϰ����ʣ�������硤
+ * ����ե졼��ˤ�äȤ�ᤤ�ȥ�ꥹ���ñ�줬���򤵤��. 
  * 
- * @param r [in] 認識処理インスタンス
- * @param nw [out] 次単語集合を格納する構造体へのポインタ
- * @param hypo [in] 展開元の部分文仮説
- * @param tm [in] 単語を探す中心となる指定フレーム
- * @param t_end [in] 単語を探すフレームの右端
+ * @param r [in] ǧ���������󥹥���
+ * @param nw [out] ��ñ�콸����Ǽ���빽¤�ΤؤΥݥ���
+ * @param hypo [in] Ÿ��������ʬʸ����
+ * @param tm [in] ñ���õ���濴�Ȥʤ����ե졼��
+ * @param t_end [in] ñ���õ���ե졼��α�ü
  * 
- * @return @a nw に格納された次単語候補の数を返す. 
+ * @return @a nw �˳�Ǽ���줿��ñ�����ο����֤�. 
  * </JA>
  * <EN>
  * @brief  Determine next word candidates from the word trellis.
@@ -400,16 +400,16 @@ get_backtrellis_words(RecogProcess *r, NEXTWORD **nw, NODE *hypo, short tm, shor
 
 /** 
  * <JA>
- * @brief  非展開単語を除去. 
+ * @brief  ��Ÿ��ñ������. 
  * 
- * 制約により展開対象とならない単語をリストから消去する. 
+ * ����ˤ��Ÿ���оݤȤʤ�ʤ�ñ���ꥹ�Ȥ���õ��. 
  * 
- * @param nw [i/o] 次単語集合（集合中の展開できない単語が消去される）
- * @param hypo [in] 展開元の部分文仮説
- * @param num [in] @a nw に現在格納されている単語数
- * @param winfo [in] 単語辞書
+ * @param nw [i/o] ��ñ�콸��ʽ������Ÿ���Ǥ��ʤ�ñ�줬�õ����
+ * @param hypo [in] Ÿ��������ʬʸ����
+ * @param num [in] @a nw �˸��߳�Ǽ����Ƥ���ñ���
+ * @param winfo [in] ñ�켭��
  * 
- * @return 新たに nw に含まれる次単語数
+ * @return ������ nw �˴ޤޤ�뼡ñ���
  * </JA>
  * <EN>
  * @brief  Remove non-expansion word from list.
@@ -430,7 +430,7 @@ limit_nw(NEXTWORD **nw, NODE *hypo, int num, WORD_INFO *winfo)
   int src,dst;
   int newnum;
 
-  /* <s>からは何も展開しない */
+  /* <s>����ϲ���Ÿ�����ʤ� */
   /* no hypothesis will be generated after "<s>" */
   if (hypo->seq[hypo->seqnum-1] == winfo->head_silwid) {
     return(0);
@@ -439,12 +439,12 @@ limit_nw(NEXTWORD **nw, NODE *hypo, int num, WORD_INFO *winfo)
   dst = 0;
   for (src=0; src<num; src++) {
     if (nw[src]->id == winfo->tail_silwid) {
-      /* </s> は展開しない */
+      /* </s> ��Ÿ�����ʤ� */
       /* do not expand </s> (it only appears at start) */
       continue;
     }
 #ifdef FIX_35_INHIBIT_SAME_WORD_EXPANSION
-    /* 直前単語と同じトレリス単語は展開しない */
+    /* ľ��ñ���Ʊ���ȥ�ꥹñ���Ÿ�����ʤ� */
     /* inhibit expanding the exactly the same trellis word twice */
     if (nw[src]->tre == hypo->tre) continue;
 #endif
@@ -460,18 +460,18 @@ limit_nw(NEXTWORD **nw, NODE *hypo, int num, WORD_INFO *winfo)
 
 /** 
  * <JA>
- * @brief  初期単語仮説集合を求める. 
+ * @brief  ���ñ�첾�⽸������. 
  *
- * N-gramベースの探索では，初期仮説は単語末尾の無音単語に固定されている. 
- * ただし，ショートポーズセグメンテーション時は，第1パスで最終フレームに終端が
- * 残った単語の中で尤度最大の単語となる. 
+ * N-gram�١�����õ���Ǥϡ���������ñ��������̵��ñ��˸��ꤵ��Ƥ���. 
+ * �����������硼�ȥݡ����������ơ��������ϡ���1�ѥ��Ǻǽ��ե졼��˽�ü��
+ * �Ĥä�ñ���������ٺ����ñ��Ȥʤ�. 
  * 
- * @param nw [out] 次単語候補リスト（得られた初期単語仮説を格納する）
- * @param peseqlen [in] 入力フレーム長
- * @param maxnw [in] @a nw に格納できる単語の最大数
- * @param r [in] 認識処理インスタンス
+ * @param nw [out] ��ñ�����ꥹ�ȡ�����줿���ñ�첾����Ǽ�����
+ * @param peseqlen [in] ���ϥե졼��Ĺ
+ * @param maxnw [in] @a nw �˳�Ǽ�Ǥ���ñ��κ����
+ * @param r [in] ǧ���������󥹥���
  * 
- * @return @a nw に格納された単語候補数を返す. 
+ * @return @a nw �˳�Ǽ���줿ñ���������֤�. 
  * </JA>
  * <EN>
  * @brief  Get initial word hypotheses at the beginning.
@@ -499,12 +499,12 @@ ngram_firstwords(NEXTWORD **nw, int peseqlen, int maxnw, RecogProcess *r)
   if (r->config->successive.enabled) {
     /* in sp segment mode  */
     if (r->sp_break_2_begin_word != WORD_INVALID) {
-      /* 初期仮説は 最終フレームに残った単語トレリス上の最尤単語 */
+      /* �������� �ǽ��ե졼��˻Ĥä�ñ��ȥ�ꥹ��κ���ñ�� */
       /* the initial hypothesis is the best word survived on the last frame of
 	 the segment */
       nw[0]->id = r->sp_break_2_begin_word;
     } else {
-      /* 最終セグメント: 初期仮説は 単語の末尾の無音単語(=winfo->tail_silwid) */
+      /* �ǽ���������: �������� ñ���������̵��ñ��(=winfo->tail_silwid) */
       /* we are in the last of sentence: initial hypothesis is word-end silence word */
       nw[0]->id = r->lm->winfo->tail_silwid;
     }
@@ -527,21 +527,21 @@ ngram_firstwords(NEXTWORD **nw, int peseqlen, int maxnw, RecogProcess *r)
 
 /** 
  * <JA>
- * @brief 次単語仮説集合を返す. 
+ * @brief ��ñ�첾�⽸����֤�. 
  *
- * 与えられた部分文仮説から，次に接続しうる単語の集合を返す. 実際には，
- * 第1パスの結果であるトレリス単語集合 bt 上で，展開元の部分文仮説の最終単語の
- * （推定された）始端フレーム hypo->estimated_next_t の前後に存在する
- * 単語集合を取出し，それらの N-gram 接続確率を計算して返す. 
- * 取り出された次単語仮説は，あらかじめ maxnm の長さだけ
- * 領域が確保されている nw に格納される. 
+ * Ϳ����줿��ʬʸ���⤫�顤������³������ñ��ν�����֤�. �ºݤˤϡ�
+ * ��1�ѥ��η�̤Ǥ���ȥ�ꥹñ�콸�� bt ��ǡ�Ÿ��������ʬʸ����κǽ�ñ���
+ * �ʿ��ꤵ�줿�˻�ü�ե졼�� hypo->estimated_next_t �������¸�ߤ���
+ * ñ�콸����Ф��������� N-gram ��³��Ψ��׻������֤�. 
+ * ���Ф��줿��ñ�첾��ϡ����餫���� maxnm ��Ĺ������
+ * �ΰ褬���ݤ���Ƥ��� nw �˳�Ǽ�����. 
  * 
- * @param hypo [in] 展開元の文仮説
- * @param nw [out] 次単語候補リストを格納する領域へのポインタ
- * @param maxnw [in] @a nw の最大長
- * @param r [in] 認識処理インスタンス
+ * @param hypo [in] Ÿ������ʸ����
+ * @param nw [out] ��ñ�����ꥹ�Ȥ��Ǽ�����ΰ�ؤΥݥ���
+ * @param maxnw [in] @a nw �κ���Ĺ
+ * @param r [in] ǧ���������󥹥���
  * 
- * @return 抽出され nw に格納された次単語仮説の数を返す. 
+ * @return ��Ф��� nw �˳�Ǽ���줿��ñ�첾��ο����֤�. 
  * </JA>
  * <EN>
  * @brief  Return the list of next word candidate.
@@ -571,11 +571,11 @@ ngram_nextwords(NODE *hypo, NEXTWORD **nw, int maxnw, RecogProcess *r)
     j_internal_error("ngram_nextwords: hypo contains no word\n");
   }
 
-  /* 仮説の推定終端時刻において backtrellis内に残っている単語を得る */
+  /* ����ο��꽪ü����ˤ����� backtrellis��˻ĤäƤ���ñ������� */
   /* get survived words on backtrellis at the estimated end frame */
   num = get_backtrellis_words(r, nw, hypo, hypo->estimated_next_t, hypo->bestt);
 
-  /* 展開できない単語をチェックして外す */
+  /* Ÿ���Ǥ��ʤ�ñ�������å����Ƴ��� */
   /* exclude unallowed words */
   num2 = limit_nw(nw, hypo, num, r->lm->winfo);
 
@@ -586,16 +586,16 @@ ngram_nextwords(NODE *hypo, NEXTWORD **nw, int maxnw, RecogProcess *r)
 
 /** 
  * <JA>
- * @brief  受理判定
+ * @brief  ����Ƚ��
  * 
- * 与えられた部分文仮説が，文（すなわち探索終了）として
- * 受理可能であるかどうかを返す. N-gram では文頭に対応する無音単語
- * (silhead) であれば受理する. 
+ * Ϳ����줿��ʬʸ���⤬��ʸ�ʤ��ʤ��õ����λ�ˤȤ���
+ * ������ǽ�Ǥ��뤫�ɤ������֤�. N-gram �Ǥ�ʸƬ���б�����̵��ñ��
+ * (silhead) �Ǥ���м�������. 
  * 
- * @param hypo [in] 部分文仮説
- * @param r [in] 認識処理インスタンス
+ * @param hypo [in] ��ʬʸ����
+ * @param r [in] ǧ���������󥹥���
  * 
- * @return 文として受理可能であれば TRUE，不可能なら FALSE を返す. 
+ * @return ʸ�Ȥ��Ƽ�����ǽ�Ǥ���� TRUE���Բ�ǽ�ʤ� FALSE ���֤�. 
  * </JA>
  * <EN>
  * @brief  Acceptance check.
@@ -617,13 +617,13 @@ ngram_acceptable(NODE *hypo, RecogProcess *r)
 {
 
   if (r->config->successive.enabled) {
-    /* 最後の仮説が第１パス最尤仮説の最初の単語と一致しなければならない */
+    /* �Ǹ�β��⤬�裱�ѥ����ಾ��κǽ��ñ��Ȱ��פ��ʤ���Фʤ�ʤ� */
     /* the last word should be equal to the first word on the best hypothesis on 1st pass */
     if (hypo->seq[hypo->seqnum-1] == r->sp_break_2_end_word) {
       return TRUE;
     }
   } else {
-    /* 最後の仮説が文頭無音単語でなければならない */
+    /* �Ǹ�β��⤬ʸƬ̵��ñ��Ǥʤ���Фʤ�ʤ� */
     /* the last word should be head silence word */
     if (hypo->seq[hypo->seqnum-1] == r->lm->winfo->head_silwid) {
       return TRUE;

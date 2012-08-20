@@ -1,4 +1,4 @@
-О╩©/**
+/**
  * @file   callback.h
  * 
  * <EN>
@@ -6,7 +6,7 @@
  * </EN>
  * 
  * <JA>
- * @brief  Ц┌ЁЦ┐╪Ц┐╚Ц┐░Ц┐┐Ц┌╞APIГ■╗Е╝ Г╬╘
+ * @brief  ╔Ё║╪╔К╔п╔ц╔╞APIмядЙ╣а
  * </JA>
  * 
  * @author Akinobu Lee

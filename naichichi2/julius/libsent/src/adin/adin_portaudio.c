@@ -1,28 +1,28 @@
-﻿/**
+/**
  * @file   adin_portaudio.c
  * 
  * <JA>
- * @brief  マイク入力 (portaudioライブラリ)
+ * @brief  �ޥ������� (portaudio�饤�֥��)
  *
- * portaudiooライブラリを使用したマイク入力のための低レベル関数です．
- * 使用するには configure 時に "--with-mictype=portaudio" を指定して下さい．
- * Linux および Win32 で使用可能です．Win32モードではこれが
- * デフォルトとなります．
+ * portaudioo�饤�֥�����Ѥ����ޥ������ϤΤ�������٥�ؿ��Ǥ���
+ * ���Ѥ���ˤ� configure ���� "--with-mictype=portaudio" ����ꤷ�Ʋ�������
+ * Linux ����� Win32 �ǻ��Ѳ�ǽ�Ǥ���Win32�⡼�ɤǤϤ��줬
+ * �ǥե���ȤȤʤ�ޤ���
  *
- * 録音デバイスは WASAPI -> ASIO -> DirectSound -> MME の順で選択されます。
- * 使用するデバイスを指定したい場合は、環境変数 PORTAUDIO_DEV でデバイス名
- * （先頭から部分マッチ）を指定するか、PORTAUDIO_DEV_NUM でデバイス番号を
- * 指定してください。使用可能なデバイス名とデバイス番号は起動時に出力されます。
+ * Ͽ���ǥХ����� WASAPI -> ASIO -> DirectSound -> MME �ν�����򤵤�ޤ���
+ * ���Ѥ���ǥХ�������ꤷ�������ϡ��Ķ��ѿ� PORTAUDIO_DEV �ǥǥХ���̾
+ * ����Ƭ������ʬ�ޥå��ˤ���ꤹ�뤫��PORTAUDIO_DEV_NUM �ǥǥХ����ֹ��
+ * ���ꤷ�Ƥ������������Ѳ�ǽ�ʥǥХ���̾�ȥǥХ����ֹ�ϵ�ư���˽��Ϥ���ޤ���
  *
- * Juliusはミキサーデバイスの設定を一切行いません．録音デバイスの
- * 選択（マイク/ライン）や録音ボリュームの調節はWindowsの
- * 「ボリュームコントロール」 や Linux の xmixer など，他のツールで
- * 行なって下さい．
+ * Julius�ϥߥ������ǥХ������������ڹԤ��ޤ���Ͽ���ǥХ�����
+ * ����ʥޥ���/�饤��ˤ�Ͽ���ܥ�塼���Ĵ���Windows��
+ * �֥ܥ�塼�ॳ��ȥ������ �� Linux �� xmixer �ʤɡ�¾�Υġ����
+ * �ԤʤäƲ�������
  *
- * portaudio はフリーでクロスプラットホームのオーディオ入出力ライブラリ
- * です．ソースは libsent/src/adin/pa/ に含まれています．このプログラムでは
- * スレッドを利用したcallback を利用して入力音声をリングバッファに取り込んで
- * います．
+ * portaudio �ϥե꡼�ǥ������ץ�åȥۡ���Υ����ǥ��������ϥ饤�֥��
+ * �Ǥ����������� libsent/src/adin/pa/ �˴ޤޤ�Ƥ��ޤ������Υץ������Ǥ�
+ * ����åɤ����Ѥ���callback �����Ѥ������ϲ������󥰥Хåե��˼������
+ * ���ޤ���
  *
  * @sa http://www.portaudio.com/
  * </JA>

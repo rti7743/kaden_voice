@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Implementation of the PortAudio API for Apple AUHAL
  *
  * PortAudio Portable Real-Time Audio Library

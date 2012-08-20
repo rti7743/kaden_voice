@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=640" />
+	<title>jQuery UI Sortable - Display as grid</title>
+	<link type="text/css" href="./jscss/ui-lightness/jquery-ui-1.8.21.custom.css" rel="stylesheet" />
+	<link type="text/css" href="./jscss/jquery.mobile.css" rel="stylesheet" />
+	<script type="text/javascript" src="./jscss/jquery.js"></script>
+	<script type="text/javascript" src="./jscss/jquery-ui.js"></script>
+	<script type="text/javascript" src="./jscss/jquery.mobile.js"></script>
+	<script type="text/javaScript" src="./jscss/jquery.tooltip2.js"></script>
+
+
+	<style>
+
+	.clearfix{
+		clear:both;
+		float:none;
+	}
+	
+	.error {
+		display: none;
+		font-color: #red;
+	}
+
+	.js_template {
+		display: none;
+	}
+	
+	.contents_wrapper {
+ 		width:900px;
+		margin:0 auto;
+	}
+
+	dt {
+		padding: 10px;
+		font-size: 1.2em;
+	}
+
+	@media screen and (max-device-width: 640px), screen and (max-width: 640px) {
+		.contents_wrapper {
+			width:640px;
+			margin:0 auto;
+		}
+	}
+	</style>
+</head>
+<body class="ui-mobile-viewport ui-overlay-c"> 
+
+
+<div data-role="page" id="top" data-url="top" tabindex="0" class="ui-page ui-body-c ui-page-active">
+
+	<div data-role="header"> 
+		<h1><a data-role="none" href="#top" ><img src="./jscss/images/fhc700.png" /></h1> 
+	</div> <!-- /header -->
+
+	<div data-role="content" class="ui-content contents_wrapper" role="main">
+
+
+	<p><a data-role="button" class="menubutton" data-inline="true">設定→</a><a data-role="button" class="menubutton" data-inline="true">機材設定</a></p>
+
+	<p><a data-role="button" data-transition="slide" href="#account_setting" >アカウント設定</a></p>
+	<p><a data-role="button" data-transition="slide" href="#network_setting" >ネットワーク設定</a></p>
+	<p><a data-role="button" data-transition="slide" href="#recong_setting" >音声認識設定</a></p>
+	<p><a data-role="button" data-transition="slide" href="#speak_setting" >合成音声設定</a></p>
+	<p><a data-role="button" data-transition="slide" href="#version_setting" >バージョン情報</a></p>
+
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>(C) 2012 rti Institute of Technology</h4> 
+	</div> <!-- /footer -->
+
+</div><!-- /page top -->
+
+<div data-role="page" id="account_setting" data-theme="c" data-url="account_setting" tabindex="0" class="ui-page ui-body-c" style="min-height: 562px; ">
+
+<div data-role="header"> 
+	<h1><a data-role="none" href="#top" ><img src="img/fhc700.png" /></h1> 
+</div> 
+
+	<div data-role="content" data-theme="c" class="ui-content contents_wrapper">	
+	<p><a data-role="button" class="menubutton" data-inline="true">設定→</a><a data-role="button" class="menubutton" data-inline="true">機材設定→</a><a data-role="button" class="menubutton" data-inline="true">アカウント設定</a></p>
+
+	<dl>
+	<dt>メールアドレス</dt>
+	<dd>
+		<input type="text" name="usermail" id="usermail" value="">
+	</dd>
+	<dt>パスワード</dt>
+	<dd>
+		<input type="text" name="password" id="password" value="">
+	</dd>
+	</dl>
+	<div class="error" id="auth_error">認証に失敗しました。</div>
+	<div class="error" id="auth_ok">まだ認証されていません。</div>
+	<div class="error" id="auth_ok">正しく認証されています。</div>
+
+	クラウドの処理を使うには、ユーザ登録が必要です。<br />
+	<p><a data-role="button" onclick="OnActionEditablePageOpen($('#editable_key').val(),'new');" >認証する</a></p>
+	<p><a data-role="button" onclick="OnActionEditablePageOpen($('#editable_key').val(),'new');" >リンクを解除する</a></p>
+
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed">
+	<h4>(C) 2012 rti Institute of Technology</h4> 
+</div> 
+
+</div><!-- /page account_setting -->
+
+<div data-role="page" id="network_setting" data-theme="c" data-url="network_setting" tabindex="0" class="ui-page ui-body-c" style="min-height: 562px; ">
+
+<div data-role="header"> 
+	<h1><a data-role="none" href="#top" ><img src="img/fhc700.png" /></h1> 
+</div> 
+
+	<div data-role="content" data-theme="c" class="contents_wrapper">	
+	<p><a data-role="button" class="menubutton" data-inline="true">設定→</a><a data-role="button" class="menubutton" data-inline="true">機材設定→</a><a data-role="button" class="menubutton" data-inline="true">ネットワーク設定</a></p>
+
+	<dl>
+	<dt>IPアドレス取得方法</dt>
+	<dd>
+		<select name="ipaddress_type" id="ipaddress_type" size="1">
+		<option value="DHCP">DHCP</option>
+		<option value="固定IP">固定IP</option>
+		</select>
+		<div id="ipaddress_type_fixed_div">
+			<dl>
+			<dt>IPアドレス</dt>
+			<dd>
+				<input type="text" name="ipaddress_type_fixed_ip" id="ipaddress_type_fixed_ip" value="">
+			</dd>
+			<dt>netmask</dt>
+			<dd>
+				<input type="text" name="ipaddress_type_fixed_mask" id="ipaddress_type_fixed_mask" value="">
+			</dd>
+			<dt>gateway</dt>
+			<dd>
+				<input type="text" name="ipaddress_type_fixed_gateway" id="ipaddress_type_fixed_gateway" value="">
+			</dd>
+			<dt>DNS</dt>
+			<dd>
+				<input type="text" name="ipaddress_type_fixed_dns" id="ipaddress_type_fixed_dns" value="">
+			</dd>
+			</dl>
+		</div>
+	</dd>
+	</dl>
+	<p><a data-role="button" onclick="OnActionEditablePageOpen($('#editable_key').val(),'new');" >設定する</a></p>
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed">
+	<h4>(C) 2012 rti Institute of Technology</h4> 
+</div> 
+
+</div><!-- /page network_setting -->
+
+
+<div data-role="page" id="recong_setting" data-theme="c" data-url="recong_setting" tabindex="0" class="ui-page ui-body-c" style="min-height: 562px; ">
+
+<div data-role="header"> 
+	<h1><a data-role="none" href="#top" ><img src="img/fhc700.png" /></h1> 
+</div> 
+
+	<div data-role="content" data-theme="c" class="contents_wrapper">	
+	<p><a data-role="button" class="menubutton" data-inline="true">設定→</a><a data-role="button" class="menubutton" data-inline="true">機材設定→</a><a data-role="button" class="menubutton" data-inline="true">音声認識設定</a></p>
+
+	<dl>
+	<dt>誤認識フィルタ</dt>
+	<dd>
+		<select name="recong_type" id="recong_type" size="1">
+		<option value="クラウドで再検証する">クラウドで再検証する</option>
+		<option value="クライアントでの2PATHチェック(MFCCを入れる)">クライアントでの2PATHチェック(MFCCを入れる)</option>
+		<option value="クライアントでの2PATHチェック(MFCCを除く)">クライアントでの2PATHチェック(MFCCを除く)</option>
+		<option value="音声認識を利用しない">音声認識を利用しない</option>
+		</select>
+	</dd>
+	<dt>呼びかけワード</dt>
+	<dd>
+		<input type="text" name="reco__yobikake__1" id="reco__yobikake__1" value="">
+		<input type="text" name="reco__yobikake__2" id="reco__yobikake__2" value="">
+		<input type="text" name="reco__yobikake__3" id="reco__yobikake__3" value="">
+		<input type="text" name="reco__yobikake__4" id="reco__yobikake__4" value="">
+		<input type="text" name="reco__yobikake__5" id="reco__yobikake__5" value="">
+		<p>短すぎる呼びかけは誤動作を引き起こします。最低3文字はいれてください。</p>
+	</dd>
+	</dl>
+	<p><a data-role="button" onclick="OnActionEditablePageOpen($('#editable_key').val(),'new');" >設定する</a></p>
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed">
+	<h4>(C) 2012 rti Institute of Technology</h4> 
+</div> 
+	
+</div><!-- /page recong_setting -->
+
+
+<div data-role="page" id="speak_setting" data-theme="c" data-url="speak_setting" tabindex="0" class="ui-page ui-body-c" style="min-height: 562px; ">
+
+<div data-role="header"> 
+	<h1><a data-role="none" href="#top" ><img src="img/fhc700.png" /></h1> 
+</div> 
+
+	<div data-role="content" data-theme="c" class="contents_wrapper">	
+	<p><a data-role="button" class="menubutton" data-inline="true">設定→</a><a data-role="button" class="menubutton" data-inline="true">機材設定→</a><a data-role="button" class="menubutton" data-inline="true">合成音声設定</a></p>
+
+	<dl>
+	<dt>合成音声</dt>
+	<dd>
+		<select name="speak_type" id="speak_type" size="1">
+		<option value="mssp">mssp</option>
+		<option value="google translate">google translate</option>
+		<option value="openjtalk">openjtalk</option>
+		<option value="aquestalk">aquestalk</option>
+		<option value="読み上げを行わない">読み上げを行わない</option>
+		</select>
+	</dd>
+	</dl>
+	<p><a data-role="button" onclick="OnActionEditablePageOpen($('#editable_key').val(),'new');" >設定する</a></p>
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed">
+	<h4>(C) 2012 rti Institute of Technology</h4> 
+</div> 
+
+</div><!-- /page speak_setting -->
+
+
+<div data-role="page" id="version_setting" data-theme="c" data-url="version_setting" tabindex="0" class="ui-page ui-body-c" style="min-height: 562px; ">
+
+<div data-role="header"> 
+	<h1><a data-role="none" href="#top" ><img src="img/fhc700.png" /></h1> 
+</div> 
+
+	<div data-role="content" data-theme="c" class="contents_wrapper">	
+	<p><a data-role="button" class="menubutton" data-inline="true">設定→</a><a data-role="button" class="menubutton" data-inline="true">機材設定→</a><a data-role="button" class="menubutton" data-inline="true">合成音声設定</a></p>
+
+	<dl>
+	<dt>バージョン情報</dt>
+	<dd>
+		<span id="version">version</span><br>
+		<div id="new_version">新しいバージョンがあります。<br />アップデートしますか？</div>
+	</dd>
+	<dt>著作表示</dt>
+	<dd>
+		rti giken.<br>
+		<br>
+		以下のソフトウェアを含んでいます<br>
+		julius<br>
+		openjtalk<br>
+		mecab<br>
+		lua<br>
+		liblinear<br>
+		mmdagent<br>
+	</dd>
+	</dl>
+	<p><a data-role="button" onclick="OnActionEditablePageOpen($('#editable_key').val(),'new');" >再起動する</a></p>
+	<p><a data-role="button" onclick="OnActionEditablePageOpen($('#editable_key').val(),'new');" >シャットダウンする</a></p>
+	</div><!-- /content -->
+
+<div data-role="footer" data-position="fixed">
+	<h4>(C) 2012 rti Institute of Technology</h4> 
+</div> 
+
+</div><!-- /page version_setting -->
+
+<script>
+
+</script>
+
+</body></html>

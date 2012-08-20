@@ -1347,9 +1347,9 @@ void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 				continue;
 			}
 			//素性を詰めていきます。
-			std::vector<feature_node> feature_nodeVector;
+			std::vector<XLMachineLearningLibliear::feature> feature_nodeVector;
 			feature_nodeVector.resize(r->lm->am->mfcc->param->header.samplenum * r->lm->am->mfcc->param->veclen + 9 + 1);
-			feature_node* feature_nodeP = &feature_nodeVector[0];
+			auto feature_nodeP = &feature_nodeVector[0];
 
 			//dict から plus側のrule を求める
 			const int dict = atoi(winfo->wname[i_seq]);

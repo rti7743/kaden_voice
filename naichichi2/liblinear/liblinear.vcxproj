@@ -56,6 +56,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <DisableSpecificWarnings>4996;4819</DisableSpecificWarnings>
       <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

@@ -1,4 +1,4 @@
-﻿#ifndef PA_MAC_CORE_H
+#ifndef PA_MAC_CORE_H
 #define PA_MAC_CORE_H
 /*
  * PortAudio Portable Real-Time Audio Library

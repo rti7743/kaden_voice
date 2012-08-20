@@ -1,4 +1,4 @@
-﻿#ifndef PA_WIN_WAVEFORMAT_H
+#ifndef PA_WIN_WAVEFORMAT_H
 #define PA_WIN_WAVEFORMAT_H
 
 /*

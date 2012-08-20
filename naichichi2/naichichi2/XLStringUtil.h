@@ -224,6 +224,8 @@ public:
 	static std::string mb_convert_kana(const std::string &inTarget,const std::string& option);
 	//みんな大好きPHPのescapeshellarg
 	static std::string escapeshellarg(const std::string &inStr);
+	//数字の桁数を求める
+	static int getScaler(unsigned int num);
 
 };
 

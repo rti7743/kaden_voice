@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   multi-gram.h
  * 
  * <JA>
- * @brief  複数の文法を同時に扱うための定義. 
+ * @brief  ʣ����ʸˡ��Ʊ���˰�����������. 
  * </JA>
  * 
  * <EN>

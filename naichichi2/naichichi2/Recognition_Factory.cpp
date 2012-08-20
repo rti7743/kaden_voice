@@ -3,6 +3,7 @@
 #include "Recognition_Factory.h"
 //#include "Recognition_SAPI.h"
 #include "Recognition_JuliusPlus.h"
+#include "Recognition_Cloud.h"
 #include "MainWindow.h"
 
 Recognition_Factory::Recognition_Factory()
@@ -23,6 +24,10 @@ xreturn::r<bool> Recognition_Factory::Create(const std::string & name , MainWind
 	if (name == "julius")
 	{
 		this->Engine = new Recognition_JuliusPlus();
+	}
+	else if (name == "cloud")
+	{
+		this->Engine = new Recognition_Cloud();
 	}
 	else
 	{

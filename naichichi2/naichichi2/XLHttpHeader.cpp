@@ -20,20 +20,21 @@ XLHttpHeader::~XLHttpHeader()
 
 }
 
-bool XLHttpHeader::Parse(const char * inHeader)
+bool XLHttpHeader::Parse(const char * inHeader , int size)
 {
 	_USE_WINDOWS_ENCODING;
 	this->HeaderSize = 0;
 
 	const char * p = inHeader;
+	const char * endP = inHeader + size;
 	//最初のヘッダー
 	{
 		int firstHeadSpaceCount = 0;
-		for( const char * start = p; *p ; ++p )
+		for( const char * start = p; p < endP; ++p )
 		{
 			if (*p == '\r' || *p == '\n')
 			{
-				this->FirstHeader[2] = std::string(start , 0 , (int)(p - start));
+				this->FirstHeader[2] = XLStringUtil::strtoupper( std::string(start , 0 , (int)(p - start)) );
 				if (*p == '\r' && *(p+1) == '\n')
 				{
 					p++;
@@ -60,7 +61,7 @@ bool XLHttpHeader::Parse(const char * inHeader)
 		//改行までシーク.
 		const char * sep = NULL;
 		const char * value_start = NULL;
-		for( const char * start = p; *p ; ++p )
+		for( const char * start = p; p < endP ; ++p )
 		{
 			//複数行にまたがっているヘッダーは考慮しないことにするw
 			if (*p == '\r' || *p == '\n')
@@ -69,8 +70,8 @@ bool XLHttpHeader::Parse(const char * inHeader)
 				{
 					break;
 				}
-				std::string key = std::string(start , 0, (int)(sep - start));
-				std::string value = std::string(value_start , 0, (int)(value_start - p));
+				std::string key = XLStringUtil::strtolower( std::string(start , 0, (int)(sep - start)) );
+				std::string value = std::string(value_start , 0, (int)(p - value_start));
 				if (Header.find(key) == Header.end())
 				{
 					this->Header[key] = value;
@@ -104,9 +105,14 @@ bool XLHttpHeader::Parse(const char * inHeader)
 		{
 			if (*p == '\r' && *(p+1) == '\n')
 			{
+				p+=2;
+			}
+			else
+			{
 				p++;
 			}
-			this->HeaderSize = (unsigned int)(p - inHeader);
+			this->HeaderSize = (unsigned int)(p - inHeader) ;
+			break;
 		}
 	}
 
@@ -123,19 +129,24 @@ bool XLHttpHeader::Parse(const char * inHeader)
 			this->FirstHeader[1] = this->FirstHeader[1].substr(0,getsep);
 		}
 	}
-	//POSTパース
-	{
-		if ( XLStringUtil::strtoupper( this->FirstHeader[0] ) == "POST")
-		{
-			std::string str = XLStringUtil::urldecode( p );
-			str = _U2A(str.c_str());
+	return true;
+}
 
-			this->Post = XLStringUtil::crosssplit("&","=",str);
-		}
-	}
+
+bool XLHttpHeader::PostParse( const char * inBody , int size )
+{
+	_USE_WINDOWS_ENCODING;
+
+	//POSTパース
+	std::string str = std::string(inBody,0,size);
+	str = XLStringUtil::urldecode( str );
+	str = _U2A(str.c_str());
+
+	this->Post = XLStringUtil::crosssplit("&","=",str );
 
 	return true;
 }
+
 
 void XLHttpHeader::setAt(const std::string inKey , const std::string & inValue)
 {

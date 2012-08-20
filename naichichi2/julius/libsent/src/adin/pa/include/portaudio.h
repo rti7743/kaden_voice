@@ -1,4 +1,4 @@
-﻿#ifndef PORTAUDIO_H
+#ifndef PORTAUDIO_H
 #define PORTAUDIO_H
 /*
  * $Id: portaudio.h,v 1.1 2011/02/05 09:00:03 sumomo Exp $

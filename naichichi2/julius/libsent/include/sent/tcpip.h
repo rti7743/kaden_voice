@@ -1,11 +1,11 @@
-ï»¿/**
+/**
  * @file   tcpip.h
  *
  * <EN>
  * @brief  Definitions relating TCP/IP Networking
  * </EN>
  * <JA>
- * @brief  TCP/IP ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯é–¢é€£ã®å®šç¾©
+ * @brief  TCP/IP ¥Í¥Ã¥È¥ï¡¼¥¯´ØÏ¢¤ÎÄêµÁ
  * </JA>
  * 
  * @author Akinobu LEE

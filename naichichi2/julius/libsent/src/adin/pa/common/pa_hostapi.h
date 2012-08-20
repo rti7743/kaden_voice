@@ -1,4 +1,4 @@
-﻿#ifndef PA_HOSTAPI_H
+#ifndef PA_HOSTAPI_H
 #define PA_HOSTAPI_H
 /*
  * $Id: pa_hostapi.h,v 1.1 2011/02/05 09:00:02 sumomo Exp $

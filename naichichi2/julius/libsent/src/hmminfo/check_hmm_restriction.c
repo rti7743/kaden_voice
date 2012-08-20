@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   check_hmm_restriction.c
  * 
  * <JA>
- * @brief  与えられた %HMM の遷移が使用可能な形式かどうかチェックする
+ * @brief  Ϳ����줿 %HMM �����ܤ����Ѳ�ǽ�ʷ������ɤ��������å�����
  * </JA>
  * 
  * <EN>
@@ -211,12 +211,12 @@ check_all_hmm_limit(HTK_HMM_INFO *hmminfo)
 
 /** 
  * <JA>
- * モデルが，出力状態を経由せずに入力状態から出力状態へ直接遷移するような
- * 遷移を持つかどうかをチェックする．
+ * ��ǥ뤬�����Ͼ��֤��ͳ���������Ͼ��֤�����Ͼ��֤�ľ�����ܤ���褦��
+ * ���ܤ���Ĥ��ɤ���������å����롥
  * 
- * @param d [in] 論理HMM
+ * @param d [in] ����HMM
  * 
- * @return 入力から出力への直接遷移を持つ場合 TRUE, 持たない場合 FALSE を返す．
+ * @return ���Ϥ�����Ϥؤ�ľ�����ܤ���ľ�� TRUE, �����ʤ���� FALSE ���֤���
  * </JA>
  * <EN>
  * Check if the model has direct transition from initial state to final state,

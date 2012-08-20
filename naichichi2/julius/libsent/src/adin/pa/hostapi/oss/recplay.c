@@ -1,4 +1,4 @@
-﻿/*
+/*
  * recplay.c
  * Phil Burk
  * Minimal record and playback test.

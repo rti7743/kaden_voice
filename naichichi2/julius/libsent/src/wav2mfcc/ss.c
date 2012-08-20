@@ -1,11 +1,11 @@
-﻿/**
+/**
  * @file   ss.c
  * 
  * <JA>
- * @brief  スペクトル減算
+ * @brief  ���ڥ��ȥ븺��
  *
- * 実際のスペクトル減算は wav2mfcc-buffer.c および wav2mfcc-pipe.c で
- * 行われます．ここでは平均スペクトルの推定とファイルI/Oのみ定義されています．
+ * �ºݤΥ��ڥ��ȥ븺���� wav2mfcc-buffer.c ����� wav2mfcc-pipe.c ��
+ * �Ԥ��ޤ��������Ǥ�ʿ�ѥ��ڥ��ȥ�ο���ȥե�����I/O�Τ��������Ƥ��ޤ���
  * </JA>
  * 
  * <EN>

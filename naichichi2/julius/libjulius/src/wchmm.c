@@ -1,16 +1,16 @@
-﻿/**
+/**
  * @file   wchmm.c
  * 
  * <JA>
- * @brief  木構造化辞書の構築
+ * @brief  �ڹ�¤������ι���
  *
- * ここでは，与えられた単語辞書, HMM定義および言語制約から木構造化辞書を
- * 構築する関数が定義されています. 木構造化辞書は起動時に構築され，
- * 第1パスの認識に用いられます. 木構造化辞書は状態単位で構成され，
- * 各状態はHMM出力確率と遷移先の他，および探索のための様々な情報を含みます. 
+ * �����Ǥϡ�Ϳ����줿ñ�켭��, HMM�������Ӹ������󤫤��ڹ�¤�������
+ * ���ۤ���ؿ����������Ƥ��ޤ�. �ڹ�¤������ϵ�ư���˹��ۤ��졤
+ * ��1�ѥ���ǧ�����Ѥ����ޤ�. �ڹ�¤������Ͼ���ñ�̤ǹ������졤
+ * �ƾ��֤�HMM���ϳ�Ψ���������¾�������õ���Τ�����͡��ʾ����ޤߤޤ�. 
  *
- * 開発の経緯上，ソース内では木構造化辞書は wchmm (word-conjunction HMM) と
- * も表現されています. 
+ * ��ȯ�ηа޾塤��������Ǥ��ڹ�¤������� wchmm (word-conjunction HMM) ��
+ * ��ɽ������Ƥ��ޤ�. 
  * 
  * </JA>
  * 
@@ -54,9 +54,9 @@
 
 /** 
  * <JA>
- * 木構造化辞書構造体を新規に割り付ける. 
+ * �ڹ�¤������¤�Τ򿷵��˳���դ���. 
  * 
- * @return 新たにメモリ上に割り付けられた木構造化辞書構造体へのポインタを返す. 
+ * @return �����˥����˳���դ���줿�ڹ�¤������¤�ΤؤΥݥ��󥿤��֤�. 
  * </JA>
  * <EN>
  * Allocate a new tree lexicon structure.
@@ -90,9 +90,9 @@ wchmm_new()
 
 /** 
  * <JA>
- * 木構造化辞書の内容を初期化する. 
+ * �ڹ�¤����������Ƥ���������. 
  * 
- * @param wchmm [out] 木構造化辞書へのポインタ
+ * @param wchmm [out] �ڹ�¤������ؤΥݥ���
  * </JA>
  * <EN>
  * Initialize content of a lexicon tree.
@@ -149,9 +149,9 @@ wchmm_init(WCHMM_INFO *wchmm)
 
 /** 
  * <JA>
- * 木構造化辞書の状態格納領域を MAXWCNSTEP 分だけ伸長する. 
+ * �ڹ�¤������ξ��ֳ�Ǽ�ΰ�� MAXWCNSTEP ʬ������Ĺ����. 
  * 
- * @param wchmm [i/o] 木構造化辞書
+ * @param wchmm [i/o] �ڹ�¤������
  * </JA>
  * <EN>
  * Expand state-related area in a tree lexicon by MAXWCNSTEP.
@@ -176,9 +176,9 @@ wchmm_extend(WCHMM_INFO *wchmm)
 
 /** 
  * <JA>
- * 木構造化辞書の単語先頭ノード格納領域を STARTNODE_STEP分だけ伸長する.  (multipath)
+ * �ڹ�¤�������ñ����Ƭ�Ρ��ɳ�Ǽ�ΰ�� STARTNODE_STEPʬ������Ĺ����.  (multipath)
  * 
- * @param wchmm [i/o] 木構造化辞書
+ * @param wchmm [i/o] �ڹ�¤������
  * </JA>
  * <EN>
  * Expand word-start nodes area in a tree lexicon by STARTNODE_STEP. (multipath)
@@ -198,9 +198,9 @@ wchmm_extend_startnode(WCHMM_INFO *wchmm)
 
 /** 
  * <JA>
- * 木構造化辞書およびその内部の割付メモリを全て解放する. 
+ * �ڹ�¤�����񤪤�Ӥ��������γ��ե�������Ʋ�������. 
  * 
- * @param w [in] 木構造化辞書
+ * @param w [in] �ڹ�¤������
  * </JA>
  * <EN>
  * Free all data in a tree lexicon.
@@ -267,12 +267,12 @@ wchmm_free(WCHMM_INFO *w)
 
 /** 
  * <JA>
- * 単語を音素のならびでソートするqsort_reentrant関数
+ * ñ����ǤΤʤ�Ӥǥ����Ȥ���qsort_reentrant�ؿ�
  * 
- * @param widx1 [in] 単語ID 1 へのポインタ
- * @param widx2 [in] 単語ID 2 へのポインタ
+ * @param widx1 [in] ñ��ID 1 �ؤΥݥ���
+ * @param widx2 [in] ñ��ID 2 �ؤΥݥ���
  * 
- * @return 単語widx2が単語widx1の一部か昇順であれば 1, 単語widx1が単語widx2の一部か昇順であれば -1, 全く同じ音素並びであれば 0 を返す. 
+ * @return ñ��widx2��ñ��widx1�ΰ���������Ǥ���� 1, ñ��widx1��ñ��widx2�ΰ���������Ǥ���� -1, ����Ʊ�������¤ӤǤ���� 0 ���֤�. 
  * </JA>
  * <EN>
  * qsort_reentrant function to sort words by their phoneme sequence.
@@ -316,12 +316,12 @@ compare_wseq(WORD_ID *widx1, WORD_ID *widx2, WORD_INFO *winfo)
 
 /** 
  * <JA>
- * 単語IDの集合 windex[bgn..bgn+len-1] を単語の音素ならびでソートする. 
+ * ñ��ID�ν��� windex[bgn..bgn+len-1] ��ñ��β��Ǥʤ�Ӥǥ����Ȥ���. 
  * 
- * @param winfo [in] 単語辞書
- * @param windex [i/o] 単語IDのインデックス列（内部でソートされる）
- * @param bgn [in] @a windex のソート開始点
- * @param len [in] @a windex の @a bgn からのソートする要素数
+ * @param winfo [in] ñ�켭��
+ * @param windex [i/o] ñ��ID�Υ���ǥå�����������ǥ����Ȥ�����
+ * @param bgn [in] @a windex �Υ����ȳ�����
+ * @param len [in] @a windex �� @a bgn ����Υ����Ȥ������ǿ�
  * </JA>
  * <EN>
  * Sort word IDs in windex[bgn..bgn+len-1] by their phoneme sequence order.
@@ -340,10 +340,10 @@ wchmm_sort_idx_by_wseq(WORD_INFO *winfo, WORD_ID *windex, WORD_ID bgn, WORD_ID l
 
 /** 
  * <JA>
- * 単語をカテゴリIDでソートするqsort関数. 
+ * ñ��򥫥ƥ���ID�ǥ����Ȥ���qsort�ؿ�. 
  * 
- * @param widx1 [in] 要素1へのポインタ
- * @param widx2 [in] 要素2へのポインタ
+ * @param widx1 [in] ����1�ؤΥݥ���
+ * @param widx2 [in] ����2�ؤΥݥ���
  * 
  * @return 
  * </JA>
@@ -367,11 +367,11 @@ compare_category(WORD_ID *widx1, WORD_ID *widx2, WORD_INFO *winfo)
 
 /** 
  * <JA>
- * 単語ID集合 windex[0..len-1] をカテゴリIDでソートする. 
+ * ñ��ID���� windex[0..len-1] �򥫥ƥ���ID�ǥ����Ȥ���. 
  * 
- * @param winfo [in] 単語辞書
- * @param windex [i/o] 単語IDのインデックス列（内部でソートされる）
- * @param len [in] @a windex の要素数
+ * @param winfo [in] ñ�켭��
+ * @param windex [i/o] ñ��ID�Υ���ǥå�����������ǥ����Ȥ�����
+ * @param len [in] @a windex �����ǿ�
  * </JA>
  * <EN>
  * Sort word IDs in windex[0..len-1] by their category ID.
@@ -394,13 +394,13 @@ wchmm_sort_idx_by_category(WORD_INFO *winfo, WORD_ID *windex, WORD_ID len)
 
 /** 
  * <JA>
- * ２単語間で，単語の先頭から同一で共有可能な音素の数を調べる. 
+ * ��ñ��֤ǡ�ñ�����Ƭ����Ʊ��Ƕ�ͭ��ǽ�ʲ��Ǥο���Ĵ�٤�. 
  * 
- * @param winfo [in] 単語辞書
- * @param i [in] 単語１
- * @param j [in] 単語２
+ * @param winfo [in] ñ�켭��
+ * @param i [in] ñ�죱
+ * @param j [in] ñ�죲
  * 
- * @return 共有可能な先頭からの音素数を返す. 
+ * @return ��ͭ��ǽ����Ƭ����β��ǿ����֤�. 
  * </JA>
  * <EN>
  * Compare two words from word head per phoneme to see how many phones
@@ -433,7 +433,7 @@ wchmm_check_match(WORD_INFO *winfo, int i, int j)
  * Initialize transition information on a node.
  * </EN>
  * <JA>
- * ノードの遷移情報を初期化する. 
+ * �Ρ��ɤ����ܾ������������. 
  * </JA>
  * 
  * @param wchmm [i/o] tree lexicon
@@ -454,8 +454,8 @@ acc_init(WCHMM_INFO *wchmm, int node)
  * This function is for transition other than self and next node.
  * </EN>
  * <JA>
- * ノードに遷移を追加する. 
- * この関数は自己遷移・隣への遷移以外の場合に使用される. 
+ * �Ρ��ɤ����ܤ��ɲä���. 
+ * ���δؿ��ϼ������ܡ��٤ؤ����ܰʳ��ξ��˻��Ѥ����. 
  * </JA>
  * 
  * @param wchmm [i/o] tree lexicon
@@ -485,12 +485,12 @@ add_ac(WCHMM_INFO *wchmm, int node, LOGPROB a, int arc)
 
 /** 
  * <JA>
- * 木構造化辞書のあるノードに，別のノードへの遷移を追加する
+ * �ڹ�¤������Τ���Ρ��ɤˡ��̤ΥΡ��ɤؤ����ܤ��ɲä���
  * 
- * @param wchmm [i/o] 木構造化辞書
- * @param node [in] ノード番号
- * @param a [in] 遷移確率（対数）
- * @param arc [in] 遷移先のノード番号
+ * @param wchmm [i/o] �ڹ�¤������
+ * @param node [in] �Ρ����ֹ�
+ * @param a [in] ���ܳ�Ψ���п���
+ * @param arc [in] ������ΥΡ����ֹ�
  * </JA>
  * <EN>
  * Add a transition arc between two nodes on the tree lexicon
@@ -515,16 +515,16 @@ add_wacc(WCHMM_INFO *wchmm, int node, LOGPROB a, int arc)
 
 /**
  * <JA>
- * ある単語のある位置の音素から単語末端の外へ出る遷移のリストを得る. (multipath) 
+ * ����ñ��Τ�����֤β��Ǥ���ñ����ü�γ��ؽФ����ܤΥꥹ�Ȥ�����. (multipath) 
  * 
- * @param wchmm [in] 木構造化辞書
- * @param w [in] 単語ID
- * @param pos [in] 音素位置
- * @param node [out] 音素内の，単語末端外への遷移を持つ状態のリスト
- * @param a [out] @a node の各要素の遷移確率
- * @param num [out] @a node の要素数. 発見数だけ増加される. 
- * @param maxnum [in] @a node の格納可能な最大数
- * @param insert_sp [in] 単語終端での sp 挟み込みを考慮するならTRUE
+ * @param wchmm [in] �ڹ�¤������
+ * @param w [in] ñ��ID
+ * @param pos [in] ���ǰ���
+ * @param node [out] ������Ρ�ñ����ü���ؤ����ܤ���ľ��֤Υꥹ��
+ * @param a [out] @a node �γ����Ǥ����ܳ�Ψ
+ * @param num [out] @a node �����ǿ�. ȯ�����������ä����. 
+ * @param maxnum [in] @a node �γ�Ǽ��ǽ�ʺ����
+ * @param insert_sp [in] ñ�콪ü�Ǥ� sp ���߹��ߤ��θ����ʤ�TRUE
  * </JA>
  * <EN>
  * Make outgoing transition list for given phone position of a word. (multipath)
@@ -609,12 +609,12 @@ get_outtrans_list(WCHMM_INFO *wchmm, WORD_ID w, int pos, int *node, LOGPROB *a, 
 
 /** 
  * <JA>
- * ある音素の末尾の状態から，ある音素の先頭状態への遷移を追加する. 
+ * ���벻�Ǥ������ξ��֤��顤���벻�Ǥ���Ƭ���֤ؤ����ܤ��ɲä���. 
  * 
- * @param wchmm [i/o] 木構造化辞書
- * @param from_node [in] ある音素の末尾の状態
- * @param to_node [in] ある音素の先頭状態
- * @param tinfo [in] @a from_node の属する音素HMMの遷移確率行列
+ * @param wchmm [i/o] �ڹ�¤������
+ * @param from_node [in] ���벻�Ǥ������ξ���
+ * @param to_node [in] ���벻�Ǥ���Ƭ����
+ * @param tinfo [in] @a from_node ��°���벻��HMM�����ܳ�Ψ����
  * </JA>
  * <EN>
  * Add a transition from end node of a phone to start node of another phone.
@@ -664,13 +664,13 @@ wchmm_link_hmm(WCHMM_INFO *wchmm, int from_node, int to_node, HTK_HMM_Trans *tin
 
 /** 
  * <JA>
- * 木構造化辞書中の２単語中のある音素間を接続する. 
+ * �ڹ�¤��������Σ�ñ����Τ��벻�Ǵ֤���³����. 
  * 
- * @param wchmm [i/o] 木構造化辞書
- * @param from_word [in] 遷移元の単語のID
- * @param from_seq [in] 遷移元の単語中の接続する音素の位置
- * @param to_word [in] 遷移先の単語のID
- * @param to_seq [in] 遷移先の単語中の接続する音素の位置
+ * @param wchmm [i/o] �ڹ�¤������
+ * @param from_word [in] ���ܸ���ñ���ID
+ * @param from_seq [in] ���ܸ���ñ�������³���벻�Ǥΰ���
+ * @param to_word [in] �������ñ���ID
+ * @param to_seq [in] �������ñ�������³���벻�Ǥΰ���
  * </JA>
  * <EN>
  * Connect two phonemes in tree lexicon.
@@ -701,12 +701,12 @@ wchmm_link_subword(WCHMM_INFO *wchmm, int from_word, int from_seq, int to_word, 
 /**
  * @note
  * <JA>
- * 同音語処理:
- * 木構造化辞書においてすべての単語は独立した最終状態を持つ必要があるため，
- * 同音語は注意深く扱う必要がある. このため，最初の木構造化辞書を構築した後, 
- * 別の単語と完全に共有された単語(同音語), あるいは別の単語の一部として
- * 埋め込まれてしまっている単語を発見するとともに, その最終ノードを
- * コピーして新たな単語終端ノードを作る必要がある. 
+ * Ʊ�������:
+ * �ڹ�¤������ˤ����Ƥ��٤Ƥ�ñ�����Ω�����ǽ����֤����ɬ�פ����뤿�ᡤ
+ * Ʊ��������տ�������ɬ�פ�����. ���Τ��ᡤ�ǽ���ڹ�¤��������ۤ�����, 
+ * �̤�ñ��ȴ����˶�ͭ���줿ñ��(Ʊ����), ���뤤���̤�ñ��ΰ����Ȥ���
+ * �����ޤ�Ƥ��ޤäƤ���ñ���ȯ������ȤȤ��, ���κǽ��Ρ��ɤ�
+ * ���ԡ����ƿ�����ñ�콪ü�Ρ��ɤ���ɬ�פ�����. 
  * </JA>
  * <EN>
  * Homophones:
@@ -720,12 +720,12 @@ wchmm_link_subword(WCHMM_INFO *wchmm, int from_word, int from_seq, int to_word, 
 
 /** 
  * <JA>
- * 単語終端状態の独立化：与えられた単語の終端ノードをコピーして，
- * 新たにある単語の最終状態として定義する. 
+ * ñ�콪ü���֤���Ω����Ϳ����줿ñ��ν�ü�Ρ��ɤ򥳥ԡ����ơ�
+ * �����ˤ���ñ��κǽ����֤Ȥ����������. 
  * 
- * @param wchmm [i/o] 木構造化辞書
- * @param node [in] 同音語の終端ノード番号
- * @param word [in] 新たに登録する単語
+ * @param wchmm [i/o] �ڹ�¤������
+ * @param node [in] Ʊ����ν�ü�Ρ����ֹ�
+ * @param word [in] ��������Ͽ����ñ��
  * </JA>
  * <EN>
  * Isolation of word-end nodes for homophones: duplicate the word-end state,
@@ -855,10 +855,10 @@ wchmm_duplicate_state(WCHMM_INFO *wchmm, int node, int word) /* source node, new
 
 /** 
  * <JA>
- * 木構造化辞書全体を走査して，すべての同音語について単語終端状態の独立化
- * を行う. 
+ * �ڹ�¤���������Τ��������ơ����٤Ƥ�Ʊ����ˤĤ���ñ�콪ü���֤���Ω��
+ * ��Ԥ�. 
  * 
- * @param wchmm [i/o] 木構造化辞書
+ * @param wchmm [i/o] �ڹ�¤������
  * </JA>
  * <EN>
  * Scan the whole lexicon tree to find already registered homophones, and
@@ -933,15 +933,15 @@ wchmm_duplicate_leafnode(WCHMM_INFO *wchmm)
 
 /** 
  * <JA>
- * 木構造化辞書に新たに単語を追加する. 追加場所の情報として，現在の木構造化
- * 辞書内で最もその単語と先頭から良くマッチする単語，およびそのマッチする長さ
- * を指定する. 
+ * �ڹ�¤������˿�����ñ����ɲä���. �ɲþ��ξ���Ȥ��ơ����ߤ��ڹ�¤��
+ * ������ǺǤ⤽��ñ�����Ƭ�����ɤ��ޥå�����ñ�졤����Ӥ��Υޥå�����Ĺ��
+ * ����ꤹ��. 
  * 
- * @param wchmm [i/o] 木構造化辞書
- * @param word [in] 追加する辞書単語のID
- * @param matchlen [in] @a word と @a matchword の先頭からマッチする音素長
- * @param matchword [in] 既存の木構造化辞書中で @a word と最もマッチする単語
- * @param enable_iwsp [in] 単語間ショートポーズ機能使用時TRUEを指定
+ * @param wchmm [i/o] �ڹ�¤������
+ * @param word [in] �ɲä��뼭��ñ���ID
+ * @param matchlen [in] @a word �� @a matchword ����Ƭ����ޥå����벻��Ĺ
+ * @param matchword [in] ��¸���ڹ�¤��������� @a word �ȺǤ�ޥå�����ñ��
+ * @param enable_iwsp [in] ñ��֥��硼�ȥݡ�����ǽ���ѻ�TRUE�����
  * </JA>
  * <EN>
  * Add a new word to the lexicon tree.  The longest matched word in the current
@@ -1390,10 +1390,10 @@ wchmm_add_word(WCHMM_INFO *wchmm, int word, int matchlen, int matchword, boolean
 
 /** 
  * <JA>
- * 木構造化辞書を走査し，単語の終端状態から外への次遷移確率のリストを作成する. 
+ * �ڹ�¤���������������ñ��ν�ü���֤��鳰�ؤμ����ܳ�Ψ�Υꥹ�Ȥ��������. 
  * (non multipath)
  * 
- * @param wchmm [i/o] 木構造化辞書
+ * @param wchmm [i/o] �ڹ�¤������
  * </JA>
  * <EN>
  * Scan the lexicon tree to make list of emission probability from the word end
@@ -1424,12 +1424,12 @@ wchmm_calc_wordend_arc(WCHMM_INFO *wchmm)
 
 /** 
  * <JA>
- * unigram確率でソートするための qsort コールバック関数. 
+ * unigram��Ψ�ǥ����Ȥ��뤿��� qsort ������Хå��ؿ�. 
  * 
- * @param a [in] 要素1
- * @param b [in] 要素2
+ * @param a [in] ����1
+ * @param b [in] ����2
  * 
- * @return 演算の結果の符合を返す. 
+ * @return �黻�η�̤������֤�. 
  * </JA>
  * <EN>
  * qsort callback function to sort unigram values.
@@ -1450,12 +1450,12 @@ compare_prob(LOGPROB *a, LOGPROB *b)
 
 /** 
  * <JA>
- * 1-gramスコアの上位 N 番目の値を求める. 
+ * 1-gram�������ξ�� N ���ܤ��ͤ����. 
  * 
- * @param winfo [in] 単語辞書
- * @param n [in] 求める順位
+ * @param winfo [in] ñ�켭��
+ * @param n [in] ������
  * 
- * @return 上位 N 番目の uni-gram 確率の値を返す. 
+ * @return ��� N ���ܤ� uni-gram ��Ψ���ͤ��֤�. 
  * </JA>
  * <EN>
  * Get the Nth-best unigram probability from all words.
@@ -1519,12 +1519,12 @@ get_nbest_uniprob(WCHMM_INFO *wchmm, int n)
 
 /** 
  * <JA>
- * 与えられた単語辞書と言語モデルから木構造化辞書を構築する. この関数は
- * 処理が遅く，Julianで"-oldtree"オプション指定時のみ使用されます. オプション
- * 非指定時およびJuliusでは代わりに build_wchmm2() が用いられます. 
+ * Ϳ����줿ñ�켭��ȸ����ǥ뤫���ڹ�¤��������ۤ���. ���δؿ���
+ * �������٤���Julian��"-oldtree"���ץ���������Τ߻��Ѥ���ޤ�. ���ץ����
+ * �����������Julius�Ǥ������ build_wchmm2() ���Ѥ����ޤ�. 
  * 
- * @param wchmm [i/o] 木構造化辞書
- * @param lmconf [in] 言語モデル(LM)設定パラメータ
+ * @param wchmm [i/o] �ڹ�¤������
+ * @param lmconf [in] �����ǥ�(LM)����ѥ�᡼��
  * </JA>
  * <EN>
  * Build a tree lexicon from given word dictionary and language model.
@@ -1563,8 +1563,8 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
   ok_p = TRUE;
   
 #ifdef SEPARATE_BY_UNIGRAM
-  /* 上位[separate_wnum]番目の1-gramスコアを求める */
-  /* 1-gramスコアがこの値以上のものは木から分ける */
+  /* ���[separate_wnum]���ܤ�1-gram����������� */
+  /* 1-gram�������������Ͱʾ�Τ�Τ��ڤ���ʬ���� */
   separate_thres = get_nbest_uniprob(wchmm, lmconf->separate_wnum);
 #endif
 
@@ -1572,7 +1572,7 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
 #ifndef USE_OLD_IWCD
   if (wchmm->category_tree) {
     if (wchmm->ccd_flag) {
-      /* 全てのカテゴリID付き lcd_set を作成 */
+      /* ���ƤΥ��ƥ���ID�դ� lcd_set ����� */
       lcdset_register_with_category_all(wchmm);
     }
   }
@@ -1580,10 +1580,10 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
 #endif /* PASS1_IWCD */
   
 
-  /* wchmmを初期化 */
+  /* wchmm������ */
   wchmm_init(wchmm);
 
-  /* カウンタリセット */
+  /* �����󥿥ꥻ�å� */
   wchmm->separated_word_count=0;
 
   jlog("STAT: wchmm: Building HMM lexicon tree (left-to-right)\n");
@@ -1591,9 +1591,9 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
 
     if (wchmm->lmtype == LM_PROB) {
       if (i == wchmm->winfo->head_silwid || i == wchmm->winfo->tail_silwid) {
-	/* 先頭/末尾の無音モデルは木構造化せず，
-	 * 先頭の無音単語の先頭への遷移，末尾単語の末尾からの遷移は作らない*/
-	/* sharelen=0でそのまま */
+	/* ��Ƭ/������̵����ǥ���ڹ�¤��������
+	 * ��Ƭ��̵��ñ�����Ƭ�ؤ����ܡ�����ñ���������������ܤϺ��ʤ�*/
+	/* sharelen=0�Ǥ��Τޤ� */
 	if (wchmm_add_word(wchmm, i, 0, 0, lmconf->enable_iwsp) == FALSE) {
 	  jlog("ERROR: wchmm: failed to add word #%d to lexicon tree\n");
 	  ok_p = FALSE;
@@ -1602,8 +1602,8 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
       }
 #ifndef NO_SEPARATE_SHORT_WORD
       if (wchmm->winfo->wlen[i] <= SHORT_WORD_LEN) {
-	/* 長さの短い単語を木構造化しない(ここでは1音節) */
-	/* sharelen=0でそのまま */
+	/* Ĺ����û��ñ����ڹ�¤�����ʤ�(�����Ǥ�1����) */
+	/* sharelen=0�Ǥ��Τޤ� */
 	if (wchmm_add_word(wchmm, i, 0, 0, lmconf->enable_iwsp) == FALSE) {
 	  jlog("ERROR: wchmm: failed to add word #%d to lexicon tree\n");
 	  ok_p = FALSE;
@@ -1626,8 +1626,8 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
 	p = (*(wchmm->uni_prob_user))(wchmm->winfo, i, p);
       }
       if (p >= separate_thres && wchmm->separated_word_count < lmconf->separate_wnum) {
-	/* 頻度の高い単語を木構造化しない */
-	/* separate_thres は上位separate_wnum番目のスコア */
+	/* ���٤ι⤤ñ����ڹ�¤�����ʤ� */
+	/* separate_thres �Ͼ��separate_wnum���ܤΥ����� */
 	if (wchmm_add_word(wchmm, i, 0, 0, lmconf->enable_iwsp) == FALSE) {
 	  jlog("ERROR: wchmm: failed to add word #%d to lexicon tree\n");
 	  ok_p = FALSE;
@@ -1638,7 +1638,7 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
 #endif
     }
 
-    /* 最も長く音素を共有出来る単語を探す */
+    /* �Ǥ�Ĺ�����Ǥ�ͭ�����ñ���õ�� */
     maxsharelen=0;
     for (j=0;j<i;j++) {
       if (wchmm->category_tree  && wchmm->lmtype == LM_DFA) {
@@ -1646,8 +1646,8 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
       }
       sharelen = wchmm_check_match(wchmm->winfo, i, j);
       if (sharelen == wchmm->winfo->wlen[i] && sharelen == wchmm->winfo->wlen[j]) {
-       /* word に同音語が存在する */
-       /* 必ず最大の長さであり，重複カウントを避けるためここで抜ける */
+       /* word ��Ʊ���줬¸�ߤ��� */
+       /* ɬ�������Ĺ���Ǥ��ꡤ��ʣ������Ȥ��򤱤뤿�ᤳ����ȴ���� */
        maxsharelen = sharelen;
        matchword = j;
        break;
@@ -1664,7 +1664,7 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
   }
 
 #if 0
-  /* 木構造を作らない */
+  /* �ڹ�¤����ʤ� */
   for (i=0;i<wchmm->winfo->num;i++) {
     if (wchmm_add_word(wchmm, i, 0, 0, lmconf->enable_iwsp) == FALSE) {
       jlog("ERROR: wchmm: failed to add word #%d to lexicon tree\n");
@@ -1675,23 +1675,23 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
   jlog("STAT:  %5d words ended     (%6d nodes)\n",i,wchmm->n);
 
   if (! wchmm->hmminfo->multipath) {
-    /* 同一音素系列を持つ単語同士の leaf node を2重化して区別する */
+    /* Ʊ�첻�Ƿ�������ñ��Ʊ�Τ� leaf node ��2�Ų����ƶ��̤��� */
     num_duplicated = wchmm_duplicate_leafnode(wchmm);
     jlog("STAT:  %d leaf nodes are made unshared\n", num_duplicated);
     
-    /* 単語の終端から外への遷移確率を求めておく */
+    /* ñ��ν�ü���鳰�ؤ����ܳ�Ψ����Ƥ��� */
     wchmm_calc_wordend_arc(wchmm);
   }
 
-  /* wchmmの整合性をチェックする */
+  /* wchmm��������������å����� */
   check_wchmm(wchmm);
 
-  /* factoring用に各状態に後続単語のリストを付加する */
+  /* factoring�Ѥ˳ƾ��֤˸�³ñ��Υꥹ�Ȥ��ղä��� */
   if (!wchmm->category_tree) {
 
 #ifdef UNIGRAM_FACTORING
     if (wchmm->lmtype == LM_PROB) {
-      /* 同時に前もってfactoring値を計算 */
+      /* Ʊ��������ä�factoring�ͤ�׻� */
       make_successor_list_unigram_factoring(wchmm);
       jlog("STAT:  1-gram factoring values has been pre-computed\n");
     } else {
@@ -1702,13 +1702,13 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
 #endif /* UNIGRAM_FACTORING */
     
     if (wchmm->hmminfo->multipath) {
-      /* 構築された factoring 情報をスキップ遷移および文頭文法ノードにコピー */
+      /* ���ۤ��줿 factoring ����򥹥��å����ܤ����ʸƬʸˡ�Ρ��ɤ˥��ԡ� */
       adjust_sc_index(wchmm);
     }
     
 #ifdef UNIGRAM_FACTORING
     if (wchmm->lmtype == LM_PROB) {
-      /* 単語間LMキャッシュが必要なノードのリストを作る */
+      /* ñ���LM����å��夬ɬ�פʥΡ��ɤΥꥹ�Ȥ��� */
       make_iwcache_index(wchmm);
     }
 #endif /* UNIGRAM_FACTORING */
@@ -1722,14 +1722,14 @@ build_wchmm(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
 
 /** 
  * <JA>
- * 与えられた単語辞書と言語モデルから木構造化辞書を構築する. 
- * この関数は bulid_wchmm() と同じ処理を行いますが，
- * 最初に単語を音素列でソートして音素列の似た順に単語を並べるため，
- * より高速に木構造化を行うことができる. とくにオプション指定をしない
- * 限り，Julius/Julianではこちらが用いられる. 
+ * Ϳ����줿ñ�켭��ȸ����ǥ뤫���ڹ�¤��������ۤ���. 
+ * ���δؿ��� bulid_wchmm() ��Ʊ��������Ԥ��ޤ�����
+ * �ǽ��ñ�������ǥ����Ȥ��Ʋ�����λ������ñ����¤٤뤿�ᡤ
+ * ����®���ڹ�¤����Ԥ����Ȥ��Ǥ���. �Ȥ��˥��ץ�������򤷤ʤ�
+ * �¤ꡤJulius/Julian�ǤϤ����餬�Ѥ�����. 
  * 
- * @param wchmm [i/o] 木構造化辞書
- * @param lmconf [in] 言語モデル(LM)設定パラメータ
+ * @param wchmm [i/o] �ڹ�¤������
+ * @param lmconf [in] �����ǥ�(LM)����ѥ�᡼��
  * </JA>
  * <EN>
  * Build a tree lexicon from given word dictionary and language model.
@@ -2066,9 +2066,9 @@ build_wchmm2(WCHMM_INFO *wchmm, JCONF_LM *lmconf)
 
 /** 
  * <JA>
- * 木構造化辞書のサイズなどの情報を標準出力に出力する. 
+ * �ڹ�¤������Υ������ʤɤξ����ɸ����Ϥ˽��Ϥ���. 
  * 
- * @param wchmm [in] 木構造化辞書
+ * @param wchmm [in] �ڹ�¤������
  * </JA>
  * <EN>
  * Output some specifications of the tree lexicon (size etc.) to stdout.

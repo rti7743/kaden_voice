@@ -1,8 +1,8 @@
-﻿/**
+/**
  * @file   endian.c
  * 
  * <JA>
- * @brief  バイトオーダー変換
+ * @brief  �Х��ȥ��������Ѵ�
  * </JA>
  * 
  * <EN>

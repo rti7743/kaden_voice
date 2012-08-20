@@ -1,4 +1,4 @@
-﻿/*
+/*
  * $Id: pa_process.c,v 1.1 2011/02/05 09:00:02 sumomo Exp $
  * Portable Audio I/O Library
  * streamCallback <-> host buffer processing adapter

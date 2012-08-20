@@ -7,7 +7,6 @@
 #include "Speak_Factory.h"
 #include "Speak_AquesTalk.h"
 #include "MainWindow.h"
-#include "XLHttpRequerst.h"
 #include "XLStringUtil.h"
 #include "XLFileUtil.h"
 #include "XLSoundPlay.h"

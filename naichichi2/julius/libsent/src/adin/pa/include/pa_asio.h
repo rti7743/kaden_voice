@@ -1,4 +1,4 @@
-﻿#ifndef PA_ASIO_H
+#ifndef PA_ASIO_H
 #define PA_ASIO_H
 /*
  * $Id: pa_asio.h,v 1.1 2011/02/05 09:00:03 sumomo Exp $

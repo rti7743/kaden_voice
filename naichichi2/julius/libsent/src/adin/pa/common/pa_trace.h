@@ -1,4 +1,4 @@
-﻿#ifndef PA_TRACE_H
+#ifndef PA_TRACE_H
 #define PA_TRACE_H
 /*
  * $Id: pa_trace.h,v 1.1 2011/02/05 09:00:02 sumomo Exp $

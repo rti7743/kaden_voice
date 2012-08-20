@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file   instance.c
  * 
  * <EN>
@@ -6,7 +6,7 @@
  * </EN>
  * 
  * <JA>
- * @brief  各種インスタンスの割り付けおよび開放
+ * @brief  �Ƽ磻�󥹥��󥹤γ���դ�����ӳ���
  * </JA>
  * 
  * @author Akinobu Lee
@@ -29,7 +29,7 @@
  * Allocate a new MFCC calculation instance
  * </EN>
  * <JA>
- * MFCC計算インスタンスを新たに割り付ける. 
+ * MFCC�׻����󥹥��󥹤򿷤��˳���դ���. 
  * </JA>
  * 
  * @param amconf [in] acoustic model configuration parameters
@@ -80,7 +80,7 @@ j_mfcccalc_new(JCONF_AM *amconf)
  * Free an MFCC calculation instance.
  * </EN>
  * <JA>
- * MFCC計算インスタンスを開放する
+ * MFCC�׻����󥹥��󥹤�������
  * </JA>
  * 
  * @param mfcc [i/o] MFCC calculation instance
@@ -109,7 +109,7 @@ j_mfcccalc_free(MFCCCalc *mfcc)
  * Allocate a new acoustic model processing instance.
  * </EN>
  * <JA>
- * 音響モデル計算インスタンスを新たに割り付ける. 
+ * ������ǥ�׻����󥹥��󥹤򿷤��˳���դ���. 
  * </JA>
  *
  * @param recog [i/o] engine instance
@@ -149,7 +149,7 @@ j_process_am_new(Recog *recog, JCONF_AM *amconf)
  * Free an acoustic model processing instance.
  * </EN>
  * <JA>
- * 音響モデル計算インスタンスを開放する. 
+ * ������ǥ�׻����󥹥��󥹤�������. 
  * </JA>
  * 
  * @param am [i/o] AM process instance
@@ -173,7 +173,7 @@ j_process_am_free(PROCESS_AM *am)
  * Allocate a new language model processing instance.
  * </EN>
  * <JA>
- * 言語モデル計算インスタンスを新たに割り付ける. 
+ * �����ǥ�׻����󥹥��󥹤򿷤��˳���դ���. 
  * </JA>
  *
  * @param recog [i/o] engine instance
@@ -219,7 +219,7 @@ j_process_lm_new(Recog *recog, JCONF_LM *lmconf)
  * Free a language model processing instance.
  * </EN>
  * <JA>
- * 言語モデル計算インスタンスを開放する. 
+ * �����ǥ�׻����󥹥��󥹤�������. 
  * </JA>
  * 
  * @param lm [i/o] LM process instance
@@ -243,7 +243,7 @@ j_process_lm_free(PROCESS_LM *lm)
  * Allocate a new recognition process instance.
  * </EN>
  * <JA>
- * 認識処理インスタンスを新たに生成する. 
+ * ǧ���������󥹥��󥹤򿷤�����������. 
  * </JA>
  *
  * @param recog [i/o] engine instance
@@ -286,7 +286,7 @@ j_recogprocess_new(Recog *recog, JCONF_SEARCH *sconf)
  * Free a recognition process instance
  * </EN>
  * <JA>
- * 認識処理インスタンスを開放する. 
+ * ǧ���������󥹥��󥹤�������. 
  * </JA>
  * 
  * @param process [i/o] recognition process instance
@@ -319,8 +319,8 @@ j_recogprocess_free(RecogProcess *process)
  * Default parameter values are set to it.
  * </EN>
  * <JA>
- * 音響モデル(AM)パラメータ構造体を新たに割り付ける.
- * 内部メンバにはデフォルト値が格納される.
+ * ������ǥ�(AM)�ѥ�᡼����¤�Τ򿷤��˳���դ���.
+ * �������Фˤϥǥե�����ͤ���Ǽ�����.
  * </JA>
  * 
  * @return the newly allocated AM parameter structure
@@ -345,8 +345,8 @@ j_jconf_am_new()
  * Default parameter values are set to it.
  * </EN>
  * <JA>
- * 音響モデル(AM)パラメータ構造体を解放する. 
- * 内部メンバにはデフォルト値が格納される. 
+ * ������ǥ�(AM)�ѥ�᡼����¤�Τ��������. 
+ * �������Фˤϥǥե�����ͤ���Ǽ�����. 
  * </JA>
  * 
  * @param amconf [in] AM configuration
@@ -368,8 +368,8 @@ j_jconf_am_free(JCONF_AM *amconf)
  * Returns error if the same name already exist in the jconf.
  * </EN>
  * <JA>
- * 音響モデル(AM)パラメータ構造体を jconf に登録する．
- * jconf内に同じ名前のモジュールが既に登録されている場合はエラーとなる．
+ * ������ǥ�(AM)�ѥ�᡼����¤�Τ� jconf ����Ͽ���롥
+ * jconf���Ʊ��̾���Υ⥸�塼�뤬������Ͽ����Ƥ�����ϥ��顼�Ȥʤ롥
  * </JA>
  * 
  * @param jconf [i/o] global jconf
@@ -423,8 +423,8 @@ j_jconf_am_regist(Jconf *jconf, JCONF_AM *amconf, char *name)
  * Default parameter values are set to it.
  * </EN>
  * <JA>
- * 言語モデル (LM) パラメータ構造体を新たに割り付ける
- * 内部メンバにはデフォルト値が格納される. 
+ * �����ǥ� (LM) �ѥ�᡼����¤�Τ򿷤��˳���դ���
+ * �������Фˤϥǥե�����ͤ���Ǽ�����. 
  * </JA>
  * 
  * @return the newly allocated LM parameter structure.
@@ -448,7 +448,7 @@ j_jconf_lm_new()
  * Release a language model (LM) parameter structure
  * </EN>
  * <JA>
- * 言語モデル (LM) パラメータ構造体を解放する
+ * �����ǥ� (LM) �ѥ�᡼����¤�Τ��������
  * </JA>
  * 
  * @param lmconf [in] LM parameter structure
@@ -485,8 +485,8 @@ j_jconf_lm_free(JCONF_LM *lmconf)
  * Returns error if the same name already exist in the jconf.
  * </EN>
  * <JA>
- * 言語モデル(LM)パラメータ構造体を jconf に登録する．
- * jconf内に同じ名前のモジュールが既に登録されている場合はエラーとなる．
+ * �����ǥ�(LM)�ѥ�᡼����¤�Τ� jconf ����Ͽ���롥
+ * jconf���Ʊ��̾���Υ⥸�塼�뤬������Ͽ����Ƥ�����ϥ��顼�Ȥʤ롥
  * </JA>
  * 
  * @param jconf [i/o] global jconf
@@ -540,8 +540,8 @@ j_jconf_lm_regist(Jconf *jconf, JCONF_LM *lmconf, char *name)
  * Default parameter values are set to it.
  * </EN>
  * <JA>
- * 探索パラメータ(SEARCH)構造体を新たに割り付ける. 
- * 内部メンバにはデフォルト値が格納される. 
+ * õ���ѥ�᡼��(SEARCH)��¤�Τ򿷤��˳���դ���. 
+ * �������Фˤϥǥե�����ͤ���Ǽ�����. 
  * </JA>
  * 
  * @return the newly allocated SEARCH parameter structure.
@@ -565,7 +565,7 @@ j_jconf_search_new()
  * Release a search (SEARCH) parameter structure
  * </EN>
  * <JA>
- * 探索パラメータ(SEARCH)構造体を解放する
+ * õ���ѥ�᡼��(SEARCH)��¤�Τ��������
  * </JA>
  * 
  * @param sconf [in] SEARCH parameter structure
@@ -587,8 +587,8 @@ j_jconf_search_free(JCONF_SEARCH *sconf)
  * Returns error if the same name already exist in the jconf.
  * </EN>
  * <JA>
- * 探索(SEARCH)パラメータ構造体を jconf に登録する．
- * jconf内に同じ名前のモジュールが既に登録されている場合はエラーとなる．
+ * õ��(SEARCH)�ѥ�᡼����¤�Τ� jconf ����Ͽ���롥
+ * jconf���Ʊ��̾���Υ⥸�塼�뤬������Ͽ����Ƥ�����ϥ��顼�Ȥʤ롥
  * </JA>
  * 
  * @param jconf [i/o] global jconf
@@ -643,11 +643,11 @@ j_jconf_search_regist(Jconf *jconf, JCONF_SEARCH *sconf, char *name)
  * 
  * </EN>
  * <JA>
- * @brief  全体のパラメータ構造体を新たに割り付ける. 
+ * @brief  ���ΤΥѥ�᡼����¤�Τ򿷤��˳���դ���. 
  *
- * JCONF_AM, JCONF_LM, JCONF_SEARCHも１つづつ割り当てられる. 
- * これらは -AM 等の指定を含まない 3.x 以前の jconf を読み込んだときに，
- * そのまま用いられる. 
+ * JCONF_AM, JCONF_LM, JCONF_SEARCH�⣱�ĤŤĳ�����Ƥ���. 
+ * ������ -AM ���λ����ޤޤʤ� 3.x ������ jconf ���ɤ߹�����Ȥ��ˡ�
+ * ���Τޤ��Ѥ�����. 
  * 
  * </JA>
  * 
@@ -698,9 +698,9 @@ j_jconf_new()
  * 
  * </EN>
  * <JA>
- * @brief  全体のパラメータ構造体を開放する. 
+ * @brief  ���ΤΥѥ�᡼����¤�Τ�������. 
  *
- * JCONF_AM, JCONF_LM, JCONF_SEARCHもすべて開放される. 
+ * JCONF_AM, JCONF_LM, JCONF_SEARCH�⤹�٤Ƴ��������. 
  * 
  * </JA>
  * 
@@ -745,7 +745,7 @@ j_jconf_free(Jconf *jconf)
  * Allocate memory for a new engine instance.
  * </EN>
  * <JA>
- * エンジンインスタンスを新たにメモリ割り付けする. 
+ * ���󥸥󥤥󥹥��󥹤򿷤��˥������դ�����. 
  * </JA>
  * 
  * @return the newly allocated engine instance.
@@ -797,9 +797,9 @@ j_recog_new()
  * All allocated memories in the instance will be also released.
  * </EN>
  * <JA>
- * @brief  エンジンインスタンスを開放する
+ * @brief  ���󥸥󥤥󥹥��󥹤�������
  *
- * インスタンス内でこれまでにアロケートされた全てのメモリも開放される. 
+ * ���󥹥�����Ǥ���ޤǤ˥��������Ȥ��줿���ƤΥ���Ⳬ�������. 
  * </JA>
  * 
  * @param recog [in] engine instance.

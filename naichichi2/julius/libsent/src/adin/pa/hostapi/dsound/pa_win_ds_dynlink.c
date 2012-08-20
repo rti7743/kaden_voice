@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Interface for dynamically loading directsound and providing a dummy
  * implementation if it isn't present.
  *

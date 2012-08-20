@@ -1,5 +1,10 @@
 -gram __temp__regexp_test_file
 -C hmm_ptm.jconf
--input rawfile -demo
+-input rawfile
 -rejectshort 10
--n 14 -output 14
+-n 7 -output 7
+-sb 100
+-nopausesegment
+-nostrip
+-gprune beam
+-notypecheck

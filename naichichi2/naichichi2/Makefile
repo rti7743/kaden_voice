@@ -33,14 +33,18 @@ Recognition_JuliusPlus.o \
 Recognition_JuliusPlusRule.o \
 ScriptManager.o \
 ScriptRunner.o \
+ScriptWebRunner.o \
+WebMenu.o \
+Callbackable.o \
 Speak_Factory.o \
 Speak_GoogleTranslate.o \
 TriggerManager.o \
-WebMenu.o \
 XLDebugUtil.o \
 XLFileUtil.o \
+XLException.o \
+XLSocket.o \
 XLHttpHeader.o \
-XLHttpRequerst.o \
+XLHttpSocket.o \
 XLStringUtil.o \
 XLSoundPlay.o \
 XLUrlParser.o 
