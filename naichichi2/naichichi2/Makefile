@@ -1,6 +1,7 @@
 CC=gcc
 CXX=g++
-FPUHINT=-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -mabi=aapcs-linux -fforce-addr -fomit-frame-pointer -fstrength-reduce
+#FPUHINT=-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -mabi=aapcs-linux -fforce-addr -fomit-frame-pointer -fstrength-reduce
+FPUHINT=
 CFLAGS=-g -Os $(FPUHINT)
 
 CPPFLAGS= \
