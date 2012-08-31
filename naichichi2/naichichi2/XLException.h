@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 
+//UTF-8 BOMいれた
 //xreturn::error として使ってね。
 class XLException : public std::exception {
 protected:
