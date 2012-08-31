@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef _MSC_VER
 #endif
@@ -7,8 +7,9 @@
 #include <iostream>
 #include <sstream>
 
-//UTF-8 BOMいれた
-//xreturn::error として使ってね。
+//UTF-8 BOMいれた...
+//xreturn::error として使ってね。 ......
+//
 class XLException : public std::exception {
 protected:
 	std::string message; //
