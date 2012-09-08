@@ -18,7 +18,7 @@ void ScriptWebRunner::Create(MainWindow * poolMainWindow)
 	this->PoolMainWindow = poolMainWindow;
 }
 
-xreturn::r<bool> ScriptWebRunner::Load()
+bool ScriptWebRunner::Load()
 {
 	//設定を読み込んで
 	const auto configmap = this->PoolMainWindow->Config.FindGetsToMap("elec_",false);
@@ -43,7 +43,10 @@ xreturn::r<bool> ScriptWebRunner::Load()
 			{
 				continue;
 			}
-
+			if (commandIT->second.empty())
+			{
+				continue;
+			}
 
 			this->PoolMainWindow->SyncInvoke([=](){
 				auto xr = this->PoolMainWindow->Recognition.AddCommandRegexp( this->CreateCallback( key1,key2 ) , commandIT->second);
@@ -56,8 +59,34 @@ xreturn::r<bool> ScriptWebRunner::Load()
 	return true;
 }
 
+//インスタンスの再読み込み
+//プログラムをデバッグしているときとか、再読み込み機能がないと死ねるから・・・
+bool ScriptWebRunner::Reload()
+{
+	this->PoolMainWindow->SyncInvoke( [=](){
+		for(auto it = this->callbackHistoryList.begin() ; it != this->callbackHistoryList.end() ; ++it)
+		{
+			if (this->PoolMainWindow->Recognition.RemoveCallback(*it,false))
+			{
+				break;	
+			}
+			if (this->PoolMainWindow->Speak.RemoveCallback(*it,false))
+			{
+				break;	
+			}
+		}
+		Load();
 
-xreturn::r<std::string> ScriptWebRunner::callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match)
+		this->PoolMainWindow->SyncInvokeLog("音声認識エンジンコミット開始",LOG_LEVEL_DEBUG);
+		this->PoolMainWindow->Recognition.CommitRule();
+		this->PoolMainWindow->SyncInvokeLog("音声認識エンジンコミット終了",LOG_LEVEL_DEBUG);
+		return ;
+	} );
+
+	return true;
+}
+
+std::string ScriptWebRunner::callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match)
 {
 	fireAction( callback->getFunc() , callback->getFunc2() );
 	return std::string("");
@@ -152,12 +181,7 @@ void ScriptWebRunner::fireAction(int key1,int key2)  const
 			runner.LoadScript(fullpath);
 
 			const std::list<std::string> args;
-			auto r = runner.callFunction("call",args,true);
-			if (!r)
-			{
-//				return luaL_errorHelper(L,lua_funcdump(L,"execute") + "がエラーになりました。 " + r.getFullErrorMessage() );
-				return ;
-			}
+			runner.callFunction("call",args,true);
 		}
 		else
 		{
@@ -216,34 +240,34 @@ std::string ScriptWebRunner::remocon_fire_byid(const XLHttpHeader& httpHeaders,W
 }
 
 //実行!!
-std::string ScriptWebRunner::remocon_fire_byname(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+std::string ScriptWebRunner::remocon_fire_bytype(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
 {
 	const std::map<std::string,std::string> request = httpHeaders.getRequest();
 	{
-		//name1=hogehoge&name2=hogehoge
-		auto name1IT = request.find("name1");
-		if (name1IT == request.end())
+		//type1=hogehoge&type2=hogehoge
+		auto type1IT = request.find("type1");
+		if (type1IT == request.end())
 		{
-			return RemoconStatusError(20001 , "name1が見つかりません");
+			return RemoconStatusError(20001 , "type1が見つかりません");
 		}
 
-		auto name2IT = request.find("name2");
-		if (name2IT == request.end())
+		auto type2IT = request.find("type2");
+		if (type2IT == request.end())
 		{
-			return RemoconStatusError(20003 , "name2が見つかりません");
+			return RemoconStatusError(20003 , "type2が見つかりません");
 		}
 
 		int key1 = -1;
 		const auto configmap = this->PoolMainWindow->Config.FindGetsToMap("elec_",false);
 		for(auto it = configmap.begin() ; it != configmap.end() ; ++it )
 		{
-			if ( it->second == name1IT->second )
+			if ( it->second == type1IT->second )
 			{
-				if ( ! strstr( it->first.c_str() , "_name" ) && !strstr( it->first.c_str() , "_action_" ) )
+				if ( ! strstr( it->first.c_str() , "_type" ) && !strstr( it->first.c_str() , "_action_" ) )
 				{
 					continue;
 				}
-				sscanf(it->first.c_str(),"elec_%d_name",&key1);
+				sscanf(it->first.c_str(),"elec_%d_type",&key1);
 				break;
 			}
 		}
@@ -256,13 +280,13 @@ std::string ScriptWebRunner::remocon_fire_byname(const XLHttpHeader& httpHeaders
 		const std::string prefix = "elec_" + num2str(key1) + "_action_";
 		for(auto it = configmap.begin() ; it != configmap.end() ; ++it )
 		{
-			if ( it->second == name2IT->second )
+			if ( it->second == type2IT->second )
 			{
-				if ( ! strstr( it->first.c_str() , "_name" ) && strstr( it->first.c_str() , prefix.c_str() ) )
+				if ( ! strstr( it->first.c_str() , "_type" ) && strstr( it->first.c_str() , prefix.c_str() ) )
 				{
 					continue;
 				}
-				sscanf(it->first.c_str(),"elec_%d_action_%d_name",&key1,&key2);
+				sscanf(it->first.c_str(),"elec_%d_action_%d_type",&key1,&key2);
 				break;
 			}
 		}
@@ -345,7 +369,7 @@ std::string ScriptWebRunner::remocon_update_elec_action_order(const XLHttpHeader
 }
 
 //家電を消す
-std::string ScriptWebRunner::remocon_delete_elec(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+std::string ScriptWebRunner::remocon_delete_elec(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) 
 {
 	const std::map<std::string,std::string> request = httpHeaders.getRequest();
 	{
@@ -370,12 +394,14 @@ std::string ScriptWebRunner::remocon_delete_elec(const XLHttpHeader& httpHeaders
 			this->PoolMainWindow->Config.Remove( it->first.c_str() );
 		}
 
+		Reload();
+
 		return this->RemoconStatus();
 	}
 }
 
 //家電の操作を消す
-std::string ScriptWebRunner::remocon_delete_elec_action(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+std::string ScriptWebRunner::remocon_delete_elec_action(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result)
 {
 	const std::map<std::string,std::string> request = httpHeaders.getRequest();
 
@@ -412,6 +438,8 @@ std::string ScriptWebRunner::remocon_delete_elec_action(const XLHttpHeader& http
 			this->PoolMainWindow->Config.Remove( it->first.c_str() );
 		}
 
+		Reload();
+
 		return this->RemoconStatus();
 	}
 }
@@ -422,7 +450,7 @@ std::string ScriptWebRunner::RemoconStatusError(int code ,std::string msg)  cons
 {
 	_USE_WINDOWS_ENCODING;
 
-	const std::string jsonstring = std::string("{ status: \"error\" , code: ") + num2str(code)  + ", msg: \"" + XLStringUtil::htmlspecialchars_low(msg) + "\"}";
+	const std::string jsonstring = std::string("{ \"status\": \"error\" , \"code\": ") + num2str(code)  + ", \"message\": \"" + XLStringUtil::htmlspecialchars_low(msg) + "\"}";
 #ifdef _WINDOWS
 	return _A2U(jsonstring.c_str());
 #else
@@ -526,20 +554,20 @@ std::string ScriptWebRunner::RemoconStatus()  const
 	{
 		for(auto arrayIT = (*it)->arraykeys.begin() ; arrayIT != (*it)->arraykeys.end() ; ++arrayIT )
 		{
-			jsonstring += std::string(",") + XLStringUtil::htmlspecialchars_low(arrayIT->first) + ": \"" + XLStringUtil::htmlspecialchars_low(arrayIT->second) + "\"";
+			jsonstring += std::string(",\"") + XLStringUtil::htmlspecialchars_low(arrayIT->first) + "\": \"" + XLStringUtil::htmlspecialchars_low(arrayIT->second) + "\"";
 		}
 		
 		for(auto itaction = (*it)->action.begin() ; itaction != (*it)->action.end() ; ++itaction )
 		{
 			for(auto arrayIT = (*itaction)->arraykeys.begin() ; arrayIT != (*itaction)->arraykeys.end() ; ++arrayIT )
 			{
-				jsonstring += std::string(",") + XLStringUtil::htmlspecialchars_low(arrayIT->first) + ": \"" + XLStringUtil::htmlspecialchars_low(arrayIT->second) + "\"";
+				jsonstring += std::string(",\"") + XLStringUtil::htmlspecialchars_low(arrayIT->first) + "\": \"" + XLStringUtil::htmlspecialchars_low(arrayIT->second) + "\"";
 			}
 			delete *itaction;
 		}
 		delete *it;
 	}
-	jsonstring = std::string("{ status: \"ok\"") + jsonstring + "}";
+	jsonstring = std::string("{ \"status\": \"ok\" ") + jsonstring + "}";
 
 #ifdef _WINDOWS
 	return _A2U(jsonstring.c_str());
@@ -579,19 +607,21 @@ int ScriptWebRunner::NewElecActionID(int eleckey) const
 	return max + 1;
 }
 
-//家電名が重複していないかどうか
-bool ScriptWebRunner::checkUniqElecName(int key1,const std::string& name) const
+//機材の種類が重複していたらエラー
+bool ScriptWebRunner::checkUniqElecType(int key1,const std::string& type) const
 {
 	const std::string prefix = std::string("elec_") ;
 	const auto configmap = this->PoolMainWindow->Config.FindGetsToMap(prefix,false);
+
+	//その他があるのでめんどい所
 	for(auto it = configmap.begin() ; it != configmap.end() ; ++it )
 	{
-		const int key = atoi( it->first.c_str() + prefix.size() );
-		if (key == key1)
+		const int targetkey = atoi( it->first.c_str() + prefix.size() );
+		if (targetkey == key1)
 		{//自分自身と重複している分にはいいわけで
 			continue;
 		}
-		if (!strstr(it->first.c_str(),"_name")  )
+		if (!strstr(it->first.c_str(),"_type")  )
 		{
 			continue;
 		}
@@ -599,45 +629,39 @@ bool ScriptWebRunner::checkUniqElecName(int key1,const std::string& name) const
 		{
 			continue;
 		}
-		if ( it->second == name )
-		{
+
+		if (it->second == type)
+		{//既に使われている!
 			return false;
 		}
 	}
 	return true;
 }
 
-//家電操作名が重複していないかどうか
-bool ScriptWebRunner::checkUniqElecActionName(int key1,int key2,const std::string& name) const
+//機材操作の種類が重複していたらエラー
+bool ScriptWebRunner::checkUniqElecActionType(int key1,int key2,const std::string& actiontype) const
 {
 	const std::string prefix = std::string("elec_") + num2str(key1) + "_action_";
 	const auto configmap = this->PoolMainWindow->Config.FindGetsToMap(prefix,false);
+
+	//その他があるのでめんどい所
 	for(auto it = configmap.begin() ; it != configmap.end() ; ++it )
 	{
-		const int key = atoi( it->first.c_str() + prefix.size() );
-		if (key == key2)
+		const int targetkey = atoi( it->first.c_str() + prefix.size() );
+		if (targetkey == key2)
 		{//自分自身と重複している分にはいいわけで
 			continue;
 		}
-		if (!strstr(it->first.c_str(),"_name"))
+		if (!strstr(it->first.c_str(),"_actiontype")  )
 		{
 			continue;
 		}
-		if ( it->second == name )
-		{
+
+		if (it->second == actiontype)
+		{//既に使われている!
 			return false;
 		}
 	}
-	return true;
-}
-
-bool ScriptWebRunner::checkUniqElecType(int key,const std::string& type,const std::string& type_other) const
-{
-	return true;
-}
-
-bool ScriptWebRunner::checkUniqElecActionType(int key1,int key2,const std::string& actiontype,const std::string& actiontype_other) const
-{
 	return true;
 }
 
@@ -682,8 +706,8 @@ int ScriptWebRunner::newOrderElecAction(int key1) const
 }
 
 //機材のアップデート
-//editable_key=123&name=名前&type=タイプ&type_other=タイプその他
-std::string ScriptWebRunner::remocon_update_elec(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+//editable_key=123&type=タイプ&type_other=タイプその他
+std::string ScriptWebRunner::remocon_update_elec(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) 
 {
 	const std::map<std::string,std::string> request = httpHeaders.getRequest();
 	{
@@ -706,35 +730,31 @@ std::string ScriptWebRunner::remocon_update_elec(const XLHttpHeader& httpHeaders
 		}
 		const auto prefix = std::string("elec_") + num2str(key)  ;
 
-		const std::string name = mapfind(request,"name");
-		if (! checkUniqElecName(key,name) )
-		{
-			return RemoconStatusError(10010 , "nameで設定しようとしている操作名称は既に使われています");
-		}
-
-		const std::string type = mapfind(request,"type");
-		const std::string type_other = mapfind(request,"type_other");
-		if (! checkUniqElecType(key,type,type_other) )
+		std::string type = mapfind(request,"type");
+		if (type == "" || type == "その他") type = mapfind(request,"type_other");
+		if (! checkUniqElecType(key,type) )
 		{
 			return RemoconStatusError(10020 , "typeで設定しようとしている操作種類は既に使われています");
 		}
+		const std::string elecicon = mapfind(request,"elecicon");
 
-		this->PoolMainWindow->Config.Set( prefix + "_name" , name );
 		this->PoolMainWindow->Config.Set( prefix + "_type" , type );
-		this->PoolMainWindow->Config.Set( prefix + "_type_other" , type_other );
+		this->PoolMainWindow->Config.Set( prefix + "_elecicon" , elecicon );
 
 		if (editable_key == "new")
 		{
 			this->PoolMainWindow->Config.Set( prefix + "_status" , "" );
 			this->PoolMainWindow->Config.Set( prefix + "_order" , num2str( newOrderElec() ) );
-		}		
+		}
+
+//		Reload();
 	}
 	return this->RemoconStatus();
 }
 
 //機材のアクション項目のアップデート
-//actioneditable_key1=123&actioneditable_key2=456&actionname=名前&actiontype=種類&actiontype_other=種類その他&actionvoice=1&actionvoice_command=こんぴゅーた&showremocon=1&useapi=1&useinternet=1&tospeak_select=ターゲット&tospeak_string=読み上げ文字列&tospeak_mp3=hoge.mp3&actionexecuteflag=赤外線&actionexecuteflag_ir=12345678910&actionexecuteflag_command=a.exe&actionexecuteflag_command_args1=&actionexecuteflag_command_args2=&actionexecuteflag_command_args3=&actionexecuteflag_command_args4=&actionexecuteflag_command_args5=
-std::string ScriptWebRunner::remocon_update_elec_action(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+//actioneditable_key1=123&actioneditable_key2=456&actiontype=種類&actiontype_other=種類その他&actionvoice=1&actionvoice_command=こんぴゅーた&showremocon=1&useapi=1&useinternet=1&tospeak_select=ターゲット&tospeak_string=読み上げ文字列&tospeak_mp3=hoge.mp3&actionexecuteflag=赤外線&actionexecuteflag_ir=12345678910&actionexecuteflag_command=a.exe&actionexecuteflag_command_args1=&actionexecuteflag_command_args2=&actionexecuteflag_command_args3=&actionexecuteflag_command_args4=&actionexecuteflag_command_args5=
+std::string ScriptWebRunner::remocon_update_elec_action(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) 
 {
 	const std::map<std::string,std::string> request = httpHeaders.getRequest();
 	{
@@ -763,18 +783,12 @@ std::string ScriptWebRunner::remocon_update_elec_action(const XLHttpHeader& http
 		}
 		const auto prefix = std::string("elec_") + num2str(key1) + "_action_" + num2str(key2) ;
 
+		std::string actiontype = mapfind(request,"actiontype");
+		if (actiontype == "" || actiontype == "その他") actiontype = mapfind(request,"actiontype_other");
 
-		const std::string actionname = mapfind(request,"actionname");
-		if (! checkUniqElecActionName(key1,key2,actionname) )
+		if (! checkUniqElecActionType(key1,key2,actiontype) )
 		{
-			return RemoconStatusError(20005 , "actionnameで設定しようとしている操作名称は既に使われています");
-		}
-
-		const std::string actiontype = mapfind(request,"actiontype");
-		const std::string actiontype_other = mapfind(request,"actiontype_other");
-		if (! checkUniqElecActionType(key1,key2,actiontype,actiontype_other) )
-		{
-			return RemoconStatusError(20005 , "actionnameで設定しようとしている操作名称は既に使われています");
+			return RemoconStatusError(20005 , "actiontypeで設定しようとしている操作名称は既に使われています");
 		}
 
 		const std::string actionvoice = mapfind(request,"actionvoice");
@@ -795,15 +809,16 @@ std::string ScriptWebRunner::remocon_update_elec_action(const XLHttpHeader& http
 		const std::string actionexecuteflag_command_args4 = mapfind(request,"actionexecuteflag_command_args4");
 		const std::string actionexecuteflag_command_args5 = mapfind(request,"actionexecuteflag_command_args5");
 
-		this->PoolMainWindow->Config.Set( prefix + "_actionname" , actionname );
+		const std::string old_actionvoice = this->PoolMainWindow->Config.Get( prefix + "_actionvoice","");
+		const std::string old_actionvoice_command = this->PoolMainWindow->Config.Get( prefix + "_actionvoice_command","");
+
 		this->PoolMainWindow->Config.Set( prefix + "_actiontype" , actiontype );
-		this->PoolMainWindow->Config.Set( prefix + "_actiontype_other" , actiontype_other );
 		this->PoolMainWindow->Config.Set( prefix + "_actionvoice" , actionvoice );
 		this->PoolMainWindow->Config.Set( prefix + "_actionvoice_command" , actionvoice_command );
 		this->PoolMainWindow->Config.Set( prefix + "_showremocon" , showremocon );
 		this->PoolMainWindow->Config.Set( prefix + "_useapi" , useapi );
 		this->PoolMainWindow->Config.Set( prefix + "_useinternet" , useinternet );
-		this->PoolMainWindow->Config.Set( prefix + "_topeak" , tospeak );
+		this->PoolMainWindow->Config.Set( prefix + "_tospeak" , tospeak );
 		this->PoolMainWindow->Config.Set( prefix + "_tospeak_select" , tospeak_select );
 		this->PoolMainWindow->Config.Set( prefix + "_tospeak_string" , tospeak_string );
 		this->PoolMainWindow->Config.Set( prefix + "_tospeak_mp3" , tospeak_mp3 );
@@ -815,9 +830,25 @@ std::string ScriptWebRunner::remocon_update_elec_action(const XLHttpHeader& http
 		this->PoolMainWindow->Config.Set( prefix + "_actionexecuteflag_command_args3" , actionexecuteflag_command_args3 );
 		this->PoolMainWindow->Config.Set( prefix + "_actionexecuteflag_command_args4" , actionexecuteflag_command_args4 );
 		this->PoolMainWindow->Config.Set( prefix + "_actionexecuteflag_command_args5" , actionexecuteflag_command_args5 );
+
+		bool is_reaload = false;
 		if (actioneditable_key2 == "new")
 		{
 			this->PoolMainWindow->Config.Set( prefix + "_order" , num2str(newOrderElecAction(key1)) );
+			is_reaload = true;
+		}
+		else
+		{
+			if (old_actionvoice != actionvoice || old_actionvoice_command != actionvoice_command )
+			{
+				is_reaload = true;
+			}
+		}
+
+		//リロード処理
+		if (is_reaload)
+		{
+			Reload();
 		}
 	}
 
@@ -851,20 +882,269 @@ bool ScriptWebRunner::checkReferer(const XLHttpHeader& httpHeaders,WEBSERVER_RES
 	return false;
 }
 
+//設定のweb index
+std::string ScriptWebRunner::SettingIndex(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	const std::string filename = this->PoolMainWindow->Httpd.WebPathToRealPath("setting.tpl");
+	const std::string html = XLFileUtil::cat(filename);
+
+	return XLStringUtil::replace_low(html,"%SETTING%", SettingStatus() );
+}
+
+//設定のステータスを jsonで
+std::string ScriptWebRunner::SettingStatus()  const
+{
+	_USE_WINDOWS_ENCODING;
+
+	const auto configmap = this->PoolMainWindow->Config.FindGetsToMap("setting_",false);
+	std::string jsonstring;
+	for(auto it = configmap.begin() ; it != configmap.end() ; ++it )
+	{
+		jsonstring += std::string(",\"") + XLStringUtil::htmlspecialchars_low(it->first) + "\": " + "\"" + XLStringUtil::htmlspecialchars_low(it->second) + "\"";
+	}
+
+	jsonstring = std::string("{ \"status\": \"ok\" ") + jsonstring + "}";
+
+#ifdef _WINDOWS
+	return _A2U(jsonstring.c_str());
+#else
+	return jsonstring;
+#endif
+}
+
+std::string ScriptWebRunner::setting_update_setting_account(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	const std::map<std::string,std::string> request = httpHeaders.getRequest();
+	{
+		boost::unique_lock<boost::mutex> al(this->updatelock);
+
+		const std::string setting_account_usermail = mapfind(request,"setting_account_usermail");
+		const std::string setting_account_password = mapfind(request,"setting_account_password");
+
+		this->PoolMainWindow->Config.Set( "setting_account_usermail" , setting_account_usermail );
+		if (setting_account_password != "<%PASSWORD NO CHANGE%>")
+		{
+			this->PoolMainWindow->Config.Set( "setting_account_password" , setting_account_password );
+		}
+	}
+
+	return this->SettingStatus();
+}
+
+std::string ScriptWebRunner::setting_update_setting_network(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	const std::map<std::string,std::string> request = httpHeaders.getRequest();
+	{
+		boost::unique_lock<boost::mutex> al(this->updatelock);
+
+		const std::string setting_network_ipaddress_type = mapfind(request,"setting_network_ipaddress_type");
+		const std::string setting_network_ipaddress_type_fixed_ip = mapfind(request,"setting_network_ipaddress_type_fixed_ip");
+		const std::string setting_network_ipaddress_type_fixed_mask = mapfind(request,"setting_network_ipaddress_type_fixed_mask");
+		const std::string setting_network_ipaddress_type_fixed_gateway = mapfind(request,"setting_network_ipaddress_type_fixed_gateway");
+		const std::string setting_network_ipaddress_type_fixed_dns = mapfind(request,"setting_network_ipaddress_type_fixed_dns");
+
+		this->PoolMainWindow->Config.Set( "setting_network_ipaddress_type" , setting_network_ipaddress_type );
+		this->PoolMainWindow->Config.Set( "setting_network_ipaddress_type_fixed_ip" , setting_network_ipaddress_type_fixed_ip );
+		this->PoolMainWindow->Config.Set( "setting_network_ipaddress_type_fixed_mask" , setting_network_ipaddress_type_fixed_mask );
+		this->PoolMainWindow->Config.Set( "setting_network_ipaddress_type_fixed_gateway" , setting_network_ipaddress_type_fixed_gateway );
+		this->PoolMainWindow->Config.Set( "setting_network_ipaddress_type_fixed_dns" , setting_network_ipaddress_type_fixed_dns );
+	}
+
+	return this->SettingStatus();
+}
+
+std::string ScriptWebRunner::setting_update_setting_recong(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	const std::map<std::string,std::string> request = httpHeaders.getRequest();
+	{
+		boost::unique_lock<boost::mutex> al(this->updatelock);
+
+		const std::string setting_recong_recong_type = mapfind(request,"setting_recong_recong_type");
+		const std::string setting_recong_recong_volume = mapfind(request,"setting_recong_recong_volume");
+//		const std::string setting_recong_reco__yobikake__1 = mapfind(request,"setting_recong_reco__yobikake__1");
+//		const std::string setting_recong_reco__yobikake__2 = mapfind(request,"setting_recong_reco__yobikake__2");
+//		const std::string setting_recong_reco__yobikake__3 = mapfind(request,"setting_recong_reco__yobikake__3");
+//		const std::string setting_recong_reco__yobikake__4 = mapfind(request,"setting_recong_reco__yobikake__4");
+//		const std::string setting_recong_reco__yobikake__5 = mapfind(request,"setting_recong_reco__yobikake__5");
+
+		this->PoolMainWindow->Config.Set( "setting_recong_recong_type" , setting_recong_recong_type );
+		this->PoolMainWindow->Config.Set( "setting_recong_recong_volume" , setting_recong_recong_volume );
+//		this->PoolMainWindow->Config.Set( "setting_recong_reco__yobikake__1" , setting_recong_reco__yobikake__1 );
+//		this->PoolMainWindow->Config.Set( "setting_recong_reco__yobikake__2" , setting_recong_reco__yobikake__2 );
+//		this->PoolMainWindow->Config.Set( "setting_recong_reco__yobikake__3" , setting_recong_reco__yobikake__3 );
+//		this->PoolMainWindow->Config.Set( "setting_recong_reco__yobikake__4" , setting_recong_reco__yobikake__4 );
+//		this->PoolMainWindow->Config.Set( "setting_recong_reco__yobikake__5" , setting_recong_reco__yobikake__5 );
+	}
+
+	return this->SettingStatus();
+}
+
+std::string ScriptWebRunner::setting_update_setting_speak(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	const std::map<std::string,std::string> request = httpHeaders.getRequest();
+	{
+		boost::unique_lock<boost::mutex> al(this->updatelock);
+
+		const std::string setting_speak_speak_type = mapfind(request,"setting_speak_speak_type");
+		const std::string setting_speak_speak_volume = mapfind(request,"setting_speak_speak_volume");
+
+		this->PoolMainWindow->Config.Set( "setting_speak_speak_type" , setting_speak_speak_type );
+		this->PoolMainWindow->Config.Set( "setting_speak_speak_volume" , setting_speak_speak_volume );
+	}
+
+	return this->SettingStatus();
+}
+
+std::string ScriptWebRunner::remocon_fileselectpage_find(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	_USE_WINDOWS_ENCODING;
+	const std::map<std::string,std::string> request = httpHeaders.getRequest();
+	const std::string typepath = mapfind(request,"typepath");
+	const std::string search = mapfind(request,"search");
+
+	std::string path = "";
+	if (typepath == "tospeak_mp3")
+	{
+		path = "./webroot/user/tospeak_mp3/";
+	}
+	else if (typepath == "elecicon")
+	{
+		path = "./webroot/user/elecicon/";
+	}
+	else
+	{
+		return RemoconStatusError(20005 , "typepathが正しくありません");
+	}
+	std::string jsonstring;
+
+	int fileid = 1;
+	const std::string baseDirectory = XLStringUtil::pathcombine( this->PoolMainWindow->Config.GetBaseDirectory() , path);
+	bool ret = XLFileUtil::findfile(baseDirectory , [&](const std::string& filename,const std::string& fullfilename) -> bool {
+		
+		if (filename == "." || filename == "..")
+		{
+			return true;
+		}
+		if (!search.empty())
+		{
+			if ( ! XLStringUtil::stristr(filename,search) )
+			{
+				return true;
+			}
+		}
+		const std::string prefix = std::string("file_") + num2str(fileid) ;
+
+		std::string icon;
+		if (typepath == "tospeak_mp3")
+		{
+			icon = "./jscss/images/icon_audio.png";
+		}
+		else if (typepath == "elecicon")
+		{
+			icon = std::string("./user/elecicon/") + filename;
+		}
+		
+		jsonstring += std::string(",\"") + XLStringUtil::htmlspecialchars_low(prefix + "_name") + "\": " + "\"" + XLStringUtil::htmlspecialchars_low(filename) + "\""
+			+ std::string(",\"") + XLStringUtil::htmlspecialchars_low(prefix + "_size") + "\": " + "\"" + XLStringUtil::htmlspecialchars_low(num2str(XLFileUtil::getfilesize(fullfilename) )) + "\""
+			+ std::string(",\"") + XLStringUtil::htmlspecialchars_low(prefix + "_time") + "\": " + "\"" + XLStringUtil::htmlspecialchars_low(num2str(XLFileUtil::getfiletime(fullfilename) )) + "\""
+			+ std::string(",\"") + XLStringUtil::htmlspecialchars_low(prefix + "_date") + "\": " + "\"" + XLStringUtil::htmlspecialchars_low(XLStringUtil::timetostr(XLFileUtil::getfiletime(fullfilename),"%Y/%m/%d %H:%M:%S" )) + "\""
+			+ std::string(",\"") + XLStringUtil::htmlspecialchars_low(prefix + "_icon") + "\": " + "\"" + XLStringUtil::htmlspecialchars_low(icon) + "\""
+		;
+		fileid++;
+		return true;
+	});
+
+	jsonstring = std::string("{ \"status\": \"ok\" ") + jsonstring + "}";
+
+#ifdef _WINDOWS
+	return _A2U(jsonstring.c_str());
+#else
+	return jsonstring;
+#endif
+}
+
+std::string ScriptWebRunner::remocon_fileselectpage_upload(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	_USE_WINDOWS_ENCODING;
+	const std::map<std::string,std::string> request = httpHeaders.getRequest();
+	const std::string typepath = mapfind(request,"typepath");
+
+	std::string path = "";
+	if (typepath == "tospeak_mp3")
+	{
+		path = XLStringUtil::pathcombine(this->PoolMainWindow->Config.GetBaseDirectory() , "./webroot/user/tospeak_mp3/");
+	}
+	else if (typepath == "elecicon")
+	{
+		path = XLStringUtil::pathcombine(this->PoolMainWindow->Config.GetBaseDirectory() , "./webroot/user/elecicon/");
+	}
+	else
+	{
+		return RemoconStatusError(20005 , "typepathが正しくありません");
+	}
+
+	auto files = httpHeaders.getFilesPointer();
+	for(auto it = files->begin() ; it != files->end() ; ++ it )
+	{
+		const std::string savepath = XLStringUtil::pathcombine( path , it->second->filename);
+		XLFileUtil::write(savepath , it->second->data);
+	}
+
+	return remocon_fileselectpage_find(httpHeaders,result);
+}
+
+
+std::string ScriptWebRunner::remocon_fileselectpage_delete(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	_USE_WINDOWS_ENCODING;
+	const std::map<std::string,std::string> request = httpHeaders.getRequest();
+	const std::string typepath = mapfind(request,"typepath");
+	const std::string filter = mapfind(request,"filter");
+
+	std::string path = "";
+	if (typepath == "tospeak_mp3")
+	{
+		path = "./user/tospeak_mp3/";
+	}
+	else if (typepath == "elecicon")
+	{
+		path = "./user/elecicon/";
+	}
+	else
+	{
+		return RemoconStatusError(20005 , "typepathが正しくありません");
+	}
+	std::string jsonstring;
+	jsonstring = std::string("{ \"status\": \"ok\" ") + jsonstring + "}";
+
+#ifdef _WINDOWS
+	return _A2U(jsonstring.c_str());
+#else
+	return jsonstring;
+#endif
+}
+
+//音声認識エンジンをアップデートする
+std::string ScriptWebRunner::remocon_recongupdate(const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result) const
+{
+	return "";
+}
+
+
 //webからアクセスがあったときに呼ばれます。
-bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result,std::string* responsString) const
+bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& httpHeaders,WEBSERVER_RESULT_TYPE* result,std::string* responsString)
 {
 	ASSERT___IS_WORKER_THREAD_RUNNING(); //メインスレッド以外で動きます。
 
 	if (path == "/remocon/")
 	{
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_HTML;
 		*responsString = RemoconIndex(httpHeaders,result);
 		return true;
 	}
 	else if (path == "/remocon/get/status") 
 	{
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
 		*responsString = RemoconStatus();
 		return true;
 	}
@@ -874,7 +1154,7 @@ bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& http
 		{
 			return true;
 		}
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
 		*responsString = remocon_update_icon_order(httpHeaders,result);
 		return true;
 	}
@@ -884,7 +1164,7 @@ bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& http
 		{
 			return true;
 		}
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
 		*responsString = remocon_update_elec(httpHeaders,result);
 		return true;
 	}
@@ -894,7 +1174,7 @@ bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& http
 		{
 			return true;
 		}
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
 		*responsString = remocon_update_elec_action(httpHeaders,result);
 		return true;
 	}
@@ -904,7 +1184,7 @@ bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& http
 		{
 			return true;
 		}
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
 		*responsString = remocon_update_elec_action_order(httpHeaders,result);
 		return true;
 	}
@@ -914,7 +1194,7 @@ bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& http
 		{
 			return true;
 		}
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
 		*responsString = remocon_delete_elec(httpHeaders,result);
 		return true;
 	}
@@ -924,7 +1204,7 @@ bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& http
 		{
 			return true;
 		}
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
 		*responsString = remocon_delete_elec_action(httpHeaders,result);
 		return true;
 	}
@@ -934,18 +1214,90 @@ bool ScriptWebRunner::WebAccess(const std::string& path,const XLHttpHeader& http
 		{
 			return true;
 		}
-		*result = WEBSERVER_RESULT_TYPE_OK;
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
 		*responsString = remocon_fire_byid(httpHeaders,result);
 		return true;
 	}
-	else if (path == "/remocon/fire/byname") 
+	else if (path == "/remocon/fire/bytype") 
 	{
 		if (!checkReferer(httpHeaders,result,responsString))
 		{
 			return true;
 		}
-		*result = WEBSERVER_RESULT_TYPE_OK;
-		*responsString = remocon_fire_byname(httpHeaders,result);
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
+		*responsString = remocon_fire_bytype(httpHeaders,result);
+		return true;
+	}
+	else if (path == "/setting/")
+	{
+		*result = WEBSERVER_RESULT_TYPE_OK_HTML;
+		*responsString = SettingIndex(httpHeaders,result);
+		return true;
+	}
+	else if (path == "/setting/get/status") 
+	{
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
+		*responsString = SettingStatus();
+		return true;
+	}
+	else if (path == "/setting/update/setting_account") 
+	{
+		if (!checkReferer(httpHeaders,result,responsString))
+		{
+			return true;
+		}
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
+		*responsString = setting_update_setting_account(httpHeaders,result);
+		return true;
+	}
+	else if (path == "/setting/update/setting_network") 
+	{
+		if (!checkReferer(httpHeaders,result,responsString))
+		{
+			return true;
+		}
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
+		*responsString = setting_update_setting_network(httpHeaders,result);
+		return true;
+	}
+	else if (path == "/setting/update/setting_recong") 
+	{
+		if (!checkReferer(httpHeaders,result,responsString))
+		{
+			return true;
+		}
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
+		*responsString = setting_update_setting_recong(httpHeaders,result);
+		return true;
+	}
+	else if (path == "/setting/update/setting_speak") 
+	{
+		if (!checkReferer(httpHeaders,result,responsString))
+		{
+			return true;
+		}
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
+		*responsString = setting_update_setting_speak(httpHeaders,result);
+		return true;
+	}
+	else if (path == "/remocon/fileselectpage/find") 
+	{
+		if (!checkReferer(httpHeaders,result,responsString))
+		{
+			return true;
+		}
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
+		*responsString = remocon_fileselectpage_find(httpHeaders,result);
+		return true;
+	}
+	else if (path == "/remocon/fileselectpage/upload") 
+	{
+		if (!checkReferer(httpHeaders,result,responsString))
+		{
+			return true;
+		}
+		*result = WEBSERVER_RESULT_TYPE_OK_JSON;
+		*responsString = remocon_fileselectpage_upload(httpHeaders,result);
 		return true;
 	}
 	else

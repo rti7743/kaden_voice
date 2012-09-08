@@ -4,36 +4,30 @@
 
 MecabControl::MecabControl(void)
 {
-	this->Tagger = NULL;
+	this->mecab = (Mecab*)malloc(sizeof(Mecab));
+	Mecab_initialize(this->mecab);
 }
 
 
 MecabControl::~MecabControl(void)
 {
-	if (this->Tagger)
-	{
-		delete this->Tagger;
-		this->Tagger = NULL;
-	}
+	Mecab_clear(this->mecab);
 }
 
-xreturn::r<bool> MecabControl::Create(const std::string& dicpath)
+bool MecabControl::Create(const std::string& dicpath)
 {
-	assert(this->Tagger == NULL);
-
 	std::string option = std::string("-d ") + dicpath + "/";
-	this->Tagger = MeCab::createTagger(option.c_str());
-	if (this->Tagger == NULL)
-	{
-	printf("mecab %s" , option.c_str());
-		return xreturn::error("mecab のインスタンスを作れませんでした");
-	}
+	Mecab_load(this->mecab,(char*) option.c_str());
 	return true;
 }
 
+/*
 void MecabControl::Parse(const std::string& str,const std::function< void(const MeCab::Node* node) >& callbackNode)
 {
 	boost::unique_lock<boost::mutex> al(this->lock);
+   Mecab_analysis(&this->mecab, str.c_str() );
+   mecab2njd(&open_jtalk->njd, Mecab_get_feature(&open_jtalk->mecab),
+             Mecab_get_size(&open_jtalk->mecab));
 
 	const MeCab::Node* node = this->Tagger->parseToNode( str.c_str() );
 	if (node == NULL)
@@ -45,12 +39,15 @@ void MecabControl::Parse(const std::string& str,const std::function< void(const 
 		callbackNode(node);
 	}
 
+	Mecab_refresh(&this->mecab);
 }
+*/
 
 //漢字その他をすべてひらがなに直します
 std::string MecabControl::KanjiAndKanakanaToHiragana(const std::string& str)
 {
 	std::string yomi;
+/*
 	this->Parse(str , [&](const MeCab::Node* node){
 		std::vector<std::string> kammalist = XLStringUtil::split_vector(",",node->feature);
 		if (kammalist.size() > 7 && kammalist[7] != "*")
@@ -62,6 +59,7 @@ std::string MecabControl::KanjiAndKanakanaToHiragana(const std::string& str)
 			yomi += std::string(node->surface, 0,node->length);
 		}
 	});
+*/
 	//mecabだとカタカナ読みしか取れないので、強制的にひらがなに直します。
 	return XLStringUtil::mb_convert_kana(yomi,"cHsa");
 }

@@ -103,6 +103,15 @@
     <ClCompile Include="ScriptWebRunner.cpp">
       <Filter>mainlogic</Filter>
     </ClCompile>
+    <ClCompile Include="Speak_OpenJTalk.cpp">
+      <Filter>speak</Filter>
+    </ClCompile>
+    <ClCompile Include="MecabControl.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
+    <ClCompile Include="XLException.cpp">
+      <Filter>mainlogic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Speak_SpeechPlatform.h">
@@ -148,9 +157,6 @@
       <Filter>mainlogic</Filter>
     </ClInclude>
     <ClInclude Include="XLUrlParser.h">
-      <Filter>mainlogic</Filter>
-    </ClInclude>
-    <ClInclude Include="xreturn.h">
       <Filter>mainlogic</Filter>
     </ClInclude>
     <ClInclude Include="ActionScriptManager.h">
@@ -211,6 +217,12 @@
       <Filter>mainlogic</Filter>
     </ClInclude>
     <ClInclude Include="ScriptWebRunner.h">
+      <Filter>mainlogic</Filter>
+    </ClInclude>
+    <ClInclude Include="Speak_OpenJTalk.h">
+      <Filter>speak</Filter>
+    </ClInclude>
+    <ClInclude Include="MecabControl.h">
       <Filter>mainlogic</Filter>
     </ClInclude>
   </ItemGroup>

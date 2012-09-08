@@ -12,6 +12,39 @@ julius「マナの本当の力を思い知れ!!」
 #include "MainWindow.h"
 #include "XLStringUtil.h"
 
+//ツリー内で特定のコールバックを持っているもので最小単位を排除する.
+bool Recognition_JuliusPlusRule::RemoveCallback(const CallbackDataStruct* c)
+{
+	std::remove_if(this->nestrules.begin(),this->nestrules.end() ,
+		[&](Recognition_JuliusPlusRule* r) -> bool 
+		{
+			if ( r->RemoveCallback(c) )
+			{
+				delete r;
+				return true;
+			}
+			return false;
+		} 
+	);
+
+	if ( this->combineRule != NULL )
+	{
+		if ( this->combineRule->RemoveCallback(c) )
+		{
+			delete this->combineRule;
+			this->combineRule = NULL;
+		}
+	}
+
+	if ( this->callback == c && this->combineRule == NULL && this->nestrules.empty())
+	{
+		this->Clear();
+		return true;
+	}
+	return false;
+}
+
+
 //dictからマッチするルールを探す
 const Recognition_JuliusPlusRule* Recognition_JuliusPlusRule::findDict(int dict)  const
 {

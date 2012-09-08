@@ -4,9 +4,8 @@
 #include "XLStringUtil.h"
 #include <vector>
 //#include <boost/asio.hpp>
-//#include "xreturn.h"
 
-xreturn::r<bool> XLHttpRequerst::Download(const std::string & url , const std::map<std::string,std::string> & header ,const std::map<std::string,std::string> & option)
+bool XLHttpRequerst::Download(const std::string & url , const std::map<std::string,std::string> & header ,const std::map<std::string,std::string> & option)
 {
 	this->OutData.clear();
 
@@ -29,7 +28,7 @@ xreturn::r<bool> XLHttpRequerst::Download(const std::string & url , const std::m
 	socket.connect(endpoint,error);
     if (error)
 	{
-		return xreturn::error("ホストに接続できません URL:" + url);
+		throw XLException("ホストに接続できません URL:" + url);
 	}
 
 	//送信
@@ -40,7 +39,7 @@ xreturn::r<bool> XLHttpRequerst::Download(const std::string & url , const std::m
 	{
 		if (option.find("data") == option.end())
 		{
-			return xreturn::error("POSTなのにデータの内容がないよう。sample: option[\"data\"] = \"a=123&b=1234&sample=sakura\"; ");
+			throw XLException("POSTなのにデータの内容がないよう。sample: option[\"data\"] = \"a=123&b=1234&sample=sakura\"; ");
 		}
 		request_stream << "POST " << urlparse.getPath() << " HTTP/1.0\r\n";
 	}
@@ -105,7 +104,7 @@ xreturn::r<bool> XLHttpRequerst::Download(const std::string & url , const std::m
 	int size = response_body.size();
     if (size <= 0)
 	{
-		return xreturn::error("bodyサイズが0です URL:" + url);
+		throw XLException("bodyサイズが0です URL:" + url);
 	}
 
 	this->OutData.insert(this->OutData.end() ,data , data + size );
@@ -113,13 +112,13 @@ xreturn::r<bool> XLHttpRequerst::Download(const std::string & url , const std::m
 	return true;
 }
 
-xreturn::r<bool> XLHttpRequerst::saveFile(const std::string & filename) const
+bool XLHttpRequerst::saveFile(const std::string & filename) const
 {
 	FILE * fp = fopen(filename.c_str() , "wb");
 	if (!fp)
 	{
 		int code = errno;
-		return xreturn::errnoError(std::string() + "ファイル:" + filename + "に書き込めません",code);
+		throw XLException(std::string() + "ファイル:" + filename + "に書き込めません",code);
 	}
 	fwrite( &this->OutData[0] , 1 , this->OutData.size() , fp );
 	fclose(fp);

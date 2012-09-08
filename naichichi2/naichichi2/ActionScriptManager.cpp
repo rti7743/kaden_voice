@@ -21,7 +21,7 @@ ActionScriptManager::~ActionScriptManager()
 {
 }
 
-xreturn::r<bool> ActionScriptManager::Create(MainWindow* poolMainWindow)
+bool ActionScriptManager::Create(MainWindow* poolMainWindow)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
@@ -29,25 +29,25 @@ xreturn::r<bool> ActionScriptManager::Create(MainWindow* poolMainWindow)
 	return true;
 }
 
-xreturn::r<bool> ActionScriptManager::Regist(const CallbackDataStruct* callback , const std::string & actionName )
+bool ActionScriptManager::Regist(const CallbackDataStruct* callback , const std::string & actionName )
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
 	if ( actionName.find("action__") != 0)
 	{
-		return xreturn::error("アクション " + actionName + " の名前が正しくありません。 アクションは、 action__hogehoge のように、 action__ というprefixが必要です。 ");
+		throw XLException("アクション " + actionName + " の名前が正しくありません。 アクションは、 action__hogehoge のように、 action__ というprefixが必要です。 ");
 	}
 
 	std::string command = this->PoolMainWindow->Config.Get( actionName , "");
 	if ( command.empty() )
 	{
-		return xreturn::error("アクション " + actionName + " に設定にありません。config.conf を確認してください。 ");
+		throw XLException("アクション " + actionName + " に設定にありません。config.conf を確認してください。 ");
 	}
 
 	std::list<std::string> args = XLStringUtil::parse_command(command);
 	if (args.size() <= 0)
 	{
-		return xreturn::error("アクション " + actionName + " の設定引数をパースしたら、引数が0になりました。内容を確認してください。 " + actionName + ": " + command);
+		throw XLException("アクション " + actionName + " の設定引数をパースしたら、引数が0になりました。内容を確認してください。 " + actionName + ": " + command);
 	}
 
 	assert(args.size() >= 1);

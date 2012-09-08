@@ -1,0 +1,9 @@
+-gram ./__temp__regexp_test
+#-h ./phone_m_mmdagent/clustered.mmf.16mix.all.julius.binhmm   # PTM triphone
+#-hlist ./phone_m_mmdagent/tri_tied.list.bin
+-h ./phone_m_julius/hmmdefs_ptm_gid.binhmm   # PTM triphone
+-hlist ./phone_m_julius/logicalTri
+-input mic
+-n 1 -output 1
+-rejectshort 1000
+-walign

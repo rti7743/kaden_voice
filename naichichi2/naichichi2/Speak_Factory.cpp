@@ -19,7 +19,7 @@ Speak_Factory::~Speak_Factory()
 	delete this->Engine;
 }
 
-xreturn::r<bool> Speak_Factory::Create(const std::string & name , MainWindow* poolMainWindow,int rate,int pitch,unsigned int volume,const std::string& botname)
+bool Speak_Factory::Create(const std::string & name , MainWindow* poolMainWindow,int rate,int pitch,unsigned int volume,const std::string& botname)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	assert(this->Engine == NULL);
@@ -42,7 +42,7 @@ xreturn::r<bool> Speak_Factory::Create(const std::string & name , MainWindow* po
 	}
 	else
 	{
-		return xreturn::error("合成音声エンジン" + name + "がありません");
+		throw XLException("合成音声エンジン" + name + "がありません");
 	}
 
 	this->Engine->Create(poolMainWindow);
@@ -51,11 +51,10 @@ xreturn::r<bool> Speak_Factory::Create(const std::string & name , MainWindow* po
 	return true;
 }
 
-xreturn::r<bool> Speak_Factory::Speak(const CallbackDataStruct * callback,const std::string & str)
+bool Speak_Factory::Speak(const CallbackDataStruct * callback,const std::string & str)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-	auto r = this->Engine->Speak(callback,str);
-	if (!r) return xreturn::error(r.getError());
+	this->Engine->Speak(callback,str);
 	return true;
 }
 
@@ -66,11 +65,10 @@ void Speak_Factory::Cancel()
 }
 
 //このコールバックに関連付けられているものをすべて消す
-xreturn::r<bool> Speak_Factory::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback)
+bool Speak_Factory::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
-	auto r = this->Engine->RemoveCallback(callback,is_unrefCallback);
-	if (!r) return xreturn::error(r.getError());
+	this->Engine->RemoveCallback(callback,is_unrefCallback);
 	return true;
 }
 

@@ -20,31 +20,30 @@ public:
 	}
 	virtual ~ScriptRunner();
 
-	xreturn::r<bool> LoadScript(const std::string & filename);
+	bool LoadScript(const std::string & filename);
 
 	bool IsMethodExist(const std::string& name);
-	xreturn::r<std::string> callFunction(const std::string& name);
-	xreturn::r<std::string> callFunction(const std::string& name,const std::string& paramA,const std::string& paramB = "",const std::string& paramC = "");
-	xreturn::r<std::string> callFunction(const std::string& name,const std::map<std::string , std::string> & match);
-	xreturn::r<std::string> callFunction(const std::string& name,const std::list<std::string> & list,bool stripFirst);
+	std::string callFunction(const std::string& name);
+	std::string callFunction(const std::string& name,const std::string& paramA,const std::string& paramB = "",const std::string& paramC = "");
+	std::string callFunction(const std::string& name,const std::map<std::string , std::string> & match);
+	std::string callFunction(const std::string& name,const std::list<std::string> & list,bool stripFirst);
 
-	xreturn::r<std::string> callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match);
+	std::string callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match);
 	//コールバックが不要になった時に呼ばれる 自分から this-> で読んではいけない。
 	void unrefCallback(const CallbackDataStruct* callback);
 	//インスタンスの再読み込み
 	//プログラムをデバッグしているときとか、再読み込み機能がないと死ねるから・・・
-	xreturn::r<bool> Reload();
+	bool Reload();
 
 private:
 
 	//新しい luaインスタンスを作成する
-	xreturn::r<bool> CreateLuaInstance();
+	bool CreateLuaInstance();
 	//メモリからluaのプログラムを構築(テスト用)
-	xreturn::r<bool> EvalScript(const std::string & script);
+	bool EvalScript(const std::string & script);
 
 	static int l_onvoice(lua_State* L);
 	static int l_onvoice_local(lua_State* L);
-	static int l_onhttp(lua_State* L);
 	static int l_ontimer(lua_State* L);
 	static int l_ontrigger(lua_State* L);
 	static int l_onidle(lua_State* L);
@@ -86,7 +85,7 @@ private:
 	static std::string lua_tostringHelper(lua_State* L , int index);
 	static void lua_pushstringHelper(lua_State* L ,const std::string & str);
 	static int luaL_errorHelper(lua_State* L ,const std::string & errorMessage);
-	static xreturn::r<std::string> lua_crossdataToString(lua_State* L , int index);
+	static std::string lua_crossdataToString(lua_State* L , int index);
 	static std::string convertTemplate(const std::string & filename,const std::string functionname);
 	static std::string lua_funcdump(lua_State* L ,const std::string& name);
 	//luaのテーブルをjson文字列に変換 文字コードは UTF8のままです。

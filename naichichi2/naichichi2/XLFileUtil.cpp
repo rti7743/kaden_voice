@@ -51,7 +51,7 @@ bool XLFileUtil::copy(const std::string & inFileNameA,const std::string & inFile
 	const auto a = XLStringUtil::pathseparator(inFileNameA);
 	const auto b = XLStringUtil::pathseparator(inFileNameB);
 #if _MSC_VER
-	::CopyFile(a.c_str(),b.c_str(),TRUE);
+	return Btob(::CopyFile(a.c_str(),b.c_str(),FALSE));
 #else
 	int read_fd;
 	int write_fd;
@@ -80,8 +80,8 @@ bool XLFileUtil::copy(const std::string & inFileNameA,const std::string & inFile
 	/* Close up. */
 	close (read_fd);
 	close (write_fd);
-#endif
 	return true;
+#endif
 }
 bool XLFileUtil::move(const std::string & inFileNameA,const std::string & inFileNameB)
 {
@@ -229,6 +229,23 @@ bool XLFileUtil::findfile(const std::string & dir,const std::function< bool(cons
 #endif
 	return true;
 }
+#include <sys/stat.h>
+
+size_t XLFileUtil::getfilesize(const std::string & inFileName)
+{
+	struct  stat st = {0};
+	::stat( inFileName.c_str() ,&st );
+	return st.st_size;
+}
+
+time_t XLFileUtil::getfiletime(const std::string & inFileName)
+{
+	struct  stat st = {0};
+	::stat( inFileName.c_str() ,&st );
+	return st.st_mtime;
+}
+
+
 
 //inStr を ファイルに書き込む
 bool XLFileUtil::write(const std::string & inFileName,const std::string & inStr )

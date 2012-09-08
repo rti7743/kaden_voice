@@ -20,7 +20,7 @@ public:
 	{
 	}
 
-	virtual xreturn::r<bool> play(const std::string & filename)
+	virtual bool play(const std::string & filename)
 	{
 		std::string ext = XLStringUtil::strtolower(XLStringUtil::baseext(filename));
 
@@ -39,7 +39,7 @@ public:
 		}
 		else
 		{
-			return xreturn::error("未対応の形式" + ext + "が選択されました。 ファイル:" + filename );
+			throw XLException("未対応の形式" + ext + "が選択されました。 ファイル:" + filename );
 		}
 
 		if(mciSendCommand(0,MCI_OPEN,MCI_WAIT|MCI_OPEN_TYPE|MCI_OPEN_ELEMENT,(DWORD)&open_parms) == 0){
@@ -62,7 +62,7 @@ public:
 	{
 	}
 
-	virtual xreturn::r<bool> play(const std::string & filename)
+	virtual bool play(const std::string & filename)
 	{
 		std::string command = std::string("mpg123 ") + "\"" + filename + "\""; //!!
 		system(command.c_str());
@@ -87,7 +87,7 @@ XLSoundPlay::~XLSoundPlay()
 	delete this->Object;
 }
 
-xreturn::r<bool> XLSoundPlay::play(const std::string & filename) 
+bool XLSoundPlay::play(const std::string & filename) 
 {
 	return this->Object->play(filename);
 }

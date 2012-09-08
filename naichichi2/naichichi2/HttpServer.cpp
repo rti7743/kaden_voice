@@ -74,7 +74,8 @@ void HttpWorker::HTTP302(const std::string& url)
 	boost::system::error_code ec;
 	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
-void HttpWorker::HTTP200(const std::string& contents,const std::string& headers,bool texthtml)
+
+void HttpWorker::HTTP200(const std::string& contents,const std::string& headers)
 {
     boost::asio::streambuf respons;
     std::ostream respons_stream(&respons);
@@ -82,11 +83,11 @@ void HttpWorker::HTTP200(const std::string& contents,const std::string& headers,
 						"Pragma:no-cache\r\n"
 						"Server:naichichi2\r\n"
 						"Content-Length: " << contents.size() << "\r\n";
-	if (texthtml)
+	if (!headers.empty())
 	{
-		respons_stream << "Content-type: text/html; charset=UTF-8\r\n";
+		respons_stream << headers ;
 	}
-	respons_stream		<< headers << "\r\n"
+	respons_stream		<< "\r\n"
 						<< contents 
 						<< std::flush;
 
@@ -94,6 +95,49 @@ void HttpWorker::HTTP200(const std::string& contents,const std::string& headers,
 	boost::asio::write(*this->ConnectSocket,respons ,ec);
 }
 
+
+void HttpWorker::HTTP200LongPooling(const std::string& headers,HttpLongPoolingInterface* longPoolingObhect)
+{
+	{
+		boost::asio::streambuf respons;
+		std::ostream respons_stream(&respons);
+		respons_stream <<	"HTTP/1.0 200 OK\r\n"
+							"Pragma:no-cache\r\n"
+							"Server:naichichi2\r\n"
+							;
+		if (!headers.empty())
+		{
+			respons_stream << headers ;
+		}
+
+		boost::system::error_code ec;
+		boost::asio::write(*this->ConnectSocket,respons ,ec);
+	}
+
+	for(int i = 0 ; 1 ; i ++ )
+	{
+		boost::asio::streambuf respons;
+		std::ostream respons_stream(&respons);
+
+		respons_stream << "DummyHeader" << i << ": " << i << "\r\n";
+		boost::system::error_code ec;
+		boost::asio::write(*this->ConnectSocket,respons ,ec);
+		if ( longPoolingObhect->Pooling(i) )
+		{
+			break;
+		}
+//		sleep(1);
+	}
+
+	{
+		boost::asio::streambuf respons;
+		std::ostream respons_stream(&respons);
+		respons_stream <<	"\r\n" << longPoolingObhect->getFulltext();
+
+		boost::system::error_code ec;
+		boost::asio::write(*this->ConnectSocket,respons ,ec);
+	}
+}
 
 void HttpWorker::HTTP200SendFileContent(const std::string& urlpath)
 {
@@ -193,8 +237,12 @@ void HttpWorker::operator()()
 
 	//処理系に投げる
 	std::string responsString;
-	std::string headers;
 	WEBSERVER_RESULT_TYPE result = WEBSERVER_RESULT_TYPE_NOT_FOUND;
+	if ( path == "/longpooling/ir_learn" )
+	{
+		this->ConnectSocket->close();
+		return ;
+	}
 	if (!  this->PoolMainWindow->ScriptManager.WebAccess(path,httpHeaders,&result,&responsString) )
 	{
 		HTTP200SendFileContent(path);
@@ -204,8 +252,14 @@ void HttpWorker::operator()()
 
 	switch(result)
 	{
-	case WEBSERVER_RESULT_TYPE_OK:
-		HTTP200(responsString,headers,true);
+	case WEBSERVER_RESULT_TYPE_OK_HTML:
+		HTTP200(responsString,"Content-type: text/html; charset=utf-8\r\n");
+		break;
+	case WEBSERVER_RESULT_TYPE_OK_JSON:
+		HTTP200(responsString,"Content-Type: text/javascript; charset=utf-8\r\n");
+		break;
+	case WEBSERVER_RESULT_TYPE_OK_DATA:
+		HTTP200(responsString,"");
 		break;
 	case WEBSERVER_RESULT_TYPE_TRASMITFILE:
 		HTTP200SendFileContent(responsString);
@@ -236,14 +290,13 @@ HttpServer::~HttpServer()
 {
 	stop();
 }
-void HttpServer::Create(MainWindow* poolMainWindow,int port,int threadcount,const std::string& webroot,const std::string& accesstoken,const std::map<std::string,std::string>& allowext)
+void HttpServer::Create(MainWindow* poolMainWindow,int port,int threadcount,const std::string& webroot,const std::map<std::string,std::string>& allowext)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
 	this->PoolMainWindow = poolMainWindow;
 	this->Webroot = webroot;
 	this->Port = port;
-	this->Accesstoken = accesstoken;
 	this->AllowExtAndMime = allowext;
 
 	//終了時にこれをcloseしてやらんと無限ループるみたい。めんどい。
@@ -256,7 +309,7 @@ void HttpServer::Create(MainWindow* poolMainWindow,int port,int threadcount,cons
 		{
 			this->acceptThread(threadcount); 
 		}
-		catch(xreturn::error & e)
+		catch(XLException & e)
 		{
 			this->PoolMainWindow->SyncInvokeError(e.getFullErrorMessage());
 		}
@@ -314,7 +367,7 @@ void HttpServer::acceptThread(int threadcount)
 	tg.join_all();
 }
 
-xreturn::r<bool>  HttpServer::Regist(const CallbackDataStruct * callback ,const std::string & path)
+bool  HttpServer::Regist(const CallbackDataStruct * callback ,const std::string & path)
 {
 	boost::unique_lock<boost::mutex> al(this->lock);
 
@@ -341,18 +394,13 @@ std::string HttpServer::getWebURL(const std::string& path) const
 	else if (path[0] != '/') url += "/" + path;
 	else url += path;
 
-	return XLStringUtil::AppendURLParam(url,"accesstoken=" + this->Accesstoken);
+	return url;
 }
 
 //サーバのトップアドレス. (accesstokenキーなし)
 std::string HttpServer::getServerTop() const
 {
 	return "http://127.0.0.1:" + num2str(this->Port) ;
-}
-
-bool HttpServer::checkAccessToken(const std::string& token) const
-{
-	return token == this->Accesstoken;
 }
 
 std::string HttpServer::WebPathToRealPath(const std::string& urlpath)
@@ -387,8 +435,3 @@ SEXYTEST(HttpServer__WebPathToRealPath,"HttpServer::WebPathToRealPath")
 */
 
 
-xreturn::r<bool> HttpServer::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
-{
-	boost::unique_lock<boost::mutex> al(this->lock);
-	return true;
-}

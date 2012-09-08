@@ -43,7 +43,7 @@ Recognition_Cloud::~Recognition_Cloud()
 
 
 
-xreturn::r<bool> Recognition_Cloud::Create(MainWindow* poolMainWindow)
+bool Recognition_Cloud::Create(MainWindow* poolMainWindow)
 {
 	this->PoolMainWindow = poolMainWindow;
 
@@ -52,23 +52,23 @@ xreturn::r<bool> Recognition_Cloud::Create(MainWindow* poolMainWindow)
 
 //呼びかけを設定します。
 //設定したあと、 CommitRule() てしてね。
-xreturn::r<bool> Recognition_Cloud::SetYobikake(const std::list<std::string> & yobikakeList)
+bool Recognition_Cloud::SetYobikake(const std::list<std::string> & yobikakeList)
 {
 	return true;
 }
-xreturn::r<bool> Recognition_Cloud::SetCancel(const std::list<std::string> & cancelList) 
+bool Recognition_Cloud::SetCancel(const std::list<std::string> & cancelList) 
 {
 	return true;
 }
 
 //認識結果で不完全なものを捨てる基準値を設定します。
-xreturn::r<bool> Recognition_Cloud::SetRecognitionFilter(double temporaryRuleConfidenceFilter)
+bool Recognition_Cloud::SetRecognitionFilter(double temporaryRuleConfidenceFilter)
 {
 	return true;
 }
 
 //音声データを保存するディレクトリ
-xreturn::r<bool> Recognition_Cloud::SetLogDirectory(const std::string& logdir)
+bool Recognition_Cloud::SetLogDirectory(const std::string& logdir)
 {
 	this->LogDirectory = logdir;
 
@@ -76,7 +76,7 @@ xreturn::r<bool> Recognition_Cloud::SetLogDirectory(const std::string& logdir)
 }
 
 //コマンドに反応する音声認識ルールを構築します
-xreturn::r<bool> Recognition_Cloud::AddCommandRegexp(const CallbackDataStruct* callback,const std::string & str)
+bool Recognition_Cloud::AddCommandRegexp(const CallbackDataStruct* callback,const std::string & str)
 {
 	this->IsNeedUpdateRule = true;
 	this->RegexpList.push_back( new CallbackRegexpStruct(callback,str) );
@@ -85,7 +85,7 @@ xreturn::r<bool> Recognition_Cloud::AddCommandRegexp(const CallbackDataStruct* c
 }
 
 //テンポラリルールに反応する音声認識ルールを構築します
-xreturn::r<bool> Recognition_Cloud::AddTemporaryRegexp(const CallbackDataStruct* callback,const std::string & str)
+bool Recognition_Cloud::AddTemporaryRegexp(const CallbackDataStruct* callback,const std::string & str)
 {
 	this->IsNeedUpdateRule = true;
 	this->RegexpTemporaryList.push_back( new CallbackRegexpStruct(callback,str) );
@@ -95,7 +95,7 @@ xreturn::r<bool> Recognition_Cloud::AddTemporaryRegexp(const CallbackDataStruct*
 }
 
 //テンポラリルールをすべてクリアします
-xreturn::r<bool> Recognition_Cloud::ClearTemporary()
+bool Recognition_Cloud::ClearTemporary()
 {
 	if (this->TemporaryRuleCount <= 0)
 	{//現在テンポラリルールにルールが入っていないので、クリアをスキップします。
@@ -115,14 +115,13 @@ xreturn::r<bool> Recognition_Cloud::ClearTemporary()
 	this->IsNeedUpdateRule = true;
 
 	//コミット発動
-	auto r = this->CommitRule();
-	if (!r) return xreturn::error(r.getError());
+	this->CommitRule();
 
 	return true;
 }
 
 //構築したルールを音声認識エンジンにコミットします。
-xreturn::r<bool> Recognition_Cloud::CommitRule()
+bool Recognition_Cloud::CommitRule()
 {
 	if (! this->IsNeedUpdateRule )
 	{//アップデートする必要なし
@@ -204,7 +203,7 @@ int Recognition_Cloud::adin_callback_file(SP16 *now, int len, Recog *recog)
 	return(0);
 }
 
-xreturn::r<bool> Recognition_Cloud::JuliusStart()
+bool Recognition_Cloud::JuliusStart()
 {
 	assert(this->recog == NULL);
 	assert(this->jconf == NULL);
@@ -223,7 +222,7 @@ xreturn::r<bool> Recognition_Cloud::JuliusStart()
 	//jconf = j_config_load_file_new(jconf_filename);
 	if (this->jconf == NULL) 
 	{
-		return xreturn::error("Try `-help' for more information.\n");
+		throw XLException("Try `-help' for more information.\n");
 	}
 
 	/* 2. create recognition instance according to the jconf */
@@ -232,13 +231,13 @@ xreturn::r<bool> Recognition_Cloud::JuliusStart()
 	this->recog = j_create_instance_from_jconf(this->jconf);
 	if (this->recog == NULL)
 	{
-		return xreturn::error("Error in startup(j_create_instance_from_jconf)\n");
+		throw XLException("Error in startup(j_create_instance_from_jconf)\n");
 	}
 
 	// Initialize audio input
 	if (j_adin_init(this->recog) == FALSE) 
 	{
-		return xreturn::error("Error in startup(j_adin_init)\n");
+		throw XLException("Error in startup(j_adin_init)\n");
 	}
 
 	//output system information to log
@@ -246,7 +245,7 @@ xreturn::r<bool> Recognition_Cloud::JuliusStart()
 	ret = j_open_stream(this->recog, NULL);
 	if(ret < 0)
 	{
-		return xreturn::error("Error in startup(j_open_stream)\n");
+		throw XLException("Error in startup(j_open_stream)\n");
 	}
 
 	this->Thread = new boost::thread( [&]()
@@ -362,12 +361,7 @@ void Recognition_Cloud::Reaction(const std::string &recogResult)
 }
 
 //このコールバックに関連付けられているものをすべて消す
-xreturn::r<bool> Recognition_Cloud::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
-{
-	return true;
-}
-//メディア情報をアップデートします。
-xreturn::r<bool> Recognition_Cloud::UpdateMedia(const std::string& name ,const std::list<std::string>& list ) 
+bool Recognition_Cloud::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
 {
 	return true;
 }

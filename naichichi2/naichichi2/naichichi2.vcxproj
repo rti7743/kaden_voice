@@ -18,6 +18,7 @@
     <ClCompile Include="HttpServer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="MecabControl.cpp" />
     <ClCompile Include="Recognition_Cloud.cpp" />
     <ClCompile Include="Recognition_Factory.cpp" />
     <ClCompile Include="Recognition_JuliusPlus.cpp" />
@@ -28,10 +29,12 @@
     <ClCompile Include="Speak_AquesTalk.cpp" />
     <ClCompile Include="Speak_Factory.cpp" />
     <ClCompile Include="Speak_GoogleTranslate.cpp" />
+    <ClCompile Include="Speak_OpenJTalk.cpp" />
     <ClCompile Include="Speak_SpeechPlatform.cpp" />
     <ClCompile Include="TriggerManager.cpp" />
     <ClCompile Include="WebMenu.cpp" />
     <ClCompile Include="XLDebugUtil.cpp" />
+    <ClCompile Include="XLException.cpp" />
     <ClCompile Include="XLFileUtil.cpp" />
     <ClCompile Include="XLHttpHeader.cpp" />
     <ClCompile Include="XLHttpSocket.cpp" />
@@ -48,6 +51,7 @@
     <ClInclude Include="Callbackable.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="HttpServer.h" />
+    <ClInclude Include="MecabControl.h" />
     <ClInclude Include="Recognition_Cloud.h" />
     <ClInclude Include="Recognition_JuliusPlus.h" />
     <ClInclude Include="Recognition_JuliusPlusRule.h" />
@@ -63,6 +67,7 @@
     <ClInclude Include="Speak_AquesTalk.h" />
     <ClInclude Include="Speak_Factory.h" />
     <ClInclude Include="Speak_GoogleTranslate.h" />
+    <ClInclude Include="Speak_OpenJTalk.h" />
     <ClInclude Include="Speak_SpeechPlatform.h" />
     <ClInclude Include="TriggerManager.h" />
     <ClInclude Include="WebMenu.h" />
@@ -78,7 +83,6 @@
     <ClInclude Include="XLSoundPlay.h" />
     <ClInclude Include="XLStringUtil.h" />
     <ClInclude Include="XLUrlParser.h" />
-    <ClInclude Include="xreturn.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="icon1.ico" />
@@ -136,7 +140,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <MapExports>true</MapExports>
-      <AdditionalDependencies>liblinear.lib;zlib.lib;portaudio.lib;julius.lib;lua.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>openjtalk.lib;liblinear.lib;zlib.lib;portaudio.lib;julius.lib;lua.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>

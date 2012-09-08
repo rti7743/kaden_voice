@@ -18,18 +18,18 @@ public:
 	virtual ~XLImage();
 
 	//画像読み込み
-	xreturn::r<bool> Load(const std::string & fileName);
+	bool Load(const std::string & fileName);
 	//画像読み込み
-	xreturn::r<bool> Load(const std::vector<char> & data);
+	bool Load(const std::vector<char> & data);
 	//画像読み込み
-	xreturn::r<bool> Load(HBITMAP hbitmap);
+	bool Load(HBITMAP hbitmap);
 	//画像読み込み
-	xreturn::r<bool> Load(HICON hicon);
+	bool Load(HICON hicon);
 
 	//画像保存
-	xreturn::r<bool> Save(const std::string & fileName,int option = INT_MAX) const;
+	bool Save(const std::string & fileName,int option = INT_MAX) const;
 	//画像保存
-	xreturn::r<bool> Save(const std::string & ext,std::vector<char> * data,int option) const;
+	bool Save(const std::string & ext,std::vector<char> * data,int option) const;
 
 	//描画
 	void Draw(XLImage* image,int x,int y) const;
@@ -43,7 +43,7 @@ public:
 	Gdiplus::Image* GetThumbnailImage(int width,int height) ;
 private:
 	void Clear();
-	xreturn::r<bool> findEncoder(const std::string & ext,CLSID* clsid) const;
+	bool findEncoder(const std::string & ext,CLSID* clsid) const;
 	bool IsEnable() const
 	{
 		return this->image != NULL;

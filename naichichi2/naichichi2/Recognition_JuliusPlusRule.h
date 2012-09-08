@@ -67,14 +67,7 @@ public:
 		this->combineRule = combineRule;
 		return true;
 	}
-	void RemoveNestRule(Recognition_JuliusPlusRule* haveRule)
-	{
-		std::remove_if(this->nestrules.begin(),this->nestrules.end() , [&](Recognition_JuliusPlusRule* r) -> bool { if (r == haveRule){ delete r; return true; }else{ return false; } } );
-	}
-	void RemoveWord(std::string word)
-	{
-		std::remove_if(this->words.begin(),this->words.end() , [&](wordnode* w) -> bool { if (w->word == word){ delete w; return true; }else{ return false; } } );
-	}
+	bool RemoveCallback(const CallbackDataStruct* c);
 	//dict番号は建前上は連番で振りたいので、全ノードをまとめてcommitしたときに連番に振り直すので、振ってみなければわからない
 	//そのため、コンストラクタではなく、commitするときにまとめてアップデートする必要がある。
 	void UpdateDictNumber(int dictNumber)

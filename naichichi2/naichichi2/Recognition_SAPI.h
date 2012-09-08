@@ -19,41 +19,41 @@ public:
 	Recognition_SAPI();
 	virtual ~Recognition_SAPI();
 	//音声認識のためのオブジェクトの構築.
-	virtual xreturn::r<bool> Create(MainWindow* poolMainWindow);
+	virtual bool Create(MainWindow* poolMainWindow);
 
 	//呼びかけを設定します。
 	//設定したあと、 CommitRule() てしてね。
-	virtual xreturn::r<bool> SetYobikake(const std::list<std::string> & yobikakeList);
+	virtual bool SetYobikake(const std::list<std::string> & yobikakeList);
 	//認識結果で不感染なものを捨てる基準値を設定します。
-	virtual xreturn::r<bool> SetRecognitionFilter(double temporaryRuleConfidenceFilter,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter,bool useDictationFilter);
+	virtual bool SetRecognitionFilter(double temporaryRuleConfidenceFilter,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter,bool useDictationFilter);
 	//コマンドに反応する音声認識ルールを構築します
-	virtual xreturn::r<bool> AddCommandRegexp(const CallbackDataStruct * callback,const std::string & str);
+	virtual bool AddCommandRegexp(const CallbackDataStruct * callback,const std::string & str);
 	//テンポラリルールに反応する音声認識ルールを構築します
-	virtual xreturn::r<bool> AddTemporaryRegexp(const CallbackDataStruct * callback,const std::string & str);
+	virtual bool AddTemporaryRegexp(const CallbackDataStruct * callback,const std::string & str);
 	//テンポラリルールをすべてクリアします
-	virtual xreturn::r<bool> ClearTemporary() ;
+	virtual bool ClearTemporary() ;
 	//構築したルールを音声認識エンジンにコミットします。
-	virtual xreturn::r<bool> CommitRule();
+	virtual bool CommitRule();
 	//このコールバックに関連付けられているものをすべて消す
-	virtual xreturn::r<bool> RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
+	virtual bool RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
 	//メディア情報をアップデートします。
-	virtual xreturn::r<bool> UpdateMedia(const std::string& name ,const std::list<std::string>& list );
+	virtual bool UpdateMedia(const std::string& name ,const std::list<std::string>& list );
 private:
 	//認識した結果の解析
-	xreturn::r<bool> CallbackReco();
+	bool CallbackReco();
 	void Callback(WPARAM wParam, LPARAM lParam);
 	//マッチしたphraseから正規表現キャプチャ () による文字列の抽出.
 	bool PhraseToRegexpCapture(SPPHRASE *pPhrase,std::map<std::string , std::string>* capture, double * SREngineConfidenceAvg) const;
 	//ディクテーションフィルターで呼びかけ文字列が入っているか確認する.
 	bool checkDictation(const std::string & dictationString) const;
 	//ルールベースで認識した結果の音声部分をもう一度 ディクテーションにかけて認識した結果を取得します。
-	xreturn::r<std::string> convertDictation(ISpRecoResult* result,const std::string& ruleName);
+	std::string convertDictation(ISpRecoResult* result,const std::string& ruleName);
 	//音声認識ルールを構築します。 正規表現にも対応しています。
-	xreturn::r<bool> AddRegexp(unsigned int id,const std::string & str ,SPSTATEHANDLE stateHandle ) ;
+	bool AddRegexp(unsigned int id,const std::string & str ,SPSTATEHANDLE stateHandle ) ;
 	//音声認識ルールを登録する部分の詳細な実行です。正規表現のネストがあるので再起してます。
-	xreturn::r<bool> AddRegexpImpl(const SPPROPERTYINFO* prop,const std::wstring & str, SPSTATEHANDLE stateHandle);
+	bool AddRegexpImpl(const SPPROPERTYINFO* prop,const std::wstring & str, SPSTATEHANDLE stateHandle);
 	//デバッグ用 認識結果をWaveファイルとして保存する
-	xreturn::r<bool> DebugSaveWavFile(const std::string& directory,ISpStreamFormat* streamFormat) const;
+	bool DebugSaveWavFile(const std::string& directory,ISpStreamFormat* streamFormat) const;
 private:
 	//ルールベース
 	CComPtr<ISpRecognizer>		RuleEngine;

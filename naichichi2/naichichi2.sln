@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "portaudio", "portaudio\port
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsvm", "libsvm\libsvm.vcxproj", "{AD94DA6A-8977-4769-A931-B1F1E452DE5F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openjtalk", "openjtalk\openjtalk.vcxproj", "{9AAE796F-247C-44FA-8BEE-F1DB12B8D0C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -49,6 +51,10 @@ Global
 		{AD94DA6A-8977-4769-A931-B1F1E452DE5F}.Debug|Win32.Build.0 = Debug|Win32
 		{AD94DA6A-8977-4769-A931-B1F1E452DE5F}.Release|Win32.ActiveCfg = Release|Win32
 		{AD94DA6A-8977-4769-A931-B1F1E452DE5F}.Release|Win32.Build.0 = Release|Win32
+		{9AAE796F-247C-44FA-8BEE-F1DB12B8D0C1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9AAE796F-247C-44FA-8BEE-F1DB12B8D0C1}.Debug|Win32.Build.0 = Debug|Win32
+		{9AAE796F-247C-44FA-8BEE-F1DB12B8D0C1}.Release|Win32.ActiveCfg = Release|Win32
+		{9AAE796F-247C-44FA-8BEE-F1DB12B8D0C1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

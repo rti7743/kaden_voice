@@ -16,20 +16,15 @@ ScriptRunner::~ScriptRunner()
 
 //インスタンスの再読み込み
 //プログラムをデバッグしているときとか、再読み込み機能がないと死ねるから・・・
-xreturn::r<bool> ScriptRunner::Reload()
+bool ScriptRunner::Reload()
 {
-/*
 	for(auto it = this->callbackHistoryList.begin() ; it != this->callbackHistoryList.end() ; ++it)
 	{
-		if (this->PoolMainWindow->Recognition.RemoveCallback(it,false))
+		if (this->PoolMainWindow->Recognition.RemoveCallback(*it,false))
 		{
 			break;	
 		}
-		if (this->PoolMainWindow->Speak.RemoveCallback(it,false))
-		{
-			break;	
-		}
-		if (this->PoolMainWindow->Httpd.RemoveCallback(it,false))
+		if (this->PoolMainWindow->Speak.RemoveCallback(*it,false))
 		{
 			break;	
 		}
@@ -41,40 +36,36 @@ xreturn::r<bool> ScriptRunner::Reload()
 		lua_close(this->LuaInstance);
 		this->LuaInstance = NULL;
 	}
-*/
+
 	return true;
 }
 
-xreturn::r<bool> ScriptRunner::LoadScript(const std::string & filename)
+bool ScriptRunner::LoadScript(const std::string & filename)
 {
 	assert(this->LuaInstance == NULL);
 
 	// Luaを開く
 	this->filename = filename;
 
-	auto r1 = CreateLuaInstance();
-	if (!r1)
-	{
-		return xreturn::error(std::string("luaインスタンス構築に失敗しました。 Filename:") + this->filename + " Lua:" + r1.getError().getFullErrorMessage() );
-	}
+	CreateLuaInstance();
 
 	// Luaファイルを読み込む
 	if(luaL_loadfile(this->LuaInstance, filename.c_str() ) )
 	{
-		return xreturn::error(std::string("スクリプト読み込みに失敗しました。 Filename:") + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(std::string("スクリプト読み込みに失敗しました。 Filename:") + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
 	}
 
 	//スクリプトのグローバルなエリアの処理.
 	if(lua_pcall(this->LuaInstance, 0, 0, 0) )
 	{
-		return xreturn::error(std::string("スクリプト読み込み時の実行に失敗しました。 Filename:") + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(std::string("スクリプト読み込み時の実行に失敗しました。 Filename:") + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
 	}
 
 	return true;
 }
 
 
-xreturn::r<bool> ScriptRunner::EvalScript(const std::string & script)
+bool ScriptRunner::EvalScript(const std::string & script)
 {
 	assert(this->LuaInstance == NULL);
 
@@ -82,28 +73,24 @@ xreturn::r<bool> ScriptRunner::EvalScript(const std::string & script)
 	this->filename = "<EVAL>";
 
 	auto r1 = CreateLuaInstance();
-	if (!r1)
-	{
-		return xreturn::error(std::string("luaインスタンス構築に失敗しました。 Filename:") + this->filename + " Lua:" + r1.getError().getFullErrorMessage() );
-	}
 
 	// Luaファイルを読み込む
 	if ( luaL_loadstring(this->LuaInstance, script.c_str()) )
 	{
-		return xreturn::error(std::string("スクリプト読み込み時に失敗しました。 Filename:") + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(std::string("スクリプト読み込み時に失敗しました。 Filename:") + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
 	}
 
 	//スクリプトのグローバルなエリアの処理.
 	if(lua_pcall(this->LuaInstance, 0, 0, 0) )
 	{
-		return xreturn::error(std::string("スクリプト読み込み時の実行に失敗しました。 Filename:") + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(std::string("スクリプト読み込み時の実行に失敗しました。 Filename:") + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
 	}
 
 	return true;
 }
 
 //新しい luaインスタンスを作成する
-xreturn::r<bool> ScriptRunner::CreateLuaInstance()
+bool ScriptRunner::CreateLuaInstance()
 {
 	assert(this->LuaInstance == NULL);
 
@@ -115,7 +102,6 @@ xreturn::r<bool> ScriptRunner::CreateLuaInstance()
 	//ないちちで利用する関数オーバーライド
 	lua_register(this->LuaInstance, "onvoice", (lua_CFunction)ScriptRunner::l_onvoice);
 	lua_register(this->LuaInstance, "onvoice_local", (lua_CFunction)ScriptRunner::l_onvoice_local);
-	lua_register(this->LuaInstance, "onhttp", (lua_CFunction)ScriptRunner::l_onhttp);
 	lua_register(this->LuaInstance, "ontrigger", (lua_CFunction)ScriptRunner::l_ontrigger);
 	lua_register(this->LuaInstance, "speak", (lua_CFunction)ScriptRunner::l_speak);
 	lua_register(this->LuaInstance, "trigger", (lua_CFunction)ScriptRunner::l_trigger);
@@ -160,37 +146,33 @@ bool ScriptRunner::IsMethodExist(const std::string& name)
 	return r;
 }
 
-xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name)
+std::string ScriptRunner::callFunction(const std::string& name)
 {
 	this->PoolMainWindow->SyncInvokeLog(std::string() + "callFunction:" + name + "()",LOG_LEVEL_DEBUG);
 
 	lua_getglobal(this->LuaInstance, name.c_str() );
 	if(!lua_isfunction(this->LuaInstance,-1) )
 	{
-		return xreturn::error(name + " 関数が定義されていません。 Filename:" + this->filename);
+		throw XLException(name + " 関数が定義されていません。 Filename:" + this->filename);
 	}
 
 	if(lua_pcall(this->LuaInstance, 0, 1, 0) != 0) 
 	{
-		return xreturn::error(name + "関数呼び出しに失敗しました。 Filename:" + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(name + "関数呼び出しに失敗しました。 Filename:" + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
 	}
 
-	auto value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
+	const std::string value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
 	lua_pop(this->LuaInstance, lua_gettop(this->LuaInstance));
-	if (!value)
-	{
-		return xreturn::error(name + "関数の戻り値が、voidか、数字か、文字列以外のデータになりました。 Filename:" + this->filename );
-	}
 	return value;
 }
-xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name,const std::string& paramA,const std::string& paramB,const std::string& paramC)
+std::string ScriptRunner::callFunction(const std::string& name,const std::string& paramA,const std::string& paramB,const std::string& paramC)
 {
 	this->PoolMainWindow->SyncInvokeLog(std::string() + "callFunction:" + name + "(" + paramA + "," + paramB + "," + paramC + ")",LOG_LEVEL_DEBUG);
 
 	lua_getglobal(this->LuaInstance, name.c_str() );
 	if(!lua_isfunction(this->LuaInstance,-1) )
 	{
-		return xreturn::error(name + " 関数が定義されていません。 Filename:" + this->filename);
+		throw XLException(name + " 関数が定義されていません。 Filename:" + this->filename);
 	}
 
 	lua_pushstringHelper(this->LuaInstance,paramA);
@@ -199,26 +181,22 @@ xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name,const
 
 	if(lua_pcall(this->LuaInstance, 3, 1, 0) != 0) 
 	{
-		return xreturn::error(name + "関数呼び出しに失敗しました。 Filename:" + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(name + "関数呼び出しに失敗しました。 Filename:" + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
 	}
 
-	auto value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
+	const std::string value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
 	lua_pop(this->LuaInstance, lua_gettop(this->LuaInstance));
-	if (!value)
-	{
-		return xreturn::error(name + "関数の戻り値が、voidか、数字か、文字列以外のデータになりました。 Filename:" + this->filename );
-	}
 	return value;
 }
 
-xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name,const std::map<std::string , std::string> & match)
+std::string ScriptRunner::callFunction(const std::string& name,const std::map<std::string , std::string> & match)
 {
 	this->PoolMainWindow->SyncInvokeLog(std::string() + "callFunction:" + name + "(!map!)",LOG_LEVEL_DEBUG);
 
 	lua_getglobal(this->LuaInstance, name.c_str() );
 	if(!lua_isfunction(this->LuaInstance,-1) )
 	{
-		return xreturn::error(name + " 関数が定義されていません。 Filename:" + this->filename);
+		throw XLException(name + " 関数が定義されていません。 Filename:" + this->filename);
 	}
 
 	//func( { data = value , ... }  ) として呼ぶ.
@@ -232,26 +210,22 @@ xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name,const
 
 	if(lua_pcall(this->LuaInstance, 1, 1, 0) != 0) 
 	{
-		return xreturn::error(name + "関数呼び出しに失敗しました。 Filename:" + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(name + "関数呼び出しに失敗しました。 Filename:" + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
 	}
 
-	auto value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
+	const std::string value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
 	lua_pop(this->LuaInstance, lua_gettop(this->LuaInstance));
-	if (!value)
-	{
-		return xreturn::error(name + "関数の戻り値が、voidか、数字か、文字列以外のデータになりました。 Filename:" + this->filename );
-	}
 	return value;
 }
 
-xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name,const std::list<std::string> & list,bool stripFirst)
+std::string ScriptRunner::callFunction(const std::string& name,const std::list<std::string> & list,bool stripFirst)
 {
 	this->PoolMainWindow->SyncInvokeLog(std::string() + "callFunction:" + name + "(!list!)",LOG_LEVEL_DEBUG);
 
 	lua_getglobal(this->LuaInstance, name.c_str() );
 	if(!lua_isfunction(this->LuaInstance,-1) )
 	{
-		return xreturn::error(name + " 関数が定義されていません。 Filename:" + this->filename);
+		throw XLException(name + " 関数が定義されていません。 Filename:" + this->filename);
 	}
 
 	int size = list.size();
@@ -268,15 +242,11 @@ xreturn::r<std::string> ScriptRunner::callFunction(const std::string& name,const
 
 	if(lua_pcall(this->LuaInstance, size, 1, 0) != 0) 
 	{
-		return xreturn::error(name + "関数呼び出しに失敗しました。 Filename:" + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(name + "関数呼び出しに失敗しました。 Filename:" + this->filename + " Lua:" + lua_tostringHelper(this->LuaInstance, -1));
 	}
 
-	auto value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
+	const std::string value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
 	lua_pop(this->LuaInstance, lua_gettop(this->LuaInstance));
-	if (!value)
-	{
-		return xreturn::error(name + "関数の戻り値が、voidか、数字か、文字列以外のデータになりました。 Filename:" + this->filename );
-	}
 	return value;
 }
 
@@ -316,10 +286,13 @@ int ScriptRunner::l_onvoice(lua_State* L)
 	}
 	int func = luaL_ref(L,LUA_REGISTRYINDEX);
 
-	auto xr = _this->PoolMainWindow->Recognition.AddCommandRegexp( _this->CreateCallback( func ) , p1);
-	if(!xr)
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"onvoice") + "実行時のエラー:" +xr.getErrorMessage());
+		_this->PoolMainWindow->Recognition.AddCommandRegexp( _this->CreateCallback( func ) , p1);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"onvoice") + "実行時のエラー:" +e.getErrorMessage());
 	}
 
 	return 0;             //戻り値の数を指定
@@ -349,61 +322,20 @@ int ScriptRunner::l_onvoice_local(lua_State* L)
 	}
 	int func = luaL_ref(L,LUA_REGISTRYINDEX);
 
- 
-	auto xr = _this->PoolMainWindow->Recognition.AddTemporaryRegexp( _this->CreateCallback( func ) , p1);
-	if(!xr)
+
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"onvoice_local") + "実行時のエラー" +xr.getErrorMessage());
+		_this->PoolMainWindow->Recognition.AddTemporaryRegexp( _this->CreateCallback( func ) , p1);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"onvoice") + "実行時のエラー:" +e.getErrorMessage());
 	}
 
 	return 0;             //戻り値の数を指定
 }
 
 
-
-int ScriptRunner::l_onhttp(lua_State* L)
-{
-	ScriptRunner* _this = __this(L);
-	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"onhttp") ,LOG_LEVEL_DEBUG);
-
-	if (!_this->IsScenario)
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"onhttp") + "はシナリオモードのみ有効です");
-	}
-	int argc = lua_gettop(L);
-	std::string key;
-	int func;
-
-	if (argc == 2)
-	{
-		//第1引数
-		if (! lua_isstring(L,-2) )
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"onhttp") + "の第1引数が文字列ではありません");
-		}
-		key = lua_tostringHelper(L,-2);
-
-		//第2引数
-		if (! lua_isfunction(L,-1) )
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"onhttp") + "の第2引数が関数ではありません");
-		}
-		func = luaL_ref(L,LUA_REGISTRYINDEX);
-	}
-	else
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"onhttp") + "の引数数が正しくありません");
-	}
-
-	
-	auto xr = _this->PoolMainWindow->Httpd.Regist(_this->CreateCallback( func ) , key);
-	if(!xr)
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"onhttp") + "実行時のエラー" +xr.getErrorMessage());
-	}
-
-	return 0;             //戻り値の数を指定
-}
 
 int ScriptRunner::l_ontrigger(lua_State* L)
 {
@@ -463,11 +395,14 @@ int ScriptRunner::l_ontrigger(lua_State* L)
 		return luaL_errorHelper(L,lua_funcdump(L,"ontrigger") + "の引数数が正しくありません");
 	}
 
-	
-	auto xr = _this->PoolMainWindow->TriggerManager.Regist(_this->CreateCallback( func ) , menuname, key);
-	if(!xr)
+
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"ontrigger") + "実行時のエラー" +xr.getErrorMessage());
+		_this->PoolMainWindow->TriggerManager.Regist(_this->CreateCallback( func ) , menuname, key);
+	}
+	catch(XLException & e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"ontrigger") + "実行時のエラー" +e.getErrorMessage());
 	}
 
 	return 0;             //戻り値の数を指定
@@ -524,10 +459,14 @@ int ScriptRunner::l_trigger(lua_State* L)
 		lua_pop(L, 1);
 	}
 
-	auto r1 = _this->PoolMainWindow->TriggerManager.Call(triggername , args);
-	if (!r1)
+	std::string r1;
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"trigger") + " 実行中にエラーが発生しました。" + r1.getFullErrorMessage() );
+		r1 = _this->PoolMainWindow->TriggerManager.Call(triggername , args);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"trigger") + " 実行中にエラーが発生しました。" + e.getFullErrorMessage() );
 	}
 
 	lua_pushstringHelper(L,r1);
@@ -579,10 +518,13 @@ int ScriptRunner::l_action(lua_State* L)
 		return luaL_errorHelper(L,lua_funcdump(L,"action") + "の引数数が正しくありません。");
 	}
 
-	auto xr = _this->PoolMainWindow->WebMenu.Fire(_this->CreateCallback( func ) ,_this->PoolMainWindow->WebMenu.getRoomName(), action);
-	if(!xr)
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"action") + "実行時のエラー:" + xr.getErrorMessage());
+		_this->PoolMainWindow->WebMenu.Fire(_this->CreateCallback( func ) ,_this->PoolMainWindow->WebMenu.getRoomName(), action);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"action") + "実行時のエラー:" + e.getErrorMessage());
 	}
 
 	return 0;             //戻り値の数を指定
@@ -633,10 +575,13 @@ int ScriptRunner::l_speak(lua_State* L)
 		return luaL_errorHelper(L,lua_funcdump(L,"speak") + "の引数数が正しくありません。");
 	}
 
-	auto xr = _this->PoolMainWindow->Speak.Speak(_this->CreateCallback( func ) ,text);
-	if(!xr)
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"speak") + "実行時のエラー:" +xr.getErrorMessage());
+		_this->PoolMainWindow->Speak.Speak(_this->CreateCallback( func ) ,text);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"speak") + "実行時のエラー:" +e.getErrorMessage());
 	}
 
 	return 0;             //戻り値の数を指定
@@ -656,12 +601,7 @@ int ScriptRunner::l_set_config(lua_State* L)
 	std::string key = lua_tostringHelper(L,-2);
 
 	//値
-	auto value = ScriptRunner::lua_crossdataToString(L ,-1);
-	if (!value)
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"set_config") + "の第2引数が文字列または数字ではありません");
-	}
-
+	std::string value = ScriptRunner::lua_crossdataToString(L ,-1);
 	_this->PoolMainWindow->Config.Set(key,value);
 	return 0;
 }
@@ -685,11 +625,7 @@ int ScriptRunner::l_get_config(lua_State* L)
 		key = lua_tostringHelper(L,-2);
 
 		//第二引数 ディフォルト
-		auto value = ScriptRunner::lua_crossdataToString(L ,-1);
-		if (!value)
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"get_config") + "の第2引数が文字列または数字ではありません");
-		}
+		std::string value = ScriptRunner::lua_crossdataToString(L ,-1);
 		def = value;
 	}
 	else if (argc == 1)
@@ -728,11 +664,7 @@ int ScriptRunner::l_telnet(lua_State* L)
 	std::string host= lua_tostringHelper(L,-5);
 
 	//第ニ引数 port
-	auto portString = ScriptRunner::lua_crossdataToString(L ,-4);
-	if (!portString)
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"telnet") + "の第2引数が数字ではありません");
-	}
+	std::string portString = ScriptRunner::lua_crossdataToString(L ,-4);
 	int port = atoi( ((std::string)portString).c_str() );
 
 	//第三引数 wait
@@ -756,10 +688,14 @@ int ScriptRunner::l_telnet(lua_State* L)
 	}
 	std::string recv = lua_tostringHelper(L,-1);
 
-	auto r = ActionImplement::Telnet(host , (int)port , wait,send,recv);
-	if (!r)
+	std::string r;
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"telnet") + "がエラーになりました。 " + r.getFullErrorMessage() );
+		r = ActionImplement::Telnet(host , (int)port , wait,send,recv);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"telnet") + "がエラーになりました。 " + e.getFullErrorMessage() );
 	}
 
 	//戻り値を積む.
@@ -780,10 +716,14 @@ int ScriptRunner::l_httpget(lua_State* L)
 	}
 	std::string url= lua_tostringHelper(L,-1);
 
-	auto r = ActionImplement::HttpGet(url);
-	if (!r)
+	std::string r;
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"httpget") + "がエラーになりました。 " + r.getFullErrorMessage() );
+		r = ActionImplement::HttpGet(url);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"httpget") + "がエラーになりました。 " + e.getFullErrorMessage() );
 	}
 
 	//戻り値を積む.
@@ -811,10 +751,14 @@ int ScriptRunner::l_httppost(lua_State* L)
 	}
 	std::string data= lua_tostringHelper(L,-2);
 
-	auto r = ActionImplement::HttpPost(url,data);
-	if (!r)
+	std::string r;
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"httppost") + "がエラーになりました。 " + r.getFullErrorMessage() );
+		r = ActionImplement::HttpPost(url,data);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"httppost") + "がエラーになりました。 " + e.getFullErrorMessage() );
 	}
 
 	//戻り値を積む.
@@ -862,10 +806,13 @@ int ScriptRunner::l_execute(lua_State* L)
 	}
 	command = XLStringUtil::pathcombine(baseDirectory,command);
 
-	auto r = ActionImplement::Execute("",command,args);
-	if (!r)
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"execute") + "がエラーになりました。 " + r.getFullErrorMessage() );
+		ActionImplement::Execute("",command,args);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"execute") + "がエラーになりました。 " + e.getFullErrorMessage() );
 	}
 
 	return 0;
@@ -899,11 +846,14 @@ int ScriptRunner::l_sendkey(lua_State* L)
 	}
 	int keyoption = lua_tointeger(L,-1);
 
-	auto r = ActionImplement::SendKeydown("",windowname,key,keyoption);
-	if (!r)
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"sendkey") + "がエラーになりました。 " + r.getFullErrorMessage() );
+		ActionImplement::SendKeydown("",windowname,key,keyoption);
 	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"sendkey") + "がエラーになりました。 " + e.getFullErrorMessage() );
+	}	
 
 	return 0;
 }
@@ -943,10 +893,13 @@ int ScriptRunner::l_sendmessage(lua_State* L)
 	}
 	int lparam = lua_tointeger(L,-1);
 
-	auto r = ActionImplement::SendMessage("",windowname,message,wparam,lparam);
-	if (!r)
+	try
 	{
-		return luaL_errorHelper(L,lua_funcdump(L,"sendmessage") + "がエラーになりました。 " + r.getFullErrorMessage() );
+		ActionImplement::SendMessage("",windowname,message,wparam,lparam);
+	}
+	catch(XLException &e)
+	{
+		return luaL_errorHelper(L,lua_funcdump(L,"sendmessage") + "がエラーになりました。 " + e.getFullErrorMessage() );
 	}
 
 	return 0;
@@ -969,11 +922,8 @@ int ScriptRunner::l_msleep(lua_State* L)
 	{
 		return luaL_errorHelper(L,lua_funcdump(L,"msleep") + "の第1引数が0以下です。スリープするミリ秒を入れてください。");
 	}
-	auto r = ActionImplement::MSleep("" , (unsigned int)mtime);
-	if (!r)
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"msleep") + "がエラーになりました。 " + r.getFullErrorMessage() );
-	}
+
+	ActionImplement::MSleep("" , (unsigned int)mtime);
 	return 0;
 }
 
@@ -999,11 +949,7 @@ int ScriptRunner::l_gotoweb(lua_State* L)
 	_this->PoolMainWindow->SyncInvokeLog(std::string() + "lua function:" + lua_funcdump(L,"gotoweb") ,LOG_LEVEL_DEBUG);
 
 	//第一引数 webpath
-	auto webpath = ScriptRunner::lua_crossdataToString(L ,-1);
-	if (!webpath)
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"gotoweb") + "の第1引数が数字ではありません");
-	}
+	const std::string webpath = ScriptRunner::lua_crossdataToString(L ,-1);
 
 	std::string weburl = _this->PoolMainWindow->Httpd.getWebURL(webpath);
 
@@ -1029,28 +975,12 @@ int ScriptRunner::l_tips(lua_State* L)
 	else if (argc == 1)
 	{
 		title = "";
-		auto r1 = ScriptRunner::lua_crossdataToString(L ,-1);
-		if (!r1)
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"tips") + "の第1引数が文字列ではありません");
-		}
-		message = r1;
+		message = ScriptRunner::lua_crossdataToString(L ,-1);
 	}
 	else 
 	{
-		auto r1 = ScriptRunner::lua_crossdataToString(L ,-2);
-		if (!r1)
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"tips") + "の第1引数が文字列ではありません");
-		}
-		title = r1;
-
-		auto r2 = ScriptRunner::lua_crossdataToString(L ,-1);
-		if (!r1)
-		{
-			return luaL_errorHelper(L,lua_funcdump(L,"tips") + "の第2引数が文字列ではありません");
-		}
-		message = r2;
+		title = ScriptRunner::lua_crossdataToString(L ,-2);
+		message = ScriptRunner::lua_crossdataToString(L ,-1);
 	}
 
 	_this->PoolMainWindow->SyncInvokePopupMessage(title,message);
@@ -1072,10 +1002,6 @@ int ScriptRunner::l_find_config(lua_State* L)
 
 	//キー
 	auto key = ScriptRunner::lua_crossdataToString(L ,-1);
-	if (!key)
-	{
-		return luaL_errorHelper(L,lua_funcdump(L,"findconfig") + "の第1引数が文字列ではありません");
-	}
 
 	auto configmap = _this->PoolMainWindow->Config.FindGetsToMap(key,true);
 
@@ -1238,7 +1164,7 @@ std::string ScriptRunner::convertTemplate(const std::string & filename,const std
 	return sourceCode;
 }
 
-xreturn::r<std::string> ScriptRunner::callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match)
+std::string ScriptRunner::callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match)
 {
 	const int callbackIndex = callback->getFunc();
 	this->PoolMainWindow->SyncInvokeLog(std::string() + "callbackFunction:" + num2str(callbackIndex) ,LOG_LEVEL_DEBUG);
@@ -1258,16 +1184,12 @@ xreturn::r<std::string> ScriptRunner::callbackFunction(const CallbackDataStruct*
 
 	if(lua_pcall(this->LuaInstance, 1, 1, 0) != 0) 
 	{
-		return xreturn::error(("戻り値のcallback関数呼び出しに失敗しました  Filename:") + this->filename + " Lua:" +  lua_tostringHelper(this->LuaInstance, -1));
+		throw XLException(("戻り値のcallback関数呼び出しに失敗しました  Filename:") + this->filename + " Lua:" +  lua_tostringHelper(this->LuaInstance, -1));
 	}
 
 
 	auto value = ScriptRunner::lua_crossdataToString(this->LuaInstance ,-1);
 	lua_pop(this->LuaInstance, lua_gettop(this->LuaInstance));
-	if (!value)
-	{
-		return xreturn::error(std::string("callback関数 の戻り値が、voidか、数字か、文字列以外のデータになりました。 Filename:") + this->filename );
-	}
 
 	return value;
 }
@@ -1308,7 +1230,7 @@ int ScriptRunner::luaL_errorHelper(lua_State* L ,const std::string & errorMessag
 }
 
 
-xreturn::r<std::string> ScriptRunner::lua_crossdataToString(lua_State* L , int index)
+std::string ScriptRunner::lua_crossdataToString(lua_State* L , int index)
 {
 	if(lua_isstring(L,index)) 
 	{//文字列
@@ -1329,7 +1251,7 @@ xreturn::r<std::string> ScriptRunner::lua_crossdataToString(lua_State* L , int i
 	}
 	else 
 	{
-		return xreturn::error("文字列または数字ではありません");
+		return "";
 	}
 }
 

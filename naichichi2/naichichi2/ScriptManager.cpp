@@ -4,7 +4,7 @@
 #include "MainWindow.h"
 
 //作成
-xreturn::r<bool> ScriptManager::Create(MainWindow * poolMainWindow)
+bool ScriptManager::Create(MainWindow * poolMainWindow)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 	this->PoolMainWindow = poolMainWindow;
@@ -16,7 +16,9 @@ xreturn::r<bool> ScriptManager::Create(MainWindow * poolMainWindow)
 	this->WebScript.Create(this->PoolMainWindow);
 	this->WebScript.Load();
 
+	this->PoolMainWindow->SyncInvokeLog("音声認識エンジンコミット開始",LOG_LEVEL_DEBUG);
 	this->PoolMainWindow->Recognition.CommitRule();
+	this->PoolMainWindow->SyncInvokeLog("音声認識エンジンコミット終了",LOG_LEVEL_DEBUG);
 
 	this->PoolMainWindow->SyncInvokeLog("ScriptManager初期化完了",LOG_LEVEL_DEBUG);
 	return true;
@@ -33,7 +35,7 @@ ScriptManager::~ScriptManager()
 #include "XLStringUtil.h"
 
 //luaファイル郡の読み込み
-xreturn::r<bool> ScriptManager::loadLua(const std::string & baseDirectory)
+bool ScriptManager::loadLua(const std::string & baseDirectory)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
@@ -46,10 +48,14 @@ xreturn::r<bool> ScriptManager::loadLua(const std::string & baseDirectory)
 		}
 
 		ScriptRunner* runner = new ScriptRunner(this->PoolMainWindow , true );
-		auto r1 = runner->LoadScript(fullfilename);
-		if (!r1)
+
+		try
 		{
-			this->PoolMainWindow->SyncInvokeError( r1.getFullErrorMessage() );
+			runner->LoadScript(fullfilename);
+		}
+		catch(XLException &e)
+		{
+			this->PoolMainWindow->SyncInvokeError( e.getFullErrorMessage() );
 			return true;
 		}
 
@@ -58,7 +64,7 @@ xreturn::r<bool> ScriptManager::loadLua(const std::string & baseDirectory)
 	});
 	if (!ret)
 	{
-		return xreturn::error("findfirstに失敗 ディレクトリ:" + baseDirectory + " を検索できません。",-1);
+		throw XLException("findfirstに失敗 ディレクトリ:" + baseDirectory + " を検索できません。",-1);
 	}
 
 	return true;
@@ -73,10 +79,13 @@ void ScriptManager::RunAllLua()
 	auto it = this->Scripts.begin();
 	for( ; it != this->Scripts.end() ; ++it )
 	{
-		auto r = (*it)->callFunction("call");
-		if (!r)
+		try
 		{
-			this->PoolMainWindow->SyncInvokeError( r.getFullErrorMessage() );
+			(*it)->callFunction("call");
+		}
+		catch(XLException &e)
+		{
+			this->PoolMainWindow->SyncInvokeError( e.getFullErrorMessage() );
 			continue;
 		}
 	}
@@ -124,7 +133,7 @@ void ScriptManager::SpeakEnd(const CallbackDataStruct* callback,const std::strin
 }
 
 //汎用的なコールバック打ち返し
-xreturn::r<std::string> ScriptManager::fireCallback(const CallbackDataStruct* callback,const std::map< std::string , std::string >& args) const
+std::string ScriptManager::fireCallback(const CallbackDataStruct* callback,const std::map< std::string , std::string >& args) const
 {
 	std::string ret;
 	if (callback == NULL)
@@ -139,8 +148,6 @@ xreturn::r<std::string> ScriptManager::fireCallback(const CallbackDataStruct* ca
 	}
 	return callback->getRunner()->callbackFunction(callback,args);
 }
-
-
 
 //家電制御が終わった時
 void ScriptManager::ActionEnd(const CallbackDataStruct* callback,const std::map< std::string , std::string >& data)

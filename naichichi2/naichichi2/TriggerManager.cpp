@@ -25,7 +25,7 @@ TriggerManager::~TriggerManager()
 	}
 }
 
-xreturn::r<bool> TriggerManager::Create(MainWindow* poolMainWindow)
+bool TriggerManager::Create(MainWindow* poolMainWindow)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
@@ -33,7 +33,7 @@ xreturn::r<bool> TriggerManager::Create(MainWindow* poolMainWindow)
 	return true;
 }
 
-xreturn::r<bool> TriggerManager::Regist(const CallbackDataStruct* callback , const std::string & menuName,const std::string & triggerName )
+bool TriggerManager::Regist(const CallbackDataStruct* callback , const std::string & menuName,const std::string & triggerName )
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
@@ -51,7 +51,7 @@ xreturn::r<bool> TriggerManager::Regist(const CallbackDataStruct* callback , con
 	return true;
 }
 
-xreturn::r<std::string> TriggerManager::Call(const std::string & triggerName ,const std::map<std::string,std::string>& args)
+std::string TriggerManager::Call(const std::string & triggerName ,const std::map<std::string,std::string>& args)
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
@@ -65,7 +65,7 @@ xreturn::r<std::string> TriggerManager::Call(const std::string & triggerName ,co
 		}
 	}
 
-	return xreturn::error("指定された" + triggerName + "は存在しません");
+	throw XLException("指定された" + triggerName + "は存在しません");
 }
 
 bool TriggerManager::IsExist(const std::string & triggerName) const

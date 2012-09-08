@@ -10,7 +10,7 @@ else
         (cd julius ; ./configure --with-alsa ; make ; cd .. );
         (cd liblinear ; ./configure ; make ; cd .. );
 #        (cd mecab ; ./configure ; make ; cd .. );
-        (cd lua ; ./configure ; make ; cd ..  );
+        (cd lua ; ./configure ; make linux ; cd ..  );
         (cd naichichi2 ; ./configure ; make ; cd .. );
 
 fi

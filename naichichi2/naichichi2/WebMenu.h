@@ -36,6 +36,6 @@ public:
 	const std::string getRoomName() const;
 	bool checkRoomname(const std::string& roomname) const;
 	void AddMenu(const std::string& roomname,const std::string& roomip,const std::string& menuname,const std::string& menuimage,const std::string& menustate,const std::string& actionname,const std::string& actioncommand);
-	xreturn::r<bool> Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& action);
-	xreturn::r<bool> Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& menuname,const std::string& actionname);
+	bool Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& action);
+	bool Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& menuname,const std::string& actionname);
 };

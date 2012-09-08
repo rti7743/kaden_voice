@@ -32,7 +32,7 @@ Speak_GoogleTranslate::~Speak_GoogleTranslate()
 }
 
 //音声認識のためのオブジェクトの構築.
-xreturn::r<bool> Speak_GoogleTranslate::Create(MainWindow* poolMainWindow)
+bool Speak_GoogleTranslate::Create(MainWindow* poolMainWindow)
 {
 	assert(this->Thread == NULL);
 	
@@ -43,7 +43,7 @@ xreturn::r<bool> Speak_GoogleTranslate::Create(MainWindow* poolMainWindow)
 		{
 			this->Run(); 
 		}
-		catch(xreturn::error &e)
+		catch(XLException &e)
 		{
 			this->PoolMainWindow->SyncInvokeError( e.getErrorMessage() );
 		}
@@ -151,13 +151,13 @@ void Speak_GoogleTranslate::Run()
 	}
 }
 
-xreturn::r<bool> Speak_GoogleTranslate::Setting(int rate,int pitch,unsigned int volume,const std::string& botname)
+bool Speak_GoogleTranslate::Setting(int rate,int pitch,unsigned int volume,const std::string& botname)
 {
 	//設定できません!!
 	return true;
 }
 
-xreturn::r<bool> Speak_GoogleTranslate::Speak(const CallbackDataStruct * callback,const std::string & str)
+bool Speak_GoogleTranslate::Speak(const CallbackDataStruct * callback,const std::string & str)
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
@@ -169,7 +169,7 @@ xreturn::r<bool> Speak_GoogleTranslate::Speak(const CallbackDataStruct * callbac
 }
 
 
-xreturn::r<bool> Speak_GoogleTranslate::Cancel()
+bool Speak_GoogleTranslate::Cancel()
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
@@ -178,7 +178,7 @@ xreturn::r<bool> Speak_GoogleTranslate::Cancel()
 	return true;
 }
 
-xreturn::r<bool> Speak_GoogleTranslate::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
+bool Speak_GoogleTranslate::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 

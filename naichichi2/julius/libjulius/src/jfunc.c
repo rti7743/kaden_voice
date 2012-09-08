@@ -2,10 +2,9 @@
  * @file   jfunc.c
  * 
  * <JA>
- * @brief  еве╫еъе▒б╝е╖ечеє╕■д▒д╬╝яб╣д╬API┤╪┐Ї
- *
- * д│д╬е╒ебедеыд╦д╧бдеве╫еъе▒б╝е╖ечеєдлдщJuliusLibд╬│╞╡б╟╜дЄ╕╞д╙╜╨д╣
- * API┤╪┐Їдкдшд╙ещеде╓ещеъ▓╜д╬д┐дсд╦╝┬┴їд╡дьд┐╝яб╣д╬┤╪┐Їдм─ъ╡┴д╡дьд╞ддд▐д╣. 
+ * @brief  еве╫еБE▒б╝е╖ечеє╕■д▒д╬╝БE╣д╬API┤╪┐БE *
+ * д│д╬е╒ебедеБE╦д╧бдеве╫еБE▒б╝е╖ечеєдлдщJuliusLibд╬│╞╡б╟╜дЄ╕╞д╙╜╨д╣
+ * API┤╪┐Їдкдшд╙ещеде╓ещеБE╜д╬д┐дсд╦╝┬┴їд╡дБE┐╝БE╣д╬┤╪┐Їдм─БE┴д╡дБE╞ддд▐д╣. 
  * 
  * </JA>
  * 
@@ -37,8 +36,8 @@
  * speech input, it will stop after the current recognition ended.
  * </EN>
  * <JA>
- * еиеєе╕еєд╦╟з╝▒╜ш═¤дЄ░ь╗■─ф╗▀д╣дыдшдж═╫╡сд╣ды. д│д╬┤╪┐ЇдЄ╕╞╜╨д╖╗■д╦
- * ▓╗└╝╞■╬╧дЄ╝┬╣╘├цд╟двд├д┐╛ь╣чбдд╜д╬╞■╬╧д╬╟з╝▒дм╜к╬╗д╖д┐двд╚д╟─ф╗▀д╣ды. 
+ * еиеєе╕еєд╦╟з╝▒╜ш═¤дЄ░БE■─ф╗▀д╣дБEшдж═╫╡сд╣дБE д│д╬┤╪┐ЇдЄ╕╞╜╨д╖╗■д╦
+ * ▓╗└╝╞■╬╧дЄ╝┬╣╘├цд╟двд├д┐╛БEчбдд╜д╬╞■╬╧д╬╟з╝▒дм╜к╬╗д╖д┐двд╚д╟─ф╗▀д╣дБE 
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -77,8 +76,8 @@ j_request_pause(Recog *recog)
  * current input will be lost).
  * </EN>
  * <JA>
- * еиеєе╕еєд╦╟з╝▒╜ш═¤дЄ┬и╗■─ф╗▀д╣дыдшдж═╫╡сд╣ды. д│д╬┤╪┐ЇдЄ╕╞╜╨д╖╗■д╦
- * ▓╗└╝╞■╬╧дЄ╝┬╣╘├цд╬╛ь╣чбдд╜д╬╞■╬╧дЄ╟╦┤■д╖д╞┬и║┬д╦─ф╗▀д╣ды. 
+ * еиеєе╕еєд╦╟з╝▒╜ш═¤дЄ┬и╗■─ф╗▀д╣дБEшдж═╫╡сд╣дБE д│д╬┤╪┐ЇдЄ╕╞╜╨д╖╗■д╦
+ * ▓╗└╝╞■╬╧дЄ╝┬╣╘├цд╬╛БEчбдд╜д╬╞■╬╧дЄ╟╦┤■д╖д╞┬и║┬д╦─ф╗▀д╣дБE 
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -116,7 +115,7 @@ j_request_terminate(Recog *recog)
  * Resume the engine which has already paused or terminated.
  * </EN>
  * <JA>
- * ░ь╗■─ф╗▀д╖д╞дддыеиеєе╕еєдЄ║╞│лд╡д╗ды. 
+ * ░БE■─ф╗▀д╖д╞дддБEиеєе╕еєдЄ║╞│лд╡д╗дБE 
  * </JA>
  * 
  * @param recog 
@@ -153,10 +152,10 @@ j_request_resume(Recog *recog)
  * 
  * </EN>
  * <JA>
- * ┴┤╩╕╦бд╬╩╤╣╣дЄе┴езе├епд╖бд╔м═╫д╟двдьд╨╟з╝▒═╤╝н╜ёдЄ║╞╣╜├█д╣дыдшдж
- * еиеєе╕еєд╦═╫╡сд╣ды. ╝┬║▌д╬╜ш═¤д╧╝бд╬╟з╝▒д╬╣ч┤╓д╦╣╘дядьды. 
- * д│д╬┤╪┐Їд╧╩╕╦бдЄ─╔▓├д╖д┐дъ║я╜№д╖д┐д╩д╔бд
- * ╩╕╦беъе╣е╚д╦╩╤╣╣дЄ▓├дид┐двд╚д╦╔мд║╕╞д╓д┘днд╟двды. 
+ * ┴┤╩╕╦бд╬╩╤╣╣дЄе┴езе├епд╖бд╔м═╫д╟двдБE╨╟з╝▒═╤╝н╜ёдЄ║╞╣╜├█д╣дБEшдж
+ * еиеєе╕еєд╦═╫╡сд╣дБE ╝┬║▌д╬╜ш═¤д╧╝бд╬╟з╝▒д╬╣ч┤╓д╦╣╘дБEБEБE 
+ * д│д╬┤╪┐Їд╧╩╕╦бдЄ─╔▓├д╖д┐дБEБEБE╖д┐д╩д╔бд
+ * ╩╕╦беБE╣е╚д╦╩╤╣╣дЄ▓├дид┐двд╚д╦╔мд║╕╞д╓д┘днд╟двдБE 
  * 
  * </JA>
  * 
@@ -197,7 +196,7 @@ schedule_grammar_update(Recog *recog)
 
 /** 
  * <JA>
- * ║╞╣╜├█═╫╡се╒еще░дЄепеъевд╣ды. 
+ * ║╞╣╜├█═╫╡се╒еще░дЄепеБEвд╣дБE 
  * 
  * </JA>
  * <EN>
@@ -222,8 +221,7 @@ j_reset_reload(Recog *recog)
  * Enable debug messages in JuliusLib to log.
  * </EN>
  * <JA>
- * JuliusLib╞тд╬┤╪┐Їд╟е╟е╨е├е░есе├е╗б╝е╕дЄеэе░д╦╜╨╬╧д╣дыдшджд╦д╣ды
- * </JA>
+ * JuliusLib╞тд╬┤╪┐Їд╟е╟е╨е├е░есе├е╗б╝е╕дЄе·┴░д╦╜╨╬╧д╣дБEшджд╦д╣дБE * </JA>
  * @callgraph
  * @callergraph
  * @ingroup engine
@@ -239,7 +237,7 @@ j_enable_debug_message()
  * Disable debug messages in JuliusLib to log.
  * </EN>
  * <JA>
- * JuliusLib╞тд╬┤╪┐Їд╟е╟е╨е├е░есе├е╗б╝е╕дЄ╜╨д╡д╩дддшджд╦д╣ды. 
+ * JuliusLib╞тд╬┤╪┐Їд╟е╟е╨е├е░есе├е╗б╝е╕дЄ╜╨д╡д╩дддшджд╦д╣дБE 
  * </JA>
  * 
  * @callgraph
@@ -257,7 +255,7 @@ j_disable_debug_message()
  * Enable verbose messages in JuliusLib to log.
  * </EN>
  * <JA>
- * JuliusLib╞тд╬┤╪┐Їд╟╝ч═╫есе├е╗б╝е╕дЄеэе░д╦╜╨╬╧д╣дыдшджд╦д╣ды. 
+ * JuliusLib╞тд╬┤╪┐Їд╟╝ч═╫есе├е╗б╝е╕дЄе·┴░д╦╜╨╬╧д╣дБEшджд╦д╣дБE 
  * </JA>
  * 
  * @callgraph
@@ -275,7 +273,7 @@ j_enable_verbose_message()
  * Disable verbose messages in JuliusLib to log.
  * </EN>
  * <JA>
- * JuliusLib╞тд╬┤╪┐Їд╟╝ч═╫есе├е╗б╝е╕д╬еэе░╜╨╬╧дЄд╖д╩дддшджд╦д╣ды. 
+ * JuliusLib╞тд╬┤╪┐Їд╟╝ч═╫есе├е╗б╝е╕д╬е·┴░╜╨╬╧дЄд╖д╩дддшджд╦д╣дБE 
  * </JA>
  * 
  * @callgraph
@@ -318,7 +316,7 @@ j_internal_error(char *fmt, ...)
  * If multiple instances defined from init, remove initial one (id=0)
  * </EN>
  * <JA>
- * ╩г┐Їедеєе╣е┐еєе╣дм─ъ╡┴д╡дьд╞ддды╛ь╣чбв╜щ┤№едеєе╣е┐еєе╣(id=0)д╧
+ * ╩г┐Їедеєе╣е┐еєе╣дм─БE┴д╡дБE╞дддБEБEчбв╜щ┤БEдеєе╣е┐еєе╣(id=0)д╧
  * ╠╡╕·д╩д╬д╟╛├д╣. 
  * </JA>
  * 
@@ -358,8 +356,8 @@ j_config_remove_initial(Jconf *jconf)
  * instances in jconf.
  * </EN>
  * <JA>
- * е│е▐еєе╔░·┐Їдлдще╤ещесб╝е┐дЄ╞╔д▀╣■д▀бдjconf ╞тд╬│╞└▀─ъедеєе╣е┐еєе╣д╦
- * ├═дЄ│╩╟╝д╣ды. 
+ * е│е▐еєе╔░·┐Їдлдще╤ещесб╝е┐дЄ╞╔д▀╣■д▀бдjconf ╞тд╬│╞└▀─БEдеєе╣е┐еєе╣д╦
+ * ├═дЄ│╩╟╝д╣дБE 
  * </JA>
  * 
  * @param jconf [i/o] global configuration instance
@@ -391,8 +389,8 @@ j_config_load_args(Jconf *jconf, int argc, char *argv[])
  * instances in jconf.
  * </EN>
  * <JA>
- * е│е▐еєе╔░·┐ЇдЄ┤▐др╩╕╗·╬єдлдще╤ещесб╝е┐дЄ╞╔д▀╣■д▀бдjconf ╞тд╬│╞└▀─ъедеєе╣е┐еєе╣д╦
- * ├═дЄ│╩╟╝д╣ды. 
+ * е│е▐еєе╔░·┐ЇдЄ┤▐др╩╕╗·╬єдлдще╤ещесб╝е┐дЄ╞╔д▀╣■д▀бдjconf ╞тд╬│╞└▀─БEдеєе╣е┐еєе╣д╦
+ * ├═дЄ│╩╟╝д╣дБE 
  * </JA>
  * 
  * @param jconf [i/o] global configuration instance
@@ -427,8 +425,8 @@ j_config_load_string(Jconf *jconf, char *string)
  * instances in jconf.
  * </EN>
  * <JA>
- * jconf е╒ебедеыдлдще╤ещесб╝е┐дЄ╞╔д▀╣■д▀бдjconf ╞тд╬│╞└▀─ъедеєе╣е┐еєе╣д╦
- * ├═дЄ│╩╟╝д╣ды. 
+ * jconf е╒ебедеБEлдще╤ещесб╝е┐дЄ╞╔д▀╣■д▀бдjconf ╞тд╬│╞└▀─БEдеєе╣е┐еєе╣д╦
+ * ├═дЄ│╩╟╝д╣дБE 
  * </JA>
  * 
  * @param jconf [i/o] glbal configuration instance
@@ -460,7 +458,7 @@ j_config_load_file(Jconf *jconf, char *filename)
  * </EN>
  * <JA>
  * е│е▐еєе╔░·┐Їдлдще╤ещесб╝е┐дЄ╞╔д▀╣■д▀бдд╜д╬├═дЄ│╩╟╝д╖д┐
- * ┐╖д┐д╩└▀─ъедеєе╣е┐еєе╣дЄ│фдъ╔╒д▒д╞╩╓д╣. 
+ * ┐╖д┐д╩└▀─БEдеєе╣е┐еєе╣дЄ│фдБE╒д▒д╞╩╓д╣. 
  * </JA>
  * 
  * @param argc [in] number of arguments
@@ -490,8 +488,8 @@ j_config_load_args_new(int argc, char *argv[])
  * file.
  * </EN>
  * <JA>
- * ┐╖д┐д╩└▀─ъедеєе╣е┐еєе╣дЄ│фдъ╔╒д▒бдд╜д│д╦
- * jconfе╒ебедеыдлдщ└▀─ъе╤ещесб╝е┐дЄ╞╔д▀╣■дєд╟╩╓д╣. 
+ * ┐╖д┐д╩└▀─БEдеєе╣е┐еєе╣дЄ│фдБE╒д▒бдд╜д│д╦
+ * jconfе╒ебедеБEлдщ└▀─БE╤ещесб╝е┐дЄ╞╔д▀╣■дєд╟╩╓д╣. 
  * </JA>
  * 
  * @param filename [in] jconf filename
@@ -520,8 +518,8 @@ j_config_load_file_new(char *filename)
  * file.
  * </EN>
  * <JA>
- * ┐╖д┐д╩└▀─ъедеєе╣е┐еєе╣дЄ│фдъ╔╒д▒бдд╜д│д╦
- * ╩╕╗·╬єдлдщ└▀─ъе╤ещесб╝е┐дЄ╞╔д▀╣■дєд╟╩╓д╣. 
+ * ┐╖д┐д╩└▀─БEдеєе╣е┐еєе╣дЄ│фдБE╒д▒бдд╜д│д╦
+ * ╩╕╗·╬єдлдщ└▀─БE╤ещесб╝е┐дЄ╞╔д▀╣■дєд╟╩╓д╣. 
  * </JA>
  * 
  * @param string [in] option string
@@ -551,9 +549,9 @@ j_config_load_string_new(char *string)
  * The file will be read just after the normal dictionary at startup.
  * </EN>
  * <JA>
- * ─╔▓├╝н╜ёе╒ебедеыд╬╞╔д▀╣■д▀дЄ╗╪─ъд╣ды.
- * ╩г┐Ї▓є╕╞д╨дьд┐╛ь╣чбвд╣д┘д╞╞╔д▀╣■д▐дьдыбг
- * ╗╪─ъд╡дьд┐╝н╜ёд╧╡п╞░╗■д╦─╠╛яд╬╝н╜ёд╬двд╚д╦┬│д▒д╞╞╔д▀╣■д▐дьды.
+ * ─╔▓├╝н╜ёе╒ебедеБE╬╞╔д▀╣■д▀дЄ╗╪─ъд╣дБE
+ * ╩г┐Ї▓є╕╞д╨дБE┐╛БEчбвд╣д┘д╞╞╔д▀╣■д▐дБEБEг
+ * ╗╪─ъд╡дБE┐╝н╜ёд╧╡п╞░╗■д╦─╠╛БE╬╝н╜ёд╬двд╚д╦┬│д▒д╞╞╔д▀╣■д▐дБEБE
  * </JA>
  *
  * @param lm [i/o] a LM configuration
@@ -583,9 +581,9 @@ j_add_dict(JCONF_LM *lm, char *dictfile)
  * If called multiple times, all the specified words will be appended.
  * </EN>
  * <JA>
- * ─╔▓├д╬├▒╕ьеиеєе╚еъдЄ╗╪─ъд╣ды.
- * ╞т═╞д╧╝н╜ёе╒ебедеыд╚╞▒д╕е╒ейб╝е▐е├е╚.
- * ╡п╞░д▐д╟д╦╩г┐Ї▓є╕╞д╨дьд┐╛ь╣чбвд╜д╬д╣д┘д╞дм╡п╞░╗■д╦─╔▓├д╡дьды.
+ * ─╔▓├д╬├▒╕БEиеєе╚еъдЄ╗╪─ъд╣дБE
+ * ╞т═╞д╧╝н╜ёе╒ебедеБE╚╞▒д╕е╒ейб╝е▐е├е╚.
+ * ╡п╞░д▐д╟д╦╩г┐Ї▓є╕╞д╨дБE┐╛БEчбвд╜д╬д╣д┘д╞дм╡п╞░╗■д╦─╔▓├д╡дБEБE
  * </JA>
  *
  * @param lm [i/o] a LM configuration
@@ -613,9 +611,9 @@ j_add_word(JCONF_LM *lm, char *wordentry)
  * A/D-in thread will start inside this function.
  * </EN>
  * <JA>
- * └▀─ъд╟┴к┬Єд╡дьд┐ A/D-in е╟е╨еде╣дЄ╜щ┤№▓╜д╖╟з╝▒д╬╜р╚ўдЄ╣╘дж. 
- * д╜д╬е╟е╨еде╣д╦┬╨д╖д╞ threading дм╗╪─ъд╡дьд╞ддды╛ь╣чд╧бд
- * A/D-in ═╤е╣еье├е╔дмд│д│д╟│л╗╧д╡дьды. 
+ * └▀─ъд╟┴к┬Єд╡дБE┐ A/D-in е╟е╨еде╣дЄ╜щ┤БE╜д╖╟з╝▒д╬╜р╚ўдЄ╣╘дж. 
+ * д╜д╬е╟е╨еде╣д╦┬╨д╖д╞ threading дм╗╪─ъд╡дБE╞дддБEБEчд╧бд
+ * A/D-in ═╤е╣еБE├е╔дмд│д│д╟│л╗╧д╡дБEБE 
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -656,8 +654,8 @@ j_adin_init(Recog *recog)
  * input device does not support this function.
  * </EN>
  * <JA>
- * ╕╜║▀д╬╞■╬╧е╒ебедеы╠╛дЄ╩╓д╣.╕╜║▀д╬╞■╬╧е╟е╨еде╣дмд│д╬╡б╟╜дЄе╡е▌б╝е╚
- * д╖д╞ддд╩дд╛ь╣чд╧ NULL дЄ╩╓д╣бе
+ * ╕╜║▀д╬╞■╬╧е╒ебедеБE╛дЄ╩╓д╣.╕╜║▀д╬╞■╬╧е╟е╨еде╣дмд│д╬╡б╟╜дЄе╡е▌б╝е╚
+ * д╖д╞ддд╩дд╛БEчд╧ NULL дЄ╩╓д╣бе
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -699,7 +697,7 @@ j_get_current_filename(Recog *recog)
  * Output all configurations and system informations into log.
  * </EN>
  * <JA>
- * еиеєе╕еєд╬┴┤└▀─ъд╚┴┤е╖е╣е╞ер╛Ё╩єдЄеэе░д╦╜╨╬╧д╣ды. 
+ * еиеєе╕еєд╬┴┤└▀─ъд╚┴┤е╖е╣е╞ер╛Ё╩єдЄе·┴░д╦╜╨╬╧д╣дБE 
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -727,12 +725,12 @@ j_recog_info(Recog *recog)
  * </EN>
  *
  * <JA>
- * @brief  ═┐дидщдьд┐└▀─ъедеєе╣е┐еєе╣╞тд╬╛Ё╩єд╦╜╛д├д╞бд┐╖д┐д╩
- * еиеєе╕еєедеєе╣е┐еєе╣дЄ ╡п╞░бж└╕└од╣ды. 
+ * @brief  ═┐дидщдБE┐└▀─БEдеєе╣е┐еєе╣╞тд╬╛Ё╩єд╦╜╛д├д╞бд┐╖д┐д╩
+ * еиеєе╕еєедеєе╣е┐еєе╣дБE╡п╞░бж└╕└од╣дБE 
  * 
- * └▀─ъедеєе╣е┐еєе╣╞тд╬е╤ещесб╝е┐д╬е┴езе├еп╕хбдете╟еыдЄ╞╔д▀╣■д▀бд╠┌╣╜
- * ┬д▓╜╝н╜ёд╬└╕└обдеяб╝епеиеъевдкдшд╙енеуе├е╖ехд╬│╬╩▌д╩д╔дЄ╣╘дж. 
- * A/D-in д╬╜щ┤№▓╜░╩│░д╟╟з╝▒дЄ│л╗╧д╣дыд╬д╦╔м═╫д╩╜ш═¤дЄд╣д┘д╞╣╘дж. 
+ * └▀─БEдеєе╣е┐еєе╣╞тд╬е╤ещесб╝е┐д╬е┴езе├еп╕хбдете╟еБEЄ╞╔д▀╣■д▀бд╠┌╣╜
+ * ┬д▓╜╝н╜ёд╬└╕└обдеБE╝епеиеБEвдкдшд╙енеуе├е╖ехд╬│╬╩▌д╩д╔дЄ╣╘дж. 
+ * A/D-in д╬╜щ┤БE╜░╩│░д╟╟з╝▒дЄ│л╗╧д╣дБE╬д╦╔м═╫д╩╜ш═¤дЄд╣д┘д╞╣╘дж. 
  * </JA>
  * 
  * @param jconf [in] gloabl configuration instance
@@ -784,10 +782,9 @@ j_create_instance_from_jconf(Jconf *jconf)
  * specify "-userlm" option at jconf to use user-define language scoring.
  * </EN>
  * <JA>
- * ╕└╕ьете╟еы╜ш═¤едеєе╣е┐еєе╣д╦ецб╝е╢─ъ╡┴д╬╕└╕ье╣е│ев╔╒═┐┤╪┐ЇдЄ┼╨╧┐д╣ды. 
- * д│д╬┤╪┐Їд╧еиеєе╕еєедеєе╣е┐еєе╣└╕└о╕хдлдщ j_final_fusion() дм╕╞д╨дьды
- * д▐д╟д╬┤╓д╦╕╞д╓╔м═╫дмдвды. ├э░╒бзецб╝е╢─ъ╡┴д╬╕└╕ье╣е│ев┤╪┐ЇдЄ╗╚дж╛ь╣чд╧
- * ╝┬╣╘╗■еке╫е╖ечеє "-userlm" дт╗╪─ъд╣ды╔м═╫дмдвдыд│д╚д╦├э░╒д╗дш. 
+ * ╕└╕БEте╟еБEш═¤едеєе╣е┐еєе╣д╦ецб╝е╢─БE┴д╬╕└╕БE╣е│ев╔╒═┐┤╪┐ЇдЄ┼╨╧┐д╣дБE 
+ * д│д╬┤╪┐Їд╧еиеєе╕еєедеєе╣е┐еєе╣└╕└о╕хдлдБEj_final_fusion() дм╕╞д╨дБEБE * д▐д╟д╬┤╓д╦╕╞д╓╔м═╫дмдвдБE ├·╠╒бзецб╝е╢─БE┴д╬╕└╕БE╣е│ев┤╪┐ЇдЄ╗╚дж╛БEчд╧
+ * ╝┬╣╘╗■еке╫е╖ечеБE"-userlm" дт╗╪─ъд╣дБEм═╫дмдвдБE│д╚д╦├·╠╒д╗дБE 
  * </JA>
  * 
  * @param lm [i/o] LM processing instance
@@ -818,7 +815,7 @@ j_regist_user_lm_func(PROCESS_LM *lm,
  * Assign a user-defined parameter extraction function to engine instance.
  * </EN>
  * <JA>
- * ецб╝е╢─ъ╡┴д╬╞├─з╬╠╖╫╗╗┤╪┐ЇдЄ╗╚дждшджеиеєе╕еєд╦┼╨╧┐д╣ды. 
+ * ецб╝е╢─БE┴д╬╞├─з╬╠╖╫╗╗┤╪┐ЇдЄ╗╚дждшджеиеєе╕еєд╦┼╨╧┐д╣дБE 
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -843,7 +840,7 @@ j_regist_user_param_func(Recog *recog, boolean (*user_calc_vector)(MFCCCalc *, S
  * Get AM configuration structure in jconf by its name.
  * </EN>
  * <JA>
- * jconf╞тд╬ AM ете╕ехб╝еы└▀─ъ╣╜┬д┬╬дЄ╠╛┴░д╟╕б║ўд╣ды. 
+ * jconf╞тд╬ AM ете╕ехб╝еБE▀─БE╜┬д┬╬дЄ╠╛┴░д╟╕б║ўд╣дБE 
  * </JA>
  * 
  * @param jconf [in] global configuration
@@ -877,7 +874,7 @@ j_get_amconf_by_name(Jconf *jconf, char *name)
  * Get AM configuration structure in jconf by its id.
  * </EN>
  * <JA>
- * jconf╞тд╬ AM ете╕ехб╝еы└▀─ъ╣╜┬д┬╬дЄ ID д╟╕б║ўд╣ды. 
+ * jconf╞тд╬ AM ете╕ехб╝еБE▀─БE╜┬д┬╬дБEID д╟╕б║ўд╣дБE 
  * </JA>
  * 
  * @param jconf [in] global configuration
@@ -913,9 +910,9 @@ j_get_amconf_by_id(Jconf *jconf, int id)
  * If multiple AM configuration exists, return the latest one.
  * </EN>
  * <JA>
- * е╟е╒ейеые╚д╬ AM └▀─ъдЄ╩╓д╣. 
+ * е╟е╒ейеБE╚д╬ AM └▀─ъдЄ╩╓д╣. 
  *
- * AMдм╩г┐Ї└▀─ъд╡дьд╞ддды╛ь╣чбд║╟дт║╟╢сд╬дтд╬дЄ╩╓д╣. 
+ * AMдм╩г┐Ї└▀─ъд╡дБE╞дддБEБEчбд║╟дт║╟╢сд╬дтд╬дЄ╩╓д╣. 
  * </JA>
  * 
  * @param jconf [in] global configuration
@@ -941,7 +938,7 @@ j_get_amconf_default(Jconf *jconf)
  * Get LM configuration structure in jconf by its name.
  * </EN>
  * <JA>
- * jconf╞тд╬ LM ете╕ехб╝еы└▀─ъ╣╜┬д┬╬дЄ╠╛┴░д╟╕б║ўд╣ды. 
+ * jconf╞тд╬ LM ете╕ехб╝еБE▀─БE╜┬д┬╬дЄ╠╛┴░д╟╕б║ўд╣дБE 
  * </JA>
  * 
  * @param jconf [in] global configuration
@@ -975,7 +972,7 @@ j_get_lmconf_by_name(Jconf *jconf, char *name)
  * Get LM configuration structure in jconf by its id.
  * </EN>
  * <JA>
- * jconf╞тд╬ LM ете╕ехб╝еы└▀─ъ╣╜┬д┬╬дЄ ID д╟╕б║ўд╣ды. 
+ * jconf╞тд╬ LM ете╕ехб╝еБE▀─БE╜┬д┬╬дБEID д╟╕б║ўд╣дБE 
  * </JA>
  * 
  * @param jconf [in] global configuration
@@ -1009,7 +1006,7 @@ j_get_lmconf_by_id(Jconf *jconf, int id)
  * Get SEARCH configuration structure in jconf by its name.
  * </EN>
  * <JA>
- * jconf╞тд╬ SESARCH ете╕ехб╝еы└▀─ъ╣╜┬д┬╬дЄ╠╛┴░д╟╕б║ўд╣ды. 
+ * jconf╞тд╬ SESARCH ете╕ехб╝еБE▀─БE╜┬д┬╬дЄ╠╛┴░д╟╕б║ўд╣дБE 
  * </JA>
  * 
  * @param jconf [in] global configuration
@@ -1043,7 +1040,7 @@ j_get_searchconf_by_name(Jconf *jconf, char *name)
  * Get SEARCH configuration structure in jconf by its id.
  * </EN>
  * <JA>
- * jconf╞тд╬ SEARCH ете╕ехб╝еы└▀─ъ╣╜┬д┬╬дЄ ID д╟╕б║ўд╣ды. 
+ * jconf╞тд╬ SEARCH ете╕ехб╝еБE▀─БE╜┬д┬╬дБEID д╟╕б║ўд╣дБE 
  * </JA>
  * 
  * @param jconf [in] global configuration
@@ -1078,8 +1075,8 @@ j_get_searchconf_by_id(Jconf *jconf, int id)
  * The process will actually pauses at the next recognition interval.
  * </EN>
  * <JA>
- * ╗╪─ъд╡дьд┐╠╛┴░д╬╟з╝▒╜ш═¤едеєе╣е┐еєе╣д╬╞░║юдЄ░ь╗■─ф╗▀д╡д╗ды. 
- * ╝┬║▌д╦─ф╗▀д╣дыд╬д╧╝бд╬▓╗└╝╟з╝▒д╬╣ч┤╓д╟двды. 
+ * ╗╪─ъд╡дБE┐╠╛┴░д╬╟з╝▒╜ш═¤едеєе╣е┐еєе╣д╬╞░║√└Є░БE■─ф╗▀д╡д╗дБE 
+ * ╝┬║▌д╦─ф╗▀д╣дБE╬д╧╝бд╬▓╗└╝╟з╝▒д╬╣ч┤╓д╟двдБE 
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -1121,9 +1118,9 @@ j_process_deactivate(Recog *recog, char *name)
  * The process will actually pauses at the next recognition interval.
  * </EN>
  * <JA>
- * ╗╪─ъд╡дьд┐╟з╝▒╜ш═¤едеєе╣е┐еєе╣д╬╞░║юдЄ░ь╗■─ф╗▀д╡д╗ды. 
- * ┬╨╛▌едеєе╣е┐еєе╣дЄ ID ╚╓╣цд╟╗╪─ъд╣ды╛ь╣чд╧д│д┴дщдЄ╗╚дж. 
- * ╝┬║▌д╦─ф╗▀д╣дыд╬д╧╝бд╬▓╗└╝╟з╝▒д╬╣ч┤╓д╟двды. 
+ * ╗╪─ъд╡дБE┐╟з╝▒╜ш═¤едеєе╣е┐еєе╣д╬╞░║√└Є░БE■─ф╗▀д╡д╗дБE 
+ * ┬╨╛▌едеєе╣е┐еєе╣дБEID ╚╓╣цд╟╗╪─ъд╣дБEБEчд╧д│д┴дщдЄ╗╚дж. 
+ * ╝┬║▌д╦─ф╗▀д╣дБE╬д╧╝бд╬▓╗└╝╟з╝▒д╬╣ч┤╓д╟двдБE 
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -1166,8 +1163,8 @@ j_process_deactivate_by_id(Recog *recog, int id)
  * The process will actually starts at the next recognition interval.
  * </EN>
  * <JA>
- * ░ь╗■─ф╗▀д╡дьд╞ддд┐╟з╝▒╜ш═¤едеєе╣е┐еєе╣д╬╞░║юдЄ║╞│лд╡д╗ды. 
- * ╝┬║▌д╦║╞│лд╣дыд╬д╧╝бд╬▓╗└╝╟з╝▒д╬╣ч┤╓д╟двды. 
+ * ░БE■─ф╗▀д╡дБE╞ддд┐╟з╝▒╜ш═¤едеєе╣е┐еєе╣д╬╞░║√└Є║╞│лд╡д╗дБE 
+ * ╝┬║▌д╦║╞│лд╣дБE╬д╧╝бд╬▓╗└╝╟з╝▒д╬╣ч┤╓д╟двдБE 
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -1210,8 +1207,8 @@ j_process_activate(Recog *recog, char *name)
  * The process will actually starts at the next recognition interval.
  * </EN>
  * <JA>
- * ░ь╗■─ф╗▀д╡дьд╞ддд┐╟з╝▒╜ш═¤едеєе╣е┐еєе╣д╬╞░║юдЄ║╞│лд╡д╗ды(ID╗╪─ъ).
- * ╝┬║▌д╦║╞│лд╣дыд╬д╧╝бд╬▓╗└╝╟з╝▒д╬╣ч┤╓д╟двды. 
+ * ░БE■─ф╗▀д╡дБE╞ддд┐╟з╝▒╜ш═¤едеєе╣е┐еєе╣д╬╞░║√└Є║╞│лд╡д╗дБEID╗╪─БE.
+ * ╝┬║▌д╦║╞│лд╣дБE╬д╧╝бд╬▓╗└╝╟з╝▒д╬╣ч┤╓д╟двдБE 
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -1257,13 +1254,13 @@ j_process_activate_by_id(Recog *recog, int id)
  * Both the new LM and SR will be assigned the same instance name.
  * </EN>
  * <JA>
- * @brief  LM дкдшд╙ SR └▀─ъд╦┤Ёд┼дн╟з╝▒╜ш═¤е╫еэе╗е╣дЄ─╔▓├д╣ды. 
+ * @brief  LM дкдшд╙ SR └▀─ъд╦┤Ёд┼дн╟з╝▒╜ш═¤е╫е·┴╗е╣дЄ─╔▓├д╣дБE 
  *
- * д│д╬┤╪┐Їд╧═┐дидщдьд┐LM└▀─ъдкдшд╙SR└▀─ъе╟б╝е┐д╦┤Ёд┼днбд┐╖д┐д╩
- * LMедеєе╣е┐еєе╣дкдшд╙╟з╝▒е╫еэе╗е╣едеєе╣е┐еєе╣дЄеиеєе╕еє╞т╔Їд╦
- * └╕└од╣ды. AMд╦д─ддд╞д╧╕╜║▀д╬е╟е╒ейеые╚AMдм╝л╞░┼кд╦═╤дддщдьды. 
- * ╠╛┴░д╧LMедеєе╣е┐еєе╣бд╟з╝▒е╫еэе╗е╣едеєе╣е┐еєе╣д╚дт╞▒д╕╠╛┴░дм
- * двд┐дидщдьды. 
+ * д│д╬┤╪┐Їд╧═┐дидщдБE┐LM└▀─ъдкдшд╙SR└▀─БE╟б╝е┐д╦┤Ёд┼днбд┐╖д┐д╩
+ * LMедеєе╣е┐еєе╣дкдшд╙╟з╝▒е╫е·┴╗е╣едеєе╣е┐еєе╣дЄеиеєе╕еє╞т╔Їд╦
+ * └╕└од╣дБE AMд╦д─ддд╞д╧╕╜║▀д╬е╟е╒ейеБE╚AMдм╝л╞░┼кд╦═╤дддщдБEБE 
+ * ╠╛┴░д╧LMедеєе╣е┐еєе╣бд╟з╝▒е╫е·┴╗е╣едеєе╣е┐еєе╣д╚дт╞▒д╕╠╛┴░дм
+ * двд┐дидщдБEБE 
  * </JA>
  * 
  * @param recog [i/o] engine instance
@@ -1326,8 +1323,8 @@ j_process_add_lm(Recog *recog, JCONF_LM *lmconf, JCONF_SEARCH *sconf, char *name
  * inside this function.
  * </EN>
  * <JA>
- * ╟з╝▒╜ш═¤едеєе╣е┐еєе╣дЄ║я╜№д╣ды. 
- * ╗╪─ъд╡дьд┐SEARCH└▀─ъдтд│д╬┤╪┐Ї╞тд╟▓Є╩№бж║я╜№д╡дьды. 
+ * ╟з╝▒╜ш═¤едеєе╣е┐еєе╣дЄ║БEБE╣дБE 
+ * ╗╪─ъд╡дБE┐SEARCH└▀─ъдтд│д╬┤╪┐Ї╞тд╟▓Є╩БEж║БEБE╡дБEБE 
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -1404,8 +1401,8 @@ j_process_remove(Recog *recog, JCONF_SEARCH *sconf)
  * inside this function.
  * </EN>
  * <JA>
- * ╕└╕ьете╟еыедеєе╣е┐еєе╣дЄ║я╜№д╣ды. 
- * ╗╪─ъд╡дьд┐╕└╕ьете╟еы└▀─ъдтд│д╬┤╪┐Ї╞тд╟▓Є╩№бж║я╜№д╡дьды. 
+ * ╕└╕БEте╟еБEдеєе╣е┐еєе╣дЄ║БEБE╣дБE 
+ * ╗╪─ъд╡дБE┐╕└╕БEте╟еБE▀─ъдтд│д╬┤╪┐Ї╞тд╟▓Є╩БEж║БEБE╡дБEБE 
  * </JA>
  * 
  * @param recog [in] engine instance
@@ -1492,8 +1489,8 @@ j_process_lm_remove(Recog *recog, JCONF_LM *lmconf)
  * inside this function.
  * </EN>
  * <JA>
- * ╕└╕ьете╟еыедеєе╣е┐еєе╣дЄ║я╜№д╣дыб╩╝┬╕│├цб╦.
- * ╗╪─ъд╡дьд┐╕└╕ьете╟еы└▀─ъдтд│д╬┤╪┐Ї╞тд╟▓Є╩№бж║я╜№д╡дьды. 
+ * ╕└╕БEте╟еБEдеєе╣е┐еєе╣дЄ║БEБE╣дБE╩╝┬╕│├цб╦.
+ * ╗╪─ъд╡дБE┐╕└╕БEте╟еБE▀─ъдтд│д╬┤╪┐Ї╞тд╟▓Є╩БEж║БEБE╡дБEБE 
  * </JA>
  * 
  * @param recog [in] engine instance

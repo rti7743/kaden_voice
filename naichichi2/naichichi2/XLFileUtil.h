@@ -38,6 +38,9 @@ public:
 	//inBuffer を ファイルに書き込む
 	static bool write(const std::string & inFileName,const char* data , int size);
 
+	static  size_t getfilesize(const std::string & inFileName);
+
+	static  time_t getfiletime(const std::string & inFileName);
 };
 
 #endif // !defined(AFX_XLFILEUTIL_H__A51E414C_8F9A_46E5_A5CF_364F04C9FA00__INCLUDED_)

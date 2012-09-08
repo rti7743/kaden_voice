@@ -34,7 +34,7 @@ void XLImage::Clear()
 }
 
 //画像読み込み
-xreturn::r<bool> XLImage::Load(const std::string & fileName)
+bool XLImage::Load(const std::string & fileName)
 {
 	_USE_WINDOWS_ENCODING;
 
@@ -42,13 +42,13 @@ xreturn::r<bool> XLImage::Load(const std::string & fileName)
 	this->image = Gdiplus::Bitmap::FromFile(_A2W(fileName.c_str()) , TRUE);
 	if (!this->image)
 	{
-		return xreturn::error(std::string() + "ファイル" + fileName + "の読み込みに失敗しました");
+		throw XLException(std::string() + "ファイル" + fileName + "の読み込みに失敗しました");
 	}
 	return true;
 }
 
 //画像読み込み
-xreturn::r<bool> XLImage::Load(const std::vector<char> & data)
+bool XLImage::Load(const std::vector<char> & data)
 {
 	Clear();
 	//GlobalFreeは IStream が行う。
@@ -63,43 +63,43 @@ xreturn::r<bool> XLImage::Load(const std::vector<char> & data)
 	//メモリからストリーム作成
 	CComPtr<IStream> iStream = NULL;
 	HRESULT hr = CreateStreamOnHGlobal(memoryHandle, TRUE, &iStream);
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
+	if(FAILED(hr))	 throw XLException(StringWindows(hr));
 	
 
 	this->image = Gdiplus::Bitmap::FromStream(iStream , TRUE);
 	if (!this->image)
 	{
-		return xreturn::error(std::string() + "メモリから画像の読み込みに失敗しました");
+		throw XLException(std::string() + "メモリから画像の読み込みに失敗しました");
 	}
 	return true;
 }
 
 //画像読み込み
-xreturn::r<bool> XLImage::Load(HBITMAP hbitmap)
+bool XLImage::Load(HBITMAP hbitmap)
 {
 	Clear();
 	this->image = Gdiplus::Bitmap::FromHBITMAP(hbitmap,NULL);
 	if (!this->image)
 	{
-		return xreturn::error(std::string() + "HBITMAPからの読み込みに失敗しました");
+		throw XLException(std::string() + "HBITMAPからの読み込みに失敗しました");
 	}
 	return true;
 }
 
 //画像読み込み
-xreturn::r<bool> XLImage::Load(HICON hicon)
+bool XLImage::Load(HICON hicon)
 {
 	Clear();
 	this->image = Gdiplus::Bitmap::FromHICON(hicon);
 	if (!this->image)
 	{
-		return xreturn::error(std::string() + "HBITMAPからの読み込みに失敗しました");
+		throw XLException(std::string() + "HBITMAPからの読み込みに失敗しました");
 	}
 	return true;
 }
 
 //画像保存
-xreturn::r<bool> XLImage::Save(const std::string & fileName,int option) const
+bool XLImage::Save(const std::string & fileName,int option) const
 {
 	_USE_WINDOWS_ENCODING;
 
@@ -110,7 +110,7 @@ xreturn::r<bool> XLImage::Save(const std::string & fileName,int option) const
 	auto r1 = findEncoder(ext,&clsid);
 	if (!r1)
 	{
-		return xreturn::error(r1.getError());
+		throw XLException(r1.getError());
 	}
 
 
@@ -134,22 +134,18 @@ xreturn::r<bool> XLImage::Save(const std::string & fileName,int option) const
 	}
 	if (status != Gdiplus::Ok)
 	{
-		return xreturn::error("保存に失敗しました");
+		throw XLException("保存に失敗しました");
 	}
 	return true;
 }
 
 //画像保存
-xreturn::r<bool> XLImage::Save(const std::string & ext,std::vector<char> * data,int option) const
+bool XLImage::Save(const std::string & ext,std::vector<char> * data,int option) const
 {
 	assert(IsEnable()) ;
 
 	CLSID clsid;
-	auto r1 = findEncoder(ext,&clsid);
-	if (!r1)
-	{
-		return xreturn::error(r1.getError());
-	}
+	findEncoder(ext,&clsid);
 
 //bitmapで保持した時の最大数を割り振るとだめっぽい
 //	const int imagesize = bitmap->GetWidth() * bitmap->GetHeight() * 24;
@@ -160,7 +156,7 @@ xreturn::r<bool> XLImage::Save(const std::string & ext,std::vector<char> * data,
 	//メモリからストリーム作成
 	CComPtr<IStream> iStream = NULL;
 	HRESULT hr = CreateStreamOnHGlobal(memoryHandle, TRUE, &iStream);
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
+	if(FAILED(hr))	 throw XLException(StringWindows(hr));
 
 	Gdiplus::Status status;
 	//メモリ内に保存
@@ -182,12 +178,12 @@ xreturn::r<bool> XLImage::Save(const std::string & ext,std::vector<char> * data,
 	}
 	if (status != Gdiplus::Ok)
 	{
-		return xreturn::error("保存に失敗しました");
+		throw XLException("保存に失敗しました");
 	}
 	//サイズを取得します。
 	STATSTG statstg;
 	hr = iStream->Stat(&statstg ,0);
-	if(FAILED(hr))	 return xreturn::windowsError(hr);
+	if(FAILED(hr))	 throw XLException(StringWindows(hr));
 	//バッファ長確保して代入します。
 	data->resize(  statstg.cbSize.LowPart);
 
@@ -242,7 +238,7 @@ Gdiplus::Image* XLImage::GetThumbnailImage(int width,int height)
 
 
 
-xreturn::r<bool> XLImage::findEncoder(const std::string & ext,CLSID* clsid) const
+bool XLImage::findEncoder(const std::string & ext,CLSID* clsid) const
 {
 	const wchar_t * format;
 	if (ext == ".jpeg" || ext == ".jpg")
@@ -263,7 +259,7 @@ xreturn::r<bool> XLImage::findEncoder(const std::string & ext,CLSID* clsid) cons
 	}
 	else
 	{
-		return xreturn::error(std::string() + "指定された拡張子" + ext +"に関連付けられたエンコーダーはありません");
+		throw XLException(std::string() + "指定された拡張子" + ext +"に関連付けられたエンコーダーはありません");
 	}
 	
 	UINT  num = 0;          // number of image encoders
@@ -271,14 +267,14 @@ xreturn::r<bool> XLImage::findEncoder(const std::string & ext,CLSID* clsid) cons
 	Gdiplus::GetImageEncodersSize(&num, &size);
 	if(size == 0)
 	{
-		return xreturn::error("Gdiplus::GetImageEncodersSizeに失敗");
+		throw XLException("Gdiplus::GetImageEncodersSizeに失敗");
 	}
 
 	Gdiplus::ImageCodecInfo* pImageCodecInfo =
 				(Gdiplus::ImageCodecInfo*)(malloc(size));
 	if(pImageCodecInfo == NULL)
 	{
-		return xreturn::error("Gdiplus::ImageCodecInfo のメモリ確保に失敗");
+		throw XLException("Gdiplus::ImageCodecInfo のメモリ確保に失敗");
 	}
 
 	Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
@@ -294,19 +290,19 @@ xreturn::r<bool> XLImage::findEncoder(const std::string & ext,CLSID* clsid) cons
 	}
 
 	free(pImageCodecInfo);
-	return xreturn::error("エンコーダが見つかりません");
+	throw XLException("エンコーダが見つかりません");
 }
 
 
 /*
 //HBITMAPを *.bmp形式でメモリに保存
-xreturn::r<bool> XLImage::ConvertHBITMAPtoBytes(HBITMAP hbitmap,std::vector<char> * image) const
+bool XLImage::ConvertHBITMAPtoBytes(HBITMAP hbitmap,std::vector<char> * image) const
 {
 	BITMAP bmp; 
 	// Retrieve the bitmap color format, width, and height. 
 	if (!GetObject(hbitmap, sizeof(BITMAP), (LPSTR)&bmp)) 
 	{
-		return xreturn::error("HBITMAP から BITMAPに変換できません");
+		throw XLException("HBITMAP から BITMAPに変換できません");
 	}
  
 	// Convert the color format to a count of bits. 
@@ -373,7 +369,7 @@ xreturn::r<bool> XLImage::ConvertHBITMAPtoBytes(HBITMAP hbitmap,std::vector<char
 	{
 		auto error = ::GetLastError();
 		ReleaseDC(NULL,dc);
-		return xreturn::windowsError(error);
+		throw XLException(StringWindows(error));
 	}
 	ReleaseDC(NULL,dc);
 

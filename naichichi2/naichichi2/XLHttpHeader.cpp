@@ -17,7 +17,10 @@ XLHttpHeader::XLHttpHeader()
 
 XLHttpHeader::~XLHttpHeader()
 {
-
+	for(auto it = this->Files.begin() ; it != this->Files.end() ; ++it)
+	{
+		delete it->second;
+	}
 }
 
 bool XLHttpHeader::Parse(const char * inHeader , int size)
@@ -132,17 +135,155 @@ bool XLHttpHeader::Parse(const char * inHeader , int size)
 	return true;
 }
 
+bool XLHttpHeader::MultipartBounderParse( const char * inBody , int size )
+{
+	const std::string contenttype =  getAt("content-type");
+	if (! strstr(contenttype.c_str() , "multipart/form-data")  )
+	{
+		return false;
+	}
+
+	//普通じゃないPOSTパース multipart/form-data
+	const char * bounder = strstr( contenttype.c_str() , "boundary=");
+	if (!bounder)
+	{
+		this->Post.clear();
+	}
+	else
+	{
+		bounder += (sizeof("boundary=") - 1);
+		std::string fullbounder = std::string("--") + bounder; //bounder は -- を余計につける
+		const char * endP = inBody + size;
+		const char * p = inBody;
+		while(p < endP)
+		{
+			const char * nextbounder = strstr(p , fullbounder.c_str() );
+			if (!nextbounder)
+			{//bounder がない
+				nextbounder = endP;
+			}
+			if (nextbounder > p)
+			{
+				// p ～ nextbounder の間の解析
+				std::map<std::string,std::string> innerheader;
+				while(p < nextbounder)
+				{
+					//改行までシーク.
+					const char * sep = NULL;
+					const char * value_start = NULL;
+					for( const char * start = p; p < nextbounder ; ++p )
+					{
+						//複数行にまたがっているヘッダーは考慮しないことにするw
+						if (*p == '\r' || *p == '\n')
+						{
+							if (p == start || sep == NULL || value_start == NULL)
+							{
+								break;
+							}
+							std::string key = XLStringUtil::strtolower( std::string(start , 0, (int)(sep - start)) );
+							std::string value = std::string(value_start , 0, (int)(p - value_start));
+							if (innerheader.find(key) == innerheader.end())
+							{
+								innerheader[key] = value;
+							}
+							else
+							{
+								innerheader[key] += value;
+							}
+
+							if (*p == '\r' && *(p+1) == '\n')
+							{
+								p++;
+							}
+							break;
+						}
+						else if (sep == NULL && *p == ':')
+						{
+							sep = p;
+						}
+						else if (sep != NULL && value_start == NULL && (*p != ' ' && *p != '\t'))
+						{
+							value_start = p;
+						}
+					}
+
+					//次のヘッダへ
+					p++;
+
+					//ヘッダー終端チェック
+					if (*p == '\r' || *p == '\n')
+					{
+						if (*p == '\r' && *(p+1) == '\n')
+						{
+							p+=2;
+						}
+						else
+						{
+							p++;
+						}
+						break;
+					}
+				}
+				//content-disposition から、 name と filename を取得する.
+				auto contentDispositionMap = XLStringUtil::crosssplitChop(";","=", innerheader["content-disposition"] ); 
+				const std::string contentDispositionName = XLStringUtil::dequote( mapfind(contentDispositionMap,"name","nanachisan") );
+
+				auto alreadyit = this->Files.find(contentDispositionName);
+				if (alreadyit != this->Files.end())
+				{
+					delete alreadyit->second;
+					this->Files.erase(alreadyit);
+				}
+
+				__file_struct* filestruct = new __file_struct;
+				filestruct->data.insert(filestruct->data.end() , p, nextbounder);
+				filestruct->filename = XLStringUtil::dequote( mapfind(contentDispositionMap,"filename","nanashifile") );
+				filestruct->mime = innerheader["content-type"];
+
+				this->Files[contentDispositionName] = filestruct;
+			}
+
+			//次のbounderを探す
+			p = nextbounder + fullbounder.size();
+			if (p > endP -2)
+			{
+				break;
+			}
+			if (p[0] == '-' && p[1] == '-')
+			{//終端
+				break;
+			}
+			if (p[0] == '\r')
+			{
+				p ++;
+				if (p[0] == '\n') p++;
+			}
+			else if (p[0] == '\n')
+			{
+				p ++;
+			}
+			else
+			{//よくわからない bounder!!
+				break;
+			}
+		}
+	}
+	return ! this->Files.empty();
+}
 
 bool XLHttpHeader::PostParse( const char * inBody , int size )
 {
 	_USE_WINDOWS_ENCODING;
 
-	//POSTパース
-	std::string str = std::string(inBody,0,size);
-	str = XLStringUtil::urldecode( str );
-	str = _U2A(str.c_str());
+	if ( ! MultipartBounderParse(inBody,size) )
+	{
+		//普通のPOSTパース
+		std::string str = std::string(inBody,0,size);
+		str = XLStringUtil::urldecode( str );
+		str = _U2A(str.c_str());
 
-	this->Post = XLStringUtil::crosssplit("&","=",str );
+		this->Post = XLStringUtil::crosssplit("&","=",str );
+	}
 
 	return true;
 }
@@ -156,6 +297,7 @@ void XLHttpHeader::setAt(const std::string inKey , const std::string & inValue)
 std::string XLHttpHeader::getAt(const std::string inKey) const
 {
 	auto i = this->Header.find(inKey);
+	if (i == this->Header.end() ) return "";
 	return i->second;
 }
 

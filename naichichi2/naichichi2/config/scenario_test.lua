@@ -8,7 +8,8 @@ function call()
 	)
 	onvoice("きょうのてんきわ" //は
 		,function(e){
-			execute("http://www3.nhk.or.jp/weather/","");
+//			execute("http://www3.nhk.or.jp/weather/","");
+			execute("http://www.tv-asahi.co.jp/hotweather/","");
 			speak("これが、今日の天気です");
 		}
 	)

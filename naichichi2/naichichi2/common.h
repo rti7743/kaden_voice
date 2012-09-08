@@ -73,7 +73,7 @@ template<typename _INT> static const std::wstring num2wstr(_INT i)
 
 class MainWindow;
 
-#include "xreturn.h"
+#include "XLException.h"
 #include "windows_encoding.h"
 #include "XLDebugUtil.h"
 

@@ -14,6 +14,14 @@
 class XLHttpHeader  
 {
 public:
+	struct __file_struct
+	{
+		std::vector<char> data;
+		std::string filename;
+		std::string mime;
+	};
+
+
 	XLHttpHeader();
 	virtual ~XLHttpHeader();
 
@@ -99,14 +107,23 @@ public:
 	{
 		return XLStringUtil::merge(this->Get,this->Post,true);
 	}
+	const std::map<std::string,XLHttpHeader::__file_struct*>* getFilesPointer()const
+	{
+		return &this->Files;
+	}
 
 	static void test();
+private:
+	bool MultipartBounderParse( const char * inBody , int size );
 
 private:
 	std::string							FirstHeader[3];
 	std::map<std::string,std::string>	Header;
 	std::map<std::string,std::string>	Get;
 	std::map<std::string,std::string>	Post;
+
+	//添付ファイル
+	std::map<std::string,__file_struct*>	Files;
 	unsigned int HeaderSize;
 };
 

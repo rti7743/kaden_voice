@@ -8,14 +8,15 @@ public:
 	Callbackable();
 	virtual ~Callbackable();
 
-	virtual xreturn::r<std::string> callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match) = 0;
+	virtual std::string callbackFunction(const CallbackDataStruct* callback,const std::map<std::string , std::string> & match) = 0;
 
 	//コールバックが不要になった時に呼ばれる 自分から this-> で読んではいけない。
 	virtual void unrefCallback(const CallbackDataStruct* callback);
 	//新しいコールバックを定義する
 	virtual CallbackDataStruct* CreateCallback(int _func,int _func2 = 0);
-private:
+protected:
 	//コールバック一覧
+
 	std::list<CallbackDataStruct*> callbackHistoryList;
 };
 

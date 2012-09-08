@@ -524,6 +524,48 @@ SEXYTEST(XLStringUtil__crosssplit,"XLStringUtil::crosssplitのてすと")
 }
 */
 
+//key=value& みたいな感じの split キーに対するchopを実行する
+std::map<std::string,std::string> XLStringUtil::crosssplitChop(const std::string& glue1 ,const std::string& glue2 , const std::string & inTarget )
+{
+	std::map<std::string,std::string> r;
+
+	int oldpos = 0;
+	int pos = 0;
+	while( (pos = inTarget.find( glue1 , oldpos)) != -1 )
+	{
+		std::string k = inTarget.substr(oldpos , pos - oldpos);
+
+		oldpos = pos + glue1.size();
+
+		int vpos = k.find( glue2 );
+		if (vpos < 0)
+		{
+			r.insert( std::pair<std::string,std::string>(k,"") );
+			continue;
+		}
+
+		std::string v = k.substr( vpos + glue2.size() );
+		k = k.substr(0 , vpos);
+		r.insert( std::pair<std::string,std::string>( chop( k) ,v) );
+
+	}
+
+	//最後の残り
+	{
+		std::string k = inTarget.substr(oldpos);
+		int vpos = k.find( glue2 );
+		if (vpos < 0)
+		{
+			r.insert( std::pair<std::string,std::string>(k,"") );
+			return r;
+		}
+
+		std::string v = k.substr( vpos + glue2.size() );
+		k = k.substr(0 , vpos);
+		r.insert( std::pair<std::string,std::string>(chop( k),v) );
+	}
+	return r;
+}
 
 std::map<std::string,std::string> XLStringUtil::merge(const std::map<std::string,std::string>& a ,const std::map<std::string,std::string>& b , bool overideB = true )
 {
@@ -1635,6 +1677,15 @@ std::string XLStringUtil::doublequote_low(const std::string& str)
 	return replace_low(str , "\"" , "\\\"" );
 }
 
+//quoteをはがす
+std::string XLStringUtil::dequote(const std::string& str)
+{
+	if (str.size() <= 1) return str;
+	if ( str[0] == '\"' && str[str.size() - 1] == '\"') return str.substr(1,str.size() - 2);
+	if ( str[0] == '\'' && str[str.size() - 1] == '\'') return str.substr(1,str.size() - 2);
+	return str;
+}
+
 
 //重複削除
 std::list<std::string> XLStringUtil::unique(const std::list<std::string>& list)
@@ -2743,3 +2794,63 @@ int XLStringUtil::getScaler(unsigned int num)
 	else return 10;
 }
 
+bool XLStringUtil::findFilter(const std::string& base,const std::string& filter)
+{
+	if (filter.empty()) return true;
+	const char * base_c = base.c_str();
+	const char * filter_c = filter.c_str();
+	while(*filter_c)
+	{
+		if (*filter_c == '*')
+		{
+			while( *filter_c )
+			{
+				if (*filter_c != '*' && *filter_c != '?') break;
+				filter_c++; 
+			}
+			while( *base_c )
+			{
+				if ( *base_c == *filter_c ) break;
+				base_c++;
+			}
+		}
+		else if (*filter_c == '?')
+		{
+			base_c++;
+			filter_c++;
+		}
+		else 
+		{
+			if (*base_c != *filter_c)
+			{
+				return false;
+			}
+			base_c++;
+			filter_c++;
+		}
+
+		if (! *base_c)
+		{
+			break;
+		}
+	}
+	if (*filter_c == '\0' && *base_c == '\0') return true;
+	return false;
+}
+
+
+std::string XLStringUtil::timetostr(time_t time,const std::string & format)
+{
+	char buffer[256];
+
+#ifdef _WINDOWS
+	struct tm *date = localtime(&time);
+	strftime(buffer, 255, format.c_str() , date);
+#else
+	struct tm date;
+	localtime_r(&time,&date);
+	strftime(buffer, 255, format.c_str() , &date);
+#endif
+
+	return buffer;
+}

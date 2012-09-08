@@ -31,16 +31,12 @@ Speak_AquesTalk::~Speak_AquesTalk()
 }
 
 //音声認識のためのオブジェクトの構築.
-xreturn::r<bool> Speak_AquesTalk::Create(MainWindow* poolMainWindow)
+bool Speak_AquesTalk::Create(MainWindow* poolMainWindow)
 {
 	assert(this->Thread == NULL);
 	
 	this->PoolMainWindow = poolMainWindow;
-	auto r = this->LoadAquesTalk();
-	if ( !r  )
-	{
-		return xreturn::error(r.getError());
-	}
+	this->LoadAquesTalk();
 
 	this->StopFlag = false;
 	this->Thread = new boost::thread([=](){
@@ -48,7 +44,7 @@ xreturn::r<bool> Speak_AquesTalk::Create(MainWindow* poolMainWindow)
 		{
 			this->Run(); 
 		}
-		catch(xreturn::error &e)
+		catch(XLException &e)
 		{
 			this->PoolMainWindow->SyncInvokeError( e.getErrorMessage() );
 		}
@@ -57,7 +53,7 @@ xreturn::r<bool> Speak_AquesTalk::Create(MainWindow* poolMainWindow)
 }
 
 //AquesTalkを何とかして読み込む
-xreturn::r<bool> Speak_AquesTalk::LoadAquesTalk()
+bool Speak_AquesTalk::LoadAquesTalk()
 {
 	this->AquesTalk_FreeWave = NULL;
 	this->AquesTalk_Synthe = NULL;
@@ -98,7 +94,7 @@ xreturn::r<bool> Speak_AquesTalk::LoadAquesTalk()
 		return true;
 	}
 
-	return xreturn::error(aquesTalk2 + " または " + aquesTalk + " が読み込めません。" );
+	throw XLException(aquesTalk2 + " または " + aquesTalk + " が読み込めません。" );
 }
 
 
@@ -211,7 +207,7 @@ void Speak_AquesTalk::Run()
 	}
 }
 
-xreturn::r<bool> Speak_AquesTalk::Setting(int rate,int pitch,unsigned int volume,const std::string& botname)
+bool Speak_AquesTalk::Setting(int rate,int pitch,unsigned int volume,const std::string& botname)
 {
 	if (getVersion() == 2)
 	{
@@ -240,7 +236,7 @@ xreturn::r<bool> Speak_AquesTalk::Setting(int rate,int pitch,unsigned int volume
 	return true;
 }
 
-xreturn::r<bool> Speak_AquesTalk::Speak(const CallbackDataStruct * callback,const std::string & str)
+bool Speak_AquesTalk::Speak(const CallbackDataStruct * callback,const std::string & str)
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
@@ -251,7 +247,7 @@ xreturn::r<bool> Speak_AquesTalk::Speak(const CallbackDataStruct * callback,cons
 	return true;
 }
 
-xreturn::r<bool> Speak_AquesTalk::Cancel()
+bool Speak_AquesTalk::Cancel()
 {
 	boost::unique_lock<boost::mutex> al(this->Lock);
 
@@ -265,7 +261,7 @@ int Speak_AquesTalk::getVersion() const
 	return this->AquesTalk2_Synthe == NULL ? 1 : 2;
 }
 
-xreturn::r<bool> Speak_AquesTalk::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
+bool Speak_AquesTalk::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
 {
 	return true;
 }

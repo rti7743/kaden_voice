@@ -5,7 +5,7 @@ class Config
 public:
 	Config();
 	virtual ~Config();
-	xreturn::r<std::string> Create();
+	std::string Create();
 
 	void Set(const std::string& key,const std::string& value ) ;
 	void Remove(const std::string& key ) ;
@@ -19,8 +19,9 @@ public:
 
 	std::string GetBaseDirectory() const;
 
-	xreturn::r<bool> loadConfig(const std::string & configFilename);
-	xreturn::r<bool> saveConfig(const std::string & configFilename);
+	bool loadConfig(const std::string & configFilename);
+	bool saveConfig(const std::string & configFilename);
+	bool overrideSave();
 private:
 	bool IsComment(const char * line) const
 	{

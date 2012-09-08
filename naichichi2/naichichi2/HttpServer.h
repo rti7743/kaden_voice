@@ -11,13 +11,25 @@
 
 enum WEBSERVER_RESULT_TYPE
 {
-	 WEBSERVER_RESULT_TYPE_OK
+	 WEBSERVER_RESULT_TYPE_OK_HTML
+	,WEBSERVER_RESULT_TYPE_OK_JSON
+	,WEBSERVER_RESULT_TYPE_OK_DATA
 	,WEBSERVER_RESULT_TYPE_TRASMITFILE
 	,WEBSERVER_RESULT_TYPE_ERROR
 	,WEBSERVER_RESULT_TYPE_NOT_FOUND
 	,WEBSERVER_RESULT_TYPE_LOCATION
 	,WEBSERVER_RESULT_TYPE_FORBIDDEN
 };
+class HttpLongPoolingInterface
+{
+public:
+	HttpLongPoolingInterface(){};
+	virtual ~HttpLongPoolingInterface(){};
+	virtual bool Pooling(int count);
+	virtual std::string getFulltext() const;
+};
+
+
 class HttpWorker
 {
 	MainWindow* PoolMainWindow;
@@ -32,8 +44,10 @@ private:
 	void HTTP404();
 	void HTTP403();
 	void HTTP302(const std::string& url);
-	void HTTP200(const std::string& contents,const std::string& headers,bool texthtml);
+	void HTTP200(const std::string& contents,const std::string& headers);
 	void HTTP200SendFileContent(const std::string& urlpath);
+	void HTTP200LongPooling(const std::string& headers,HttpLongPoolingInterface* longPoolingObhect);
+
 	bool ProcToken(const std::map<std::string,std::string>& header,const std::map<std::string,std::string>& request) const;
 };
 
@@ -44,25 +58,20 @@ public:
 
 	HttpServer();
 	virtual ~HttpServer();
-	void Create(MainWindow* poolMainWindow,int port,int threadcount,const std::string& webroot,const std::string& accesstoken,const std::map<std::string,std::string>& allowext);
+	void Create(MainWindow* poolMainWindow,int port,int threadcount,const std::string& webroot,const std::map<std::string,std::string>& allowext);
 	void stop();
-	xreturn::r<bool> Regist(const CallbackDataStruct * callback ,const std::string & path);
-	xreturn::r<bool> RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
+	bool Regist(const CallbackDataStruct * callback ,const std::string & path);
+	bool RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
 
 	std::string getAllowExtAndMime(const std::string& ext) const;
 	std::string getWebURL(const std::string& path) const;
-	bool checkAccessToken(const std::string& token) const;
 	std::string WebPathToRealPath(const std::string& urlpath);
-	//サーバのトップアドレス. (accesstokenキーなし)
+	//サーバのトップアドレス.
 	std::string getServerTop() const;
 
 	std::string getWebroot() const
 	{
 		return this->Webroot;
-	}
-	std::string getAccesstoken() const
-	{
-		return this->Accesstoken;
 	}
 
 	SEXYTEST_TEST_FRIEND;
@@ -76,7 +85,6 @@ private:
 
 	bool StopFlag;
 	std::string Webroot;
-	std::string Accesstoken;
 	int Port;
 	std::map<std::string,std::string> AllowExtAndMime;
 	mutable boost::mutex lock;

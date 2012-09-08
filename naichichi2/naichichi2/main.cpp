@@ -26,7 +26,7 @@ puts("win.Create");
 puts("win.BlockMessageLoop");
 			ret = win.BlockMessageLoop();
 		}
-		catch(xreturn::error & e)
+		catch(XLException & e)
 		{
 			win.SyncInvokeError( e.getFullErrorMessage() );
 		}

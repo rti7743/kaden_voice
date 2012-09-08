@@ -123,11 +123,11 @@ bool WebMenu::checkRoomname(const std::string& roomname) const
 	return ( roomIT != rooms.end() );
 }
 
-xreturn::r<bool> WebMenu::Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& actionname)
+bool WebMenu::Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& actionname)
 {
 	if ( actionname.find("action__") != 0)
 	{
-		return xreturn::error("アクション " + actionname + " の名前が正しくありません。 アクションは、 action__hogehoge のように、 action__ というprefixが必要です。");
+		throw XLException("アクション " + actionname + " の名前が正しくありません。 アクションは、 action__hogehoge のように、 action__ というprefixが必要です。");
 	}
 	std::string stripactionanme = actionname.c_str() + sizeof("action__") - 1; //action__aircon_max -> aircon_max
 
@@ -157,7 +157,7 @@ xreturn::r<bool> WebMenu::Fire(const CallbackDataStruct* callback,const std::str
 	return false;
 }
 
-xreturn::r<bool> WebMenu::Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& menuname,const std::string& actionname)
+bool WebMenu::Fire(const CallbackDataStruct* callback,const std::string& roomname,const std::string& menuname,const std::string& actionname)
 {
 	Room * room;
 	auto roomIT = this->rooms.begin();

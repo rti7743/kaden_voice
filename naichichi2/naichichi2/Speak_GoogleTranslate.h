@@ -16,11 +16,11 @@ public:
 	virtual ~Speak_GoogleTranslate	();
 
 	//音声のためのオブジェクトの構築.
-	virtual xreturn::r<bool> Create(MainWindow* poolMainWindow);
-	virtual xreturn::r<bool> Setting(int rate,int pitch,unsigned int volume,const std::string& botname);
-	virtual xreturn::r<bool> Speak(const CallbackDataStruct * callback,const std::string & str);
-	virtual xreturn::r<bool> Cancel();
-	virtual xreturn::r<bool> RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
+	virtual bool Create(MainWindow* poolMainWindow);
+	virtual bool Setting(int rate,int pitch,unsigned int volume,const std::string& botname);
+	virtual bool Speak(const CallbackDataStruct * callback,const std::string & str);
+	virtual bool Cancel();
+	virtual bool RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) ;
 
 private:
 	void Run();

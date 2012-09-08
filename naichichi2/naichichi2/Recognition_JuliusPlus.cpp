@@ -834,7 +834,7 @@ bool Recognition_JuliusPlus::MakeJuliusRule(Recognition_JuliusPlusRule* toprule,
 }
 
 //音声認識ルールを構築します。 正規表現にも対応しています。
-xreturn::r<bool> Recognition_JuliusPlus::AddRegexp(const CallbackDataStruct* callback,const std::string & str ,Recognition_JuliusPlusRule* stateHandle ) 
+bool Recognition_JuliusPlus::AddRegexp(const CallbackDataStruct* callback,const std::string & str ,Recognition_JuliusPlusRule* stateHandle ) 
 {
 	//unixへの移植を考えて wchar_tはやめることにした。
 	//unix で UTF8 を使っている限りはマルチバイトに悩むことはないでしょう。 EUCとかレガシーなシステムは知らん。
@@ -884,7 +884,7 @@ xreturn::r<bool> Recognition_JuliusPlus::AddRegexp(const CallbackDataStruct* cal
 		else if (*p == '*' || *p == '+' || *p == '.' || *p == '[' || *p == ']')
 		{
 			//            throw exception(std::string("") + "現在は、メタ文字 " + p + " は利用できません。利用可能なメタ文字 () | .+ ?");
-			return xreturn::error(std::string("") + "現在は、メタ文字 " + p + " は利用できません。利用可能なメタ文字 () | .+ ?");
+			throw XLException(std::string("") + "現在は、メタ文字 " + p + " は利用できません。利用可能なメタ文字 () | .+ ?");
 		}
 		else
 		{
@@ -902,7 +902,7 @@ xreturn::r<bool> Recognition_JuliusPlus::AddRegexp(const CallbackDataStruct* cal
 }
 
 //音声認識ルールを登録する部分の詳細な実行です。正規表現のネストがあるので再起してます。
-xreturn::r<bool> Recognition_JuliusPlus::AddRegexpImpl(const CallbackDataStruct* callback,const std::string & str, Recognition_JuliusPlusRule*  stateHandle)
+bool Recognition_JuliusPlus::AddRegexpImpl(const CallbackDataStruct* callback,const std::string & str, Recognition_JuliusPlusRule*  stateHandle)
 {
 	//	_USE_WINDOWS_ENCODING;
 	std::string matchString;
@@ -995,11 +995,7 @@ xreturn::r<bool> Recognition_JuliusPlus::AddRegexpImpl(const CallbackDataStruct*
 
 			//ネストしているルールを再帰して実行.
 			matchString = std::string(p+1 , 0 , (int) (n - p - 1) );
-			auto r = this->AddRegexpImpl(callback,matchString, nestRule);
-			if(!r)
-			{
-				return xreturn::errnoError(r);
-			}
+			this->AddRegexpImpl(callback,matchString, nestRule);
 
 			p = n ;
 			splitPos = n + 1;  //+1は最後の ) を飛ばす. iは forの ++i で i == splitPos となる。(わかりにくい)
@@ -1042,7 +1038,7 @@ xreturn::r<bool> Recognition_JuliusPlus::AddRegexpImpl(const CallbackDataStruct*
 
 
 
-xreturn::r<bool> Recognition_JuliusPlus::Create(MainWindow* poolMainWindow)
+bool Recognition_JuliusPlus::Create(MainWindow* poolMainWindow)
 {
 	assert(this->Grammer == NULL);
 	this->PoolMainWindow = poolMainWindow;
@@ -1074,7 +1070,7 @@ xreturn::r<bool> Recognition_JuliusPlus::Create(MainWindow* poolMainWindow)
 
 //呼びかけを設定します。
 //設定したあと、 CommitRule() てしてね。
-xreturn::r<bool> Recognition_JuliusPlus::SetYobikake(const std::list<std::string> & yobikakeList)
+bool Recognition_JuliusPlus::SetYobikake(const std::list<std::string> & yobikakeList)
 {
 	this->YobikakeListArray.clear();
 	for(auto it = yobikakeList.begin();  yobikakeList.end() != it ; ++it)
@@ -1085,7 +1081,7 @@ xreturn::r<bool> Recognition_JuliusPlus::SetYobikake(const std::list<std::string
 	return true;
 }
 
-xreturn::r<bool> Recognition_JuliusPlus::SetCancel(const std::list<std::string> & cancelList) 
+bool Recognition_JuliusPlus::SetCancel(const std::list<std::string> & cancelList) 
 {
 	for(auto it = cancelList.begin();  cancelList.end() != it ; ++it)
 	{
@@ -1096,7 +1092,7 @@ xreturn::r<bool> Recognition_JuliusPlus::SetCancel(const std::list<std::string> 
 
 
 //認識結果で不完全なものを捨てる基準値を設定します。
-xreturn::r<bool> Recognition_JuliusPlus::SetRecognitionFilter(double temporaryRuleConfidenceFilter)
+bool Recognition_JuliusPlus::SetRecognitionFilter(double temporaryRuleConfidenceFilter)
 {
 	this->TemporaryRuleConfidenceFilter = temporaryRuleConfidenceFilter;
 
@@ -1104,7 +1100,7 @@ xreturn::r<bool> Recognition_JuliusPlus::SetRecognitionFilter(double temporaryRu
 }
 
 //音声データを保存するディレクトリ
-xreturn::r<bool> Recognition_JuliusPlus::SetLogDirectory(const std::string& logdir)
+bool Recognition_JuliusPlus::SetLogDirectory(const std::string& logdir)
 {
 	this->LogDirectory = logdir;
 
@@ -1113,62 +1109,78 @@ xreturn::r<bool> Recognition_JuliusPlus::SetLogDirectory(const std::string& logd
 
 
 //コマンドに反応する音声認識ルールを構築します
-xreturn::r<bool> Recognition_JuliusPlus::AddCommandRegexp(const CallbackDataStruct* callback,const std::string & str)
+bool Recognition_JuliusPlus::AddCommandRegexp(const CallbackDataStruct* callback,const std::string & str)
 {
 	this->IsNeedUpdateRule = true;
-	return AddRegexp(callback,str , this->CommandRuleHandle);
+
+	this->AllCommandRecongTask.push_back(RecongTask(callback,str));
+//	return AddRegexp(callback,str , this->CommandRuleHandle);
+	return true;
 }
 
 //テンポラリルールに反応する音声認識ルールを構築します
-xreturn::r<bool> Recognition_JuliusPlus::AddTemporaryRegexp(const CallbackDataStruct* callback,const std::string & str)
+bool Recognition_JuliusPlus::AddTemporaryRegexp(const CallbackDataStruct* callback,const std::string & str)
 {
 	this->IsNeedUpdateRule = true;
-	this->TemporaryRuleCount ++;
-	return AddRegexp(callback,str, this->TemporaryRuleHandle);
+
+	this->AllTemporaryRecongTask.push_back(RecongTask(callback,str));
+//	return AddRegexp(callback,str, this->TemporaryRuleHandle);
+	return true;
 }
 
 //テンポラリルールをすべてクリアします
-xreturn::r<bool> Recognition_JuliusPlus::ClearTemporary()
+bool Recognition_JuliusPlus::ClearTemporary()
 {
-	if (this->TemporaryRuleCount <= 0)
+	if (this->AllTemporaryRecongTask.empty())
 	{//現在テンポラリルールにルールが入っていないので、クリアをスキップします。
 		return true;
 	}
 
 	//テンポラリールールを白紙に
 	this->TemporaryRuleHandle->Clear();
+	this->AllTemporaryRecongTask.clear();
 
-	//クリアしたので、テンポラリルールの数はゼロになります。
-	this->TemporaryRuleCount = 0;
 	//ルールに変更が加わったのでコミットしないといけません。
 	this->IsNeedUpdateRule = true;
 
 	//コミット発動
-	auto r = this->CommitRule();
-	if (!r) return xreturn::error(r.getError());
+	this->CommitRule();
 
 	return true;
 }
 
 //構築したルールを音声認識エンジンにコミットします。
-xreturn::r<bool> Recognition_JuliusPlus::CommitRule()
+bool Recognition_JuliusPlus::CommitRule()
 {
 	if (! this->IsNeedUpdateRule )
 	{//アップデートする必要なし
 		return true;
 	}
 
+	this->JuliusStop();
+
+	this->CommandRuleHandle->Clear();
+	this->TemporaryRuleHandle->Clear();
+	for(auto it = AllCommandRecongTask.begin() ; it != AllCommandRecongTask.end() ; ++it)
+	{
+		AddRegexp(it->callback,it->str , this->CommandRuleHandle);
+	}
+	for(auto it = AllTemporaryRecongTask.begin() ; it != AllTemporaryRecongTask.end() ; ++it)
+	{
+		AddRegexp(it->callback,it->str , this->TemporaryRuleHandle);
+	}
+
+
 	//マイクから入力用
-	std::ofstream dfa("__temp__regexp_test.dfa");
-	std::ofstream dict("__temp__regexp_test.dict");
+	std::ofstream dfa(this->PoolMainWindow->GetConfigBasePath("/julius/__temp__regexp_test.dfa"));
+	std::ofstream dict(this->PoolMainWindow->GetConfigBasePath("/julius/__temp__regexp_test.dict"));
 	this->MakeJuliusRule(this->Grammer,true,true, &dfa,&dict);
 
 	//ディクテーションフィルター用
-	std::ofstream dfaFile("__temp__regexp_test_file.dfa");
-	std::ofstream dictFile("__temp__regexp_test_file.dict");
+	std::ofstream dfaFile(this->PoolMainWindow->GetConfigBasePath("/julius/__temp__regexp_test_file.dfa"));
+	std::ofstream dictFile(this->PoolMainWindow->GetConfigBasePath("/julius/__temp__regexp_test_file.dict"));
 	this->MakeJuliusRule(this->YobikakeRuleHandle,false,true,&dfaFile,&dictFile);
 
-	this->JuliusStop();
 	this->JuliusFileStart();
 	this->JuliusStart();
 
@@ -1183,17 +1195,15 @@ void Recognition_JuliusPlus::JuliusStop()
 {
 	if (this->recog)
 	{
-		//Juliusがビジーでなくなるまで待機
-		while(! this->JuliusInputReady )
-		{
-//			::Sleep(0);
-		}
-
+		//たまに、ストリーム閉じても、コールバックの中で迷子になることがあるので、
+		//強制的にコールバックテーブルを初期化する!!
+		callback_init(this->recog);
 		//ストリームを閉じる
 		j_close_stream(this->recog);
 
 		//スレッド停止までまつ
 		this->Thread->join();
+
 		delete this->Thread;
 		this->Thread = NULL;
 
@@ -1222,22 +1232,24 @@ void Recognition_JuliusPlus::JuliusStop()
 	}
 }
 
-xreturn::r<bool> Recognition_JuliusPlus::JuliusStart()
+bool Recognition_JuliusPlus::JuliusStart()
 {
 	assert(this->recog == NULL);
 	assert(this->jconf == NULL);
 	assert(this->Thread == NULL);
+
+	const std::string testmic_jconf = this->PoolMainWindow->GetConfigBasePath("/julius/testmic.jconf");
 	const char* argv[]={
 		"juliusplus"
 		,"-C"
-		,"testmic.jconf"
+		,testmic_jconf.c_str()
 	};
 	int argc = sizeof(argv)/sizeof(argv[0]);
 	int ret;
 	//SVM学習モデルをロード
-	if (! this->SVM.LoadModel("__svm_model.dat") )
+	if (! this->SVM.LoadModel(this->PoolMainWindow->GetConfigBasePath("/julius/__svm_model.dat") ) )
 	{
-		return xreturn::error("SVMモデルをロードできません");
+		throw XLException("SVMモデルをロードできません");
 	}
 
 	//julusはC関数なので、const外して char** にするしかない・・・
@@ -1246,7 +1258,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusStart()
 	//jconf = j_config_load_file_new(jconf_filename);
 	if (this->jconf == NULL) 
 	{
-		return xreturn::error("Try `-help' for more information.\n");
+		throw XLException("Try `-help' for more information.\n");
 	}
 
 	/* 2. create recognition instance according to the jconf */
@@ -1255,7 +1267,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusStart()
 	this->recog = j_create_instance_from_jconf(this->jconf);
 	if (this->recog == NULL)
 	{
-		return xreturn::error("Error in startup(j_create_instance_from_jconf)\n");
+		throw XLException("Error in startup(j_create_instance_from_jconf)\n");
 	}
 	struct _ref{
 		static void status_recready(Recog *recog, void *_this)
@@ -1278,7 +1290,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusStart()
 	// Initialize audio input
 	if (j_adin_init(this->recog) == FALSE) 
 	{
-		return xreturn::error("Error in startup(j_adin_init)\n");
+		throw XLException("Error in startup(j_adin_init)\n");
 	}
 
 	//output system information to log
@@ -1286,7 +1298,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusStart()
 	ret = j_open_stream(recog, NULL);
 	if(ret < 0)
 	{
-		return xreturn::error("Error in startup(j_open_stream)\n");
+		throw XLException("Error in startup(j_open_stream)\n");
 	}
 
 	this->Thread = new boost::thread( [&]()
@@ -1348,7 +1360,7 @@ void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 			}
 			//素性を詰めていきます。
 			std::vector<XLMachineLearningLibliear::feature> feature_nodeVector;
-			feature_nodeVector.resize(r->lm->am->mfcc->param->header.samplenum * r->lm->am->mfcc->param->veclen + 9 + 1);
+			feature_nodeVector.resize(r->lm->am->mfcc->param->header.samplenum * r->lm->am->mfcc->param->veclen + 10 + 1);
 			auto feature_nodeP = &feature_nodeVector[0];
 
 			//dict から plus側のrule を求める
@@ -1414,6 +1426,11 @@ void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 			feature_nodeP->value = this->WaveFileData.size() / 1024;
 			feature_nodeP++;
 
+//			//素性10 スコア
+//			feature_nodeP->index = 10;
+//			feature_nodeP->value = s->score;;
+//			feature_nodeP++;
+
 			//素性10～ これがきめてになった。
 			int feature = 10;
 			const int samplenumSecond =  min(r->lm->am->mfcc->param->header.samplenum,200);
@@ -1446,14 +1463,15 @@ void Recognition_JuliusPlus::OnOutputResultFile(Recog *recog)
 	}
 }
 
-xreturn::r<bool> Recognition_JuliusPlus::JuliusFileStart()
+bool Recognition_JuliusPlus::JuliusFileStart()
 {
 	assert(this->recogFile == NULL);
 	assert(this->jconfFile == NULL);
+	const std::string testfile_jconf = this->PoolMainWindow->GetConfigBasePath("/julius/testfile.jconf");
 	const char* argv[]={
 		"juliusplus"
 		,"-C"
-		,"testfile.jconf"
+		,testfile_jconf.c_str()
 	};
 	int argc = sizeof(argv)/sizeof(argv[0]);
 
@@ -1463,7 +1481,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusFileStart()
 	//jconf = j_config_load_file_new(jconf_filename);
 	if (this->jconfFile == NULL) 
 	{
-		return xreturn::error("Try `-help' for more information.\n");
+		throw XLException("Try `-help' for more information.\n");
 	}
 
 	/* 2. create recognition instance according to the jconf */
@@ -1472,7 +1490,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusFileStart()
 	this->recogFile = j_create_instance_from_jconf(this->jconfFile);
 	if (this->recogFile == NULL)
 	{
-		return xreturn::error("Error in startup(j_create_instance_from_jconf)\n");
+		throw XLException("Error in startup(j_create_instance_from_jconf)\n");
 	}
 
 
@@ -1487,7 +1505,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusFileStart()
 	// Initialize audio input
 	if (j_adin_init(this->recogFile) == FALSE) 
 	{
-		return xreturn::error("Error in startup(j_adin_init)\n");
+		throw XLException("Error in startup(j_adin_init)\n");
 	}
 	//以上、準備だけしておいて、
 	//認識ルーチンは、後から呼びます。
@@ -1495,7 +1513,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusFileStart()
 	int ret = j_open_stream(recogFile, "nano.wav");
 	if(ret < 0)
 	{
-		return xreturn::error("Error in startup(j_open_stream)\n");
+		throw XLException("Error in startup(j_open_stream)\n");
 	}
 
 	j_recognize_stream(recogFile);
@@ -1503,7 +1521,7 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusFileStart()
 	ret = j_open_stream(recogFile, "nano.wav");
 	if(ret < 0)
 	{
-		return xreturn::error("Error in startup(j_open_stream)\n");
+		throw XLException("Error in startup(j_open_stream)\n");
 	}
 
 	j_recognize_stream(recogFile);
@@ -1512,12 +1530,30 @@ xreturn::r<bool> Recognition_JuliusPlus::JuliusFileStart()
 }
 
 //このコールバックに関連付けられているものをすべて消す
-xreturn::r<bool> Recognition_JuliusPlus::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
+bool Recognition_JuliusPlus::RemoveCallback(const CallbackDataStruct* callback , bool is_unrefCallback) 
 {
-	return true;
-}
-//メディア情報をアップデートします。
-xreturn::r<bool> Recognition_JuliusPlus::UpdateMedia(const std::string& name ,const std::list<std::string>& list ) 
-{
+	std::remove_if(this->AllCommandRecongTask.begin(),this->AllCommandRecongTask.end() ,
+		[&](RecongTask r) -> bool 
+		{
+			if ( r.callback == callback )
+			{
+				return true;
+			}
+			return false;
+		} 
+	);
+	std::remove_if(this->AllTemporaryRecongTask.begin(),this->AllTemporaryRecongTask.end() ,
+		[&](RecongTask r) -> bool 
+		{
+			if ( r.callback == callback )
+			{
+				return true;
+			}
+			return false;
+		} 
+	);
+
+	this->IsNeedUpdateRule = true;
+
 	return true;
 }

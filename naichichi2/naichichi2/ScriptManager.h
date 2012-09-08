@@ -14,7 +14,7 @@ public:
 
 	virtual ~ScriptManager();
 	//作成
-	xreturn::r<bool> Create(MainWindow * poolMainWindow);
+	bool Create(MainWindow * poolMainWindow);
 
 	//音声認識に失敗した時の結果
 	void BadVoiceRecogntion(int errorCode,const std::string& matString,const std::string& diction,double yobikakeRuleConfidenceFilter,double basicRuleConfidenceFilter,bool dictationCheck);
@@ -35,9 +35,9 @@ public:
 private:
 
 	//luaファイル郡の読み込み
-	xreturn::r<bool> loadLua(const std::string & baseDirectory);
+	bool loadLua(const std::string & baseDirectory);
 	//汎用的なコールバック打ち返し
-	xreturn::r<std::string> fireCallback(const CallbackDataStruct* callback,const std::map< std::string , std::string >& args) const;
+	std::string fireCallback(const CallbackDataStruct* callback,const std::map< std::string , std::string >& args) const;
 	//luaの終了
 	void destoryLua();
 	//luaの実行

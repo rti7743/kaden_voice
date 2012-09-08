@@ -6,14 +6,10 @@ class XLHttpRequerst
 {
 public:
 	
-	xreturn::r<bool> Download(const std::string & url , const std::map<std::string,std::string> & header,const std::map<std::string,std::string> & option);
-	xreturn::r<std::string> GetContents(const std::string & url , const std::map<std::string,std::string> & header,const std::map<std::string,std::string> & option)
+	bool Download(const std::string & url , const std::map<std::string,std::string> & header,const std::map<std::string,std::string> & option);
+	std::string GetContents(const std::string & url , const std::map<std::string,std::string> & header,const std::map<std::string,std::string> & option)
 	{
-		auto r = this->Download(url ,  header, option);
-		if (!r)
-		{
-			return xreturn::error(r.getError());
-		}
+		this->Download(url ,  header, option);
 		return this->getDataString();
 	}
 
@@ -33,7 +29,7 @@ public:
 	{
 		return std::string((char*) (&this->OutData[0]));
 	}
-	xreturn::r<bool> saveFile(const std::string & filename) const;
+	bool saveFile(const std::string & filename) const;
 	
 private:
 	//ダウンロードしたデータ

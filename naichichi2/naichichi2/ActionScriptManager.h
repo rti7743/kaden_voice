@@ -14,8 +14,8 @@ public:
 	ActionScriptManager();
 	virtual ~ActionScriptManager();
 	
-	xreturn::r<bool> Create(MainWindow* poolMainWindow);
-	xreturn::r<bool> Regist(const CallbackDataStruct* callback , const std::string & actionName );
+	bool Create(MainWindow* poolMainWindow);
+	bool Regist(const CallbackDataStruct* callback , const std::string & actionName );
 
 private:
 	MainWindow* PoolMainWindow;

@@ -14,9 +14,9 @@ public:
 	TriggerManager();
 	virtual ~TriggerManager();
 	
-	xreturn::r<bool> Create(MainWindow* poolMainWindow);
-	xreturn::r<bool> Regist(const CallbackDataStruct* callback , const std::string & menuName, const std::string & triggername );
-	xreturn::r<std::string> Call( const std::string & triggername ,const std::map<std::string,std::string>& args);
+	bool Create(MainWindow* poolMainWindow);
+	bool Regist(const CallbackDataStruct* callback , const std::string & menuName, const std::string & triggername );
+	std::string Call( const std::string & triggername ,const std::map<std::string,std::string>& args);
 	bool IsExist(const std::string & triggerName) const;
 	std::map<std::string,std::string> GetAllMenuname() const;
 private:

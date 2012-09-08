@@ -5,7 +5,7 @@ typedef void (*XLSoundPlay_CALLBACK)(int _this, int event);
 class IXLSoundPlay_Interface
 {
 public:
-	virtual xreturn::r<bool> play(const std::string & filename) = 0;
+	virtual bool play(const std::string & filename) = 0;
 };
 
 //なんとかしてmp3を再生する.
@@ -15,7 +15,7 @@ public:
 	XLSoundPlay();
 	virtual ~XLSoundPlay();
 
-	xreturn::r<bool> play(const std::string & filename) ;
+	bool play(const std::string & filename) ;
 private:
 	IXLSoundPlay_Interface* Object;
 };

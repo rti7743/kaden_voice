@@ -106,8 +106,10 @@ public:
 	static std::list<std::string> split(const std::string& glue, const std::string & inTarget );
 	//vector
 	static std::vector<std::string> split_vector(const std::string& glue, const std::string & inTarget );
-	//key=value& みたいな感じの join
+	//key=value& みたいな感じの split
 	static std::map<std::string,std::string> crosssplit(const std::string& glue1 ,const std::string& glue2 , const std::string & inTarget );
+	//key=value& みたいな感じの split キーに対するchopを実行する
+	static std::map<std::string,std::string> crosssplitChop(const std::string& glue1 ,const std::string& glue2 , const std::string & inTarget );
 	//stringmap 同士のマージ
 	static std::map<std::string,std::string> merge(const std::map<std::string,std::string>& a ,const std::map<std::string,std::string>& b , bool overideB );
 
@@ -194,6 +196,9 @@ public:
 	static std::string doublequote(const std::string& str);
 	//非マルチバイトのダブルクウォート
 	static std::string doublequote_low(const std::string& str);
+	//quoteをはがす
+	static std::string dequote(const std::string& str);
+
 	//重複削除
 	static std::list<std::string> unique(const std::list<std::string>& list);
 	//マルチバイト対応 inOldにマッチしたものがあったら消します
@@ -226,6 +231,12 @@ public:
 	static std::string escapeshellarg(const std::string &inStr);
 	//数字の桁数を求める
 	static int getScaler(unsigned int num);
+
+	//findfirstとかのワイルドカードを使った文字列比較
+	static bool findFilter(const std::string& base,const std::string& filter);
+
+	//時刻を文字列に変換
+	static std::string timetostr(time_t time,const std::string & format);
 
 };
 

@@ -8,7 +8,6 @@
 #include <sstream>
 
 //UTF-8 BOMいれた...
-//xreturn::error として使ってね。 ......
 //
 class XLException : public std::exception {
 protected:
@@ -67,4 +66,10 @@ public:
 
 		return out.str();
 	}
+
+	static std::string StringErrNo();
+	static std::string StringWindows();
+	static std::string StringErrNo(int errorno);
+	static std::string StringWindows(unsigned long errorno );
 };
+

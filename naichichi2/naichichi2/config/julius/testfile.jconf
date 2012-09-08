@@ -1,0 +1,11 @@
+-gram ./__temp__regexp_test_file
+-h ./phone_m_julius/hmmdefs_ptm_gid.binhmm   # PTM triphone
+-hlist ./phone_m_julius/logicalTri
+-input rawfile
+-rejectshort 10
+-n 7 -output 7
+-sb 100
+-nopausesegment
+-nostrip
+-gprune beam
+-notypecheck

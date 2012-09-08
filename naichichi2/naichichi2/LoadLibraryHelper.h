@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "xreturn.h"
 
 //dll読み込みヘルパー
 class LoadLibraryHelper
@@ -21,7 +20,7 @@ public:
 			this->DllInstance = NULL;
 		}
 	}
-	xreturn::r<bool> Load( const std::string& inDLLName )//std読んでいない化石環境とかのために const char* で作る.
+	bool Load( const std::string& inDLLName )//std読んでいない化石環境とかのために const char* で作る.
 	{
 		assert(this->DllInstance == NULL);
 
@@ -29,7 +28,7 @@ public:
 		if ( this->DllInstance == NULL )
 		{
 			DWORD lastError = ::GetLastError();
-			return xreturn::windowsError(std::string() + "ライブラリ" + inDLLName + "を読み込めませんでした",lastError);
+			throw XLException(std::string() + "ライブラリ" + inDLLName + "を読み込めませんでした",lastError);
 		}
 		return true;
 	}

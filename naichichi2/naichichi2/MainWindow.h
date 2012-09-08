@@ -9,6 +9,7 @@
 #include "ActionScriptManager.h"
 #include "TriggerManager.h"
 #include "WebMenu.h"
+#include "MecabControl.h"
 
 enum LOG_LEVEL
 {
@@ -32,7 +33,7 @@ public:
 	{
 	}
 
-	xreturn::r<bool> Create(bool isdebug);
+	bool Create(bool isdebug);
 
 	int BlockMessageLoop();
 
@@ -54,8 +55,8 @@ public:
 	void SyncInvoke(std::function<void (void) > func);
 	//メインスレッドで後で実行するコールバック
 	void AsyncInvoke(std::function<void (void) > func);
-
-	
+	//config の中のパスを作る
+	std::string GetConfigBasePath(const std::string& path) const;
 	
 	
 private:
@@ -69,10 +70,12 @@ private:
 	//Popupメッセージを出す.
 	void PopupMessage(const std::string & title,const std::string & message);
 	//ログ用のコンソールを開きます。
-	xreturn::r<bool> OpenLoggerWindow();
+	bool OpenLoggerWindow();
 	//ログ用のコンソールを閉じます.
 	void CloseLoggerWindow();
 	void OnCommand(WPARAM wParam, LPARAM lParam);
+	void WriteLog(const std::string& log,LOG_LEVEL level  = LOG_LEVEL_NOTIFY);
+
 
 #if _MSC_VER
 //windows依存部
@@ -104,6 +107,7 @@ public:
 	class ActionScriptManager		ActionScriptManager;
 	class TriggerManager			TriggerManager;
 	class WebMenu					WebMenu;
+	class MecabControl				MecabControl;
 
 private:
 	::boost::thread::id MainThreadID;

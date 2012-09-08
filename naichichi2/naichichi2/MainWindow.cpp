@@ -15,7 +15,7 @@ const int WM_THREAD_CALLBACK		 = WM_USER + 1;
 const int WM_USER_TASKTRAY_CLICK	 = WM_USER + 2;
 const int WM_TASKBAR_CREATED		 = WM_USER + 3;
 
-xreturn::r<bool> MainWindow::Create(bool isdebug)
+bool MainWindow::Create(bool isdebug)
 {
 	this->MainThreadID = ::boost::this_thread::get_id();
 	this->StopFlag = false;
@@ -35,7 +35,7 @@ xreturn::r<bool> MainWindow::Create(bool isdebug)
 	myProg.lpszClassName    = HIDDEN_WINDOW_NAME;
 	if (!RegisterClass(&myProg))
 	{
-		return xreturn::error("windowクラスの登録に失敗!");
+		throw XLException("windowクラスの登録に失敗!");
 	}
 
 	this->MainWindowHandle = CreateWindow(HIDDEN_WINDOW_NAME
@@ -186,7 +186,7 @@ void MainWindow::OnCommand(WPARAM wParam, LPARAM lParam)
 	}
 	else if (wParam == ID_MENU_WEB)
 	{//web画面を開く
-		std::string weburl = this->Httpd.getWebURL("/electronics");
+		std::string weburl = this->Httpd.getWebURL("/remocon/");
 		ShellExecute(NULL,NULL,weburl.c_str() , NULL,NULL,0);
 	}
 #endif
@@ -362,8 +362,27 @@ void MainWindow::PostMessage(HWND dummyWindowHandle,unsigned int message,WPARAM 
 //終了時
 void MainWindow::OnDestory()
 {
-	this->SyncInvokeLog("プログラムを終了させます。");
+	this->WriteLog("プログラムを終了させます。");
+	//停止フラグを立てる.
 	this->StopFlag = true;
+
+#if _MSC_VER
+	//今あるメッセージ・キューを空にする.
+	{
+		MSG msg;
+		while(PeekMessage (&msg,NULL,0,0,PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+	this->WriteLog("メッセージループ完了。");
+#endif
+
+	//config を保存する.
+	this->Config.overrideSave();
+	this->WriteLog("configセーブ完了。");
+
 #if _MSC_VER
 	//タスクトレイからアイコンを消す.
 	DelNotifyIcon();
@@ -451,11 +470,6 @@ bool MainWindow::OnInit()
 		this->Speak.Create(speakEngine,this,speakRate,speakPitch,speakVolume,speakPerson);
 	}
 
-	//モーション
-	{
-		//むりむり、間に合わない。
-	}
-
 	//Httpd
 	{
 		int port = this->Config.GetInt("httpd__port",15550);
@@ -463,11 +477,7 @@ bool MainWindow::OnInit()
 		std::string webroot = this->Config.Get("httpd__webroot", this->Config.GetBaseDirectory() + "\\webroot");
 		std::map<std::string,std::string> allowext = this->Config.FindGetsToMap("httpd__allowext_",true); 
 
-		char myhostname[256] ;
-		gethostname(myhostname, sizeof(myhostname));
-
-		std::string accesstoken = this->Config.Get("httpd__accesstoken", myhostname ); 
-		this->Httpd.Create(this,port,threadcount,webroot,accesstoken,allowext);
+		this->Httpd.Create(this,port,threadcount,webroot,allowext);
 	}
 	//トリガーマネージャ
 	{
@@ -490,17 +500,17 @@ bool MainWindow::OnInit()
 
 void MainWindow::SyncInvoke(std::function<void (void) > func)
 {
+	//停止フラグが有効な場合は無視する。
+	if (this->StopFlag)
+	{
+		return ;
+	}
+
 	if (::boost::this_thread::get_id() == this->MainThreadID) 
 	{
 		ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドですね
 		//即実行
 		func();
-		return ;
-	}
-
-	//停止フラグが有効な場合は無視する。
-	if (this->StopFlag)
-	{
 		return ;
 	}
 
@@ -630,6 +640,76 @@ void MainWindow::SyncInvokeWarning(const std::string& message)
 #endif
 }
 
+void MainWindow::WriteLog(const std::string& log,LOG_LEVEL level )
+{
+	if (!this->IsOpenConsole || this->LogLevel > level )
+	{
+		return ;
+	}
+
+#if _MSC_VER
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
+
+	if (level <= LOG_LEVEL_DEBUG)
+	{
+#if _MSC_VER
+		WriteConsole(handle , "DEBUG      :" , 11, NULL, NULL);
+#else
+		puts("DEBUG      :");
+#endif
+	}
+	else if (level <= LOG_LEVEL_NOTIFY)
+	{
+#if _MSC_VER
+		SetConsoleTextAttribute(handle, FOREGROUND_GREEN);	//文字を強調
+		WriteConsole(handle , "NOTIFY     :" , 11, NULL, NULL);
+#else
+		puts("NOTIFY     :");
+#endif
+	}
+	else if (level <= LOG_LEVEL_FAIL_NOTIFY)
+	{
+#if _MSC_VER
+		SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN); //文字を黄色
+		WriteConsole(handle , "FAIL NOTIFY:" , 11, NULL, NULL);
+#else
+		puts("FAIL NOTIFY:");
+#endif
+	}
+	else if (level <= LOG_LEVEL_WARNING)
+	{
+#if _MSC_VER
+		SetConsoleTextAttribute(handle, BACKGROUND_RED | BACKGROUND_BLUE); //背景を紫
+		WriteConsole(handle , "WARNING    :" , 11, NULL, NULL);
+#else
+		puts("WARNING    :");
+#endif
+	}
+	else if (level <= LOG_LEVEL_ERROR)
+	{
+#if _MSC_VER
+		SetConsoleTextAttribute(handle, BACKGROUND_RED); //背景を赤
+		WriteConsole(handle , "ERROR      :" , 11, NULL, NULL);
+#else
+		puts("ERROR      :");
+#endif
+	}
+#if _MSC_VER
+	//黒白に戻す.
+	SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+	//本文 長すぎる文章を一気に書くと表示されないので、一行づつくぎって表示する.
+	std::list<std::string> l = XLStringUtil::split("\r\n",log);
+	for(std::list<std::string>::iterator it = l.begin() ; it != l.end() ; ++it)
+	{
+		WriteConsole(handle , it->c_str() , it->size(), NULL, NULL);
+		WriteConsole(handle , "\r\n" , 2 , NULL, NULL);
+	}
+#else
+	puts(log.c_str());
+#endif
+}
+
 void MainWindow::SyncInvokeLog(const std::string& log,LOG_LEVEL level )
 {
 	if (!this->IsOpenConsole || this->LogLevel > level )
@@ -644,75 +724,13 @@ void MainWindow::SyncInvokeLog(const std::string& log,LOG_LEVEL level )
 	}
 
 	this->SyncInvoke( [=](){
-#if _MSC_VER
-			HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-#endif
-
-			if (level <= LOG_LEVEL_DEBUG)
-			{
-#if _MSC_VER
-				WriteConsole(handle , "DEBUG      :" , 11, NULL, NULL);
-#else
-				puts("DEBUG      :");
-#endif
-			}
-			else if (level <= LOG_LEVEL_NOTIFY)
-			{
-#if _MSC_VER
-				SetConsoleTextAttribute(handle, FOREGROUND_GREEN);	//文字を強調
-				WriteConsole(handle , "NOTIFY     :" , 11, NULL, NULL);
-#else
-				puts("NOTIFY     :");
-#endif
-			}
-			else if (level <= LOG_LEVEL_FAIL_NOTIFY)
-			{
-#if _MSC_VER
-				SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN); //文字を黄色
-				WriteConsole(handle , "FAIL NOTIFY:" , 11, NULL, NULL);
-#else
-				puts("FAIL NOTIFY:");
-#endif
-			}
-			else if (level <= LOG_LEVEL_WARNING)
-			{
-#if _MSC_VER
-				SetConsoleTextAttribute(handle, BACKGROUND_RED | BACKGROUND_BLUE); //背景を紫
-				WriteConsole(handle , "WARNING    :" , 11, NULL, NULL);
-#else
-				puts("WARNING    :");
-#endif
-			}
-			else if (level <= LOG_LEVEL_ERROR)
-			{
-#if _MSC_VER
-				SetConsoleTextAttribute(handle, BACKGROUND_RED); //背景を赤
-				WriteConsole(handle , "ERROR      :" , 11, NULL, NULL);
-#else
-				puts("ERROR      :");
-#endif
-			}
-#if _MSC_VER
-			//黒白に戻す.
-			SetConsoleTextAttribute(handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-			//本文 長すぎる文章を一気に書くと表示されないので、一行づつくぎって表示する.
-			std::list<std::string> l = XLStringUtil::split("\r\n",log);
-			for(std::list<std::string>::iterator it = l.begin() ; it != l.end() ; ++it)
-			{
-				WriteConsole(handle , it->c_str() , it->size(), NULL, NULL);
-				WriteConsole(handle , "\r\n" , 2 , NULL, NULL);
-			}
-#else
-			puts(log.c_str());
-#endif
-
-
+			WriteLog(log,level);
 		}
 	);
 }
 
 //ログ用のコンソールを開きます。
-xreturn::r<bool> MainWindow::OpenLoggerWindow()
+bool MainWindow::OpenLoggerWindow()
 {
 #if _MSC_VER
 	if ( this->IsOpenConsole )
@@ -725,7 +743,7 @@ xreturn::r<bool> MainWindow::OpenLoggerWindow()
 	if ( ! AllocConsole() )
 	{
 		DWORD lasterror = ::GetLastError();
-		return xreturn::windowsError("コンソールを確保できません",lasterror);
+		throw XLException(XLException::StringWindows() + "コンソールを確保できません",lasterror);
 	}
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
@@ -754,5 +772,11 @@ void MainWindow::CloseLoggerWindow()
 #endif
 	this->IsOpenConsole = false;
 	return ;
+}
+
+//config の中のパスを作る
+std::string MainWindow::GetConfigBasePath(const std::string& path) const
+{
+	return XLStringUtil::pathcombine( this->Config.GetBaseDirectory(), path);
 }
 

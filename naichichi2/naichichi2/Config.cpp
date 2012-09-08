@@ -11,30 +11,31 @@ Config::Config()
 }
 Config::~Config()
 {
-	if (this->IsLoad)
-	{
-		this->saveConfig(this->BaseDirectory + "\\config.conf");
-	}
 }
 
-xreturn::r<std::string> Config::Create()
+std::string Config::Create()
 {
 	ASSERT_IS_MAIN_THREAD_RUNNING(); //メインスレッドでしか動きません
 
 	this->BaseDirectory = GetBaseDirectoryImpl();
-	auto r = this->loadConfig(this->BaseDirectory + "\\config.conf");
-	if (!r)
-	{
-		puts("bad config!");
-		return xreturn::error("設定ファイルが読み込めません");
-	}
+	this->loadConfig(this->BaseDirectory + "\\config.conf");
 		
 	this->IsLoad = true;
 	return this->BaseDirectory;
 }
 
+bool Config::overrideSave()
+{
+	if (this->IsLoad)
+	{
+		this->saveConfig(this->BaseDirectory + "\\config.conf");
+	}
+	return true;
+}
 
-xreturn::r<bool> Config::loadConfig(const std::string & configFilename)
+
+
+bool Config::loadConfig(const std::string & configFilename)
 {
 	boost::unique_lock<boost::mutex> al(this->lock);
 	_USE_WINDOWS_ENCODING;
@@ -43,7 +44,7 @@ xreturn::r<bool> Config::loadConfig(const std::string & configFilename)
 	FILE * fp = fopen( XLStringUtil::pathseparator(configFilename).c_str() ,"rb");
 	if (fp == NULL)
 	{
-		return xreturn::error("config " + configFilename + " を読み込めませんでした。");
+		throw XLException("config " + configFilename + " を読み込めませんでした。");
 	}
 	char readbuffer[MAX_PATH];
 
@@ -67,7 +68,7 @@ xreturn::r<bool> Config::loadConfig(const std::string & configFilename)
 	return true;
 }
 
-xreturn::r<bool> Config::saveConfig(const std::string & configFilename)
+bool Config::saveConfig(const std::string & configFilename)
 {
 	boost::unique_lock<boost::mutex> al(this->lock);
 	_USE_WINDOWS_ENCODING;
@@ -78,7 +79,7 @@ xreturn::r<bool> Config::saveConfig(const std::string & configFilename)
 	FILE * wfp = fopen( XLStringUtil::pathseparator(tmpfilename).c_str() ,"wb");
 	if (wfp == NULL)
 	{
-		return xreturn::error("設定保存用の一時ファイル" + tmpfilename + "を作成できませんでした。");
+		throw XLException("設定保存用の一時ファイル" + tmpfilename + "を作成できませんでした。");
 	}
 	FILE * fp = fopen( XLStringUtil::pathseparator(configFilename).c_str() ,"rb");
 	if (fp != NULL)
@@ -103,11 +104,11 @@ xreturn::r<bool> Config::saveConfig(const std::string & configFilename)
 					continue;
 				}
 
-				std::string key = XLStringUtil::chop( std::string(buf , 0 , eq - buf) ) ;
-				std::string value = XLStringUtil::chop( std::string(eq + 1) ) ;
+				const std::string key = XLStringUtil::chop( std::string(buf , 0 , eq - buf) ) ;
+				const std::string value = XLStringUtil::chop( std::string(eq + 1) ) ;
 
 				//このデータは読み込んでいますか?
-				std::map<std::string,std::string>::iterator i = localSetting.find(key);
+				const auto i = localSetting.find(key);
 				if (i == localSetting.end() )
 				{
 					//ない場合は削除
@@ -121,7 +122,9 @@ xreturn::r<bool> Config::saveConfig(const std::string & configFilename)
 				}
 
 				//書き換え.
-				fprintf(wfp , "%s=%s\r\n" , _A2U((*i).first.c_str())  , _A2U((*i).second.c_str()) );
+				const std::string writekey = _A2U((*i).first);
+				const std::string writevalue = _A2U((*i).second);
+				fprintf(wfp , "%s=%s\r\n" , writekey.c_str()  , writevalue.c_str() );
 				localSetting.erase(i);
 			}
 	}
@@ -129,9 +132,10 @@ xreturn::r<bool> Config::saveConfig(const std::string & configFilename)
 	{
 		for(std::map<std::string,std::string>::iterator i = localSetting.begin() ; i != localSetting.end() ; i++)
 		{
-			fprintf(wfp , "%s=%s\r\n" , _A2U((*i).first.c_str())  , _A2U((*i).second.c_str()) );
+			const std::string writekey = _A2U((*i).first);
+			const std::string writevalue = _A2U((*i).second);
+			fprintf(wfp , "%s=%s\r\n" , writekey.c_str()  , writevalue.c_str() );
 		}
-		fflush(wfp);
 	}
 	if (fp) fclose(fp);
 	if (wfp) fclose(wfp);

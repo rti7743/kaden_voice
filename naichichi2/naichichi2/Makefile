@@ -1,7 +1,6 @@
 CC=gcc
 CXX=g++
-#FPUHINT=-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -mabi=aapcs-linux -fforce-addr -fomit-frame-pointer -fstrength-reduce
-FPUHINT=
+FPUHINT=-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -mabi=aapcs-linux -fforce-addr -fomit-frame-pointer -fstrength-reduce
 CFLAGS=-g -Os $(FPUHINT)
 
 CPPFLAGS= \
@@ -17,6 +16,7 @@ LDFLAGS= \
 ../lua/liblua.a \
 ../liblinear/liblinear.a \
 ../liblinear/blas/blas.a \
+../openjtalk/open_jtalk/open_jtalk/open_jtalk.a \
 -L../julius/libjulius `../julius/libjulius/libjulius-config --libs` \
 -L../julius/libsent `../julius/libsent/libsent-config --libs`
 
@@ -38,6 +38,7 @@ ScriptWebRunner.o \
 WebMenu.o \
 Callbackable.o \
 Speak_Factory.o \
+Speak_OpenJTalk.o \
 Speak_GoogleTranslate.o \
 TriggerManager.o \
 XLDebugUtil.o \

@@ -12,7 +12,7 @@ ActionImplement::~ActionImplement(void)
 {
 }
 
-xreturn::r<std::string> ActionImplement::Telnet(const std::string& host,int port,const std::string& wait,const std::string& send,const std::string& recv)
+std::string ActionImplement::Telnet(const std::string& host,int port,const std::string& wait,const std::string& send,const std::string& recv)
 {
 	//ASIO作成
 	boost::asio::io_service io_service;
@@ -29,7 +29,7 @@ xreturn::r<std::string> ActionImplement::Telnet(const std::string& host,int port
 	socket.connect(endpoint,error);
     if (error)
 	{
-		return xreturn::error("ホストに接続できません host:" + host + " port:" + num2str(port) );
+		throw XLException("ホストに接続できません host:" + host + " port:" + num2str(port) );
 	}
 
 	//まずは相手の言い分を聞きます.
@@ -60,17 +60,17 @@ xreturn::r<std::string> ActionImplement::Telnet(const std::string& host,int port
 	return ret;
 }
 
-xreturn::r<std::string> ActionImplement::HttpGet(const std::string& url)
+std::string ActionImplement::HttpGet(const std::string& url)
 {
 	return XLHttpSocket::Get(url);
 }
 
-xreturn::r<std::string> ActionImplement::HttpPost(const std::string& url,const std::string& postdata)
+std::string ActionImplement::HttpPost(const std::string& url,const std::string& postdata)
 {
 	return XLHttpSocket::Post(url,postdata.c_str() , postdata.size() );
 }
 
-xreturn::r<bool> ActionImplement::Execute(const std::string& targetpc,const std::string& command,const std::string& args)
+bool ActionImplement::Execute(const std::string& targetpc,const std::string& command,const std::string& args)
 {
 	std::string _command = XLStringUtil::pathseparator(command);
 	std::string _args = XLStringUtil::pathseparator(args);
@@ -82,7 +82,7 @@ xreturn::r<bool> ActionImplement::Execute(const std::string& targetpc,const std:
 	//成功失敗の判定がうまくいかない時があるので、とりあえずこれで。
 	return true;
 }
-xreturn::r<bool> ActionImplement::OpenWeb(const std::string& targetpc,const std::string& command)
+bool ActionImplement::OpenWeb(const std::string& targetpc,const std::string& command)
 {
 	assert ( XLStringUtil::strpos(command,"http://") == 0 || XLStringUtil::strpos(command,"https://") == 0 );
 
@@ -91,7 +91,8 @@ xreturn::r<bool> ActionImplement::OpenWeb(const std::string& targetpc,const std:
 #endif
 	return true;
 }
-xreturn::r<bool> ActionImplement::SendKeydown(const std::string& targetpc,const std::string& windowname,int key , int keyoption)
+
+bool ActionImplement::SendKeydown(const std::string& targetpc,const std::string& windowname,int key , int keyoption)
 {
 #if _MSC_VER
 	HWND hwnd = ::GetTopWindow(::GetDesktopWindow());
@@ -123,7 +124,7 @@ xreturn::r<bool> ActionImplement::SendKeydown(const std::string& targetpc,const 
 	return true;
 }
 
-xreturn::r<bool> ActionImplement::SendMessage(const std::string& targetpc,const std::string& windowname,int message,int wparam,int  lparam)
+bool ActionImplement::SendMessage(const std::string& targetpc,const std::string& windowname,int message,int wparam,int  lparam)
 {
 #if _MSC_VER
 	HWND hwnd = ::GetTopWindow(::GetDesktopWindow());
@@ -147,7 +148,7 @@ xreturn::r<bool> ActionImplement::SendMessage(const std::string& targetpc,const 
 	return true;
 }
 
-xreturn::r<bool> ActionImplement::MSleep(const std::string& targetpc,unsigned int mtime )
+bool ActionImplement::MSleep(const std::string& targetpc,unsigned int mtime )
 {
 #if _MSC_VER
 	const unsigned int sleep_poolingtime = 100;
